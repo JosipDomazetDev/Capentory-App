@@ -4,9 +4,12 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -38,10 +41,14 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, Inventory.OnFragmentInteractionListener {
     TextView txtView;
     private static final String CHANNEL_ID = "inventory_channel_01";
+    protected DrawerLayout drawer;
+    @Override
+    public void onFragmentInteraction(Uri uri){
 
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +63,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -64,36 +71,80 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
         createNotificationChannel();
-        txtView = (TextView) findViewById(R.id.txtContent);
 
-        String url = "https://jsonplaceholder.typicode.com/posts/1";
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        txtView.setText("Response: " + response.toString());
-                    }
-                }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
 
-                    }
-                });
-
-// Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
-
+        getZebraPayload();
     }
+
+    private void getZebraPayload() {
+        IntentFilter filter = new IntentFilter();
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        filter.addAction(getResources().getString(R.string.activity_intent_filter_action));
+        registerReceiver(myBroadcastReceiver, filter);
+    }
+
+
+    //
+    // The section below assumes that a UI exists in which to place the data. A production
+    // application would be driving much of the behavior following a scan.
+    //
+    private void displayScanResult(Intent initiatingIntent, String howDataReceived) {
+        String decodedSource = initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_source));
+        String decodedData = initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
+        String decodedLabelType = initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_label_type));
+
+        final TextView lblScanSource = (TextView) findViewById(R.id.lblScanSource);
+        final TextView lblScanData = (TextView) findViewById(R.id.lblScanData);
+        final TextView lblScanLabelType = (TextView) findViewById(R.id.lblScanDecoder);
+
+        lblScanSource.setText(decodedSource + " " + howDataReceived);
+        lblScanData.setText(decodedData);
+        lblScanLabelType.setText(decodedLabelType);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(myBroadcastReceiver);
+    }
+
+    //
+    // After registering the broadcast receiver, the next step (below) is to define it.
+    // Here it's done in the MainActivity.java, but also can be handled by a separate class.
+    // The logic of extracting the scanned data and displaying it on the screen
+    // is executed in its own method (later in the code). Note the use of the
+    // extra keys defined in the strings.xml file.
+    //
+    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Bundle b = intent.getExtras();
+
+            //  This is useful for debugging to verify the format of received intents from DataWedge
+            //for (String key : b.keySet())
+            //{
+            //    Log.v(LOG_TAG, key);
+            //}
+
+            if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
+                //  Received a barcode scan
+                try {
+                    displayScanResult(intent, "via Broadcast");
+                } catch (Exception e) {
+                    //  Catch if the UI does not exist when we receive the broadcast
+                }
+            }
+        }
+    };
 
     public void scanBarcode(View v) {
         Intent intent = new Intent(this, FlashScanBarcodeAcitivity.class);
         startActivityForResult(intent, 0);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -186,6 +237,7 @@ public class MainActivity extends AppCompatActivity
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(10, builder.build());
+
     }
 
     private void createNotificationChannel() {
@@ -194,7 +246,7 @@ public class MainActivity extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name,  NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this

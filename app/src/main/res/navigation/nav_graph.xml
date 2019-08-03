@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/inventory">
+
+    <fragment
+        android:id="@+id/inventory"
+        android:name="com.example.capentory_client.Inventory"
+        android:label="fragment_inventory"
+        tools:layout="@layout/fragment_inventory" >
+        <action
+            android:id="@+id/action_inventory_to_flashScanBarcodeAcitivity"
+            app:destination="@id/flashScanBarcodeAcitivity" />
+    </fragment>
+    <activity
+        android:id="@+id/flashScanBarcodeAcitivity"
+        android:name="com.example.capentory_client.FlashScanBarcodeAcitivity"
+        android:label="activity_flash_barcode_scan_acitivity"
+        tools:layout="@layout/activity_flash_barcode_scan_acitivity" />
+
+</navigation>
