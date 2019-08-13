@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,8 +58,8 @@ public class Inventory extends Fragment {
                 container, false);
 
 
-  /*      final TextView txtView = view.findViewById(R.id.txtContent);
-        String url = "https://jsonplaceholder.typicode.com/posts/1";
+        final TextView txtView = view.findViewById(R.id.scan_result_textview_fragment);
+        String url = "http://192.168.1.2:8000/api/actualitem/1/";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
@@ -76,7 +77,7 @@ public class Inventory extends Fragment {
                 });
 
         // Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(getContext()).addToRequestQueue(jsonObjectRequest);*/
+        MySingleton.getInstance(getContext()).addToRequestQueue(jsonObjectRequest);
 
 
 /*

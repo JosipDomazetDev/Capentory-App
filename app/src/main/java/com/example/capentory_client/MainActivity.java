@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity
 
 
 
-
         getZebraPayload();
     }
 
@@ -86,17 +85,9 @@ public class MainActivity extends AppCompatActivity
     // application would be driving much of the behavior following a scan.
     //
     private void displayScanResult(Intent initiatingIntent, String howDataReceived) {
-        String decodedSource = initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_source));
         String decodedData = initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
-        String decodedLabelType = initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_label_type));
-
-        final TextView lblScanSource = (TextView) findViewById(R.id.lblScanSource);
-        final TextView lblScanData = (TextView) findViewById(R.id.lblScanData);
-        final TextView lblScanLabelType = (TextView) findViewById(R.id.lblScanDecoder);
-
-        lblScanSource.setText(decodedSource + " " + howDataReceived);
+        final TextView lblScanData = findViewById(R.id.scan_result_textview_fragment);
         lblScanData.setText(decodedData);
-        lblScanLabelType.setText(decodedLabelType);
     }
 
     @Override
@@ -135,8 +126,8 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-    public void scanBarcode(View v) {
-        Intent intent = new Intent(this, FlashScanBarcodeAcitivity.class);
+    public void cameraScanBarcode(View v) {
+        Intent intent = new Intent(this,ScanBarcodeActivity.class);
         startActivityForResult(intent, 0);
     }
 
@@ -144,6 +135,8 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 0) {
             if (resultCode == CommonStatusCodes.SUCCESS) {
+                txtView=findViewById(R.id.scan_result_textview_fragment);
+
                 if (data != null) {
                     txtView.setText("Barcode:" + String.valueOf(data.getStringExtra("barcode")));
                 } else {

@@ -29,13 +29,8 @@ public class ScanBarcodeActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_barcode);
-        cameraPreview = (SurfaceView) findViewById(R.id.camera_preview);
+        cameraPreview = findViewById(R.id.camera_preview);
         createCameraSource();
-
-
-
-        String url = "http://my-json-feed";
-
     }
 
 
@@ -92,7 +87,7 @@ public class ScanBarcodeActivity extends Activity {
                 final SparseArray<Barcode> barcodeSparseArray = detections.getDetectedItems();
                 if (barcodeSparseArray.size() > 0) {
                     Intent intent = new Intent();
-                    intent.putExtra("barcode", barcodeSparseArray.valueAt(0));
+                    intent.putExtra("barcode", String.valueOf(barcodeSparseArray.valueAt(0).displayValue));
                     setResult(CommonStatusCodes.SUCCESS, intent);
                     finish();
                 }

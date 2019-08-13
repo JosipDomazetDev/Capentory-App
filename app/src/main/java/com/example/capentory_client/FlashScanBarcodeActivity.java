@@ -19,7 +19,7 @@ import java.util.List;
 
 import info.androidhive.barcode.BarcodeReader;
 
-public class FlashScanBarcodeAcitivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener {
+public class FlashScanBarcodeActivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener {
 
 
     private BarcodeReader barcodeReader;
