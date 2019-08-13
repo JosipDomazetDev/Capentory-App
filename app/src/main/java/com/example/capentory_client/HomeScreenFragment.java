@@ -11,86 +11,64 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-
-import org.json.JSONObject;
-
-import java.util.Objects;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Inventory.OnFragmentInteractionListener} interface
+ * {@link HomeScreenFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class Inventory extends Fragment {
+public class HomeScreenFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public Inventory() {
+    public HomeScreenFragment() {
         // Required empty public constructor
     }
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_inventory,
-                container, false);
+        View view = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
-
-  /*      final TextView txtView = view.findViewById(R.id.txtContent);
-        String url = "https://jsonplaceholder.typicode.com/posts/1";
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        txtView.setText("Response: " + response.toString());
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-
-                    }
-                });
-
-        // Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(getContext()).addToRequestQueue(jsonObjectRequest);*/
-
-
-/*
-        ((Button)view.findViewById(R.id.start)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-                Navigation.findNavController(view).navigate(R.id.action_inventory_to_flashScanBarcodeAcitivity);
+                Navigation.findNavController(view).navigate(R.id.inventory);
             }
-        });*/
+        });
         return view;
-
     }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
 
     @Override
     public void onDetach() {

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/inventory">
+    app:startDestination="@id/homeScreenFragment">
 
     <fragment
         android:id="@+id/inventory"
@@ -19,5 +19,14 @@
         android:name="com.example.capentory_client.FlashScanBarcodeAcitivity"
         android:label="activity_flash_barcode_scan_acitivity"
         tools:layout="@layout/activity_flash_barcode_scan_acitivity" />
+    <fragment
+        android:id="@+id/homeScreenFragment"
+        android:name="com.example.capentory_client.HomeScreenFragment"
+        android:label="fragment_home_screen"
+        tools:layout="@layout/fragment_home_screen" >
+        <action
+            android:id="@+id/action_homeScreenFragment_to_inventory"
+            app:destination="@id/inventory" />
+    </fragment>
 
 </navigation>

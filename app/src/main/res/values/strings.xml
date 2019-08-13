@@ -112,4 +112,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="homescreen_intro">Diese Applikation wurde im Rahmen der Diplomarbeit "Capentory" an der HTL Rennweg entwickelt.
+    Dank der Kombination aus dieser App und unserem Ralph-Server konnten wir den Inventurvorgang an unserer Schule erheblich vereinfachen und vor allem effizienter gestalten.</string>
+    <string name="project_title">Capentory</string>
 </resources>

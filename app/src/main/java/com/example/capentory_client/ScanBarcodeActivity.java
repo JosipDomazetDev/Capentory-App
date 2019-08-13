@@ -2,33 +2,24 @@ package com.example.capentory_client;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.common.api.Response;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.lang.reflect.Field;
 
 public class ScanBarcodeActivity extends Activity {
     SurfaceView cameraPreview;
