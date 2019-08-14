@@ -4,7 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:clipToPadding="false"
+        android:padding="20dp"
+        card_view:cardElevation="1dp">
 
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/anlage_textview"
@@ -13,7 +26,7 @@
                 android:layout_centerVertical="true"
                 android:text="400000467489"
                 android:textColor="#000"
-                android:textSize="17sp" />
+                android:textSize="13sp" />
 
 
             <TextView
@@ -22,10 +35,12 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="30dp"
-                android:layout_toEndOf="@+id/anlage_textview"
                 android:text="HP Color LaserJet Enterprise M750n Printer D3L08A"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/anlage_textview"
                 android:textColor="#000"
                 android:textSize="17sp" />
-
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

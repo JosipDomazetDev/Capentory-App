@@ -57,8 +57,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public ViewHolder(View itemView) {
             super(itemView);
-            anlage_textview = itemView.findViewById(R.id.anlage_bez_textview);
-            anlage_bez_textview = itemView.findViewById(R.id.anlage_textview);
+            anlage_textview = itemView.findViewById(R.id.anlage_textview);
+            anlage_bez_textview = itemView.findViewById(R.id.anlage_bez_textview);
             actualitem_container = itemView.findViewById(R.id.actualitem_container);
         }
     }
