@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/actualitem_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+
+            <TextView
+                android:id="@+id/anlage_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="400000467489"
+                android:textColor="#000"
+                android:textSize="17sp" />
+
+
+            <TextView
+                android:id="@+id/anlage_bez_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="30dp"
+                android:layout_toEndOf="@+id/anlage_textview"
+                android:text="HP Color LaserJet Enterprise M750n Printer D3L08A"
+                android:textColor="#000"
+                android:textSize="17sp" />
+
+
+</RelativeLayout>

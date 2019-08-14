@@ -40,7 +40,6 @@ public class FlashScanBarcodeActivity extends AppCompatActivity implements Barco
         barcodeReader.playBeep();
         Intent intent = new Intent();
         intent.putExtra("barcode", String.valueOf(barcode.displayValue));
-        Log.e("xxxxx", String.valueOf(barcode.displayValue));
 
         setResult(CommonStatusCodes.SUCCESS, intent);
         finish();

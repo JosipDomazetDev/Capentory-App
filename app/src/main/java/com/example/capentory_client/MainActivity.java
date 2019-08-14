@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,8 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -41,15 +44,21 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Inventory.OnFragmentInteractionListener {
     TextView txtView;
     private static final String CHANNEL_ID = "inventory_channel_01";
     protected DrawerLayout drawer;
+
+
+
     @Override
-    public void onFragmentInteraction(Uri uri){
+    public void onFragmentInteraction(Uri uri) {
 
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +77,9 @@ public class MainActivity extends AppCompatActivity
         createNotificationChannel();
 
 
-
         getZebraPayload();
+
+
     }
 
     private void getZebraPayload() {
@@ -88,6 +98,7 @@ public class MainActivity extends AppCompatActivity
         String decodedData = initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
         final TextView lblScanData = findViewById(R.id.scan_result_textview_fragment);
         lblScanData.setText(decodedData);
+        Log.e("xxxxx", String.valueOf(initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_label_type))));
     }
 
     @Override
@@ -127,7 +138,7 @@ public class MainActivity extends AppCompatActivity
     };
 
     public void cameraScanBarcode(View v) {
-        Intent intent = new Intent(this,ScanBarcodeActivity.class);
+        Intent intent = new Intent(this, ScanBarcodeActivity.class);
         startActivityForResult(intent, 0);
     }
 
@@ -135,7 +146,7 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 0) {
             if (resultCode == CommonStatusCodes.SUCCESS) {
-                txtView=findViewById(R.id.scan_result_textview_fragment);
+                txtView = findViewById(R.id.scan_result_textview_fragment);
 
                 if (data != null) {
                     txtView.setText("Barcode:" + String.valueOf(data.getStringExtra("barcode")));
