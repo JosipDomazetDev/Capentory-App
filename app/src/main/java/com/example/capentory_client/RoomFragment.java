@@ -4,56 +4,64 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
+import org.json.JSONObject;
+
+import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HomeScreenFragment.OnFragmentInteractionListener} interface
+ * {@link RoomFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * create an instance of this fragment.
  */
-public class HomeScreenFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class RoomFragment extends Fragment {
+    private RoomFragmentViewModel roomFragmentViewModel;
 
     private OnFragmentInteractionListener mListener;
 
-    public HomeScreenFragment() {
+    public RoomFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home_screen, container, false);
+        View view = inflater.inflate(R.layout.fragment_room, container, false);
 
-        view.findViewById(R.id.start).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.roomFragment, null));
+        view.findViewById(R.id.button_fragment_room).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.inventory, null));
+
+        roomFragmentViewModel = ViewModelProviders.of(this).get(RoomFragmentViewModel.class);
+
+        roomFragmentViewModel.init();
+
+        roomFragmentViewModel.getRooms().observe(this, new Observer<List<JSONObject>>() {
+            @Override
+            public void onChanged(@Nullable List<JSONObject> rooms) {
+                Log.e("xx","xxx");
+            }
+        });
+
         return view;
     }
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -61,7 +69,6 @@ public class HomeScreenFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
 
     @Override
     public void onDetach() {
