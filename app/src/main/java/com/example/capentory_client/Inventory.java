@@ -64,40 +64,6 @@ public class Inventory extends Fragment {
                 container, false);
 
 
-        final TextView txtView = view.findViewById(R.id.scan_result_textview_fragment);
-        String url = "http://192.168.49.123:8000/api/actualitem/1/?format=json";
-
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        txtView.setText("Response: " + response.toString());
-                    }
-
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-                        Log.e("xxxxxxxxxxxxxxxx", error.getMessage() + error.getLocalizedMessage());
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                String credentials = "ralph" + ":" + "ralph";
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Content-Type", "application/json");
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-
-        // Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(getContext()).addToRequestQueue(jsonObjectRequest);
 
 
 /*
@@ -127,7 +93,6 @@ public class Inventory extends Fragment {
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(anlage, anlage_bez, getContext());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         return view;
 
     }

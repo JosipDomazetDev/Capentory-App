@@ -16,10 +16,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -42,7 +47,7 @@ public class RoomFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_room, container, false);
+        final View view = inflater.inflate(R.layout.fragment_room, container, false);
 
         view.findViewById(R.id.button_fragment_room).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.inventory, null));
 
@@ -53,14 +58,19 @@ public class RoomFragment extends Fragment {
         roomFragmentViewModel.getRooms().observe(this, new Observer<List<JSONObject>>() {
             @Override
             public void onChanged(@Nullable List<JSONObject> rooms) {
-                Log.e("xx","xxx");
+                ArrayList<String> options = new ArrayList<String>();
+
+                options.add("option 1");
+                options.add("option 2");
+                options.add("option 3");
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, options);
+                ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
             }
         });
 
         return view;
     }
-
-
 
 
     // TODO: Rename method, update argument and hook method into UI event

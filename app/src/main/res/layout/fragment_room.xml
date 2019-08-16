@@ -10,7 +10,7 @@
 
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/room_dropdown_fragment_room"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

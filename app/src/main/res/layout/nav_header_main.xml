@@ -15,18 +15,20 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
         android:fontFamily="@font/bauhaus"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/project_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:layout_marginTop="0dp"
+        android:textColor="#FFF"
         android:textSize="36sp" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
+        android:layout_marginBottom="10dp"
+        android:textColor="#FFF"
         android:text="Das Inventurerfassungstool"
-        android:layout_marginBottom="10dp"/>
+        android:textSize="15sp" />
 </LinearLayout>
