@@ -25,10 +25,13 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.capentory_client.Dog;
 import com.example.capentory_client.R;
 import com.example.capentory_client.ui.barcode_activities.ScanBarcodeActivity;
+import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
+import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
 
@@ -43,7 +46,7 @@ public class MainActivity extends DaggerAppCompatActivity
     TextView txtView;
     private static final String CHANNEL_ID = "inventory_channel_01";
     protected DrawerLayout drawer;
-   /* @Inject
+   /*@Inject
     Dog dog;*/
 
     @Inject
@@ -73,7 +76,6 @@ public class MainActivity extends DaggerAppCompatActivity
 
 
         getZebraPayload();
-
 
        //dog.bark();
         Log.e("allahu",trye);

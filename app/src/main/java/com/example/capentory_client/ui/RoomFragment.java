@@ -16,12 +16,17 @@ import androidx.navigation.Navigation;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
+import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import javax.inject.Inject;
+
+import dagger.android.support.DaggerFragment;
 
 
 /**
@@ -30,15 +35,18 @@ import java.util.Objects;
  * {@link RoomFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class RoomFragment extends Fragment {
+public class RoomFragment extends DaggerFragment {
     private RoomFragmentViewModel roomFragmentViewModel;
 
     private OnFragmentInteractionListener mListener;
+
 
     public RoomFragment() {
         // Required empty public constructor
     }
 
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,7 +56,8 @@ public class RoomFragment extends Fragment {
 
         view.findViewById(R.id.button_fragment_room).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.inventory, null));
 
-        roomFragmentViewModel = ViewModelProviders.of(this).get(RoomFragmentViewModel.class);
+
+        roomFragmentViewModel = ViewModelProviders.of(this, providerFactory).get(RoomFragmentViewModel.class);
 
         roomFragmentViewModel.init();
 

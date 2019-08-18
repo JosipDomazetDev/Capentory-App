@@ -22,11 +22,15 @@ public class RoomFragmentViewModel extends ViewModel {
         this.ralphRepository=ralphRepository;
     }*/
 
-    public void init(){
-        if(rooms != null){
+    @Inject
+    public RoomFragmentViewModel(RalphRepository ralphRepository) {
+        this.ralphRepository = ralphRepository;
+    }
+
+    public void init() {
+        if (rooms != null) {
             return;
         }
-        ralphRepository = RalphRepository.getInstance();
         rooms = ralphRepository.getRooms();
     }
 

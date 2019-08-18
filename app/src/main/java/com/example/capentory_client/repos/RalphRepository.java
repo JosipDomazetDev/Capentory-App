@@ -29,15 +29,7 @@ public class RalphRepository {
 
     private ArrayList<JSONObject> actualRooms = new ArrayList<>();
     private Context context;
-    private static RalphRepository instance;
 
-
-    public static RalphRepository getInstance() {
-        if (instance == null) {
-            instance = new RalphRepository(null);
-        }
-        return instance;
-    }
     @Inject
     public RalphRepository(Context context) {
         this.context = context;
@@ -83,7 +75,7 @@ public class RalphRepository {
         };
 
         // Access the RequestQueue through your singleton class.
-        //MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
 
 
         //actualRooms.add(student1);
