@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.viewmodels.RecyclerViewAdapter;
+import com.example.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
 
 import java.util.ArrayList;
 

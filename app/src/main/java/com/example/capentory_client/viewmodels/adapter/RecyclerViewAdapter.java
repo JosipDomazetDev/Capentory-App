@@ -1,4 +1,4 @@
-package com.example.capentory_client.viewmodels;
+package com.example.capentory_client.viewmodels.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

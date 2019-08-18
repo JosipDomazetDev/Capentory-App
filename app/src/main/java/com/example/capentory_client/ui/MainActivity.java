@@ -78,7 +78,6 @@ public class MainActivity extends DaggerAppCompatActivity
         getZebraPayload();
 
        //dog.bark();
-        Log.e("allahu",trye);
         // ralphRepository.getRooms();
     }
 

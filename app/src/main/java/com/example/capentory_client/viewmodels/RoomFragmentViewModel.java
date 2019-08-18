@@ -4,16 +4,20 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.repos.RalphRepository;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
 public class RoomFragmentViewModel extends ViewModel {
-    private MutableLiveData<List<JSONObject>> rooms;
+    private MutableLiveData<List<ActualRoom>> rooms;
+    private MutableLiveData<List<String>> roomNumberStrings;
     private RalphRepository ralphRepository;
     private MutableLiveData<Boolean> mIsUpdating = new MutableLiveData<>();
 
@@ -34,35 +38,24 @@ public class RoomFragmentViewModel extends ViewModel {
         rooms = ralphRepository.getRooms();
     }
 
-   /* public void addNewValue(final NicePlace nicePlace){
-        mIsUpdating.setValue(true);
 
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                List<JSONObject> currentPlaces = rooms.getValue();
-                currentPlaces.add(nicePlace);
-                rooms.postValue(currentPlaces);
-                mIsUpdating.postValue(false);
-            }
+    public LiveData<List<String>> getRoomNumberStrings() {
+        MutableLiveData<List<String>> roomNumberLiveData = new MutableLiveData<>();
+        List<String> roomNumberList = new ArrayList<>();
 
-            @Override
-            protected Void doInBackground(Void... voids) {
+        for (ActualRoom room : Objects.requireNonNull(rooms.getValue())) {
+            roomNumberList.add(room.getRoomNumber());
+        }
 
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
-    }*/
+        roomNumberLiveData.setValue(roomNumberList);
+        return roomNumberLiveData;
+    }
 
-    public LiveData<List<JSONObject>> getRooms() {
+
+    public LiveData<List<ActualRoom>> getRooms() {
         return rooms;
     }
+
 
 
     public LiveData<Boolean> getIsUpdating() {

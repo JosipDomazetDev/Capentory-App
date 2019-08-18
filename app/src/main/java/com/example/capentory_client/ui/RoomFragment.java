@@ -2,6 +2,7 @@ package com.example.capentory_client.ui;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 
@@ -61,17 +63,13 @@ public class RoomFragment extends DaggerFragment {
 
         roomFragmentViewModel.init();
 
-        roomFragmentViewModel.getRooms().observe(this, new Observer<List<JSONObject>>() {
+        roomFragmentViewModel.getRooms().observe(this, new Observer<List<ActualRoom>>() {
             @Override
-            public void onChanged(@Nullable List<JSONObject> rooms) {
-                ArrayList<String> options = new ArrayList<String>();
-
-                options.add("option 1");
-                options.add("option 2");
-                options.add("option 3");
-
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, options);
-                ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
+            public void onChanged(@Nullable List<ActualRoom> roomStrings) {
+                assert roomStrings != null;
+                Log.e("XXXXXXX", String.valueOf(roomStrings.size()));
+                //ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, new ArrayList<String>(roomStrings));
+               // ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
             }
         });
 
