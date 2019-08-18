@@ -18,6 +18,13 @@ allprojects {
         jcenter()
         maven { url 'https://jitpack.io' }
     }
+
+    // Allow 500 errors.
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xmaxerrs" << "500"
+        }
+    }
 }
 
 task clean(type: Delete) {

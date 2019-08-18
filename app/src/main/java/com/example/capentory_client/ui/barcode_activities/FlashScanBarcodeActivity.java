@@ -1,4 +1,4 @@
-package com.example.capentory_client.ui;
+package com.example.capentory_client.ui.barcode_activities;
 
 import android.app.Activity;
 import android.content.Intent;

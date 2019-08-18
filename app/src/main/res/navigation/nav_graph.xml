@@ -16,7 +16,7 @@
     </fragment>
     <activity
         android:id="@+id/flashScanBarcodeAcitivity"
-        android:name="com.example.capentory_client.ui.FlashScanBarcodeActivity"
+        android:name="com.example.capentory_client.ui.barcode_activities.FlashScanBarcodeActivity"
         android:label="activity_flash_barcode_scan_acitivity"
         tools:layout="@layout/activity_flash_barcode_scan_acitivity" />
     <fragment

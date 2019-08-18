@@ -1,28 +1,28 @@
 package com.example.capentory_client.dagger;
 
-import android.content.Context;
+import android.app.Application;
 
-import com.example.capentory_client.repos.RalphRepository;
-import com.example.capentory_client.ui.RoomFragment;
 
-import javax.inject.Singleton;
+import com.example.capentory_client.ui.BaseApplication;
 
 import dagger.BindsInstance;
 import dagger.Component;
+import dagger.android.AndroidInjector;
+import dagger.android.support.AndroidSupportInjectionModule;
 
-@Singleton
-@Component
-interface MainComponent {
-    void inject(MainActivity mainActivity);
-    void inject(RoomFragment roomFragment);
-    void inject(RalphRepository ralphRepository);
+
+@Component(
+        modules = {
+                AndroidSupportInjectionModule.class,
+        })
+public interface MainComponent extends AndroidInjector<BaseApplication> {
 
     @Component.Builder
-    interface Builder {
+    interface Builder{
 
         @BindsInstance
-        Builder bindApplicationContext(Context context);
+        Builder application(Application application);
 
-        MainComponent build();
+       MainComponent build();
     }
 }

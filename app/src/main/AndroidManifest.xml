@@ -9,15 +9,16 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:name=".ui.BaseApplication"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.FlashScanBarcodeActivity"
+            android:name=".ui.barcode_activities.FlashScanBarcodeActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".dagger.MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -28,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ScanBarcodeActivity"
+            android:name=".ui.barcode_activities.ScanBarcodeActivity"
             android:label="Scanner" />
     </application>
 

@@ -1,4 +1,4 @@
-package com.example.capentory_client.dagger;
+package com.example.capentory_client.ui;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -28,12 +28,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.capentory_client.Dog;
 import com.example.capentory_client.R;
-import com.example.capentory_client.ui.Inventory;
-import com.example.capentory_client.ui.ScanBarcodeActivity;
+import com.example.capentory_client.ui.barcode_activities.ScanBarcodeActivity;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
 
 import javax.inject.Inject;
+
+import static dagger.android.AndroidInjection.inject;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Inventory.OnFragmentInteractionListener {
@@ -67,12 +68,9 @@ public class MainActivity extends AppCompatActivity
 
 
         getZebraPayload();
-        DaggerMainComponent.builder()
-                .bindApplicationContext(getApplicationContext())
-                .build()
-                .inject(this);
 
-        dog.bark();
+
+       // dog.bark();
 
         // ralphRepository.getRooms();
     }
