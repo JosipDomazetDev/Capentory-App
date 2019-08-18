@@ -1,4 +1,4 @@
-package com.example.capentory_client;
+package com.example.capentory_client.ui;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,6 +13,7 @@ import android.view.SurfaceView;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.example.capentory_client.R;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;

@@ -1,4 +1,4 @@
-package com.example.capentory_client;
+package com.example.capentory_client.viewmodels;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.capentory_client.R;
 
 import java.util.ArrayList;
 

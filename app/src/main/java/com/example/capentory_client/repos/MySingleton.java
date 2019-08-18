@@ -1,4 +1,4 @@
-package com.example.capentory_client;
+package com.example.capentory_client.repos;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -47,7 +47,7 @@ public class MySingleton {
         if (requestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
-            requestQueue = Volley.newRequestQueue(ctx.getApplicationContext());
+            requestQueue = Volley.newRequestQueue(ctx);
         }
         return requestQueue;
     }

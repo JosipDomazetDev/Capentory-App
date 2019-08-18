@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/inventory"
-        android:name="com.example.capentory_client.Inventory"
+        android:name="com.example.capentory_client.ui.Inventory"
         android:label="fragment_inventory"
         tools:layout="@layout/fragment_inventory" >
         <action
@@ -16,17 +16,17 @@
     </fragment>
     <activity
         android:id="@+id/flashScanBarcodeAcitivity"
-        android:name="com.example.capentory_client.FlashScanBarcodeActivity"
+        android:name="com.example.capentory_client.ui.FlashScanBarcodeActivity"
         android:label="activity_flash_barcode_scan_acitivity"
         tools:layout="@layout/activity_flash_barcode_scan_acitivity" />
     <fragment
         android:id="@+id/homeScreenFragment"
-        android:name="com.example.capentory_client.HomeScreenFragment"
+        android:name="com.example.capentory_client.ui.HomeScreenFragment"
         android:label="fragment_home_screen"
         tools:layout="@layout/fragment_home_screen" />
     <fragment
         android:id="@+id/roomFragment"
-        android:name="com.example.capentory_client.RoomFragment"
+        android:name="com.example.capentory_client.ui.RoomFragment"
         android:label="fragment_room"
         tools:layout="@layout/fragment_room" >
         <action

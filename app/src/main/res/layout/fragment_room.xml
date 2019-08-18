@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RoomFragment">
+    tools:context=".ui.RoomFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:text="Begeben Sie sich zu dem gewünschten Raum und wählen Sie ihn in der Liste aus:"
         android:padding="14dp"
-        app:layout_constraintBottom_toTopOf="@+id/spinner"
+        app:layout_constraintBottom_toTopOf="@+id/room_dropdown_fragment_room"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

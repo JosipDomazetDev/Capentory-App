@@ -1,19 +1,26 @@
-package com.example.capentory_client;
+package com.example.capentory_client.viewmodels;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.os.AsyncTask;
+import com.example.capentory_client.repos.RalphRepository;
 
 import org.json.JSONObject;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class RoomFragmentViewModel extends ViewModel {
     private MutableLiveData<List<JSONObject>> rooms;
     private RalphRepository ralphRepository;
     private MutableLiveData<Boolean> mIsUpdating = new MutableLiveData<>();
+
+   /* @Inject
+    public RoomFragmentViewModel(RalphRepository ralphRepository) {
+        this.ralphRepository=ralphRepository;
+    }*/
 
     public void init(){
         if(rooms != null){
@@ -49,12 +56,12 @@ public class RoomFragmentViewModel extends ViewModel {
         }.execute();
     }*/
 
-    public LiveData<List<JSONObject>> getRooms(){
+    public LiveData<List<JSONObject>> getRooms() {
         return rooms;
     }
 
 
-    public LiveData<Boolean> getIsUpdating(){
+    public LiveData<Boolean> getIsUpdating() {
         return mIsUpdating;
     }
 

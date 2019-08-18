@@ -1,4 +1,4 @@
-package com.example.capentory_client;
+package com.example.capentory_client.dagger;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -24,26 +25,23 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.capentory_client.Dog;
+import com.example.capentory_client.R;
+import com.example.capentory_client.ui.Inventory;
+import com.example.capentory_client.ui.ScanBarcodeActivity;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
 
-import android.widget.TextView;
-
-import org.json.JSONObject;
-
-import java.util.List;
+import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Inventory.OnFragmentInteractionListener {
     TextView txtView;
     private static final String CHANNEL_ID = "inventory_channel_01";
     protected DrawerLayout drawer;
-
+    @Inject
+    Dog dog;
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -69,6 +67,14 @@ public class MainActivity extends AppCompatActivity
 
 
         getZebraPayload();
+        DaggerMainComponent.builder()
+                .bindApplicationContext(getApplicationContext())
+                .build()
+                .inject(this);
+
+        dog.bark();
+
+        // ralphRepository.getRooms();
     }
 
 
