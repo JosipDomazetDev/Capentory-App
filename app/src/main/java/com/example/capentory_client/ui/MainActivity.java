@@ -34,15 +34,20 @@ import com.google.android.material.navigation.NavigationView;
 
 import javax.inject.Inject;
 
+import dagger.android.support.DaggerAppCompatActivity;
+
 import static dagger.android.AndroidInjection.inject;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends DaggerAppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Inventory.OnFragmentInteractionListener {
     TextView txtView;
     private static final String CHANNEL_ID = "inventory_channel_01";
     protected DrawerLayout drawer;
+   /* @Inject
+    Dog dog;*/
+
     @Inject
-    Dog dog;
+    String trye;
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -70,8 +75,8 @@ public class MainActivity extends AppCompatActivity
         getZebraPayload();
 
 
-       // dog.bark();
-
+       //dog.bark();
+        Log.e("allahu",trye);
         // ralphRepository.getRooms();
     }
 
