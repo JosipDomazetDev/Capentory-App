@@ -1,11 +1,14 @@
 package com.example.capentory_client.viewmodels;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.repos.RalphRepository;
+import com.example.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
 
 import org.json.JSONObject;
 
@@ -17,14 +20,10 @@ import javax.inject.Inject;
 
 public class RoomFragmentViewModel extends ViewModel {
     private MutableLiveData<List<ActualRoom>> rooms;
-    private MutableLiveData<List<String>> roomNumberStrings;
     private RalphRepository ralphRepository;
     private MutableLiveData<Boolean> mIsUpdating = new MutableLiveData<>();
+    private MutableLiveData<List<String>> roomNumbersLiveData = new MutableLiveData<>();
 
-   /* @Inject
-    public RoomFragmentViewModel(RalphRepository ralphRepository) {
-        this.ralphRepository=ralphRepository;
-    }*/
 
     @Inject
     public RoomFragmentViewModel(RalphRepository ralphRepository) {
@@ -36,19 +35,27 @@ public class RoomFragmentViewModel extends ViewModel {
             return;
         }
         rooms = ralphRepository.getRooms();
+        Observer<List<ActualRoom>> observer = new Observer<List<ActualRoom>>() {
+            @Override
+            public void onChanged(List<ActualRoom> actualRooms) {
+                List<String> roomNumberList = new ArrayList<>();
+
+                if (actualRooms == null) {
+                    roomNumberList.add("Loading...");
+                } else
+                    for (ActualRoom room : Objects.requireNonNull(actualRooms)) {
+                        roomNumberList.add(room.getRoomNumber());
+                    }
+
+                roomNumbersLiveData.setValue(roomNumberList);
+            }
+        };
+        rooms.observeForever(observer);
     }
 
 
     public LiveData<List<String>> getRoomNumberStrings() {
-        MutableLiveData<List<String>> roomNumberLiveData = new MutableLiveData<>();
-        List<String> roomNumberList = new ArrayList<>();
-
-        for (ActualRoom room : Objects.requireNonNull(rooms.getValue())) {
-            roomNumberList.add(room.getRoomNumber());
-        }
-
-        roomNumberLiveData.setValue(roomNumberList);
-        return roomNumberLiveData;
+        return roomNumbersLiveData;
     }
 
 
@@ -56,7 +63,11 @@ public class RoomFragmentViewModel extends ViewModel {
         return rooms;
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
 
+    }
 
     public LiveData<Boolean> getIsUpdating() {
         return mIsUpdating;

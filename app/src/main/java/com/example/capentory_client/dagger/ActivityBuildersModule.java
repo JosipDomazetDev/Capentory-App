@@ -1,9 +1,8 @@
 package com.example.capentory_client.dagger;
 
 import com.example.capentory_client.dagger.daggerviewmodels.RoomFragmentViewModelsModule;
+import com.example.capentory_client.ui.ActualRoomsFragment;
 import com.example.capentory_client.ui.MainActivity;
-import com.example.capentory_client.ui.RoomFragment;
-import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
 
 import dagger.Module;
 import dagger.Provides;
@@ -18,7 +17,7 @@ public abstract class ActivityBuildersModule {
 
     @ContributesAndroidInjector(
             modules = {RoomFragmentViewModelsModule.class})
-    abstract RoomFragment contributeRoomFragment();
+    abstract ActualRoomsFragment contributeRoomFragment();
 
     @Provides
     static String someString() {

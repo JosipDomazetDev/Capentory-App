@@ -20,8 +20,6 @@ import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,16 +32,16 @@ import dagger.android.support.DaggerFragment;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RoomFragment.OnFragmentInteractionListener} interface
+ * {@link ActualRoomsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class RoomFragment extends DaggerFragment {
+public class ActualRoomsFragment extends DaggerFragment {
     private RoomFragmentViewModel roomFragmentViewModel;
 
     private OnFragmentInteractionListener mListener;
 
 
-    public RoomFragment() {
+    public ActualRoomsFragment() {
         // Required empty public constructor
     }
 
@@ -54,7 +52,7 @@ public class RoomFragment extends DaggerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_room, container, false);
+        final View view = inflater.inflate(R.layout.fragment_actualrooms, container, false);
 
         view.findViewById(R.id.button_fragment_room).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.inventory, null));
 
@@ -63,15 +61,28 @@ public class RoomFragment extends DaggerFragment {
 
         roomFragmentViewModel.init();
 
-        roomFragmentViewModel.getRooms().observe(this, new Observer<List<ActualRoom>>() {
+        roomFragmentViewModel.getRoomNumberStrings().observe(getViewLifecycleOwner(), new Observer<List<String>>() {
             @Override
-            public void onChanged(@Nullable List<ActualRoom> roomStrings) {
+            public void onChanged(@Nullable List<String> roomStrings) {
+                Log.e("networkonchanged", String.valueOf(roomStrings.size()));
+
                 assert roomStrings != null;
-                Log.e("XXXXXXX", String.valueOf(roomStrings.size()));
-                //ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, new ArrayList<String>(roomStrings));
-               // ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, new ArrayList<String>(roomStrings));
+               ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
             }
         });
+
+        /*roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), new Observer<List<ActualRoom>>() {
+            @Override
+            public void onChanged(@Nullable List<ActualRoom> roomStrings) {
+                Log.e("networke", String.valueOf(roomStrings.size()));
+
+                assert roomStrings != null;
+                //ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, new ArrayList<String>(roomStrings));
+                // ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
+            }
+        });*/
+
 
         return view;
     }

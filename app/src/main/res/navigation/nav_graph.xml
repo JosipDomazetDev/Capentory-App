@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/inventory"
-        android:name="com.example.capentory_client.ui.Inventory"
+        android:name="com.example.capentory_client.ui.ActualItemsFragment"
         android:label="fragment_inventory"
-        tools:layout="@layout/fragment_inventory" >
+        tools:layout="@layout/fragment_actualitems" >
         <action
             android:id="@+id/action_inventory_to_flashScanBarcodeAcitivity"
             app:destination="@id/flashScanBarcodeAcitivity" />
@@ -26,9 +26,9 @@
         tools:layout="@layout/fragment_home_screen" />
     <fragment
         android:id="@+id/roomFragment"
-        android:name="com.example.capentory_client.ui.RoomFragment"
+        android:name="com.example.capentory_client.ui.ActualRoomsFragment"
         android:label="fragment_room"
-        tools:layout="@layout/fragment_room" >
+        tools:layout="@layout/fragment_actualrooms" >
         <action
             android:id="@+id/action_roomFragment_to_homeScreenFragment"
             app:destination="@id/homeScreenFragment" />

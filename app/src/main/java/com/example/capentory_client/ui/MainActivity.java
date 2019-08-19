@@ -19,19 +19,14 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.ViewModelProviders;
 
-import com.example.capentory_client.Dog;
 import com.example.capentory_client.R;
 import com.example.capentory_client.ui.barcode_activities.ScanBarcodeActivity;
-import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
-import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
 
@@ -42,7 +37,7 @@ import dagger.android.support.DaggerAppCompatActivity;
 import static dagger.android.AndroidInjection.inject;
 
 public class MainActivity extends DaggerAppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Inventory.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ActualItemsFragment.OnFragmentInteractionListener {
     TextView txtView;
     private static final String CHANNEL_ID = "inventory_channel_01";
     protected DrawerLayout drawer;

@@ -6,7 +6,9 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -32,8 +34,10 @@ import javax.inject.Singleton;
 @Singleton
 public class RalphRepository {
 
-    private ArrayList<ActualRoom> actualRooms=new ArrayList<>();
+    private MutableLiveData<List<ActualRoom>> actualRoomsLiveData = new MutableLiveData<>();
+
     private Context context;
+
 
     @Inject
     public RalphRepository(Context context) {
@@ -43,40 +47,13 @@ public class RalphRepository {
     // Pretend to get data from a webservice or online source
     public MutableLiveData<List<ActualRoom>> getRooms() {
         setRooms();
-        MutableLiveData<List<ActualRoom>> data = new MutableLiveData<>();
-        data.setValue(actualRooms);
-        return data;
-}
+        return actualRoomsLiveData;
+    }
 
-    private void setRooms() {
+    public void setRooms() {
+
 
         String url = "http://192.168.1.3:8000/api/actualroom?format=json";
-
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                try {
-                JSONObject jsonObject=new JSONObject();
-                jsonObject.put("room_number","11112432");
-
-                    actualRooms.add(new ActualRoom(jsonObject));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -84,10 +61,18 @@ public class RalphRepository {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            Log.e("network", "SUCCESSS");
+
+                            List<ActualRoom> actualRooms = new ArrayList<>();
+
                             JSONArray payload = response.getJSONArray("results");
                             for (int i = 0; i < payload.length(); i++) {
                                 actualRooms.add(new ActualRoom(payload.getJSONObject(i)));
                             }
+                            actualRoomsLiveData.setValue(actualRooms);
+
+                            Log.e("network", "Filled");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -114,8 +99,6 @@ public class RalphRepository {
 
         // Access the RequestQueue through your singleton class.
         MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
-
-
 
     }
 }

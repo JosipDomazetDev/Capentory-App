@@ -20,17 +20,17 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Inventory.OnFragmentInteractionListener} interface
+ * {@link ActualItemsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class Inventory extends Fragment {
+public class ActualItemsFragment extends Fragment {
     private ArrayList<String> anlage = new ArrayList<>();
     private ArrayList<String> anlage_bez = new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
 
-    public Inventory() {
+    public ActualItemsFragment() {
         // Required empty public constructor
     }
 
@@ -46,7 +46,7 @@ public class Inventory extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_inventory,
+        View view = inflater.inflate(R.layout.fragment_actualitems,
                 container, false);
 
 
