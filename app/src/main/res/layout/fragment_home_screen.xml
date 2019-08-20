@@ -16,9 +16,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="36dp"
         android:text="Start Inventory"
-        android:textColor="#2196F3"
+        android:textColor="#FFF"
         android:textSize="15sp"
-        app:backgroundTint="@android:color/transparent"
+        app:backgroundTint="#2196F3"
         app:cornerRadius="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,6 @@
         android:paddingBottom="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:rippleColor="#33AAAAAA"
-        app:strokeColor="#2196F3"
         app:strokeWidth="2dp" />
 
     <TextView
