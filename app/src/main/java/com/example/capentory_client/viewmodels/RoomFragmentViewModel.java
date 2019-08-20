@@ -22,7 +22,6 @@ public class RoomFragmentViewModel extends ViewModel {
     private MutableLiveData<List<ActualRoom>> rooms;
     private RalphRepository ralphRepository;
     private MutableLiveData<Boolean> mIsUpdating = new MutableLiveData<>();
-    private MutableLiveData<List<String>> roomNumbersLiveData = new MutableLiveData<>();
 
 
     @Inject
@@ -35,29 +34,7 @@ public class RoomFragmentViewModel extends ViewModel {
             return;
         }
         rooms = ralphRepository.getRooms();
-        Observer<List<ActualRoom>> observer = new Observer<List<ActualRoom>>() {
-            @Override
-            public void onChanged(List<ActualRoom> actualRooms) {
-                List<String> roomNumberList = new ArrayList<>();
-
-                if (actualRooms == null) {
-                    roomNumberList.add("Loading...");
-                } else
-                    for (ActualRoom room : Objects.requireNonNull(actualRooms)) {
-                        roomNumberList.add(room.getRoomNumber());
-                    }
-
-                roomNumbersLiveData.setValue(roomNumberList);
-            }
-        };
-        rooms.observeForever(observer);
     }
-
-
-    public LiveData<List<String>> getRoomNumberStrings() {
-        return roomNumbersLiveData;
-    }
-
 
     public LiveData<List<ActualRoom>> getRooms() {
         return rooms;

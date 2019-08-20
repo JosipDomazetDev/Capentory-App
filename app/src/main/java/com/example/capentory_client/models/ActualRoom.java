@@ -19,6 +19,10 @@ public class ActualRoom {
         return roomNumber;
     }
 
+    public String getRoomDescription() throws JSONException {
+        return (String) actualRoomPayload.get("description");
+    }
+
     public JSONObject getActualRoomPayload() {
         return actualRoomPayload;
     }

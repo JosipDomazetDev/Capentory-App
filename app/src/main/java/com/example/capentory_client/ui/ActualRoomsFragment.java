@@ -19,6 +19,7 @@ import com.example.capentory_client.R;
 import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
+import com.example.capentory_client.viewmodels.adapter.DropDownRoomAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,27 +62,17 @@ public class ActualRoomsFragment extends DaggerFragment {
 
         roomFragmentViewModel.init();
 
-        roomFragmentViewModel.getRoomNumberStrings().observe(getViewLifecycleOwner(), new Observer<List<String>>() {
-            @Override
-            public void onChanged(@Nullable List<String> roomStrings) {
-                Log.e("networkonchanged", String.valueOf(roomStrings.size()));
 
-                assert roomStrings != null;
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, new ArrayList<String>(roomStrings));
-               ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
-            }
-        });
-
-        /*roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), new Observer<List<ActualRoom>>() {
+        roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), new Observer<List<ActualRoom>>() {
             @Override
             public void onChanged(@Nullable List<ActualRoom> roomStrings) {
                 Log.e("networke", String.valueOf(roomStrings.size()));
 
                 assert roomStrings != null;
-                //ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, new ArrayList<String>(roomStrings));
-                // ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
+                DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) roomStrings);
+                ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
             }
-        });*/
+        });
 
 
         return view;
