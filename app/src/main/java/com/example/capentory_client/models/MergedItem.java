@@ -7,13 +7,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- *  Represents an ActualRoom from ralph, only the roomNumber is directly stored to allow later changes to the server
+ *  Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
  */
-public class ActualRoom  {
+public class MergedItem {
     private String roomNumber;
     private JSONObject actualRoomPayload;
 
-    public ActualRoom(JSONObject actualRoomPayload) throws JSONException {
+    public MergedItem(JSONObject actualRoomPayload) throws JSONException {
         this.actualRoomPayload = actualRoomPayload;
         this.roomNumber = actualRoomPayload.getString("room_number");
     }

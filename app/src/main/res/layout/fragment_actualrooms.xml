@@ -7,7 +7,6 @@
     android:backgroundTint="@android:color/holo_orange_light"
     tools:context=".ui.ActualRoomsFragment">
 
-
     <Spinner
         android:id="@+id/room_dropdown_fragment_room"
         android:layout_width="fill_parent"
@@ -15,13 +14,12 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/dropdown_background"
         android:layout_margin="10dp"
-        android:padding="5dp"
+        android:padding="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.185" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_fragment_room"
@@ -53,4 +51,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.054" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

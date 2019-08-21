@@ -5,15 +5,16 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <!-- TODO: Use HTTPS and remove android:usesCleartextTraffic="true"-->
     <application
+        android:name=".ui.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:name=".ui.BaseApplication"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".ui.barcode_activities.FlashScanBarcodeActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />

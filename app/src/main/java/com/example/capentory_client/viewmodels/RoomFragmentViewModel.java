@@ -40,6 +40,14 @@ public class RoomFragmentViewModel extends ViewModel {
         return rooms;
     }
 
+    public void removeRoom(ActualRoom actualRoom) {
+        List<ActualRoom> currentRooms = rooms.getValue();
+        assert currentRooms != null;
+        currentRooms.remove(actualRoom);
+        rooms.postValue(currentRooms);
+    }
+
+
     @Override
     protected void onCleared() {
         super.onCleared();

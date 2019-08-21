@@ -2,11 +2,13 @@ package com.example.capentory_client.ui;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import androidx.annotation.Nullable;
@@ -22,6 +24,8 @@ import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.DropDownRoomAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,22 +59,36 @@ public class ActualRoomsFragment extends DaggerFragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_actualrooms, container, false);
 
-        view.findViewById(R.id.button_fragment_room).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.inventory, null));
+        Button btn_fragment_room = view.findViewById(R.id.button_fragment_room);
+        final Spinner roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
+
+
+        btn_fragment_room.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                Object selectedItem = roomDropDown.getSelectedItem();
+                if (!(selectedItem instanceof ActualRoom)) return;
+
+                ActualRoom selectedRoom = (ActualRoom) selectedItem;
+                Bundle bundle = new Bundle();
+                bundle.putString("room_number", selectedRoom.getRoomNumber());
+
+                Navigation.findNavController(view).navigate(R.id.inventory, bundle);
+                roomFragmentViewModel.removeRoom(selectedRoom);
+            }
+
+        });
 
 
         roomFragmentViewModel = ViewModelProviders.of(this, providerFactory).get(RoomFragmentViewModel.class);
-
         roomFragmentViewModel.init();
-
+        roomDropDown.setAdapter(new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, Collections.singletonList("Loading...")));
 
         roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), new Observer<List<ActualRoom>>() {
             @Override
-            public void onChanged(@Nullable List<ActualRoom> roomStrings) {
-                Log.e("networke", String.valueOf(roomStrings.size()));
-
-                assert roomStrings != null;
-                DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) roomStrings);
-                ((Spinner) view.findViewById(R.id.room_dropdown_fragment_room)).setAdapter(adapter);
+            public void onChanged(@Nullable List<ActualRoom> actualRooms) {
+                DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) actualRooms);
+                roomDropDown.setAdapter(adapter);
             }
         });
 

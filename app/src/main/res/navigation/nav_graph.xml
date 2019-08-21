@@ -36,5 +36,14 @@
             android:id="@+id/action_roomFragment_to_inventory"
             app:destination="@id/inventory" />
     </fragment>
+    <fragment
+        android:id="@+id/itemDetailFragment"
+        android:name="com.example.capentory_client.ItemDetailFragment"
+        android:label="fragment_item_detail"
+        tools:layout="@layout/fragment_item_detail" >
+        <action
+            android:id="@+id/action_itemDetailFragment_to_inventory"
+            app:destination="@id/inventory" />
+    </fragment>
 
 </navigation>

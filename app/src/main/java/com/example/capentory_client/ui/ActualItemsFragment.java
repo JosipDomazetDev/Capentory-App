@@ -4,12 +4,14 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
@@ -24,11 +26,13 @@ import java.util.ArrayList;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class ActualItemsFragment extends Fragment {
+public class ActualItemsFragment extends Fragment implements RecyclerViewAdapter.ItemClickListener {
+    private static final String ARG_PARAM1 = "room_number";
     private ArrayList<String> anlage = new ArrayList<>();
     private ArrayList<String> anlage_bez = new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
+    private String currentRoomNumber;
 
     public ActualItemsFragment() {
         // Required empty public constructor
@@ -38,7 +42,9 @@ public class ActualItemsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getArguments() != null) {
+            currentRoomNumber = getArguments().getString(ARG_PARAM1);
+        }
 
     }
 
@@ -50,7 +56,8 @@ public class ActualItemsFragment extends Fragment {
                 container, false);
 
 
-
+        TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_actualrooms);
+        currentRoomTextView.setText(currentRoomNumber);
 
 /*
         ((Button)view.findViewById(R.id.start)).setOnClickListener(new View.OnClickListener() {
@@ -76,7 +83,9 @@ public class ActualItemsFragment extends Fragment {
         anlage_bez.add("HP ProDesk 400 MT, Win 8.1, I5-4570, 8GB, 1TB HDD");
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerv_view);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(anlage, anlage_bez, getContext());
+
+
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(anlage, anlage_bez, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         return view;
@@ -87,6 +96,11 @@ public class ActualItemsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onItemClick(int position, View v) {
+        Navigation.findNavController(v).navigate(R.id.itemDetailFragment);
     }
 
     /**
