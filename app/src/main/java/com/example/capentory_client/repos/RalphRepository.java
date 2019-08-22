@@ -7,12 +7,12 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.capentory_client.models.ActualRoom;
+import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,8 +29,7 @@ import javax.inject.Singleton;
 @Singleton
 public class RalphRepository {
 
-    private MutableLiveData<List<ActualRoom>> actualRoomsLiveData = new MutableLiveData<>();
-    private MutableLiveData<Exception> exception = new MutableLiveData<>();
+    private StatusAwareLiveData<List<ActualRoom>> actualRoomsLiveData = new StatusAwareLiveData<>();
 
     private Context context;
 
@@ -40,12 +39,9 @@ public class RalphRepository {
         this.context = context;
     }
 
-    public MutableLiveData<Exception> getException() {
-        return exception;
-    }
 
     // Pretend to get data from a webservice or online source
-    public MutableLiveData<List<ActualRoom>> getRooms() {
+    public StatusAwareLiveData<List<ActualRoom>> getRooms() {
         setRooms();
         return actualRoomsLiveData;
     }
@@ -53,14 +49,20 @@ public class RalphRepository {
     public void setRooms() {
 
 
-        String url = "http://192.168.1.3:8000/api/actualroom?format=json";
+        final String url;
+        //url = "http://192.168.1.2:8000/api/actualroom/171/?format=json";
+        url = "http://192.168.1.2:8000/api/inventory/actualroom/171/?format=json";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Log.e("network", "SUCCESSS");
+                            Log.e("help", "===========================================");
+                            Log.e("help", "onResponce called: SUCCESSS");
+                            Log.e("help", url);
+                            Log.e("help", response.toString());
+                            Log.e("help", "===========================================");
 
                             List<ActualRoom> actualRooms = new ArrayList<>();
 
@@ -68,12 +70,14 @@ public class RalphRepository {
                             for (int i = 0; i < payload.length(); i++) {
                                 actualRooms.add(new ActualRoom(payload.getJSONObject(i)));
                             }
-                            actualRoomsLiveData.setValue(actualRooms);
+                            actualRoomsLiveData.postSuccess(actualRooms);
 
                             Log.e("network", "Filled");
 
                         } catch (JSONException error) {
-                            exception.setValue(error);
+                            Log.e("JSON_ERROR", "---------------------------");
+
+                            actualRoomsLiveData.postError(error);
                         }
                     }
 
@@ -81,8 +85,8 @@ public class RalphRepository {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        exception.setValue(error);
-                        Log.e("network", error.getMessage() + error.getLocalizedMessage());
+                        actualRoomsLiveData.postError(error);
+                        Log.e("help", "FUCKUO"+error.getMessage() + error.getLocalizedMessage());
                     }
                 }) {
             @Override
@@ -99,10 +103,9 @@ public class RalphRepository {
 
         // Access the RequestQueue through your singleton class.
         MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
-
+        actualRoomsLiveData.postLoading();
     }
 
     public void resetExceptionState() {
-        exception.setValue(null);
     }
 }

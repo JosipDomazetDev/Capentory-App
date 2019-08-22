@@ -24,6 +24,7 @@ import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.DropDownRoomAdapter;
+import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import org.json.JSONException;
 
@@ -87,12 +88,21 @@ public class ActualRoomsFragment extends DaggerFragment {
         roomFragmentViewModel.init();
         roomDropDown.setAdapter(new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, Collections.singletonList("Loading...")));
 
-        roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), new Observer<List<ActualRoom>>() {
+        roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), new Observer<StatusAwareData<List<ActualRoom>>>() {
             @Override
-            public void onChanged(@Nullable List<ActualRoom> actualRooms) {
-                DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) actualRooms);
-                roomDropDown.setAdapter(adapter);
+            public void onChanged(StatusAwareData<List<ActualRoom>> statusAwareActualRooms) {
+                switch (statusAwareActualRooms.getStatus()) {
+                    case SUCCESS:
+                        DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) statusAwareActualRooms.getData());
+                        roomDropDown.setAdapter(adapter);
+                        break;
+                    case ERROR:
+                        displayErrorToastMessage(statusAwareActualRooms.getError());
+                        break;
+                }
+
             }
+
         });
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
@@ -107,24 +117,27 @@ public class ActualRoomsFragment extends DaggerFragment {
                 }
         );
 
-        roomFragmentViewModel.getException().observe(getViewLifecycleOwner(), new Observer<Exception>() {
-
-            @Override
-            public void onChanged(Exception exception) {
-                if (exception == null) return;
-
-                String errorMsg = "";
-                if (exception instanceof JSONException) {
-                    errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
-                } else if (exception instanceof VolleyError) {
-                    errorMsg = "Ein Verbindungsfehler ist aufgetreten!";
-                }
-                Toast.makeText(getContext(), errorMsg + exception.getMessage(), Toast.LENGTH_LONG).show();
-                roomFragmentViewModel.resetExceptionState();
-            }
-        });
 
         return view;
+    }
+
+    private void displayErrorToastMessage(Throwable error) {
+        if (error == null) return;
+
+        String errorMsg = "";
+        if (error instanceof JSONException) {
+            errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
+        } else if (error instanceof VolleyError) {
+            errorMsg = "Ein Verbindungsfehler ist aufgetreten!";
+        }
+
+        String exceptionMsg = "";
+        String fullExceptionMsg = error.getMessage();
+        if (fullExceptionMsg != null)
+            exceptionMsg = fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), 100)) + "....";
+
+        Toast.makeText(getContext(), errorMsg + "\n" + exceptionMsg, Toast.LENGTH_LONG).show();
+        Log.e("ERROR_LOG", "" + error.getLocalizedMessage());
     }
 
 

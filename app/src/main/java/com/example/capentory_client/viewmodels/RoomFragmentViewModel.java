@@ -1,25 +1,19 @@
 package com.example.capentory_client.viewmodels;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.repos.RalphRepository;
-import com.example.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
+import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
 
 public class RoomFragmentViewModel extends ViewModel {
-    private MutableLiveData<List<ActualRoom>> rooms;
+    private StatusAwareLiveData<List<ActualRoom>> rooms;
     private RalphRepository ralphRepository;
 
 
@@ -39,15 +33,15 @@ public class RoomFragmentViewModel extends ViewModel {
         rooms = ralphRepository.getRooms();
     }
 
-    public LiveData<List<ActualRoom>> getRooms() {
+    public StatusAwareLiveData<List<ActualRoom>> getRooms() {
         return rooms;
     }
 
     public void removeRoom(ActualRoom actualRoom) {
-        List<ActualRoom> currentRooms = rooms.getValue();
+        List<ActualRoom> currentRooms = Objects.requireNonNull(rooms.getValue()).getData();
         assert currentRooms != null;
-        currentRooms.remove(actualRoom);
-        rooms.postValue(currentRooms);
+        if (currentRooms.remove(actualRoom))
+            rooms.postSuccess(currentRooms);
     }
 
 
@@ -57,9 +51,6 @@ public class RoomFragmentViewModel extends ViewModel {
 
     }
 
-    public LiveData<Exception> getException() {
-        return ralphRepository.getException();
-    }
 
     public void resetExceptionState() {
         ralphRepository.resetExceptionState();

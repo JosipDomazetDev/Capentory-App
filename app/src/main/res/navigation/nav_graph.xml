@@ -38,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/itemDetailFragment"
-        android:name="com.example.capentory_client.ItemDetailFragment"
+        android:name="com.example.capentory_client.ui.ItemDetailFragment"
         android:label="fragment_item_detail"
         tools:layout="@layout/fragment_item_detail" >
         <action

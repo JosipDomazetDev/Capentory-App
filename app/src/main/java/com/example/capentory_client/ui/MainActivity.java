@@ -39,11 +39,13 @@ import com.google.android.material.navigation.NavigationView;
 import dagger.android.support.DaggerAppCompatActivity;
 
 public class MainActivity extends DaggerAppCompatActivity
-        implements  NavigationView.OnNavigationItemSelectedListener, ActualItemsFragment.OnFragmentInteractionListener {
+        implements ActualItemsFragment.OnFragmentInteractionListener {
     TextView txtView;
     private static final String CHANNEL_ID = "inventory_channel_01";
     protected DrawerLayout drawer;
     private NavController navController;
+    private AppBarConfiguration appBarConfiguration;
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -76,16 +78,14 @@ public class MainActivity extends DaggerAppCompatActivity
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
 
-        AppBarConfiguration appBarConfiguration =
-                new AppBarConfiguration.Builder(navController.getGraph())
-                        .setDrawerLayout(drawer)
-                        .build();
+        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph())
+                .setDrawerLayout(drawer)
+                .build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
 
         NavigationView navView = findViewById(R.id.nav_view);
         NavigationUI.setupWithNavController(navView, navController);
-
 
 
         // Set up navigation menu
@@ -112,7 +112,7 @@ public class MainActivity extends DaggerAppCompatActivity
 
     @Override
     public boolean onSupportNavigateUp() {
-        return navController.navigateUp() || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController,appBarConfiguration) || super.onSupportNavigateUp();
     }
 
     private void getZebraPayload() {
@@ -210,22 +210,15 @@ public class MainActivity extends DaggerAppCompatActivity
         return true;
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        Log.e("eee","edwdfennav");
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        return NavigationUI.onNavDestinationSelected(item, navController)
+                || super.onOptionsItemSelected(item);
     }
-
-
 
     public void startInventory(View view) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -263,8 +256,4 @@ public class MainActivity extends DaggerAppCompatActivity
         }
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        return false;
-    }
 }
