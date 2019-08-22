@@ -2,22 +2,17 @@ package com.example.capentory_client.repos;
 
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.capentory_client.models.ActualRoom;
-import com.example.capentory_client.repos.MySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +30,7 @@ import javax.inject.Singleton;
 public class RalphRepository {
 
     private MutableLiveData<List<ActualRoom>> actualRoomsLiveData = new MutableLiveData<>();
+    private MutableLiveData<Exception> exception = new MutableLiveData<>();
 
     private Context context;
 
@@ -42,6 +38,10 @@ public class RalphRepository {
     @Inject
     public RalphRepository(Context context) {
         this.context = context;
+    }
+
+    public MutableLiveData<Exception> getException() {
+        return exception;
     }
 
     // Pretend to get data from a webservice or online source
@@ -57,7 +57,6 @@ public class RalphRepository {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -73,8 +72,8 @@ public class RalphRepository {
 
                             Log.e("network", "Filled");
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        } catch (JSONException error) {
+                            exception.setValue(error);
                         }
                     }
 
@@ -82,11 +81,12 @@ public class RalphRepository {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        exception.setValue(error);
                         Log.e("network", error.getMessage() + error.getLocalizedMessage());
                     }
                 }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
                 String credentials = "ralph" + ":" + "ralph";
                 String auth = "Basic "
@@ -100,5 +100,9 @@ public class RalphRepository {
         // Access the RequestQueue through your singleton class.
         MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
 
+    }
+
+    public void resetExceptionState() {
+        exception.setValue(null);
     }
 }

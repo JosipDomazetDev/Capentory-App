@@ -12,40 +12,38 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.ui.barcode_activities.ScanBarcodeActivity;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
 
-import javax.inject.Inject;
-
 import dagger.android.support.DaggerAppCompatActivity;
 
-import static dagger.android.AndroidInjection.inject;
-
 public class MainActivity extends DaggerAppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ActualItemsFragment.OnFragmentInteractionListener {
+        implements  NavigationView.OnNavigationItemSelectedListener, ActualItemsFragment.OnFragmentInteractionListener {
     TextView txtView;
     private static final String CHANNEL_ID = "inventory_channel_01";
     protected DrawerLayout drawer;
-   /*@Inject
-    Dog dog;*/
-
-    @Inject
-    String trye;
+    private NavController navController;
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -56,26 +54,66 @@ public class MainActivity extends DaggerAppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        setupNavigation();
+
+        createNotificationChannel();
+        getZebraPayload();
+
+        //dog.bark();
+        // ralphRepository.getRooms();
+    }
+
+    private void setupNavigation() {
+
+
+        drawer = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+
+        AppBarConfiguration appBarConfiguration =
+                new AppBarConfiguration.Builder(navController.getGraph())
+                        .setDrawerLayout(drawer)
+                        .build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+
+        NavigationView navView = findViewById(R.id.nav_view);
+        NavigationUI.setupWithNavController(navView, navController);
+
+
+
+        // Set up navigation menu
+/*
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+
         navigationView.setNavigationItemSelectedListener(this);
-        createNotificationChannel();
 
 
-        getZebraPayload();
 
-       //dog.bark();
-        // ralphRepository.getRooms();
+
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        NavigationUI.setupActionBarWithNavController(this, navController, drawer);
+
+        NavigationUI.setupWithNavController(navigationView, navController);*/
+
+
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        return navController.navigateUp() || super.onSupportNavigateUp();
+    }
 
     private void getZebraPayload() {
         IntentFilter filter = new IntentFilter();
@@ -187,30 +225,7 @@ public class MainActivity extends DaggerAppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     public void startInventory(View view) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -246,5 +261,10 @@ public class MainActivity extends DaggerAppCompatActivity
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        return false;
     }
 }

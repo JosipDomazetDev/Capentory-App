@@ -21,7 +21,6 @@ import javax.inject.Inject;
 public class RoomFragmentViewModel extends ViewModel {
     private MutableLiveData<List<ActualRoom>> rooms;
     private RalphRepository ralphRepository;
-    private MutableLiveData<Boolean> mIsUpdating = new MutableLiveData<>();
 
 
     @Inject
@@ -33,6 +32,10 @@ public class RoomFragmentViewModel extends ViewModel {
         if (rooms != null) {
             return;
         }
+        rooms = ralphRepository.getRooms();
+    }
+
+    public void reloadRooms() {
         rooms = ralphRepository.getRooms();
     }
 
@@ -54,8 +57,11 @@ public class RoomFragmentViewModel extends ViewModel {
 
     }
 
-    public LiveData<Boolean> getIsUpdating() {
-        return mIsUpdating;
+    public LiveData<Exception> getException() {
+        return ralphRepository.getException();
     }
 
+    public void resetExceptionState() {
+        ralphRepository.resetExceptionState();
+    }
 }
