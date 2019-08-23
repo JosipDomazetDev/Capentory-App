@@ -36,10 +36,18 @@ import com.example.capentory_client.ui.barcode_activities.ScanBarcodeActivity;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import dagger.android.support.DaggerAppCompatActivity;
 
 public class MainActivity extends DaggerAppCompatActivity
         implements ActualItemsFragment.OnFragmentInteractionListener {
+    //TODO: Update this for every fragment
+    private static final int[] TOP_LEVEL_DESTINATIONS = new int[]{
+            R.id.settingsFragment, R.id.homeScreenFragment, R.id.roomFragment, R.id.itemsFragment, R.id.itemDetailFragment};
+
+
     TextView txtView;
     private static final String CHANNEL_ID = "inventory_channel_01";
     protected DrawerLayout drawer;
@@ -77,8 +85,8 @@ public class MainActivity extends DaggerAppCompatActivity
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph())
+        //TODO: Expand this every time
+        appBarConfiguration = new AppBarConfiguration.Builder(TOP_LEVEL_DESTINATIONS)
                 .setDrawerLayout(drawer)
                 .build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -86,33 +94,11 @@ public class MainActivity extends DaggerAppCompatActivity
 
         NavigationView navView = findViewById(R.id.nav_view);
         NavigationUI.setupWithNavController(navView, navController);
-
-
-        // Set up navigation menu
-/*
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-
-        navigationView.setNavigationItemSelectedListener(this);
-
-
-
-
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
-        NavigationUI.setupActionBarWithNavController(this, navController, drawer);
-
-        NavigationUI.setupWithNavController(navigationView, navController);*/
-
-
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(navController,appBarConfiguration) || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
     }
 
     private void getZebraPayload() {
@@ -203,6 +189,7 @@ public class MainActivity extends DaggerAppCompatActivity
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -211,10 +198,9 @@ public class MainActivity extends DaggerAppCompatActivity
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.e("eee","edwdfennav");
+        Log.e("eee", "edwdfennav");
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.onNavDestinationSelected(item, navController)
                 || super.onOptionsItemSelected(item);

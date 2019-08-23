@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -77,7 +76,7 @@ public class ActualRoomsFragment extends DaggerFragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("room_number", selectedRoom.getRoomNumber());
 
-                Navigation.findNavController(view).navigate(R.id.inventory, bundle);
+                Navigation.findNavController(view).navigate(R.id.itemsFragment, bundle);
                 roomFragmentViewModel.removeRoom(selectedRoom);
             }
 
@@ -136,7 +135,7 @@ public class ActualRoomsFragment extends DaggerFragment {
         if (fullExceptionMsg != null)
             exceptionMsg = "\n" + fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), 100)) + "....";
 
-        Toast.makeText(getContext(), errorMsg + exceptionMsg, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), errorMsg + exceptionMsg, Toast.LENGTH_SHORT).show();
         Log.e("ERROR_LOG", "" + error.getLocalizedMessage());
     }
 

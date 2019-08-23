@@ -6,7 +6,7 @@
     app:startDestination="@id/homeScreenFragment">
 
     <fragment
-        android:id="@+id/inventory"
+        android:id="@+id/itemsFragment"
         android:name="com.example.capentory_client.ui.ActualItemsFragment"
         android:label="Gegenstände"
         tools:layout="@layout/fragment_actualitems" >
@@ -34,7 +34,7 @@
             app:destination="@id/homeScreenFragment" />
         <action
             android:id="@+id/action_roomFragment_to_inventory"
-            app:destination="@id/inventory" />
+            app:destination="@id/itemsFragment" />
     </fragment>
     <fragment
         android:id="@+id/itemDetailFragment"
@@ -43,7 +43,7 @@
         tools:layout="@layout/fragment_item_detail" >
         <action
             android:id="@+id/action_itemDetailFragment_to_inventory"
-            app:destination="@id/inventory" />
+            app:destination="@id/itemsFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -52,6 +52,12 @@
 
     <!--Global action-->
     <action android:id="@+id/open_settings_fragment"
-        app:destination="@id/settingsFragment"/>
+        app:destination="@id/settingsFragment"
+         app:launchSingleTop="false"/>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.capentory_client.ui.AboutFragment"
+        android:label="Über uns"
+        tools:layout="@layout/fragment_about"/>
 
 </navigation>
