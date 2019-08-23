@@ -7,9 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- *  Represents an ActualRoom from ralph, only the roomNumber is directly stored to allow later changes to the server
+ * Represents an ActualRoom from ralph, only the roomNumber is directly stored to allow later changes to the server
  */
-public class ActualRoom  {
+public class ActualRoom {
     private String roomNumber;
     private JSONObject actualRoomPayload;
 
@@ -23,13 +23,12 @@ public class ActualRoom  {
     }
 
     public String getRoomDescription() throws JSONException {
-        return (String) actualRoomPayload.get("description");
+        return actualRoomPayload.get("description").toString();
     }
 
     public JSONObject getActualRoomPayload() {
         return actualRoomPayload;
     }
-
 
 
 }

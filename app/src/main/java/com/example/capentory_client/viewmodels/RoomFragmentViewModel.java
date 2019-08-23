@@ -39,7 +39,8 @@ public class RoomFragmentViewModel extends ViewModel {
 
     public void removeRoom(ActualRoom actualRoom) {
         List<ActualRoom> currentRooms = Objects.requireNonNull(rooms.getValue()).getData();
-        assert currentRooms != null;
+        if (currentRooms == null) return;
+
         if (currentRooms.remove(actualRoom))
             rooms.postSuccess(currentRooms);
     }

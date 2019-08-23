@@ -134,9 +134,9 @@ public class ActualRoomsFragment extends DaggerFragment {
         String exceptionMsg = "";
         String fullExceptionMsg = error.getMessage();
         if (fullExceptionMsg != null)
-            exceptionMsg = fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), 100)) + "....";
+            exceptionMsg = "\n" + fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), 100)) + "....";
 
-        Toast.makeText(getContext(), errorMsg + "\n" + exceptionMsg, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), errorMsg + exceptionMsg, Toast.LENGTH_LONG).show();
         Log.e("ERROR_LOG", "" + error.getLocalizedMessage());
     }
 

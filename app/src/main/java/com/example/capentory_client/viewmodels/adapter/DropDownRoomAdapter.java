@@ -49,7 +49,9 @@ public class DropDownRoomAdapter extends ArrayAdapter<ActualRoom> {
         if (currentItem != null) {
             textViewRoomNumber.setText(currentItem.getRoomNumber());
             try {
-                textViewDescription.setText(currentItem.getRoomDescription());
+                String roomDescription = currentItem.getRoomDescription();
+                if (roomDescription.equals("null")) roomDescription = "";
+                textViewDescription.setText(roomDescription);
             } catch (JSONException e) {
                 textViewDescription.setText("N/A");
             }

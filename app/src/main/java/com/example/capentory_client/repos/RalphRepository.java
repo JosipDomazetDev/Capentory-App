@@ -2,15 +2,21 @@ package com.example.capentory_client.repos;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
@@ -47,36 +53,29 @@ public class RalphRepository {
     }
 
     public void setRooms() {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        String server_ip = sharedPreferences.getString("server_ip", "capentory.hostname") + ":";
+        String server_port = sharedPreferences.getString("server_port", "80");
+        String url = "http://" + server_ip + server_port + "/api/inventory/actualroom/?format=json";
 
-
-        final String url;
         //url = "http://192.168.1.2:8000/api/actualroom/171/?format=json";
-        url = "http://192.168.1.2:8000/api/inventory/actualroom/171/?format=json";
+        //url = "http://192.168.1.2:8000/api/inventory/actualroom/LAN%209/?format=json";
+        //url = "http://192.168.1.2:8000/api/saproom/?format=json";
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONArray payload) {
                         try {
-                            Log.e("help", "===========================================");
-                            Log.e("help", "onResponce called: SUCCESSS");
-                            Log.e("help", url);
-                            Log.e("help", response.toString());
-                            Log.e("help", "===========================================");
-
                             List<ActualRoom> actualRooms = new ArrayList<>();
-
-                            JSONArray payload = response.getJSONArray("results");
                             for (int i = 0; i < payload.length(); i++) {
                                 actualRooms.add(new ActualRoom(payload.getJSONObject(i)));
                             }
                             actualRoomsLiveData.postSuccess(actualRooms);
 
-                            Log.e("network", "Filled");
-
                         } catch (JSONException error) {
-                            Log.e("JSON_ERROR", "---------------------------");
-
                             actualRoomsLiveData.postError(error);
                         }
                     }
@@ -86,7 +85,7 @@ public class RalphRepository {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         actualRoomsLiveData.postError(error);
-                        Log.e("help", "FUCKUO"+error.getMessage() + error.getLocalizedMessage());
+                        Log.e("help", "FUCKUO" + error.getMessage() + error.getLocalizedMessage());
                     }
                 }) {
             @Override
@@ -101,8 +100,10 @@ public class RalphRepository {
             }
         };
 
-        // Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+        MySingleton.getInstance(context).
+                addToRequestQueue(jsonObjectRequest);
+
+
         actualRoomsLiveData.postLoading();
     }
 

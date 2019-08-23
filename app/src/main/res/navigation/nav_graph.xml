@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/inventory"
         android:name="com.example.capentory_client.ui.ActualItemsFragment"
-        android:label="fragment_inventory"
+        android:label="Gegenstände"
         tools:layout="@layout/fragment_actualitems" >
         <action
             android:id="@+id/action_inventory_to_flashScanBarcodeAcitivity"
@@ -22,12 +22,12 @@
     <fragment
         android:id="@+id/homeScreenFragment"
         android:name="com.example.capentory_client.ui.HomeScreenFragment"
-        android:label="fragment_home_screen"
+        android:label="Home"
         tools:layout="@layout/fragment_home_screen" />
     <fragment
         android:id="@+id/roomFragment"
         android:name="com.example.capentory_client.ui.ActualRoomsFragment"
-        android:label="fragment_room"
+        android:label="Raumauswahl"
         tools:layout="@layout/fragment_actualrooms" >
         <action
             android:id="@+id/action_roomFragment_to_homeScreenFragment"
@@ -39,7 +39,7 @@
     <fragment
         android:id="@+id/itemDetailFragment"
         android:name="com.example.capentory_client.ui.ItemDetailFragment"
-        android:label="fragment_item_detail"
+        android:label="Gegenstandsvalidierung"
         tools:layout="@layout/fragment_item_detail" >
         <action
             android:id="@+id/action_itemDetailFragment_to_inventory"
@@ -48,7 +48,7 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.capentory_client.ui.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="Einstellungen" />
 
     <!--Global action-->
     <action android:id="@+id/open_settings_fragment"

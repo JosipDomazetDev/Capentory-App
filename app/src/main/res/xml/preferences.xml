@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
-        app:key="notifications"
-        app:title="Enable message notifications"/>
 
     <Preference
         app:key="feedback"
-        app:title="Send feedback"
-        app:summary="Report technical issues or suggest new features"/>
+        app:summary="Report technical issues or suggest new features"
+        app:title="Send feedback" />
+
+    <EditTextPreference
+        android:key="server_ip"
+        android:summary="IP-Adresse oder Hostname konfigurieren"
+        android:inputType="textUri"
+        android:title="Serveradresse" />
+    <EditTextPreference
+        android:defaultValue="80"
+        android:inputType="number"
+        android:key="server_port"
+        android:summary="Portnummer konfigurieren (Default:80)"
+        android:title="Serverport" />
 
 </PreferenceScreen>
