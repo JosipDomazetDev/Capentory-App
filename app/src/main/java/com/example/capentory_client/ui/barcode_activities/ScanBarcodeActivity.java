@@ -2,13 +2,20 @@ package com.example.capentory_client.ui.barcode_activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -21,10 +28,11 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class ScanBarcodeActivity extends Activity {
     SurfaceView cameraPreview;
-    private static final int MY_PERMISSION_REQUEST_CAMERA = 2569;
+    public static final int MY_PERMISSION_REQUEST_CAMERA = 2569;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +40,11 @@ public class ScanBarcodeActivity extends Activity {
         setContentView(R.layout.activity_scan_barcode);
         cameraPreview = findViewById(R.id.camera_preview);
         createCameraSource();
+
+        boolean utilBool = ScanBarcodeActivityArgs.fromBundle(getIntent().getExtras()).getUtilBool();
+
+        //boolean utilBool = NavGraphDirections.openUtilScan().getUtilBool();
+        Log.e("alll", String.valueOf(utilBool));
     }
 
 
@@ -68,7 +81,6 @@ public class ScanBarcodeActivity extends Activity {
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
             }
 
             @Override
@@ -88,13 +100,64 @@ public class ScanBarcodeActivity extends Activity {
                 final SparseArray<Barcode> barcodeSparseArray = detections.getDetectedItems();
                 if (barcodeSparseArray.size() > 0) {
                     Intent intent = new Intent();
-                    intent.putExtra("barcode", String.valueOf(barcodeSparseArray.valueAt(0).displayValue));
+                    final String barcode = String.valueOf(barcodeSparseArray.valueAt(0).displayValue);
+                    final String format = getGoogleBarcodeFormat(barcodeSparseArray.valueAt(0).format);
+
+                    intent.putExtra("barcode", barcode);
                     setResult(CommonStatusCodes.SUCCESS, intent);
                     finish();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData clip = ClipData.newPlainText("barcode", barcode);
+                            clipboard.setPrimaryClip(clip);
+
+                            String msg = "Kopiert: " + barcode + " \n" + "Format: " + format;
+                            Toast toast = Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG);
+                            TextView v = toast.getView().findViewById(android.R.id.message);
+                            if (v != null) v.setGravity(Gravity.CENTER);
+
+                            toast.show();
+                        }
+                    });
                 }
             }
         });
 
     }
 
+    private String getGoogleBarcodeFormat(int format) {
+        switch (format) {
+            case Barcode.CODE_128:
+                return "CODE_128";
+            case Barcode.CODE_39:
+                return "CODE_39";
+            case Barcode.CODE_93:
+                return "CODE_93";
+            case Barcode.CODABAR:
+                return "CODABAR";
+            case Barcode.DATA_MATRIX:
+                return "DATA_MATRIX";
+            case Barcode.EAN_13:
+                return "EAN_13";
+            case Barcode.EAN_8:
+                return "EAN_8";
+            case Barcode.ITF:
+                return "ITF";
+            case Barcode.QR_CODE:
+                return "QR_CODE";
+            case Barcode.UPC_A:
+                return "UPC_A";
+            case Barcode.UPC_E:
+                return "UPC_E";
+            case Barcode.PDF417:
+                return "PDF417";
+            case Barcode.AZTEC:
+                return "AZTEC";
+            default:
+                return "Unbekannt";
+        }
+    }
 }

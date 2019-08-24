@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- TODO: Use HTTPS and remove android:usesCleartextTraffic="true"-->
+
     <application
         android:name=".ui.BaseApplication"
         android:allowBackup="true"
@@ -32,6 +32,17 @@
         <activity
             android:name=".ui.barcode_activities.ScanBarcodeActivity"
             android:label="Scanner" />
+        <activity
+            android:name=".ui.barcode_activities.ScanTextActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="ocr,barcode" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

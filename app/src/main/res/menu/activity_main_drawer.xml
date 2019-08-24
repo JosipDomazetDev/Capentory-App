@@ -2,37 +2,35 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
+    <item android:title="Inventurfunktionen">
+        <menu>
+            <group android:checkableBehavior="single">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/roomFragment"
-            android:icon="@drawable/scan_icon_ios_black"
-            android:menuCategory="secondary"
-            android:title="@string/menu_home" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:menuCategory="secondary"
-            android:title="@string/menu_gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:menuCategory="secondary"
-            android:title="@string/menu_slideshow" />
-        <item
-            android:id="@+id/settingsFragment"
-            android:menuCategory="secondary"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" />
-    </group>
+                <item
+                    android:id="@+id/open_util_scan"
+                    android:icon="@drawable/scan_icon_ios_black"
+                    android:menuCategory="secondary"
+                    android:checkable="false"
+                    android:title="Kamerascan" />
+
+                <item
+                    android:id="@+id/roomFragment"
+                    android:icon="@drawable/ic_play_arrow_black_24dp"
+                    android:menuCategory="secondary"
+                    android:title="Inventur beginnen" />
+
+                <item
+                    android:id="@+id/scanTextActivity"
+                    android:icon="@drawable/scan_text_icon_ios_black"
+                    android:menuCategory="secondary"
+                    android:checkable="false"
+                    android:title="Textscan" />
+            </group>
+        </menu>
+    </item>
 
     <item android:title="Zusätzliches">
         <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:menuCategory="secondary"
-                android:title="@string/menu_share" />
             <item
                 android:id="@+id/aboutFragment"
                 android:icon="@drawable/ic_info_outline_black_24dp"

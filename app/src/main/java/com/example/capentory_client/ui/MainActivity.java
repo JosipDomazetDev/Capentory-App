@@ -12,13 +12,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
@@ -27,7 +25,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -36,13 +33,9 @@ import com.example.capentory_client.ui.barcode_activities.ScanBarcodeActivity;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import dagger.android.support.DaggerAppCompatActivity;
 
-public class MainActivity extends DaggerAppCompatActivity
-        implements ActualItemsFragment.OnFragmentInteractionListener {
+public class MainActivity extends DaggerAppCompatActivity {
     //TODO: Update this for every fragment
     private static final int[] TOP_LEVEL_DESTINATIONS = new int[]{
             R.id.settingsFragment, R.id.homeScreenFragment, R.id.roomFragment, R.id.itemsFragment, R.id.itemDetailFragment};
@@ -56,41 +49,24 @@ public class MainActivity extends DaggerAppCompatActivity
 
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         setupNavigation();
-
         createNotificationChannel();
         getZebraPayload();
-
-        //dog.bark();
-        // ralphRepository.getRooms();
     }
 
     private void setupNavigation() {
-
-
         drawer = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
-        //TODO: Expand this every time
         appBarConfiguration = new AppBarConfiguration.Builder(TOP_LEVEL_DESTINATIONS)
                 .setDrawerLayout(drawer)
                 .build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
 
         NavigationView navView = findViewById(R.id.nav_view);
         NavigationUI.setupWithNavController(navView, navController);
@@ -155,6 +131,7 @@ public class MainActivity extends DaggerAppCompatActivity
             }
         }
     };
+
 
     public void cameraScanBarcode(View v) {
         Intent intent = new Intent(this, ScanBarcodeActivity.class);

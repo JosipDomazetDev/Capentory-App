@@ -22,11 +22,11 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ActualItemsFragment.OnFragmentInteractionListener} interface
+ * {@link MergedItemsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class ActualItemsFragment extends Fragment implements RecyclerViewAdapter.ItemClickListener {
+public class MergedItemsFragment extends Fragment implements RecyclerViewAdapter.ItemClickListener {
     private static final String ARG_PARAM1 = "room_number";
     private ArrayList<String> anlage = new ArrayList<>();
     private ArrayList<String> anlage_bez = new ArrayList<>();
@@ -34,7 +34,7 @@ public class ActualItemsFragment extends Fragment implements RecyclerViewAdapter
     private OnFragmentInteractionListener mListener;
     private String currentRoomNumber;
 
-    public ActualItemsFragment() {
+    public MergedItemsFragment() {
         // Required empty public constructor
     }
 
@@ -52,7 +52,7 @@ public class ActualItemsFragment extends Fragment implements RecyclerViewAdapter
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_actualitems,
+        View view = inflater.inflate(R.layout.fragment_mergeditems,
                 container, false);
 
 

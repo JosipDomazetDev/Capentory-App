@@ -137,6 +137,7 @@ public class ActualRoomsFragment extends DaggerFragment {
 
         Toast.makeText(getContext(), errorMsg + exceptionMsg, Toast.LENGTH_SHORT).show();
         Log.e("ERROR_LOG", "" + error.getLocalizedMessage());
+
     }
 
 

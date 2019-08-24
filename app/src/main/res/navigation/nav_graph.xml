@@ -7,18 +7,9 @@
 
     <fragment
         android:id="@+id/itemsFragment"
-        android:name="com.example.capentory_client.ui.ActualItemsFragment"
+        android:name="com.example.capentory_client.ui.MergedItemsFragment"
         android:label="Gegenstände"
-        tools:layout="@layout/fragment_actualitems" >
-        <action
-            android:id="@+id/action_inventory_to_flashScanBarcodeAcitivity"
-            app:destination="@id/flashScanBarcodeAcitivity" />
-    </fragment>
-    <activity
-        android:id="@+id/flashScanBarcodeAcitivity"
-        android:name="com.example.capentory_client.ui.barcode_activities.FlashScanBarcodeActivity"
-        android:label="activity_flash_barcode_scan_acitivity"
-        tools:layout="@layout/activity_flash_barcode_scan_acitivity" />
+        tools:layout="@layout/fragment_mergeditems"></fragment>
     <fragment
         android:id="@+id/homeScreenFragment"
         android:name="com.example.capentory_client.ui.HomeScreenFragment"
@@ -28,7 +19,7 @@
         android:id="@+id/roomFragment"
         android:name="com.example.capentory_client.ui.ActualRoomsFragment"
         android:label="Raumauswahl"
-        tools:layout="@layout/fragment_actualrooms" >
+        tools:layout="@layout/fragment_actualrooms">
         <action
             android:id="@+id/action_roomFragment_to_homeScreenFragment"
             app:destination="@id/homeScreenFragment" />
@@ -40,7 +31,7 @@
         android:id="@+id/itemDetailFragment"
         android:name="com.example.capentory_client.ui.ItemDetailFragment"
         android:label="Gegenstandsvalidierung"
-        tools:layout="@layout/fragment_item_detail" >
+        tools:layout="@layout/fragment_item_detail">
         <action
             android:id="@+id/action_itemDetailFragment_to_inventory"
             app:destination="@id/itemsFragment" />
@@ -50,14 +41,46 @@
         android:name="com.example.capentory_client.ui.SettingsFragment"
         android:label="Einstellungen" />
 
-    <!--Global action-->
-    <action android:id="@+id/open_settings_fragment"
-        app:destination="@id/settingsFragment"
-         app:launchSingleTop="false"/>
+
     <fragment
         android:id="@+id/aboutFragment"
         android:name="com.example.capentory_client.ui.AboutFragment"
         android:label="Über uns"
-        tools:layout="@layout/fragment_about"/>
+        tools:layout="@layout/fragment_about" />
+    <activity
+        android:id="@+id/scanBarcodeActivity"
+        android:name="com.example.capentory_client.ui.barcode_activities.ScanBarcodeActivity"
+        android:label="activity_scan_barcode"
+        tools:layout="@layout/activity_scan_barcode">
+        <argument
+            android:name="util_bool"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </activity>
+
+    <activity
+        android:id="@+id/scanTextActivity"
+        android:name="com.example.capentory_client.ui.barcode_activities.ScanTextActivity"
+        android:label="activity_scan_text"
+        tools:layout="@layout/activity_scan_text" />
+
+    <!--Global actions-->
+    <action
+        android:id="@+id/open_settings_fragment"
+        app:destination="@id/settingsFragment" />
+
+    <action
+        android:id="@+id/open_util_scan_text"
+        app:destination="@id/scanTextActivity" />
+
+    <action
+        android:id="@+id/open_util_scan"
+        app:destination="@id/scanBarcodeActivity">
+        <argument
+            android:name="util_bool"
+            android:defaultValue="true"
+            app:argType="boolean" />
+    </action>
+
 
 </navigation>
