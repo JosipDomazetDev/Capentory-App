@@ -45,6 +45,7 @@ import dagger.android.support.DaggerFragment;
  */
 public class ActualRoomsFragment extends DaggerFragment {
     private RoomFragmentViewModel roomFragmentViewModel;
+    private  Spinner roomDropDown;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,7 +64,7 @@ public class ActualRoomsFragment extends DaggerFragment {
         final View view = inflater.inflate(R.layout.fragment_actualrooms, container, false);
 
         Button btn_fragment_room = view.findViewById(R.id.button_fragment_room);
-        final Spinner roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
+        roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
 
 
         btn_fragment_room.setOnClickListener(new View.OnClickListener() {
@@ -168,4 +169,7 @@ public class ActualRoomsFragment extends DaggerFragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
+
 }

@@ -9,9 +9,9 @@
         app:title="Send feedback" />
 
     <EditTextPreference
+        android:inputType="textUri"
         android:key="server_ip"
         android:summary="IP-Adresse oder Hostname konfigurieren"
-        android:inputType="textUri"
         android:title="Serveradresse" />
     <EditTextPreference
         android:defaultValue="80"
@@ -19,5 +19,15 @@
         android:key="server_port"
         android:summary="Portnummer konfigurieren (Default:80)"
         android:title="Serverport" />
+
+
+    <ListPreference
+        android:dialogTitle="Texterkennungsmodus auswählen"
+        android:entries="@array/text_scan_modes"
+        android:entryValues="@array/text_scan_modes_values"
+        android:defaultValue="@array/text_scan_default_mode"
+        android:key="text_filter_mode"
+        android:summary="Den Filter der Texterkennung konfigurieren"
+        android:title="Texterkennungsmodus" />
 
 </PreferenceScreen>

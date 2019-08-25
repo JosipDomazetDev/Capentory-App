@@ -1,4 +1,4 @@
-package com.example.capentory_client.ui.barcode_activities;
+package com.example.capentory_client.ui.scan_activities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
@@ -28,23 +29,24 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.Locale;
 
 public class ScanBarcodeActivity extends Activity {
     SurfaceView cameraPreview;
     public static final int MY_PERMISSION_REQUEST_CAMERA = 2569;
+    private boolean utilityModeActivated;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_barcode);
+        utilityModeActivated = ScanBarcodeActivityArgs.fromBundle(getIntent().getExtras()).getUtilityModeActivated();
+
+
         cameraPreview = findViewById(R.id.camera_preview);
         createCameraSource();
 
-        boolean utilBool = ScanBarcodeActivityArgs.fromBundle(getIntent().getExtras()).getUtilBool();
 
-        //boolean utilBool = NavGraphDirections.openUtilScan().getUtilBool();
-        Log.e("alll", String.valueOf(utilBool));
     }
 
 
@@ -62,13 +64,6 @@ public class ScanBarcodeActivity extends Activity {
             public void surfaceCreated(SurfaceHolder holder) {
                 try {
                     if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    Activity#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for Activity#requestPermissions for more details.
                         requestPermissions(new String[]{Manifest.permission.CAMERA},
                                 MY_PERMISSION_REQUEST_CAMERA);
                         return;
@@ -107,25 +102,31 @@ public class ScanBarcodeActivity extends Activity {
                     setResult(CommonStatusCodes.SUCCESS, intent);
                     finish();
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData clip = ClipData.newPlainText("barcode", barcode);
-                            clipboard.setPrimaryClip(clip);
-
-                            String msg = "Kopiert: " + barcode + " \n" + "Format: " + format;
-                            Toast toast = Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG);
-                            TextView v = toast.getView().findViewById(android.R.id.message);
-                            if (v != null) v.setGravity(Gravity.CENTER);
-
-                            toast.show();
-                        }
-                    });
+                    if (utilityModeActivated) {
+                        utilityCopyToClipboard(barcode, format);
+                    }
                 }
             }
         });
 
+    }
+
+    private void utilityCopyToClipboard(final String barcode, final String format) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("barcode", barcode);
+                clipboard.setPrimaryClip(clip);
+
+                String msg = "Kopiert: " + barcode + " \n" + "Format: " + format;
+                Toast toast = Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG);
+                TextView v = toast.getView().findViewById(android.R.id.message);
+                if (v != null) v.setGravity(Gravity.CENTER);
+
+                toast.show();
+            }
+        });
     }
 
     private String getGoogleBarcodeFormat(int format) {

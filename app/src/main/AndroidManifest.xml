@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.barcode_activities.FlashScanBarcodeActivity"
+            android:name=".ui.scan_activities.FlashScanBarcodeActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".ui.MainActivity"
@@ -30,15 +30,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.barcode_activities.ScanBarcodeActivity"
+            android:name=".ui.scan_activities.ScanBarcodeActivity"
             android:label="Scanner" />
         <activity
-            android:name=".ui.barcode_activities.ScanTextActivity"
+            android:name=".ui.scan_activities.ScanTextActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
-            android:value="ocr,barcode" />
+            android:value="barcode,ocr" />
 
         <meta-data
             android:name="com.google.android.gms.version"

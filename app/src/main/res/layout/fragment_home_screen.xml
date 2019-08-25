@@ -10,7 +10,7 @@
 
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/start"
+        android:id="@+id/btn_start_inventory_fragment_home_screen"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/homescreen_intro"
-        app:layout_constraintBottom_toTopOf="@+id/start"
+        app:layout_constraintBottom_toTopOf="@+id/btn_start_inventory_fragment_home_screen"
         android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

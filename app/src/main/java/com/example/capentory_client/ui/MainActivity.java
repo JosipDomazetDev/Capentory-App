@@ -8,14 +8,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -29,9 +31,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.ui.barcode_activities.ScanBarcodeActivity;
+import com.example.capentory_client.ui.scan_activities.ScanBarcodeActivity;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Locale;
 
 import dagger.android.support.DaggerAppCompatActivity;
 
@@ -47,7 +51,6 @@ public class MainActivity extends DaggerAppCompatActivity {
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +58,11 @@ public class MainActivity extends DaggerAppCompatActivity {
         setupNavigation();
         createNotificationChannel();
         getZebraPayload();
+        Log.e("TTS", "Starting...");
+
+
     }
+
 
     private void setupNavigation() {
         drawer = findViewById(R.id.drawer_layout);
@@ -94,12 +101,16 @@ public class MainActivity extends DaggerAppCompatActivity {
         final TextView lblScanData = findViewById(R.id.scan_result_textview_fragment);
         lblScanData.setText(decodedData);
         Log.e("xxxxx", String.valueOf(initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_label_type))));
+
+
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(myBroadcastReceiver);
+
     }
 
     //

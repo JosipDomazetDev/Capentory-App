@@ -7,11 +7,17 @@
             <group android:checkableBehavior="single">
 
                 <item
-                    android:id="@+id/open_util_scan"
+                    android:id="@+id/utilBarcodeScan"
+                    android:checkable="false"
                     android:icon="@drawable/scan_icon_ios_black"
                     android:menuCategory="secondary"
-                    android:checkable="false"
                     android:title="Kamerascan" />
+                <item
+                    android:id="@+id/utilScanText"
+                    android:checkable="false"
+                    android:icon="@drawable/scan_text_icon_ios_black"
+                    android:menuCategory="secondary"
+                    android:title="Textscan" />
 
                 <item
                     android:id="@+id/roomFragment"
@@ -19,12 +25,7 @@
                     android:menuCategory="secondary"
                     android:title="Inventur beginnen" />
 
-                <item
-                    android:id="@+id/scanTextActivity"
-                    android:icon="@drawable/scan_text_icon_ios_black"
-                    android:menuCategory="secondary"
-                    android:checkable="false"
-                    android:title="Textscan" />
+
             </group>
         </menu>
     </item>

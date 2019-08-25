@@ -49,35 +49,35 @@
         tools:layout="@layout/fragment_about" />
     <activity
         android:id="@+id/scanBarcodeActivity"
-        android:name="com.example.capentory_client.ui.barcode_activities.ScanBarcodeActivity"
+        android:name="com.example.capentory_client.ui.scan_activities.ScanBarcodeActivity"
         android:label="activity_scan_barcode"
         tools:layout="@layout/activity_scan_barcode">
         <argument
-            android:name="util_bool"
+            android:name="utility_mode_activated"
             android:defaultValue="false"
             app:argType="boolean" />
     </activity>
 
     <activity
         android:id="@+id/scanTextActivity"
-        android:name="com.example.capentory_client.ui.barcode_activities.ScanTextActivity"
+        android:name="com.example.capentory_client.ui.scan_activities.ScanTextActivity"
         android:label="activity_scan_text"
         tools:layout="@layout/activity_scan_text" />
 
     <!--Global actions-->
     <action
-        android:id="@+id/open_settings_fragment"
+        android:id="@+id/openSettingsFragment"
         app:destination="@id/settingsFragment" />
 
     <action
-        android:id="@+id/open_util_scan_text"
+        android:id="@+id/utilScanText"
         app:destination="@id/scanTextActivity" />
 
     <action
-        android:id="@+id/open_util_scan"
+        android:id="@+id/utilBarcodeScan"
         app:destination="@id/scanBarcodeActivity">
         <argument
-            android:name="util_bool"
+            android:name="utility_mode_activated"
             android:defaultValue="true"
             app:argType="boolean" />
     </action>

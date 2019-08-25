@@ -3,13 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <SurfaceView
         android:id="@+id/surfaceView_activity_scan_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/unlock_button_activity_scan_text"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:onClick="unlock"
+        android:padding="12dp"
+        android:text="Auswahl entsperren"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:backgroundTint="@android:color/transparent"
+        app:cornerRadius="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rippleColor="#33FFFFFF"
+        app:strokeColor="#FFFFFF"
+        app:strokeWidth="2dp" />
 
     <TextView
         android:id="@+id/text_preview_activity_scan_text"
@@ -18,7 +39,7 @@
         android:layout_marginBottom="16dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:maxHeight="150dp"
+        android:maxHeight="250dp"
         android:text="Platzhalter"
         android:textColor="@android:color/white"
         android:textSize="14sp"
@@ -29,14 +50,16 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/copy_button_activity_scan_text"
         style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="16dp"
         android:onClick="copyText"
         android:padding="12dp"
         android:text="Kopieren"
         android:textColor="#FFFFFF"
-        android:textSize="15sp"
+        android:textSize="16sp"
         app:backgroundTint="@android:color/transparent"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/surfaceView_activity_scan_text"
