@@ -28,7 +28,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:rippleColor="#33FFFFFF"
+        app:rippleColor="#FFFFFF"
         app:strokeColor="#FFFFFF"
         app:strokeWidth="2dp" />
 
@@ -70,4 +70,17 @@
         app:strokeColor="#FFFFFF"
         app:strokeWidth="2dp" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_flash_activity_scan_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="toggleFlashText"
+        app:backgroundTint="#2196F3"
+        android:clickable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_flash_on_white_24dp"
+        android:focusable="true" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.example.capentory_client.ui.scan_activities;
+package com.example.capentory_client.ui.scanactivities;
 
 import android.Manifest;
 import android.content.ClipData;
@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,6 +19,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.capentory_client.R;
-import com.google.android.gms.vision.CameraSource;
+import com.example.capentory_client.ui.scanactivities.modifiedgoogleapi.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
@@ -38,7 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ScanTextActivity extends AppCompatActivity {
-    private static final Integer CERTAINTY_THRESHOLD_SCAN_AMOUNT = 5;
+    private static final Integer CERTAINTY_THRESHOLD_SCAN_AMOUNT = 3;
     private static final Integer MIN_LENGTH_OF_BARCODE = 8;
     private String TAG = "OPT";
     private SurfaceView cameraPreview;
@@ -46,7 +48,7 @@ public class ScanTextActivity extends AppCompatActivity {
     private CameraSource cameraSource;
     private StringBuilder readMessage = new StringBuilder();
     private Button btnUnlock;
-
+    private boolean useFlash = false;
 
     private static final int requestPermissionID = 101;
     private int longestCode = 0;
@@ -102,11 +104,10 @@ public class ScanTextActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
             }
         } else {
-
-            cameraSource = new CameraSource.Builder(getApplicationContext(), textRecognizer)
+            cameraSource = new CameraSource.Builder(this, textRecognizer)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setRequestedPreviewSize(1600, 1024)
-                    .setAutoFocusEnabled(true).build();
+                    .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
 
 
             cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -150,14 +151,13 @@ public class ScanTextActivity extends AppCompatActivity {
                             public void run() {
                                 if (textFilterMode != 3)
                                     readMessage = new StringBuilder();
-                                if (textFilterMode == 3 && longestCode == 0)
-                                    readMessage = new StringBuilder();
 
                                 for (int i = 0; i < items.size(); i++) {
                                     //Get current string from text block
                                     String currentString = items.valueAt(i).getValue();
+                                    Log.e(TAG, currentString + " => " + getMostFrequentCode() + "/" + map.get(getMostFrequentCode()));
                                     currentString = getFilteredString(i, currentString, textFilterMode, textRecognizer);
-                                    Log.e(TAG, currentString);
+
                                     if (textFilterMode == 3) {
                                         //Barcode Optimization
                                         fillMap(currentString);
@@ -193,8 +193,9 @@ public class ScanTextActivity extends AppCompatActivity {
     }
 
     private boolean determineDisplayedCode(int i, String currentString, String mostFrequentCode, TextRecognizer textRecognizer) {
+        String regex = getRegexForMode(textFilterMode);
+
         //After certainty threshold display the most frequent rather than the longest code
-        Log.e(TAG, String.valueOf((Collections.max(map.values()))));
         if ((Collections.max(map.values())) > CERTAINTY_THRESHOLD_SCAN_AMOUNT) {
             readMessage.setLength(0);
             readMessage.append(mostFrequentCode).append("\n");
@@ -204,10 +205,12 @@ public class ScanTextActivity extends AppCompatActivity {
             return true;
         } else {
             if (currentString.length() > longestCode) {
-                //Focus on longest string
                 readMessage.setLength(0);
-                textRecognizer.setFocus(i);
                 longestCode = currentString.length();
+                if (currentString.matches(regex)) {
+                    //Focus on longest matching string
+                    textRecognizer.setFocus(i);
+                }
             } else {
                 return true;
             }
@@ -234,17 +237,13 @@ public class ScanTextActivity extends AppCompatActivity {
 
         //Numeric optimization for barcodes (has its own setFocus optimization)
         if (textFilterMode == 3) {
-            currentString = optimizeForNumericalBarcode(currentString);
+            return optimizeForNumericalBarcode(currentString);
         } else if (currentString.matches(regexFilter)) {
             textRecognizer.setFocus(i);
         }
 
-        // IP Addresses have perfectly matching regex
-        if (textFilterMode == 4)
-            return currentString.replaceAll("[^0-9.]", "").trim();
-
         // Take the current string and make a regexFilter confirm string out of it
-        currentString = currentString.replaceAll("[^" + regexFilter + "]", "").trim();
+        currentString = currentString.replaceAll(getAntiRegexForMode(textFilterMode), "").trim();
         return currentString;
     }
 
@@ -258,24 +257,23 @@ public class ScanTextActivity extends AppCompatActivity {
         }
 
         double length = currentString.length();
-        // If less than 80% of the characters are digits correction probably is not possible, or the original text is a mixture of digits and characters
-        if (count / length < 0.8) return currentString;
+        // If less than 65% of the characters are digits correction probably is not possible, or the original text is a mixture of digits and characters
+        if (count / length < 0.65)
+            return currentString.replaceAll(getAntiRegexForMode(textFilterMode), "");
 
         // https://stackoverflow.com/questions/5455794/removing-whitespace-from-strings-in-java
-        currentString = currentString
-                .replaceAll("\\s", "")
+        return currentString
                 .replaceAll("O", "0")
-                .replaceAll("\"", "")
-                .replaceAll(">", "")
-                .replaceAll("[.]", "")
                 .replaceAll("o", "0")
+                .replaceAll("c", "0")
+                .replaceAll("d", "0")
+                .replaceAll("D", "0")
                 .replaceAll("B", "8")
                 .replaceAll("S", "5")
                 .replaceAll("Z", "2")
                 .replaceAll("b", "6")
-                .replaceAll("G", "6");
-
-        return currentString;
+                .replaceAll("G", "6")
+                .replaceAll(getAntiRegexForMode(textFilterMode), "");
     }
 
     private int getTextFilterMode() {
@@ -315,6 +313,28 @@ public class ScanTextActivity extends AppCompatActivity {
         }
     }
 
+
+    @NonNull
+    private String getAntiRegexForMode(int text_filter_mode) {
+        switch (text_filter_mode) {
+            case 1:
+                //Alphanumerisch(Deutsch)
+                return "[^ÄäÖöÜüßßA-Za-z0-9 ]";
+
+            case 2:
+                //Alphabetisch (Deutsch)
+                return "[ÄäÖöÜüßßA-Za-z ]";
+            case 3:
+                //Nummern (z.B. Für Barcodes)
+                return "[^0-9]";
+            case 4:
+                // IPs
+                return "[^0-9.]";
+            default:
+                return "";
+        }
+    }
+
     public void copyText(View view) {
         runOnUiThread(new Runnable() {
             @Override
@@ -325,7 +345,7 @@ public class ScanTextActivity extends AppCompatActivity {
                 ClipData clip = ClipData.newPlainText("text", msg);
                 clipboard.setPrimaryClip(clip);
 
-                Toast toast = Toast.makeText(getBaseContext(), "Kopiert! \n" + msg + " ", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getBaseContext(), "Kopiert! \n" + msg, Toast.LENGTH_LONG);
                 TextView v = toast.getView().findViewById(android.R.id.message);
                 if (v != null) v.setGravity(Gravity.CENTER);
 
@@ -339,5 +359,16 @@ public class ScanTextActivity extends AppCompatActivity {
         map.clear();
         longestCode = 0;
         view.setVisibility(View.GONE);
+    }
+
+    public void toggleFlashText(View view) {
+        useFlash = !useFlash;
+        if (useFlash) {
+            cameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            ((ImageButton) view).setImageResource(R.drawable.ic_flash_off_white_24dp);
+        } else {
+            cameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            ((ImageButton) view).setImageResource(R.drawable.ic_flash_on_white_24dp);
+        }
     }
 }

@@ -49,7 +49,7 @@
         tools:layout="@layout/fragment_about" />
     <activity
         android:id="@+id/scanBarcodeActivity"
-        android:name="com.example.capentory_client.ui.scan_activities.ScanBarcodeActivity"
+        android:name="com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity"
         android:label="activity_scan_barcode"
         tools:layout="@layout/activity_scan_barcode">
         <argument
@@ -60,7 +60,7 @@
 
     <activity
         android:id="@+id/scanTextActivity"
-        android:name="com.example.capentory_client.ui.scan_activities.ScanTextActivity"
+        android:name="com.example.capentory_client.ui.scanactivities.ScanTextActivity"
         android:label="activity_scan_text"
         tools:layout="@layout/activity_scan_text" />
 
@@ -81,6 +81,11 @@
             android:defaultValue="true"
             app:argType="boolean" />
     </action>
+    <activity
+        android:id="@+id/flashScanBarcodeActivity"
+        android:name="com.example.capentory_client.ui.scanactivities.FlashScanBarcodeActivity"
+        android:label="activity_flash_barcode_scan_acitivity"
+        tools:layout="@layout/activity_flash_barcode_scan_acitivity" />
 
 
 </navigation>

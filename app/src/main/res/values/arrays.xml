@@ -8,6 +8,7 @@
         <item>Nummern (z.B. optimiert für Barcodes)</item>
         <item>IP-Adressen</item>
     </string-array>
+
     <string-array name="text_scan_modes_values">
         <item>0</item>
         <item>1</item>
@@ -15,7 +16,40 @@
         <item>3</item>
         <item>4</item>
     </string-array>
-    <string-array name="text_scan_default_mode">
-        <item>0</item>
+
+    <string-array name="barcode_formats">
+        <item>Alle Formate</item>
+        <item>CODE_128</item>
+        <item>CODE_39</item>
+        <item>CODE_93</item>
+        <item>CODABAR</item>
+        <item>DATA_MATRIX</item>
+        <item>EAN_13</item>
+        <item>EAN_8</item>
+        <item>ITF</item>
+        <item>QR_CODE</item>
+        <item>UPC_A</item>
+        <item>UPC_E</item>
+        <item>PDF417</item>
+        <item>AZTEC</item>
     </string-array>
+
+    <string-array name="barcode_formats_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+        <item>16</item>
+        <item>32</item>
+        <item>64</item>
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+        <item>2048</item>
+        <item>4096</item>
+    </string-array>
+    <string-array name="barcode_formats_default_value">2</string-array>
+
 </resources>

@@ -1,4 +1,4 @@
-package com.example.capentory_client.ui.scan_activities;
+package com.example.capentory_client.ui.scanactivities;
 
 import android.content.Intent;
 import android.os.Bundle;

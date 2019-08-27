@@ -22,12 +22,21 @@
 
 
     <ListPreference
+        android:defaultValue="0"
         android:dialogTitle="Texterkennungsmodus auswählen"
         android:entries="@array/text_scan_modes"
         android:entryValues="@array/text_scan_modes_values"
-        android:defaultValue="@array/text_scan_default_mode"
         android:key="text_filter_mode"
         android:summary="Den Filter der Texterkennung konfigurieren"
         android:title="Texterkennungsmodus" />
+
+    <MultiSelectListPreference
+        android:defaultValue="@array/barcode_formats_default_value"
+        android:dialogTitle="Barcodeformate auswählen"
+        android:entries="@array/barcode_formats"
+        android:entryValues="@array/barcode_formats_values"
+        android:key="barcode_formats_key"
+        android:summary="Unterstützte Barcodeformate auswählen"
+        android:title="Barcodeformate" />
 
 </PreferenceScreen>

@@ -10,14 +10,11 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -31,11 +28,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.ui.scan_activities.ScanBarcodeActivity;
+import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
-
-import java.util.Locale;
 
 import dagger.android.support.DaggerAppCompatActivity;
 
