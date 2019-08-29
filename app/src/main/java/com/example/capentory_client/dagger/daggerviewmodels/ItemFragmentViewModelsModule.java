@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.capentory_client.dagger.ViewModelKey;
 import com.example.capentory_client.viewmodels.ItemFragmentViewModel;
-import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 
 import dagger.Binds;
@@ -13,10 +12,10 @@ import dagger.Module;
 import dagger.multibindings.IntoMap;
 
 @Module
-public abstract class RoomFragmentViewModelsModule {
+public abstract class ItemFragmentViewModelsModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RoomFragmentViewModel.class)
-    public abstract ViewModel bindRoomFragmentViewModel(RoomFragmentViewModel viewModel);
+    @ViewModelKey(ItemFragmentViewModel.class)
+    public abstract ViewModel bindItemFragmentViewModel(ItemFragmentViewModel viewModel);
 }

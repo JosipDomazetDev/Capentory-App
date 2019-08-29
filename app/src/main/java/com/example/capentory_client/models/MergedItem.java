@@ -1,35 +1,47 @@
 package com.example.capentory_client.models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- *  Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
+ * Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
  */
 public class MergedItem {
-    private String roomNumber;
-    private JSONObject actualRoomPayload;
+    private String currentRoomNumber;
 
-    public MergedItem(JSONObject actualRoomPayload) throws JSONException {
-        this.actualRoomPayload = actualRoomPayload;
-        this.roomNumber = actualRoomPayload.getString("room_number");
+
+    private JSONObject mergedItemJSONPayload;
+
+    private int itemID;
+    private String anlageNummer;
+    private String description;
+
+
+    public MergedItem(String currentRoomNumber, JSONObject mergedItemJSONPayload) throws JSONException {
+        this.currentRoomNumber = currentRoomNumber;
+        this.mergedItemJSONPayload = mergedItemJSONPayload;
+
+        this.itemID = mergedItemJSONPayload.getInt("item_id");
+        JSONObject sapItem = mergedItemJSONPayload.getJSONObject("sap_item");
+        this.anlageNummer = sapItem.getString("anlage");
+        this.description = sapItem.getString("desc");
     }
 
-    public String getRoomNumber() {
-        return roomNumber;
+    public String getCurrentRoomNumber() {
+        return currentRoomNumber;
     }
 
-    public String getRoomDescription() throws JSONException {
-        return (String) actualRoomPayload.get("description");
+    public JSONObject getMergedItemJSONPayload() {
+        return mergedItemJSONPayload;
     }
 
-    public JSONObject getActualRoomPayload() {
-        return actualRoomPayload;
+    public String getAnlageNummer() {
+        return anlageNummer;
     }
 
-
+    public String getDescription() {
+        return description;
+    }
 
 }

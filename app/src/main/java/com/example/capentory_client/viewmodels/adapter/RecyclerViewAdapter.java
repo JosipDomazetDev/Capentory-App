@@ -10,18 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.models.MergedItem;
 
 import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<String> anlage;
-    private ArrayList<String> anlage_bez;
+
+    private ArrayList<MergedItem> mergedItems;
     private ItemClickListener itemClickListener;
 
-    public RecyclerViewAdapter(ArrayList<String> anlage, ArrayList<String> anlage_bez, ItemClickListener itemClickListener) {
-        this.anlage = anlage;
-        this.anlage_bez = anlage_bez;
+    public RecyclerViewAdapter(ArrayList<MergedItem> mergedItems, ItemClickListener itemClickListener) {
+        this.mergedItems = mergedItems;
         this.itemClickListener = itemClickListener;
     }
 
@@ -33,13 +33,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.anlage_textview.setText(anlage.get(position));
-        holder.anlage_bez_textview.setText(anlage_bez.get(position));
+        holder.anlage_textview.setText(mergedItems.get(position).getAnlageNummer());
+        holder.anlage_bez_textview.setText(mergedItems.get(position).getDescription());
     }
 
     @Override
     public int getItemCount() {
-        return anlage.size();
+        return mergedItems.size();
     }
 
 

@@ -3,7 +3,11 @@ package com.example.capentory_client.viewmodels.wrappers;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class StatusAwareData<T> {
+import com.example.capentory_client.models.MergedItem;
+
+import java.util.ArrayList;
+
+public class StatusAwareData<T> extends ArrayList<MergedItem> {
 
     @NonNull
     private State status;

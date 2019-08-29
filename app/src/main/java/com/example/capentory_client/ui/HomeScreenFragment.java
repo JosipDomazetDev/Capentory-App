@@ -58,7 +58,7 @@ public class HomeScreenFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
         view.findViewById(R.id.btn_start_inventory_fragment_home_screen).setOnClickListener(
-                Navigation.createNavigateOnClickListener(R.id.flashScanBarcodeActivity, null)
+                Navigation.createNavigateOnClickListener(R.id.roomFragment, null)
         );
 
         //initTTS(view);

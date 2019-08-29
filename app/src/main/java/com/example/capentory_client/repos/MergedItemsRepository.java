@@ -7,17 +7,13 @@ import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.capentory_client.models.ActualRoom;
+import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONArray;
@@ -33,47 +29,55 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class RalphRepository {
-    private StatusAwareLiveData<List<ActualRoom>> actualRoomsLiveData = new StatusAwareLiveData<>();
+public class MergedItemsRepository {
+    private StatusAwareLiveData<List<MergedItem>> mergedItemsLiveData = new StatusAwareLiveData<>();
+    private String currentRoom="072";
     private Context context;
 
+
     @Inject
-    public RalphRepository(Context context) {
+    public MergedItemsRepository(Context context) {
         this.context = context;
     }
 
 
+
     // Pretend to get data from a webservice or online source
-    public StatusAwareLiveData<List<ActualRoom>> getRooms() {
-        setRooms();
-        return actualRoomsLiveData;
+    public StatusAwareLiveData<List<MergedItem>> getMergedItems() {
+        setItems();
+        return mergedItemsLiveData;
     }
 
-    public void setRooms() {
+    public void setItems() {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
         String server_ip = sharedPreferences.getString("server_ip", "capentory.hostname") + ":";
         String server_port = sharedPreferences.getString("server_port", "80");
-        String url = "http://" + server_ip + server_port + "/api/inventory/actualroom/?format=json";
+
+        String url = "http://" + server_ip + server_port + "/api/actualroom/" + currentRoom + "/?format=json";
 
         //url = "http://192.168.1.2:8000/api/actualroom/171/?format=json";
         //url = "http://192.168.1.2:8000/api/inventory/actualroom/LAN%209/?format=json";
         //url = "http://192.168.1.2:8000/api/saproom/?format=json";
 
 
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONArray payload) {
+                    public void onResponse(JSONObject payload) {
                         try {
-                            List<ActualRoom> actualRooms = new ArrayList<>();
-                            for (int i = 0; i < payload.length(); i++) {
-                                actualRooms.add(new ActualRoom(payload.getJSONObject(i)));
-                            }
-                            actualRoomsLiveData.postSuccess(actualRooms);
+                            String currentRoom = (String) payload.get("room_number");
+                            JSONArray allItems = payload.getJSONArray("all_items");
+                            List<MergedItem> mergedItems = new ArrayList<>();
 
+                            for (int i = 0; i < allItems.length(); i++) {
+                                JSONObject jsonItem = allItems.getJSONObject(i);
+                                mergedItems.add(new MergedItem( currentRoom, jsonItem));
+                            }
+
+                            mergedItemsLiveData.postSuccess(mergedItems);
                         } catch (JSONException error) {
-                            actualRoomsLiveData.postError(error);
+                            mergedItemsLiveData.postError(error);
                         }
                     }
 
@@ -81,7 +85,7 @@ public class RalphRepository {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        actualRoomsLiveData.postError(error);
+                        mergedItemsLiveData.postError(error);
                     }
                 }) {
             @Override
@@ -100,9 +104,7 @@ public class RalphRepository {
                 addToRequestQueue(jsonObjectRequest);
 
 
-        actualRoomsLiveData.postLoading();
+        mergedItemsLiveData.postLoading();
     }
 
-    public void resetExceptionState() {
-    }
 }
