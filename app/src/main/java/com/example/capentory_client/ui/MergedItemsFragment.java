@@ -10,6 +10,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,16 +94,25 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
 
 
         recyclerView = view.findViewById(R.id.recyclerv_view);
-        initRecyclerView();
+
+
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(this);
+        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
 
         itemFragmentViewModel.getMergedItems().observe(getViewLifecycleOwner(), new Observer<StatusAwareData<List<MergedItem>>>() {
             @Override
-            public void onChanged(StatusAwareData<List<MergedItem>> statusAwareActualRooms) {
-                switch (statusAwareActualRooms.getStatus()) {
+            public void onChanged(StatusAwareData<List<MergedItem>> statusAwareMergedItem) {
+                switch (statusAwareMergedItem.getStatus()) {
                     case SUCCESS:
-                        recyclerView.notify();
+                        Log.e("xxxx","SUC");
+                        adapter.fill(statusAwareMergedItem);
                         break;
                     case ERROR:
+                        statusAwareMergedItem.getError().printStackTrace();
+                        Log.e("xxxx","");
+
                         break;
                 }
 
@@ -117,10 +127,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
 
 
     private void initRecyclerView() {
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(itemFragmentViewModel.getMergedItems().getValue(), this);
-        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(adapter);
+
     }
 
     @Override

@@ -13,16 +13,21 @@ import com.example.capentory_client.R;
 import com.example.capentory_client.models.MergedItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
 
-    private ArrayList<MergedItem> mergedItems;
+    private List<MergedItem> mergedItems = new ArrayList<>();
     private ItemClickListener itemClickListener;
 
-    public RecyclerViewAdapter(ArrayList<MergedItem> mergedItems, ItemClickListener itemClickListener) {
-        this.mergedItems = mergedItems;
+    public RecyclerViewAdapter(ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
+    }
+
+    public void fill(List<MergedItem> mergedItems) {
+        this.mergedItems = mergedItems;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -62,7 +67,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         @Override
         public void onClick(View v) {
-            itemClickListener.onItemClick(getAdapterPosition(),v);
+            itemClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
 

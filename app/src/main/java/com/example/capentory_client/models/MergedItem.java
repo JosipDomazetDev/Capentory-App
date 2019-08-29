@@ -22,10 +22,10 @@ public class MergedItem {
         this.currentRoomNumber = currentRoomNumber;
         this.mergedItemJSONPayload = mergedItemJSONPayload;
 
-        this.itemID = mergedItemJSONPayload.getInt("item_id");
-        JSONObject sapItem = mergedItemJSONPayload.getJSONObject("sap_item");
-        this.anlageNummer = sapItem.getString("anlage");
-        this.description = sapItem.getString("desc");
+        this.itemID = mergedItemJSONPayload.optInt("item_id", -1);
+        JSONObject sapItem = mergedItemJSONPayload.optJSONObject("sap_item");
+        this.anlageNummer = sapItem.optString("anlage", "N/A");
+        this.description = sapItem.optString("desc", "N/A");
     }
 
     public String getCurrentRoomNumber() {
