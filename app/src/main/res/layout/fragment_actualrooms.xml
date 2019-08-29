@@ -12,14 +12,28 @@
         android:backgroundTint="@android:color/holo_orange_light"
         tools:context=".ui.ActualRoomsFragment">
 
+        <ProgressBar
+            android:id="@+id/progress_bar_fragment_actualrooms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="16dp"
+            android:indeterminate="true"
+            android:indeterminateBehavior="repeat"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
         <Spinner
             android:id="@+id/room_dropdown_fragment_room"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:background="@drawable/dropdown_background"
             android:layout_marginStart="15dp"
+            android:layout_marginTop="28dp"
             android:layout_marginEnd="15dp"
+            android:background="@drawable/dropdown_background"
             android:padding="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -34,8 +48,8 @@
             android:layout_marginBottom="52dp"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
-            android:textAllCaps="false"
             android:text="Raumauswahl bestätigen"
+            android:textAllCaps="false"
             android:textColor="#FFF"
             android:textSize="15sp"
             app:backgroundTint="#2196F3"

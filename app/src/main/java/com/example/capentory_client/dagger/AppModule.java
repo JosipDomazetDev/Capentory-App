@@ -11,6 +11,12 @@ import dagger.Provides;
 @Module
 public class AppModule {
 
+    private String currentString;
+
+    public AppModule(String currentString) {
+        this.currentString = currentString;
+    }
+
     @Singleton
     @Provides
     static Context getContext(Application application) {

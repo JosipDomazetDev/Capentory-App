@@ -25,8 +25,5 @@ public abstract class ActivityBuildersModule {
     abstract MergedItemsFragment contributeItemFragment();
 
 
-    @Provides
-    static String someString() {
-        return "xxxxxxsdeww";
-    }
+
 }

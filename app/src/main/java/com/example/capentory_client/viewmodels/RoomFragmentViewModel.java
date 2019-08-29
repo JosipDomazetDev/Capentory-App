@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.repos.RalphRepository;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
+import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +23,7 @@ public class RoomFragmentViewModel extends ViewModel {
         this.ralphRepository = ralphRepository;
     }
 
-    public void init() {
+    public void fetchRooms() {
         if (rooms != null) {
             return;
         }
@@ -33,7 +34,7 @@ public class RoomFragmentViewModel extends ViewModel {
         rooms = ralphRepository.getRooms();
     }
 
-    public StatusAwareLiveData<List<ActualRoom>> getRooms() {
+    public LiveData<StatusAwareData<List<ActualRoom>>> getRooms() {
         return rooms;
     }
 

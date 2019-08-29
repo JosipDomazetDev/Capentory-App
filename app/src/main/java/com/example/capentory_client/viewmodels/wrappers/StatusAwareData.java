@@ -7,7 +7,7 @@ import com.example.capentory_client.models.MergedItem;
 
 import java.util.ArrayList;
 
-public class StatusAwareData<T> extends ArrayList<MergedItem> {
+public class StatusAwareData<T>  {
 
     @NonNull
     private State status;

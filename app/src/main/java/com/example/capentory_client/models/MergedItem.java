@@ -22,10 +22,13 @@ public class MergedItem {
         this.currentRoomNumber = currentRoomNumber;
         this.mergedItemJSONPayload = mergedItemJSONPayload;
 
-        this.itemID = mergedItemJSONPayload.optInt("item_id", -1);
+        this.itemID = mergedItemJSONPayload.optInt("item_ID", -1);
+        this.description = mergedItemJSONPayload.optString("desc", "N/A");
         JSONObject sapItem = mergedItemJSONPayload.optJSONObject("sap_item");
-        this.anlageNummer = sapItem.optString("anlage", "N/A");
-        this.description = sapItem.optString("desc", "N/A");
+        if (sapItem == null) {
+            this.anlageNummer = "Nicht mit SAP verlinkt!";
+        } else
+            this.anlageNummer = sapItem.optString("anlage", "N/A");
     }
 
     public String getCurrentRoomNumber() {

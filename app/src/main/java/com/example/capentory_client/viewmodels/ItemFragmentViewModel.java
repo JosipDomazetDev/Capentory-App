@@ -1,11 +1,14 @@
 package com.example.capentory_client.viewmodels;
 
+import android.util.Log;
+
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
+import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,29 +19,25 @@ public class ItemFragmentViewModel extends ViewModel {
     private StatusAwareLiveData<List<MergedItem>> mergedItems;
     private MergedItemsRepository mergedItemsRepository;
 
-
-    public ItemFragmentViewModel() {
-    }
-
     @Inject
     public ItemFragmentViewModel(MergedItemsRepository mergedItemsRepository) {
         this.mergedItemsRepository = mergedItemsRepository;
     }
 
-
-
-    public void init() {
+    public void fetchItems(String currentRoomString) {
         if (mergedItems != null) {
             return;
         }
-        mergedItems = mergedItemsRepository.getMergedItems();
+        Log.e("e", "CALLLED");
+
+        mergedItems = mergedItemsRepository.getMergedItems(currentRoomString);
     }
 
-    public void reloadRooms() {
-        mergedItems = mergedItemsRepository.getMergedItems();
+    public void reloadItems(String currentRoomString) {
+        mergedItems = mergedItemsRepository.getMergedItems(currentRoomString);
     }
 
-    public StatusAwareLiveData<List<MergedItem>> getMergedItems() {
+    public LiveData<StatusAwareData<List<MergedItem>>> getMergedItems() {
         return mergedItems;
     }
 
@@ -53,6 +52,6 @@ public class ItemFragmentViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-
     }
+
 }

@@ -6,7 +6,7 @@ import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 public class StatusAwareLiveData<T> extends MutableLiveData<StatusAwareData<T>> {
 
-    public void postLoading() {
+    public void postFetching() {
         postValue(new StatusAwareData<T>().fetching());
     }
 
