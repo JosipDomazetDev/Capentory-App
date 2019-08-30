@@ -85,6 +85,7 @@
                 android:text="056"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:maxWidth="150dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/scan_result_textview_fragment"
                 app:layout_constraintTop_toTopOf="parent"

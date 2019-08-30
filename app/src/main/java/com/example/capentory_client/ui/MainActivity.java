@@ -144,22 +144,6 @@ public class MainActivity extends DaggerAppCompatActivity {
         startActivityForResult(intent, 0);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 0) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                txtView = findViewById(R.id.scan_result_textview_fragment);
-
-                if (data != null) {
-                    txtView.setText("Barcode:" + String.valueOf(data.getStringExtra("barcode")));
-                } else {
-                    txtView.setText("Njiet");
-                }
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
 
 
     @Override

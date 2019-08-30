@@ -17,7 +17,8 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
+            android:id="@+id/dummy"
             android:layout_height="wrap_content" />
     </ScrollView>
 

@@ -38,7 +38,7 @@ import java.util.Set;
 public class ScanBarcodeActivity extends Activity {
     SurfaceView cameraPreview;
     public static final int MY_PERMISSION_REQUEST_CAMERA = 2569;
-    private boolean utilityModeActivated;
+    private boolean utilityModeActivated = false;
     private boolean useFlash = false;
     CameraSource cameraSource;
 
@@ -46,7 +46,8 @@ public class ScanBarcodeActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_barcode);
-        utilityModeActivated = ScanBarcodeActivityArgs.fromBundle(getIntent().getExtras()).getUtilityModeActivated();
+        if (getIntent().getExtras() != null)
+            utilityModeActivated = ScanBarcodeActivityArgs.fromBundle(getIntent().getExtras()).getUtilityModeActivated();
 
         cameraPreview = findViewById(R.id.camera_preview);
         createCameraSource();

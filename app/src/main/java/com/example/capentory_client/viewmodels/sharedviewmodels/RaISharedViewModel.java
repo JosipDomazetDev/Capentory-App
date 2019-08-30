@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.capentory_client.models.ActualRoom;
 
 public class RaISharedViewModel extends ViewModel {
-    private final MutableLiveData<ActualRoom> currentRoom = new MutableLiveData<ActualRoom>();
+    private final MutableLiveData<ActualRoom> currentRoom = new MutableLiveData<>();
 
     public void setCurrentRoom(ActualRoom actualRoom) {
         currentRoom.setValue(actualRoom);
