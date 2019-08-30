@@ -113,8 +113,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="homescreen_intro">Diese Applikation wurde im Rahmen der Diplomarbeit "Capentory" an der HTL Rennweg entwickelt.
-    Dank der Kombination aus dieser App und unserem Ralph-Server konnten wir den Inventurvorgang an unserer Schule erheblich vereinfachen und vor allem effizienter gestalten.</string>
+    <string name="homescreen_intro">Diese Applikation wurde im Rahmen der Diplomarbeit Capentory an der HTL Rennweg entwickelt.
+    Wir konnten den Inventurvorgang an unserer Schule erheblich vereinfachen und vor allem effizienter gestalten.</string>
     <string name="project_title">Capentory</string>
     <string name="about_us">Über uns</string>
     <string name="icons_legal_notice">Icons powered by  <a href="https://icons8.de/">icons8</a>. Die Verwendung ist durch  <a href="https://icons8.com/license">Verlinkung zulässig.</a></string>

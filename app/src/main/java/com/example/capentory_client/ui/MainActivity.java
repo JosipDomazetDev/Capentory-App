@@ -3,10 +3,7 @@ package com.example.capentory_client.ui;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -29,7 +25,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.navigation.NavigationView;
 
 import dagger.android.support.DaggerAppCompatActivity;
@@ -52,7 +47,6 @@ public class MainActivity extends DaggerAppCompatActivity {
         setContentView(R.layout.activity_main);
         setupNavigation();
         createNotificationChannel();
-        getZebraPayload();
         Log.e("TTS", "Starting...");
 
 
@@ -79,69 +73,10 @@ public class MainActivity extends DaggerAppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
     }
 
-    private void getZebraPayload() {
-        IntentFilter filter = new IntentFilter();
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        filter.addAction(getResources().getString(R.string.activity_intent_filter_action));
-        registerReceiver(myBroadcastReceiver, filter);
-    }
-
-
-    //
-    // The section below assumes that a UI exists in which to place the data. A production
-    // application would be driving much of the behavior following a scan.
-    //
-    private void displayScanResult(Intent initiatingIntent, String howDataReceived) {
-        String decodedData = initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
-        final TextView lblScanData = findViewById(R.id.scan_result_textview_fragment);
-        lblScanData.setText(decodedData);
-        Log.e("xxxxx", String.valueOf(initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_label_type))));
-
-
-
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(myBroadcastReceiver);
-
-    }
-
-    //
-    // After registering the broadcast receiver, the next step (below) is to define it.
-    // Here it's done in the MainActivity.java, but also can be handled by a separate class.
-    // The logic of extracting the scanned data and displaying it on the screen
-    // is executed in its own method (later in the code). Note the use of the
-    // extra keys defined in the strings.xml file.
-    //
-    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Bundle b = intent.getExtras();
-
-            //  This is useful for debugging to verify the format of received intents from DataWedge
-            //for (String key : b.keySet())
-            //{
-            //    Log.v(LOG_TAG, key);
-            //}
-
-            if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
-                //  Received a barcode scan
-                try {
-                    displayScanResult(intent, "via Broadcast");
-                } catch (Exception e) {
-                    //  Catch if the UI does not exist when we receive the broadcast
-                }
-            }
-        }
-    };
-
-
-    public void cameraScanBarcode(View v) {
-        Intent intent = new Intent(this, ScanBarcodeActivity.class);
-        startActivityForResult(intent, 0);
     }
 
 

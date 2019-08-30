@@ -50,6 +50,11 @@ public class MergedItem {
     }
 
     public boolean equalsBarcode(String barcode) {
-        return anlageNummer.equals(barcode);
+        StringBuilder barcodeBuilder = new StringBuilder(barcode);
+       /* for (int i = 0; i < anlageNummer.length() - barcode.length(); i++) {
+            barcodeBuilder.append("0");
+        }*/
+
+        return anlageNummer.equals(barcodeBuilder.toString());
     }
 }

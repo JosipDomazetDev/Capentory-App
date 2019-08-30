@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.ui.scanactivities.modifiedgoogleapi.CameraSource;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.Detector;
@@ -122,20 +123,13 @@ public class ScanBarcodeActivity extends Activity {
     }
 
     private void utilityCopyToClipboard(final String barcode, final String format) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("barcode", barcode);
-                clipboard.setPrimaryClip(clip);
+        runOnUiThread(() -> {
+            ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("barcode", barcode);
+            clipboard.setPrimaryClip(clip);
 
-                String msg = "Kopiert: " + barcode + " \n" + "Format: " + format;
-                Toast toast = Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG);
-                TextView v = toast.getView().findViewById(android.R.id.message);
-                if (v != null) v.setGravity(Gravity.CENTER);
-
-                toast.show();
-            }
+            String msg = "Kopiert: " + barcode + " \n" + "Format: " + format;
+            ToastUtility.displayCenteredToastMessage(getBaseContext(), msg, Toast.LENGTH_LONG);
         });
     }
 

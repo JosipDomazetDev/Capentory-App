@@ -1,6 +1,9 @@
 package com.example.capentory_client.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,16 +16,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.example.capentory_client.viewmodels.ItemFragmentViewModel;
@@ -89,14 +92,15 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
         itemFragmentViewModel.getMergedItems().observe(getViewLifecycleOwner(), statusAwareMergedItem -> {
             switch (statusAwareMergedItem.getStatus()) {
                 case SUCCESS:
-                    hideProgressBar();
+                    hideProgressBarAndShowContent();
                     adapter.fill(statusAwareMergedItem.getData());
                     break;
                 case ERROR:
                     statusAwareMergedItem.getError().printStackTrace();
+                    hideProgressBarAndHideContent();
                     break;
                 case FETCHING:
-                    displayProgressbar();
+                    displayProgressbarAndHideContent();
                     break;
 
             }
@@ -119,16 +123,37 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
 
     }
 
-    private void displayProgressbar() {
-        progressBar.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
-    }
+    //
+    // After registering the broadcast receiver, the next step (below) is to define it.
+    // Here it's done in the MainActivity.java, but also can be handled by a separate class.
+    // The logic of extracting the scanned data and displaying it on the screen
+    // is executed in its own method (later in the code). Note the use of the
+    // extra keys defined in the strings.xml file.
+    //
+    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
 
+            //Bundle b = intent.getExtras();
+            //  This is useful for debugging to verify the format of received intents from DataWedge
+            //for (String key : b.keySet())
+            //{
+            //    Log.v(LOG_TAG, key);
+            //}
 
-    private void hideProgressBar() {
-        progressBar.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
-    }
+            if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
+                //  Received a barcode scan
+                try {
+                    String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
+                    launchItemDetailFragmentFromBarcode(barcode);
+                    //Log.e("xxxxx", String.valueOf(initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_label_type))));
+                } catch (Exception e) {
+                    //  Catch if the UI does not exist when we receive the broadcast
+                }
+            }
+        }
+    };
 
     @NonNull
     private RecyclerViewAdapter getRecyclerViewAdapter() {
@@ -149,24 +174,9 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 0) {
             if (resultCode == CommonStatusCodes.SUCCESS) {
-
                 if (data != null) {
-                    StatusAwareData<List<MergedItem>> statusAwareData = itemFragmentViewModel.getMergedItems().getValue();
-                    if (statusAwareData == null) return;
-                    List<MergedItem> items = statusAwareData.getData();
-                    if (items == null) return;
-
                     String barcode = data.getStringExtra("barcode");
-                    for (MergedItem item : items) {
-                        if (item.equalsBarcode(barcode)) {
-                            iaDSharedViewModel.setCurrentItem(item);
-                            NavHostFragment.findNavController(this).navigate(R.id.itemDetailFragment);
-                            return;
-                        }
-                    }
-
-                    Toast.makeText(getContext(), "Scanergebnis ist nicht in der Liste!", Toast.LENGTH_SHORT).show();
-
+                    launchItemDetailFragmentFromBarcode(barcode);
                 } else {
                     Toast.makeText(getContext(), "Scan ist fehlgeschlagen!", Toast.LENGTH_SHORT).show();
                 }
@@ -175,5 +185,55 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    private void launchItemDetailFragmentFromBarcode(String barcode) {
+        StatusAwareData<List<MergedItem>> statusAwareData = itemFragmentViewModel.getMergedItems().getValue();
+        if (statusAwareData == null) return;
+        List<MergedItem> items = statusAwareData.getData();
+        if (items == null) return;
+
+        for (MergedItem item : items) {
+            if (item.equalsBarcode(barcode)) {
+                iaDSharedViewModel.setCurrentItem(item);
+                NavHostFragment.findNavController(this).navigate(R.id.itemDetailFragment);
+                return;
+            }
+        }
+
+        ToastUtility.displayCenteredToastMessage(getContext(), "Scanergebnis ist nicht in der Liste!\n" + barcode, Toast.LENGTH_LONG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Objects.requireNonNull(getContext()).unregisterReceiver(myBroadcastReceiver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        filter.addAction(getResources().getString(R.string.activity_intent_filter_action));
+        Objects.requireNonNull(getContext()).registerReceiver(myBroadcastReceiver, filter);
+    }
+
+
+    private void displayProgressbarAndHideContent() {
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+    }
+
+
+    private void hideProgressBarAndShowContent() {
+        progressBar.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBarAndHideContent() {
+        progressBar.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+    }
+
 
 }

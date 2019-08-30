@@ -1,43 +1,237 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.HomeScreenFragment">
+    android:fillViewport="true">
 
-    <!-- TODO: Update blank fragment layout -->
-
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_start_inventory_fragment_home_screen"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
-        android:textAllCaps="false"
-        android:text="Inventur beginnen"
-        android:textColor="#FFF"
-        android:textSize="15sp"
-        app:backgroundTint="#2196F3"
-        app:cornerRadius="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:rippleColor="#33AAAAAA"
-        app:strokeWidth="2dp" />
+        tools:context=".ui.HomeScreenFragment">
 
-    <TextView
-        android:id="@+id/homescreen_into_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/homescreen_intro"
-        app:layout_constraintBottom_toTopOf="@+id/btn_start_inventory_fragment_home_screen"
-        android:padding="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.042" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_start_inventory_fragment_home_screen"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="36dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="Inventur beginnen"
+            android:textAllCaps="false"
+            android:textColor="#FFF"
+            android:textSize="15sp"
+            app:backgroundTint="#2196F3"
+            app:cornerRadius="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:rippleColor="#33AAAAAA"
+            app:strokeWidth="2dp" />
+
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/bauhaus"
+            android:padding="10dp"
+            android:text="Capentory"
+            android:textAlignment="center"
+            android:textColor="#2196F3"
+            android:textDirection="ltr"
+            android:textSize="40sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/homescreen_into_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginTop="8dp"
+            android:gravity="fill"
+            android:padding="20dp"
+            android:text="@string/homescreen_intro"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
+            android:layout_weight="1"
+            android:alignmentMode="alignMargins"
+            android:columnCount="2"
+            android:columnOrderPreserved="false"
+            android:rowCount="2"
+            app:layout_constraintBottom_toTopOf="@+id/btn_start_inventory_fragment_home_screen"
+            app:layout_constraintTop_toBottomOf="@+id/homescreen_into_text">
+
+            <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp"
+                android:clipToPadding="false"
+                card_view:cardCornerRadius="10dp"
+                card_view:cardElevation="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Schnell"
+                        android:textAlignment="center"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/speed_icon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_below="@id/speed"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="Schnell Icon"
+                        app:srcCompat="@drawable/speed_icon" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view_easy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp"
+                android:clipToPadding="false"
+                card_view:cardCornerRadius="10dp"
+                card_view:cardElevation="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/easy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Einfach"
+                        android:textAlignment="center"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/easy_icon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_below="@id/easy"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="Einfach Icon"
+                        app:srcCompat="@drawable/easy_icon" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view_reliable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp"
+                android:clipToPadding="false"
+                card_view:cardCornerRadius="10dp"
+                card_view:cardElevation="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/reliable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Verlässlich"
+                        android:textAlignment="center"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/reliable_icon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_below="@id/reliable"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="Verlässlich Icon"
+                        app:srcCompat="@drawable/reliable_icon" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view_statisfying"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp"
+                android:clipToPadding="false"
+                card_view:cardCornerRadius="10dp"
+                card_view:cardElevation="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/statisfying"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Überzeugend"
+                        android:textAlignment="center"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/statisfying_icon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_below="@id/statisfying"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="Überzeugend Icon"
+                        app:srcCompat="@drawable/statisfying_icon" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+        </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

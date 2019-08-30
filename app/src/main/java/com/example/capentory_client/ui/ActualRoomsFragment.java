@@ -63,7 +63,9 @@ public class ActualRoomsFragment extends DaggerFragment {
 
         final RaISharedViewModel raISharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RaISharedViewModel.class);
         btn_fragment_room.setOnClickListener(v -> {
-            raISharedViewModel.setCurrentRoom((ActualRoom) roomDropDown.getSelectedItem());
+            ActualRoom selectedRoom = (ActualRoom) roomDropDown.getSelectedItem();
+            if (selectedRoom == null) return;
+            raISharedViewModel.setCurrentRoom(selectedRoom);
             Navigation.findNavController(view).navigate(R.id.itemsFragment);
         });
 
@@ -72,17 +74,20 @@ public class ActualRoomsFragment extends DaggerFragment {
         roomFragmentViewModel.fetchRooms();
 
         roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), statusAwareActualRooms -> {
+            Log.e("eeee", String.valueOf(statusAwareActualRooms.getStatus()));
+
             switch (statusAwareActualRooms.getStatus()) {
                 case SUCCESS:
                     DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) statusAwareActualRooms.getData());
                     roomDropDown.setAdapter(adapter);
-                    hideProgressBar();
+                    hideProgressBarAndShowContent();
                     break;
                 case ERROR:
                     displayErrorToastMessage(statusAwareActualRooms.getError());
+                    hideProgressBarAndHideContent();
                     break;
                 case FETCHING:
-                    displayProgressbar();
+                    displayProgressbarAndHideContent();
                     break;
             }
 
@@ -120,15 +125,20 @@ public class ActualRoomsFragment extends DaggerFragment {
     }
 
 
-    private void displayProgressbar() {
+    private void displayProgressbarAndHideContent() {
         progressBar.setVisibility(View.VISIBLE);
         roomDropDown.setVisibility(View.GONE);
     }
 
 
-    private void hideProgressBar() {
+    private void hideProgressBarAndShowContent() {
         progressBar.setVisibility(View.GONE);
         roomDropDown.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBarAndHideContent() {
+        progressBar.setVisibility(View.GONE);
+        roomDropDown.setVisibility(View.GONE);
     }
 
 }
