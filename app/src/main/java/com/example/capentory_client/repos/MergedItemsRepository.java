@@ -54,13 +54,12 @@ public class MergedItemsRepository {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, payload -> {
                     try {
-                        String currentRoom = payload.optString("room_number", "N/A");
                         JSONArray allItems = payload.optJSONArray("all_items");
                         List<MergedItem> mergedItems = new ArrayList<>();
 
                         for (int i = 0; i < allItems.length(); i++) {
                             JSONObject jsonItem = allItems.getJSONObject(i);
-                            mergedItems.add(new MergedItem(currentRoom, jsonItem));
+                            mergedItems.add(new MergedItem(currentRoomString, jsonItem));
                         }
 
                         mergedItemsLiveData.postSuccess(mergedItems);

@@ -155,7 +155,6 @@ public class ScanTextActivity extends AppCompatActivity {
                                 for (int i = 0; i < items.size(); i++) {
                                     //Get current string from text block
                                     String currentString = items.valueAt(i).getValue();
-                                    Log.e(TAG, currentString + " => " + getMostFrequentCode() + "/" + map.get(getMostFrequentCode()));
                                     currentString = getFilteredString(i, currentString, textFilterMode, textRecognizer);
 
                                     if (textFilterMode == 3) {

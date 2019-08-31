@@ -21,7 +21,7 @@ import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.DropDownRoomAdapter;
-import com.example.capentory_client.viewmodels.sharedviewmodels.RaISharedViewModel;
+import com.example.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
 
 import org.json.JSONException;
 
@@ -61,12 +61,12 @@ public class ActualRoomsFragment extends DaggerFragment {
         Button btn_fragment_room = view.findViewById(R.id.button_fragment_room);
 
 
-        final RaISharedViewModel raISharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RaISharedViewModel.class);
+        final RoomxItemSharedViewModel roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
         btn_fragment_room.setOnClickListener(v -> {
             ActualRoom selectedRoom = (ActualRoom) roomDropDown.getSelectedItem();
             if (selectedRoom == null) return;
-            raISharedViewModel.setCurrentRoom(selectedRoom);
-            Navigation.findNavController(view).navigate(R.id.itemsFragment);
+            roomxItemSharedViewModel.setCurrentRoom(selectedRoom);
+            Navigation.findNavController(view).navigate(R.id.action_roomFragment_to_itemsFragment);
         });
 
 
@@ -74,10 +74,12 @@ public class ActualRoomsFragment extends DaggerFragment {
         roomFragmentViewModel.fetchRooms();
 
         roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), statusAwareActualRooms -> {
-            Log.e("eeee", String.valueOf(statusAwareActualRooms.getStatus()));
+            Log.e("x", String.valueOf(statusAwareActualRooms.getStatus()));
 
             switch (statusAwareActualRooms.getStatus()) {
                 case SUCCESS:
+
+
                     DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) statusAwareActualRooms.getData());
                     roomDropDown.setAdapter(adapter);
                     hideProgressBarAndShowContent();
@@ -101,6 +103,11 @@ public class ActualRoomsFragment extends DaggerFragment {
                 }
         );
 
+        roomxItemSharedViewModel.getCurrentRoomValidated().observe(getViewLifecycleOwner(), b -> {
+            if (b) {
+                roomFragmentViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
+            }
+        });
 
         return view;
     }
@@ -121,7 +128,6 @@ public class ActualRoomsFragment extends DaggerFragment {
             exceptionMsg = "\n" + fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), 100)) + "....";
 
         Toast.makeText(getContext(), errorMsg + exceptionMsg, Toast.LENGTH_SHORT).show();
-        Log.e("ERROR_LOG", "" + error.getLocalizedMessage());
     }
 
 
@@ -141,4 +147,9 @@ public class ActualRoomsFragment extends DaggerFragment {
         roomDropDown.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        roomFragmentViewModel.detach();
+    }
 }

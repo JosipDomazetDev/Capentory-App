@@ -1,6 +1,5 @@
 package com.example.capentory_client.ui;
 
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,11 +11,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.models.MergedItem;
-import com.example.capentory_client.viewmodels.sharedviewmodels.IaDSharedViewModel;
+import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 
 import java.util.Objects;
-import java.util.Observer;
 
 
 /**
@@ -42,7 +39,7 @@ public class ItemDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_item_detail, container, false);
-        IaDSharedViewModel iaDSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(IaDSharedViewModel.class);
+        ItemxDetailSharedViewModel iaDSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
 
         iaDSharedViewModel.getCurrentItem().observe(getViewLifecycleOwner(), mergedItem -> {
             TextView txt = view.findViewById(R.id.dummy);

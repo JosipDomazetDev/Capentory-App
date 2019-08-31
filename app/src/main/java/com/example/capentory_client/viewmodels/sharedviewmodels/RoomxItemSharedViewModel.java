@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.capentory_client.models.ActualRoom;
 
-public class RaISharedViewModel extends ViewModel {
+public class RoomxItemSharedViewModel extends ViewModel {
     private final MutableLiveData<ActualRoom> currentRoom = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> currentRoomValidated = new MutableLiveData<>();
+
 
     public void setCurrentRoom(ActualRoom actualRoom) {
         currentRoom.setValue(actualRoom);
@@ -17,4 +19,12 @@ public class RaISharedViewModel extends ViewModel {
         return currentRoom;
     }
 
+
+    public void setCurrentRoomValidated(Boolean b) {
+        currentRoomValidated.setValue(b);
+    }
+
+    public MutableLiveData<Boolean> getCurrentRoomValidated() {
+        return currentRoomValidated;
+    }
 }

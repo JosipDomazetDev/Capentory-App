@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.capentory_client.models.ActualRoom;
-import com.example.capentory_client.repos.RalphRepository;
+import com.example.capentory_client.repos.ActualRoomsRepository;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
@@ -15,11 +15,11 @@ import javax.inject.Inject;
 
 public class RoomFragmentViewModel extends ViewModel {
     private StatusAwareLiveData<List<ActualRoom>> rooms;
-    private RalphRepository ralphRepository;
+    private ActualRoomsRepository ralphRepository;
 
 
     @Inject
-    public RoomFragmentViewModel(RalphRepository ralphRepository) {
+    public RoomFragmentViewModel(ActualRoomsRepository ralphRepository) {
         this.ralphRepository = ralphRepository;
     }
 
@@ -53,5 +53,7 @@ public class RoomFragmentViewModel extends ViewModel {
 
     }
 
-
+    public void detach() {
+        rooms.postDetach();
+    }
 }

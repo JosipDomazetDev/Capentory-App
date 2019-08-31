@@ -18,5 +18,8 @@ public class StatusAwareLiveData<T> extends MutableLiveData<StatusAwareData<T>> 
         postValue(new StatusAwareData<T>().success(data));
     }
 
+    public void postDetach() {
+        postValue(new StatusAwareData<T>().detach());
+    }
 
 }

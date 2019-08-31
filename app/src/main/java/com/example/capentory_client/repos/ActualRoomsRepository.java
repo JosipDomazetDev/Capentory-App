@@ -25,12 +25,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class RalphRepository {
+public class ActualRoomsRepository {
     private StatusAwareLiveData<List<ActualRoom>> actualRoomsLiveData = new StatusAwareLiveData<>();
     private Context context;
 
     @Inject
-    public RalphRepository(Context context) {
+    public ActualRoomsRepository(Context context) {
         this.context = context;
     }
 
@@ -54,28 +54,17 @@ public class RalphRepository {
 
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray payload) {
-                        try {
-                            List<ActualRoom> actualRooms = new ArrayList<>();
-                            for (int i = 0; i < payload.length(); i++) {
-                                actualRooms.add(new ActualRoom(payload.getJSONObject(i)));
-                            }
-                            actualRoomsLiveData.postSuccess(actualRooms);
-
-                        } catch (JSONException error) {
-                            actualRoomsLiveData.postError(error);
+                (Request.Method.GET, url, null, payload -> {
+                    try {
+                        List<ActualRoom> actualRooms = new ArrayList<>();
+                        for (int i = 0; i < payload.length(); i++) {
+                            actualRooms.add(new ActualRoom(payload.getJSONObject(i)));
                         }
-                    }
-
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                        actualRoomsLiveData.postSuccess(actualRooms);
+                    } catch (JSONException error) {
                         actualRoomsLiveData.postError(error);
                     }
-                }) {
+                }, error -> actualRoomsLiveData.postError(error)) {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();

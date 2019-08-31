@@ -8,15 +8,17 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,10 +33,11 @@ import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.example.capentory_client.viewmodels.ItemFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
-import com.example.capentory_client.viewmodels.sharedviewmodels.IaDSharedViewModel;
-import com.example.capentory_client.viewmodels.sharedviewmodels.RaISharedViewModel;
+import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
+import com.example.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 import java.util.Objects;
@@ -54,7 +57,8 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private ItemFragmentViewModel itemFragmentViewModel;
-    private IaDSharedViewModel iaDSharedViewModel;
+    private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
+    private RoomxItemSharedViewModel roomxItemSharedViewModel;
 
 
     @Inject
@@ -76,24 +80,32 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
         progressBar = view.findViewById(R.id.progress_bar_fragment_mergeditems);
         progressBar.bringToFront();
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
+        final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn);
         final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_actualrooms);
         final RecyclerViewAdapter adapter = getRecyclerViewAdapter();
-        iaDSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(IaDSharedViewModel.class);
+        itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
 
 
-        final RaISharedViewModel raISharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RaISharedViewModel.class);
-        String currentRoomString = Objects.requireNonNull(raISharedViewModel.getCurrentRoom().getValue()).getRoomNumber();
-        raISharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(currentRoomString));
+        roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
+        String currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomNumber();
+        roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(currentRoomString));
 
 
         itemFragmentViewModel = ViewModelProviders.of(this, providerFactory).get(ItemFragmentViewModel.class);
         itemFragmentViewModel.fetchItems(currentRoomString);
 
         itemFragmentViewModel.getMergedItems().observe(getViewLifecycleOwner(), statusAwareMergedItem -> {
+            Log.e("", "-----------------");
+
+            Log.e("", statusAwareMergedItem.getStatus().toString());
+            if (statusAwareMergedItem.getData() != null)
+                Log.e("", String.valueOf(statusAwareMergedItem.getData().size()));
+
+            Log.e("", "-----------------");
+
             switch (statusAwareMergedItem.getStatus()) {
                 case SUCCESS:
-                    hideProgressBarAndShowContent();
-                    adapter.fill(statusAwareMergedItem.getData());
+                    handleSuccess(adapter, statusAwareMergedItem);
                     break;
                 case ERROR:
                     statusAwareMergedItem.getError().printStackTrace();
@@ -119,8 +131,42 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
             startActivityForResult(intent, 0);
         });
 
+        finishRoom.setOnClickListener(v -> {
+            roomxItemSharedViewModel.setCurrentRoomValidated(true);
+            new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                    .setTitle("Alles erledigt?")
+                    .setMessage("Wollen Sie die Validierung für diesen Raum beenden?")
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        handleFinishRoom();
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
+        });
+
         return view;
 
+    }
+
+    private void handleFinishRoom() {
+        roomxItemSharedViewModel.setCurrentRoomValidated(true);
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_itemsFragment_to_roomFragment,
+                        null,
+                        new NavOptions.Builder()
+                                .setPopUpTo(R.id.roomFragment,
+                                        true).build()
+                );
+
+    }
+
+    private void handleSuccess(RecyclerViewAdapter adapter, StatusAwareData<List<MergedItem>> statusAwareMergedItem) {
+        hideProgressBarAndShowContent();
+        List<MergedItem> mergedItems = statusAwareMergedItem.getData();
+        if (mergedItems == null) return;
+
+        if (mergedItems.isEmpty())
+            ToastUtility.displayCenteredToastMessage(getContext(), "In diesem Raum befinden sich keine Items!", Toast.LENGTH_LONG);
+        adapter.fill(mergedItems);
     }
 
     //
@@ -194,8 +240,8 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
 
         for (MergedItem item : items) {
             if (item.equalsBarcode(barcode)) {
-                iaDSharedViewModel.setCurrentItem(item);
-                NavHostFragment.findNavController(this).navigate(R.id.itemDetailFragment);
+                itemxDetailSharedViewModel.setCurrentItem(item);
+                NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
                 return;
             }
         }
@@ -236,4 +282,9 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
     }
 
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        itemFragmentViewModel.detach();
+    }
 }

@@ -7,7 +7,7 @@ import com.example.capentory_client.models.MergedItem;
 
 import java.util.ArrayList;
 
-public class StatusAwareData<T>  {
+public class StatusAwareData<T> {
 
     @NonNull
     private State status;
@@ -46,6 +46,13 @@ public class StatusAwareData<T>  {
     }
 
 
+    public StatusAwareData<T> detach() {
+        this.status = State.DETACHED;
+        this.data = null;
+        this.error = null;
+        return this;
+    }
+
 
     @NonNull
     public State getStatus() {
@@ -63,9 +70,10 @@ public class StatusAwareData<T>  {
     }
 
     public enum State {
+        DETACHED,
         INITIALIZED,
         SUCCESS,
         ERROR,
-        FETCHING
+        FETCHING;
     }
 }

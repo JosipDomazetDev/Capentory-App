@@ -11,23 +11,21 @@ import org.json.JSONObject;
  */
 public class ActualRoom {
     private String roomNumber;
+    private String roomDescription;
     private JSONObject actualRoomPayload;
 
     public ActualRoom(JSONObject actualRoomPayload) throws JSONException {
         this.actualRoomPayload = actualRoomPayload;
         this.roomNumber = actualRoomPayload.getString("room_number");
+        this.roomDescription = actualRoomPayload.getString("description");
     }
 
     public String getRoomNumber() {
         return roomNumber;
     }
 
-    public String getRoomDescription() throws JSONException {
-        return actualRoomPayload.get("description").toString();
-    }
-
-    public JSONObject getActualRoomPayload() {
-        return actualRoomPayload;
+    public String getRoomDescription() {
+        return roomDescription;
     }
 
 

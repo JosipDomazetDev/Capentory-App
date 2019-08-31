@@ -9,22 +9,30 @@
         android:id="@+id/itemsFragment"
         android:name="com.example.capentory_client.ui.MergedItemsFragment"
         android:label="Gegenstände"
-        tools:layout="@layout/fragment_mergeditems"></fragment>
+        tools:layout="@layout/fragment_mergeditems">
+        <action
+            android:id="@+id/action_itemsFragment_to_itemDetailFragment"
+            app:destination="@id/itemDetailFragment" />
+        <action
+            android:id="@+id/action_itemsFragment_to_roomFragment"
+            app:destination="@id/roomFragment" />
+    </fragment>
     <fragment
         android:id="@+id/homeScreenFragment"
         android:name="com.example.capentory_client.ui.HomeScreenFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home_screen" />
+        tools:layout="@layout/fragment_home_screen" >
+        <action
+            android:id="@+id/action_homeScreenFragment_to_roomFragment"
+            app:destination="@id/roomFragment" />
+    </fragment>
     <fragment
         android:id="@+id/roomFragment"
         android:name="com.example.capentory_client.ui.ActualRoomsFragment"
         android:label="Raumauswahl"
         tools:layout="@layout/fragment_actualrooms">
         <action
-            android:id="@+id/action_roomFragment_to_homeScreenFragment"
-            app:destination="@id/homeScreenFragment" />
-        <action
-            android:id="@+id/action_roomFragment_to_inventory"
+            android:id="@+id/action_roomFragment_to_itemsFragment"
             app:destination="@id/itemsFragment" />
     </fragment>
     <fragment
@@ -33,9 +41,11 @@
         android:label="Gegenstandsvalidierung"
         tools:layout="@layout/fragment_item_detail">
         <action
-            android:id="@+id/action_itemDetailFragment_to_inventory"
+            android:id="@+id/action_itemDetailFragment_to_itemsFragment"
             app:destination="@id/itemsFragment" />
     </fragment>
+
+
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.capentory_client.ui.SettingsFragment"

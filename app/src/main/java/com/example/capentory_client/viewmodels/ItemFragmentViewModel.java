@@ -28,7 +28,6 @@ public class ItemFragmentViewModel extends ViewModel {
         if (mergedItems != null) {
             return;
         }
-        Log.e("e", "CALLLED");
 
         mergedItems = mergedItemsRepository.getMergedItems(currentRoomString);
     }
@@ -54,4 +53,7 @@ public class ItemFragmentViewModel extends ViewModel {
         super.onCleared();
     }
 
+    public void detach() {
+        mergedItems.postDetach();
+    }
 }
