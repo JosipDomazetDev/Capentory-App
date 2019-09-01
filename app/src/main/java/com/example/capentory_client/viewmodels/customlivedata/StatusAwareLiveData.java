@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
+import java.util.Objects;
+
 public class StatusAwareLiveData<T> extends MutableLiveData<StatusAwareData<T>> {
 
     public void postFetching() {
@@ -16,10 +18,6 @@ public class StatusAwareLiveData<T> extends MutableLiveData<StatusAwareData<T>> 
 
     public void postSuccess(T data) {
         postValue(new StatusAwareData<T>().success(data));
-    }
-
-    public void postDetach() {
-        postValue(new StatusAwareData<T>().detach());
     }
 
 }

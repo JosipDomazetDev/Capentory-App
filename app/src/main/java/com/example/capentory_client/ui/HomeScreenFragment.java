@@ -1,11 +1,13 @@
 package com.example.capentory_client.ui;
 
-import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.os.SystemClock;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +28,8 @@ import java.util.Locale;
  */
 public class HomeScreenFragment extends Fragment {
     private TextToSpeech mTTS;
-
+    //https://stackoverflow.com/questions/5608720/android-preventing-double-click-on-a-button/9950832
+    private long lastClickTime = 0;
 
     public HomeScreenFragment() {
         // Required empty public constructor
@@ -41,42 +44,44 @@ public class HomeScreenFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
-        view.findViewById(R.id.btn_start_inventory_fragment_home_screen).setOnClickListener(
-                Navigation.createNavigateOnClickListener(R.id.action_homeScreenFragment_to_roomFragment, null)
-        );
-
-        //initTTS(view);
         return view;
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        view.findViewById(R.id.btn_start_inventory_fragment_home_screen).setOnClickListener(v -> {
+            if (SystemClock.elapsedRealtime() - lastClickTime < 500) {
+                return;
+            }
+            lastClickTime = SystemClock.elapsedRealtime();
+            Navigation.findNavController(v).navigate(R.id.action_homeScreenFragment_to_roomFragment);
+        });
+
     }
 
     private void initTTS(View view) {
         final Button ttsBtn = view.findViewById(R.id.btn_start_inventory_fragment_home_screen);
 
-        mTTS = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    int result = mTTS.setLanguage(Locale.GERMAN);
+        mTTS = new TextToSpeech(getContext(), status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                int result = mTTS.setLanguage(Locale.GERMAN);
 
-                    if (result == TextToSpeech.LANG_MISSING_DATA
-                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        Log.e("TTS", "Language not supported");
-                    } else {
-                        ttsBtn.setEnabled(true);
-                    }
+                if (result == TextToSpeech.LANG_MISSING_DATA
+                        || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    Log.e("TTS", "Language not supported");
                 } else {
-                    Log.e("TTS", "Init failed");
+                    ttsBtn.setEnabled(true);
                 }
+            } else {
+                Log.e("TTS", "Init failed");
             }
         });
 
 
-        ttsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                speak();
-            }
-        });
+        ttsBtn.setOnClickListener(v -> speak());
     }
 
 

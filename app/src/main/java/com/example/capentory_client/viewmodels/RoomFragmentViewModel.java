@@ -53,7 +53,4 @@ public class RoomFragmentViewModel extends ViewModel {
 
     }
 
-    public void detach() {
-        rooms.postDetach();
-    }
 }

@@ -82,15 +82,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
+                android:layout_marginEnd="8dp"
                 android:maxWidth="150dp"
                 android:text="056"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/add_item_floatingbtn"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/room_number_label_fragment_mergeditems"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/no_items_fragment_mergeditems"
+            android:layout_marginTop="70dp"
+            android:padding="20dp"
+            android:textAlignment="center"
+            android:textSize="17sp"
+            android:visibility="gone"
+            android:text="In diesem Raum befinden sich keine Gegenstände!"
+            android:textColor="#000000"
+            app:layout_constraintEnd_toStartOf="@+id/recyclerv_view"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/recyclerv_view"
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerv_view"

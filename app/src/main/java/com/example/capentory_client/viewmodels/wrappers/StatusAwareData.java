@@ -46,14 +46,6 @@ public class StatusAwareData<T> {
     }
 
 
-    public StatusAwareData<T> detach() {
-        this.status = State.DETACHED;
-        this.data = null;
-        this.error = null;
-        return this;
-    }
-
-
     @NonNull
     public State getStatus() {
         return status;
@@ -69,8 +61,9 @@ public class StatusAwareData<T> {
         return error;
     }
 
+
+
     public enum State {
-        DETACHED,
         INITIALIZED,
         SUCCESS,
         ERROR,

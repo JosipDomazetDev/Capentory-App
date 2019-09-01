@@ -1,7 +1,5 @@
 package com.example.capentory_client.viewmodels;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -15,12 +13,13 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class ItemFragmentViewModel extends ViewModel {
+public class MergedItemFragmentViewModel extends ViewModel {
     private StatusAwareLiveData<List<MergedItem>> mergedItems;
     private MergedItemsRepository mergedItemsRepository;
 
+
     @Inject
-    public ItemFragmentViewModel(MergedItemsRepository mergedItemsRepository) {
+    public MergedItemFragmentViewModel(MergedItemsRepository mergedItemsRepository) {
         this.mergedItemsRepository = mergedItemsRepository;
     }
 
@@ -53,7 +52,4 @@ public class ItemFragmentViewModel extends ViewModel {
         super.onCleared();
     }
 
-    public void detach() {
-        mergedItems.postDetach();
-    }
 }

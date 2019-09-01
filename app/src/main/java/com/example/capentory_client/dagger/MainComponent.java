@@ -3,10 +3,7 @@ package com.example.capentory_client.dagger;
 import android.app.Application;
 
 
-import com.example.capentory_client.dagger.daggerviewmodels.ItemFragmentViewModelsModule;
-import com.example.capentory_client.dagger.daggerviewmodels.RoomFragmentViewModelsModule;
 import com.example.capentory_client.ui.BaseApplication;
-import com.example.capentory_client.viewmodels.ItemFragmentViewModel;
 
 import javax.inject.Singleton;
 

@@ -44,13 +44,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.anlage_textview.setText(mergedItems.get(position).getAnlageNummer());
-        holder.anlage_bez_textview.setText(mergedItems.get(position).getDescription());
+        holder.anlage_textview.setText(mergedItems.get(position).getDisplayedAnlageNummer());
+        holder.anlage_bez_textview.setText(mergedItems.get(position).getDisplayedDescription());
     }
 
     @Override
     public int getItemCount() {
         return mergedItems.size();
+    }
+
+    public MergedItem getItem(int position) {
+        return mergedItems.get(position);
     }
 
 
@@ -84,10 +88,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public Filter getFilter() {
-        return exampleFilter;
+        return mergedItemFilter;
     }
 
-    private Filter exampleFilter = new Filter() {
+    private Filter mergedItemFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<MergedItem> filteredList = new ArrayList<>();
@@ -95,13 +99,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(mergedItemsFull);
             } else {
-                String filter = constraint.toString().toLowerCase().trim();
+                String filter = constraint.toString();
 
                 for (MergedItem mergedItem : mergedItemsFull) {
-                    if (mergedItem.getAnlageNummer().toLowerCase().contains(filter)) {
-                        filteredList.add(mergedItem);
-                    }
-                    if (mergedItem.getDescription().toLowerCase().contains(filter)) {
+                    if (mergedItem.applySearchBarFilter(filter)) {
                         filteredList.add(mergedItem);
                     }
                 }
@@ -109,7 +110,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             FilterResults results = new FilterResults();
             results.values = filteredList;
-
             return results;
         }
 
