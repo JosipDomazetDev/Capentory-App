@@ -68,7 +68,7 @@
                 app:srcCompat="@drawable/scan_icon_ios_white" />
 
             <TextView
-                android:id="@+id/scan_result_textview_fragment"
+                android:id="@+id/room_number_label_fragment_mergeditems"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -78,7 +78,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/room_number_fragment_actualrooms"
+                android:id="@+id/room_number_fragment_mergeditems"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -87,7 +87,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/scan_result_textview_fragment"
+                app:layout_constraintStart_toEndOf="@+id/room_number_label_fragment_mergeditems"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.5" />
         </androidx.constraintlayout.widget.ConstraintLayout>

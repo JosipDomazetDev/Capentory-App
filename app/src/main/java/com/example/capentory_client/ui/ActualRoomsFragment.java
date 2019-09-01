@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -18,10 +19,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.volley.VolleyError;
 import com.example.capentory_client.R;
 import com.example.capentory_client.models.ActualRoom;
+import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.DropDownRoomAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
+import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import org.json.JSONException;
 
@@ -54,11 +57,12 @@ public class ActualRoomsFragment extends DaggerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_actualrooms, container, false);
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
+        final Button btn_fragment_room = view.findViewById(R.id.button_fragment_room);
         roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
         progressBar = view.findViewById(R.id.progress_bar_fragment_actualrooms);
         progressBar.bringToFront();
-        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
-        Button btn_fragment_room = view.findViewById(R.id.button_fragment_room);
+        BasicNetworkErrorHandler basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom));
 
 
         final RoomxItemSharedViewModel roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
@@ -73,35 +77,31 @@ public class ActualRoomsFragment extends DaggerFragment {
         roomFragmentViewModel = ViewModelProviders.of(this, providerFactory).get(RoomFragmentViewModel.class);
         roomFragmentViewModel.fetchRooms();
 
-        Log.e("RRRR", roomFragmentViewModel.toString());
 
         roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), statusAwareActualRooms -> {
-            Log.e("x", String.valueOf(statusAwareActualRooms.getStatus()));
-
             switch (statusAwareActualRooms.getStatus()) {
                 case SUCCESS:
-
-
                     DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) statusAwareActualRooms.getData());
                     roomDropDown.setAdapter(adapter);
                     hideProgressBarAndShowContent();
                     break;
                 case ERROR:
-                    displayErrorToastMessage(statusAwareActualRooms.getError());
-
+                    basicNetworkErrorHandler.displayTextViewMessage(statusAwareActualRooms.getError());
                     hideProgressBarAndHideContent();
                     break;
                 case FETCHING:
                     displayProgressbarAndHideContent();
                     break;
             }
+            if (statusAwareActualRooms.getStatus() != StatusAwareData.State.ERROR)
+                basicNetworkErrorHandler.reset();
+
 
         });
 
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
                     roomFragmentViewModel.reloadRooms();
-                    Toast.makeText(getContext(), "Neuer Fetchversuch...", Toast.LENGTH_SHORT).show();
                     swipeRefreshLayout.setRefreshing(false);
                 }
         );
@@ -115,26 +115,6 @@ public class ActualRoomsFragment extends DaggerFragment {
 
         return view;
     }
-
-    private void displayErrorToastMessage(Throwable error) {
-        if (error == null) return;
-        error.printStackTrace();
-
-        String errorMsg = "";
-        if (error instanceof JSONException) {
-            errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
-        } else if (error instanceof VolleyError) {
-            errorMsg = "Ein Verbindungsfehler ist aufgetreten!";
-        }
-
-        String exceptionMsg = "";
-        String fullExceptionMsg = error.getMessage();
-        if (fullExceptionMsg != null)
-            exceptionMsg = "\n" + fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), 100)) + "....";
-
-        Toast.makeText(getContext(), errorMsg + exceptionMsg, Toast.LENGTH_SHORT).show();
-    }
-
 
     private void displayProgressbarAndHideContent() {
         progressBar.setVisibility(View.VISIBLE);

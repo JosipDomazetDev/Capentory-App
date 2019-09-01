@@ -24,7 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            app:layout_constraintTop_toBottomOf="@+id/dropdown_text_fragment_actualroom" />
 
         <Spinner
             android:id="@+id/room_dropdown_fragment_room"
@@ -39,7 +39,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            app:layout_constraintTop_toBottomOf="@+id/dropdown_text_fragment_actualroom" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_fragment_room"
@@ -62,7 +62,7 @@
             app:strokeWidth="2dp" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/dropdown_text_fragment_actualroom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -71,10 +71,9 @@
             android:text="Begeben Sie sich zu dem gewünschten Raum und wählen Sie ihn in der Liste aus:"
             app:layout_constraintBottom_toTopOf="@+id/button_fragment_room"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.064" />
+            app:layout_constraintVertical_bias="0.013" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

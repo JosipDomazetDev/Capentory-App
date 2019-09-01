@@ -12,14 +12,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +32,7 @@ import android.widget.Toast;
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.example.capentory_client.viewmodels.ItemFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
@@ -106,14 +105,15 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mergeditems, container, false);
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
+        final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn);
+        final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_mergeditems);
         recyclerView = view.findViewById(R.id.recyclerv_view);
         progressBar = view.findViewById(R.id.progress_bar_fragment_mergeditems);
         progressBar.bringToFront();
-        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
-        final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn);
-        final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_actualrooms);
         adapter = getRecyclerViewAdapter();
-        itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
+        BasicNetworkErrorHandler basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.room_number_label_fragment_mergeditems));
+        // itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
 
 
         roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
@@ -125,28 +125,21 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
         itemFragmentViewModel.fetchItems(currentRoomString);
 
         itemFragmentViewModel.getMergedItems().observe(getViewLifecycleOwner(), statusAwareMergedItem -> {
-            Log.e("", "-----------------");
-
-            Log.e("", statusAwareMergedItem.getStatus().toString());
-            if (statusAwareMergedItem.getData() != null)
-                Log.e("", String.valueOf(statusAwareMergedItem.getData().size()));
-
-            Log.e("", "-----------------");
-
             switch (statusAwareMergedItem.getStatus()) {
                 case SUCCESS:
                     handleSuccess(adapter, statusAwareMergedItem);
                     break;
                 case ERROR:
-                    statusAwareMergedItem.getError().printStackTrace();
+                    basicNetworkErrorHandler.displayTextViewMessage(statusAwareMergedItem.getError());
                     hideProgressBarAndHideContent();
                     break;
                 case FETCHING:
                     displayProgressbarAndHideContent();
                     break;
-
-
             }
+            if (statusAwareMergedItem.getStatus() != StatusAwareData.State.ERROR)
+                basicNetworkErrorHandler.reset();
+
         });
 
         swipeRefreshLayout.setOnRefreshListener(
@@ -162,6 +155,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
             startActivityForResult(intent, 0);
         });
 
+
         finishRoom.setOnClickListener(v -> {
             roomxItemSharedViewModel.setCurrentRoomValidated(true);
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))
@@ -172,9 +166,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
                     .show();
         });
 
-
         return view;
-
     }
 
     private void handleFinishRoom() {

@@ -11,7 +11,8 @@ public final class ToastUtility {
         throw new UnsupportedOperationException();
     }
 
-    public static void displayCenteredToastMessage(Context context, String msg, int duration){
+    public static void displayCenteredToastMessage(Context context, String msg, int duration) {
+        if (context == null) return;
         Toast toast = Toast.makeText(context, msg, duration);
         TextView v = toast.getView().findViewById(android.R.id.message);
         if (v != null) v.setGravity(Gravity.CENTER);
