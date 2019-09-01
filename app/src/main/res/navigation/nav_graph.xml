@@ -13,15 +13,13 @@
         <action
             android:id="@+id/action_itemsFragment_to_itemDetailFragment"
             app:destination="@id/itemDetailFragment" />
-        <action
-            android:id="@+id/action_itemsFragment_to_roomFragment"
-            app:destination="@id/roomFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/homeScreenFragment"
         android:name="com.example.capentory_client.ui.HomeScreenFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home_screen" >
+        tools:layout="@layout/fragment_home_screen">
         <action
             android:id="@+id/action_homeScreenFragment_to_roomFragment"
             app:destination="@id/roomFragment" />
@@ -39,11 +37,7 @@
         android:id="@+id/itemDetailFragment"
         android:name="com.example.capentory_client.ui.ItemDetailFragment"
         android:label="Gegenstandsvalidierung"
-        tools:layout="@layout/fragment_item_detail">
-        <action
-            android:id="@+id/action_itemDetailFragment_to_itemsFragment"
-            app:destination="@id/itemsFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_item_detail"/>
 
 
     <fragment

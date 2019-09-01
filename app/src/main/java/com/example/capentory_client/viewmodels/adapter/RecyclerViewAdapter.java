@@ -3,6 +3,8 @@ package com.example.capentory_client.viewmodels.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -13,12 +15,14 @@ import com.example.capentory_client.R;
 import com.example.capentory_client.models.MergedItem;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> implements Filterable {
 
 
     private List<MergedItem> mergedItems = new ArrayList<>();
+    private List<MergedItem> mergedItemsFull;
     private ItemClickListener itemClickListener;
 
     public RecyclerViewAdapter(ItemClickListener itemClickListener) {
@@ -27,6 +31,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public void fill(List<MergedItem> mergedItems) {
         this.mergedItems = mergedItems;
+        if (mergedItems != null)
+            this.mergedItemsFull = new ArrayList<>(mergedItems);
         notifyDataSetChanged();
     }
 
@@ -74,4 +80,44 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public interface ItemClickListener {
         void onItemClick(int position, View v);
     }
+
+
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+
+    private Filter exampleFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<MergedItem> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(mergedItemsFull);
+            } else {
+                String filter = constraint.toString().toLowerCase().trim();
+
+                for (MergedItem mergedItem : mergedItemsFull) {
+                    if (mergedItem.getAnlageNummer().toLowerCase().contains(filter)) {
+                        filteredList.add(mergedItem);
+                    }
+                    if (mergedItem.getDescription().toLowerCase().contains(filter)) {
+                        filteredList.add(mergedItem);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mergedItems.clear();
+            mergedItems.addAll((Collection<? extends MergedItem>) results.values);
+            notifyDataSetChanged();
+        }
+    };
 }

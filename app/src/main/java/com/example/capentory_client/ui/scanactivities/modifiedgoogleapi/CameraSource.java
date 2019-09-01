@@ -33,11 +33,13 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 import androidx.annotation.StringDef;
 
+import com.example.capentory_client.androidutility.ToastUtility;
 import com.google.android.gms.common.images.Size;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame;
@@ -579,16 +581,20 @@ public class CameraSource {
      */
     public boolean setFlashMode(@FlashMode String mode) {
         synchronized (mCameraLock) {
-            if (mCamera != null && mode != null) {
-                Camera.Parameters parameters = mCamera.getParameters();
-                if (parameters.getSupportedFlashModes().contains(mode)) {
-                    parameters.setFlashMode(mode);
-                    mCamera.setParameters(parameters);
-                    mFlashMode = mode;
-                    return true;
+            try {
+                if (mCamera != null && mode != null) {
+                    Camera.Parameters parameters = mCamera.getParameters();
+                    if (parameters == null) return false;
+                    if (parameters.getSupportedFlashModes().contains(mode)) {
+                        parameters.setFlashMode(mode);
+                        mCamera.setParameters(parameters);
+                        mFlashMode = mode;
+                        return true;
+                    }
                 }
+            } catch (Exception e) {
+                ToastUtility.displayCenteredToastMessage(mContext, "Blitz nicht unterstützt!", Toast.LENGTH_SHORT);
             }
-
             return false;
         }
     }

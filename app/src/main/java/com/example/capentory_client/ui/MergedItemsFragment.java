@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavOptions;
@@ -20,8 +21,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +64,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
     private ItemFragmentViewModel itemFragmentViewModel;
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
+    private RecyclerViewAdapter adapter;
 
 
     @Inject
@@ -71,6 +77,30 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        MenuItem searchItem = menu.findItem(R.id.search);
+        searchItem.setVisible(true);
+
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -82,7 +112,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
         final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn);
         final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_actualrooms);
-        final RecyclerViewAdapter adapter = getRecyclerViewAdapter();
+        adapter = getRecyclerViewAdapter();
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
 
 
@@ -115,6 +145,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
                     displayProgressbarAndHideContent();
                     break;
 
+
             }
         });
 
@@ -136,12 +167,11 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                     .setTitle("Alles erledigt?")
                     .setMessage("Wollen Sie die Validierung für diesen Raum beenden?")
-                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        handleFinishRoom();
-                    })
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
                     .setNegativeButton(android.R.string.no, null)
                     .show();
         });
+
 
         return view;
 
@@ -149,17 +179,11 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
 
     private void handleFinishRoom() {
         roomxItemSharedViewModel.setCurrentRoomValidated(true);
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_itemsFragment_to_roomFragment,
-                        null,
-                        new NavOptions.Builder()
-                                .setPopUpTo(R.id.roomFragment,
-                                        true).build()
-                );
-
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
     private void handleSuccess(RecyclerViewAdapter adapter, StatusAwareData<List<MergedItem>> statusAwareMergedItem) {
+        if (adapter == null) return;
         hideProgressBarAndShowContent();
         List<MergedItem> mergedItems = statusAwareMergedItem.getData();
         if (mergedItems == null) return;
@@ -209,7 +233,6 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
         recyclerView.setAdapter(adapter);
         return adapter;
     }
-
 
     @Override
     public void onItemClick(int position, View v) {
@@ -287,4 +310,5 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
         super.onDetach();
         itemFragmentViewModel.detach();
     }
+
 }

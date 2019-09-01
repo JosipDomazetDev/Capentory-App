@@ -73,6 +73,8 @@ public class ActualRoomsFragment extends DaggerFragment {
         roomFragmentViewModel = ViewModelProviders.of(this, providerFactory).get(RoomFragmentViewModel.class);
         roomFragmentViewModel.fetchRooms();
 
+        Log.e("RRRR", roomFragmentViewModel.toString());
+
         roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), statusAwareActualRooms -> {
             Log.e("x", String.valueOf(statusAwareActualRooms.getStatus()));
 
@@ -86,6 +88,7 @@ public class ActualRoomsFragment extends DaggerFragment {
                     break;
                 case ERROR:
                     displayErrorToastMessage(statusAwareActualRooms.getError());
+
                     hideProgressBarAndHideContent();
                     break;
                 case FETCHING:
@@ -106,7 +109,8 @@ public class ActualRoomsFragment extends DaggerFragment {
         roomxItemSharedViewModel.getCurrentRoomValidated().observe(getViewLifecycleOwner(), b -> {
             if (b) {
                 roomFragmentViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
-            }
+            } else
+                roomxItemSharedViewModel.setCurrentRoomValidated(false);
         });
 
         return view;
@@ -114,6 +118,7 @@ public class ActualRoomsFragment extends DaggerFragment {
 
     private void displayErrorToastMessage(Throwable error) {
         if (error == null) return;
+        error.printStackTrace();
 
         String errorMsg = "";
         if (error instanceof JSONException) {
@@ -150,6 +155,5 @@ public class ActualRoomsFragment extends DaggerFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        roomFragmentViewModel.detach();
     }
 }

@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
@@ -74,13 +76,21 @@ public class ScanBarcodeActivity extends Activity {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
                 try {
-                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{Manifest.permission.CAMERA}, MY_PERMISSION_REQUEST_CAMERA);
+                            finish();
+                        }
+                    } else if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.CAMERA},
                                 MY_PERMISSION_REQUEST_CAMERA);
                         return;
                     }
                     cameraSource.start(cameraPreview.getHolder());
-                } catch (IOException e) {
+                } catch (
+                        IOException e) {
                     e.printStackTrace();
                 }
             }

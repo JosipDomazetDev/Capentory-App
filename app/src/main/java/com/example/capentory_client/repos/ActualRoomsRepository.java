@@ -64,7 +64,9 @@ public class ActualRoomsRepository {
                     } catch (JSONException error) {
                         actualRoomsLiveData.postError(error);
                     }
-                }, error -> actualRoomsLiveData.postError(error)) {
+                }, error -> {
+                    actualRoomsLiveData.postError(error);
+                }) {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
