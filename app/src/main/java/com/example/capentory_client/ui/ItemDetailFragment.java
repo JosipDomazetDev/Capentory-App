@@ -55,7 +55,11 @@ public class ItemDetailFragment extends Fragment {
 
         itemxDetailSharedViewModel.getCurrentItem().observe(getViewLifecycleOwner(), mergedItem -> {
             TextView txt = view.findViewById(R.id.dummy);
-            txt.setText(mergedItem.getMergedItemJSONPayload().toString());
+            if (mergedItem == null) {
+                txt.setText("Server gib Formular");
+            } else {
+                txt.setText(mergedItem.getMergedItemJSONPayload().toString());
+            }
         });
 
         ImageButton validateButton = view.findViewById(R.id.validate_btn_fragment_itemdetail);

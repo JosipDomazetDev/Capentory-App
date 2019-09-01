@@ -108,6 +108,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
         View view = inflater.inflate(R.layout.fragment_mergeditems, container, false);
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
         final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn);
+        final FloatingActionButton addItem = view.findViewById(R.id.add_item_floatingbtn);
         final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_mergeditems);
         final TextView noItemTextView = view.findViewById(R.id.no_items_fragment_mergeditems);
         recyclerView = view.findViewById(R.id.recyclerv_view);
@@ -171,6 +172,11 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
                     .show();
         });
 
+        addItem.setOnClickListener(v -> {
+            itemxDetailSharedViewModel.setCurrentItem(null);
+            NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+        });
+
         itemxDetailSharedViewModel.getCurrentItemValidated().observe(getViewLifecycleOwner(), b -> {
             if (b) {
                 mergedItemFragmentViewModel.removeItem(itemxDetailSharedViewModel.getCurrentItem().getValue());
@@ -219,6 +225,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
             //}
 
             if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
+                Log.e("eeeeeeee", "eee");
                 //  Received a barcode scan
                 try {
                     String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
@@ -263,6 +270,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
     }
 
     private void launchItemDetailFragmentFromBarcode(String barcode) {
+        Log.e("XXXXX", barcode);
         StatusAwareData<List<MergedItem>> statusAwareData = mergedItemFragmentViewModel.getMergedItems().getValue();
         if (statusAwareData == null) return;
         List<MergedItem> items = statusAwareData.getData();

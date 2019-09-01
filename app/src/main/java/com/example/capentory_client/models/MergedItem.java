@@ -69,13 +69,29 @@ public class MergedItem {
     }
 
     /**
-     * Compare the barcode (consists out of two parts), if no match, just check the anlage itself
+     * Compare the scannedBarcode
      *
-     * @param barcode to compare
+     * @param scannedBarcode to compare
      * @return if matches
      */
-    public boolean equalsBarcode(String barcode) {
-        return Objects.equals(getBarcode(), barcode) || Objects.equals(getAnlageNummer(), barcode);
+    public boolean equalsBarcode(String scannedBarcode) {
+        if (anlageNummer == null) return false;
+
+        // 12340000 = 12340000
+        boolean normalCond = Objects.equals(getBarcode(), scannedBarcode);
+        if (normalCond) return true;
+
+        if (anlageNummer.length() == scannedBarcode.length()) {
+            // 1234 = 1234 (scannedBarcode maybe doesn't include zeros => only compare to anlage)
+            return Objects.equals(anlageNummer, scannedBarcode);
+
+        } else if (anlageNummer.length() < scannedBarcode.length()) {
+            // 1234 = 1234|0000| (scannedBarcode includes zeros but local barcode doesn't (=> cut and compare to anlage))
+            return Objects.equals(anlageNummer, scannedBarcode.substring(0, anlageNummer.length()));
+        }
+
+        // If the scannedBarcode however is shorther than even anlage every hope is lost
+        return false;
     }
 
     public boolean applySearchBarFilter(@NonNull String filter) {
