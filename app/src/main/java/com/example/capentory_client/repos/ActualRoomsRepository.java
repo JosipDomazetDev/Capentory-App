@@ -35,7 +35,6 @@ public class ActualRoomsRepository {
     }
 
 
-    // Pretend to get data from a webservice or online source
     public StatusAwareLiveData<List<ActualRoom>> getRooms() {
         setRooms();
         return actualRoomsLiveData;
@@ -47,11 +46,6 @@ public class ActualRoomsRepository {
         String server_ip = sharedPreferences.getString("server_ip", "capentory.hostname") + ":";
         String server_port = sharedPreferences.getString("server_port", "80");
         String url = "http://" + server_ip + server_port + "/api/inventory/actualroom/?format=json";
-
-        //url = "http://192.168.1.2:8000/api/actualroom/171/?format=json";
-        //url = "http://192.168.1.2:8000/api/inventory/actualroom/LAN%209/?format=json";
-        //url = "http://192.168.1.2:8000/api/saproom/?format=json";
-
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, payload -> {
@@ -84,8 +78,5 @@ public class ActualRoomsRepository {
 
 
         actualRoomsLiveData.postFetching();
-    }
-
-    public void resetExceptionState() {
     }
 }

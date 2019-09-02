@@ -1,6 +1,5 @@
 package com.example.capentory_client.repos;
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -8,15 +7,14 @@ import android.util.Base64;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.models.MergedItemField;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,48 +22,48 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MergedItemsRepository {
-    private StatusAwareLiveData<List<MergedItem>> mergedItemsLiveData = new StatusAwareLiveData<>();
+public class FormRepository {
+    private StatusAwareLiveData<List<MergedItemField>> mergedItemFieldsLiveData = new StatusAwareLiveData<>();
     private Context context;
 
-
     @Inject
-    public MergedItemsRepository(Context context) {
+    public FormRepository(Context context) {
         this.context = context;
     }
 
 
-    public StatusAwareLiveData<List<MergedItem>> getMergedItems(String currentRoomString) {
-        mergedItemsLiveData.postFetching();
-        setItems(currentRoomString);
-        return mergedItemsLiveData;
+    public StatusAwareLiveData<List<MergedItemField>> getForm() {
+        setForm();
+        return mergedItemFieldsLiveData;
     }
 
-    public void setItems(String currentRoomString) {
+    private void setForm() {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
         String server_ip = sharedPreferences.getString("server_ip", "capentory.hostname") + ":";
         String server_port = sharedPreferences.getString("server_port", "80");
-
-        String url = "http://" + server_ip + server_port + "/api/actualroom/" + currentRoomString + "/?format=json";
+        String url = "http://" + server_ip + server_port + "/api/actualitem/";
 
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, payload -> {
+                (Request.Method.OPTIONS, url, null, payload -> {
                     try {
-                        JSONArray allItems = payload.optJSONArray("all_items");
-                        List<MergedItem> mergedItems = new ArrayList<>();
+                        payload = payload.getJSONObject("actions").getJSONObject("POST");
+                        List<MergedItemField> mergedItemFields = new ArrayList<>();
+                        Iterator<String> iterator = payload.keys();
 
-                        for (int i = 0; i < allItems.length(); i++) {
-                            JSONObject jsonItem = allItems.getJSONObject(i);
-                            mergedItems.add(new MergedItem(currentRoomString, jsonItem));
+                        while (iterator.hasNext()) {
+                            String key = iterator.next();
+                            mergedItemFields.add(new MergedItemField(key, payload.getJSONObject(key)));
                         }
 
-                        mergedItemsLiveData.postSuccess(mergedItems);
+                        mergedItemFieldsLiveData.postSuccess(mergedItemFields);
                     } catch (JSONException error) {
-                        mergedItemsLiveData.postError(error);
+                        mergedItemFieldsLiveData.postError(error);
                     }
-                }, error -> mergedItemsLiveData.postError(error)) {
+                }, error -> {
+                    mergedItemFieldsLiveData.postError(error);
+                }) {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
@@ -80,6 +78,9 @@ public class MergedItemsRepository {
 
         MySingleton.getInstance(context).
                 addToRequestQueue(jsonObjectRequest);
-    }
 
+
+        mergedItemFieldsLiveData.postFetching();
+    }
 }
+
