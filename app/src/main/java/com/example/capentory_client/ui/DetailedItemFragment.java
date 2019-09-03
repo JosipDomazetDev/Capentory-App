@@ -26,6 +26,9 @@ import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailShare
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -74,7 +77,11 @@ public class DetailedItemFragment extends DaggerFragment {
             switch (fields.getStatus()) {
 
                 case SUCCESS:
-                    displayForm(view, fields.getData());
+                    try {
+                        displayForm(view, fields.getData());
+                    } catch (JSONException e) {
+                        basicNetworkErrorHandler.displayTextViewMessage(e);
+                    }
                     break;
                 case ERROR:
                     basicNetworkErrorHandler.displayTextViewMessage(fields.getError());
@@ -104,25 +111,52 @@ public class DetailedItemFragment extends DaggerFragment {
         validateButton.setOnClickListener(v -> handleValidate());
     }
 
-    private void displayForm(View view, List<MergedItemField> fields) {
+    private void displayForm(View view, List<MergedItemField> fields) throws JSONException {
+        JSONObject mergedItemJSONPayload = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue()).getMergedItemJSONPayload();
+        if (mergedItemJSONPayload.length() != fields.size()) {
+            return;
+        }
+
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
+
+
         for (MergedItemField field : fields) {
             TextInputLayout textInputLayout = new TextInputLayout(view.getContext());
             textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-            EditText myEditText = new EditText(getContext()); // Pass it an Activity or Context
-            myEditText.setLayoutParams(new LinearLayout.LayoutParams(100, 40));
-            myEditText.setText("eeeeeeeee");
+            EditText editText = new EditText(getContext());
 
-            //myEditText.setId(field.getKey());
 
-            textInputLayout.addView(myEditText);
+            mergedItemJSONPayload.get(field.getKey());
 
-            TextView textView = new TextView(view.getContext());
-            textView.setText("rjhhehhhhhhhh");
+            switch (field.getType().toLowerCase()) {
+                case "integer":
+                    break;
 
+                case "datetime":
+                    break;
+
+                case "string":
+                    editText.setText(mergedItemJSONPayload.getString(field.getKey()));
+                    break;
+
+                case "field":
+                    //Field => z.b. fk
+                    break;
+
+                case "choice":
+                    break;
+
+                default:
+                    break;
+
+
+            }
+
+
+            //editText.setId(field.getKey());
+            textInputLayout.addView(editText);
             linearLayout.addView(textInputLayout);
-            linearLayout.addView(textView);
 
         }
     }
@@ -130,5 +164,7 @@ public class DetailedItemFragment extends DaggerFragment {
     public void handleValidate() {
         itemxDetailSharedViewModel.setCurrentItemValidated(true);
         NavHostFragment.findNavController(this).popBackStack();
+
+        //itemxDetailSharedViewModel.setValidatedData();
     }
 }

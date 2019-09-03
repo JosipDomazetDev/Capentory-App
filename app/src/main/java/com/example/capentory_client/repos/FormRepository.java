@@ -2,8 +2,10 @@ package com.example.capentory_client.repos;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Base64;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -22,13 +24,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class FormRepository {
+public class FormRepository extends Repository {
     private StatusAwareLiveData<List<MergedItemField>> mergedItemFieldsLiveData = new StatusAwareLiveData<>();
-    private Context context;
 
     @Inject
     public FormRepository(Context context) {
-        this.context = context;
+        super(context);
     }
 
 
@@ -38,15 +39,8 @@ public class FormRepository {
     }
 
     private void setForm() {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-        String server_ip = sharedPreferences.getString("server_ip", "capentory.hostname") + ":";
-        String server_port = sharedPreferences.getString("server_port", "80");
-        String url = "http://" + server_ip + server_port + "/api/actualitem/";
-
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.OPTIONS, url, null, payload -> {
+                (Request.Method.OPTIONS, getUrl(false,"actualitem/"), null, payload -> {
                     try {
                         payload = payload.getJSONObject("actions").getJSONObject("POST");
                         List<MergedItemField> mergedItemFields = new ArrayList<>();
@@ -76,7 +70,7 @@ public class FormRepository {
             }
         };
 
-        MySingleton.getInstance(context).
+        NetworkSingleton.getInstance(context).
                 addToRequestQueue(jsonObjectRequest);
 
 

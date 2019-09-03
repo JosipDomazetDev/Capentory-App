@@ -1,10 +1,12 @@
 package com.example.capentory_client.ui.errorhandling;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
@@ -48,8 +50,14 @@ public class BasicNetworkErrorHandler {
         String errorMsg = "";
         if (error instanceof JSONException) {
             errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
-        } else if (error instanceof VolleyError) {
+        }
+        else if (error instanceof TimeoutError) {
+            errorMsg = "Zeitüberschreitungsfehler ist aufgetreten!";
+            error.printStackTrace();
+        }
+        else if (error instanceof VolleyError) {
             errorMsg = "Ein Verbindungsfehler ist aufgetreten!";
+            error.printStackTrace();
         }
 
         String exceptionMsg = "";

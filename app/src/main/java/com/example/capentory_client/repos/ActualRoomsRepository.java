@@ -7,13 +7,10 @@ import android.preference.PreferenceManager;
 import android.util.Base64;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -25,13 +22,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class ActualRoomsRepository {
+public class ActualRoomsRepository extends Repository {
     private StatusAwareLiveData<List<ActualRoom>> actualRoomsLiveData = new StatusAwareLiveData<>();
-    private Context context;
 
     @Inject
     public ActualRoomsRepository(Context context) {
-        this.context = context;
+        super(context);
     }
 
 
@@ -41,14 +37,8 @@ public class ActualRoomsRepository {
     }
 
     public void setRooms() {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-        String server_ip = sharedPreferences.getString("server_ip", "capentory.hostname") + ":";
-        String server_port = sharedPreferences.getString("server_port", "80");
-        String url = "http://" + server_ip + server_port + "/api/inventory/actualroom/?format=json";
-
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
-                (Request.Method.GET, url, null, payload -> {
+                (Request.Method.GET, getUrl(true, "inventory", "actualroom"), null, payload -> {
                     try {
                         List<ActualRoom> actualRooms = new ArrayList<>();
                         for (int i = 0; i < payload.length(); i++) {
@@ -73,7 +63,7 @@ public class ActualRoomsRepository {
             }
         };
 
-        MySingleton.getInstance(context).
+        NetworkSingleton.getInstance(context).
                 addToRequestQueue(jsonObjectRequest);
 
 

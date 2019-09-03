@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Base64;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -24,14 +25,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MergedItemsRepository {
+public class MergedItemsRepository extends Repository {
     private StatusAwareLiveData<List<MergedItem>> mergedItemsLiveData = new StatusAwareLiveData<>();
-    private Context context;
 
 
     @Inject
     public MergedItemsRepository(Context context) {
-        this.context = context;
+        super(context);
+        Log.e("eee", this.toString());
     }
 
 
@@ -42,16 +43,8 @@ public class MergedItemsRepository {
     }
 
     public void setItems(String currentRoomString) {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-        String server_ip = sharedPreferences.getString("server_ip", "capentory.hostname") + ":";
-        String server_port = sharedPreferences.getString("server_port", "80");
-
-        String url = "http://" + server_ip + server_port + "/api/actualroom/" + currentRoomString + "/?format=json";
-
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, payload -> {
+                (Request.Method.GET, getUrl(true, "actualroom", currentRoomString), null, payload -> {
                     try {
                         JSONArray allItems = payload.optJSONArray("all_items");
                         List<MergedItem> mergedItems = new ArrayList<>();
@@ -78,7 +71,7 @@ public class MergedItemsRepository {
             }
         };
 
-        MySingleton.getInstance(context).
+        NetworkSingleton.getInstance(context).
                 addToRequestQueue(jsonObjectRequest);
     }
 

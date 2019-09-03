@@ -1,13 +1,7 @@
 package com.example.capentory_client.ui;
 
 
-
-
 import com.example.capentory_client.dagger.DaggerMainComponent;
-
-import dagger.android.AndroidInjector;
-import dagger.android.support.DaggerApplication;
-
 
 import dagger.android.AndroidInjector;
 import dagger.android.support.DaggerApplication;
