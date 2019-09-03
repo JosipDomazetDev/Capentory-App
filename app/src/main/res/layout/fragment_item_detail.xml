@@ -7,26 +7,20 @@
     android:layout_height="match_parent"
     tools:context=".ui.DetailedItemFragment">
 
-    <ScrollView
-        android:id="@+id/scrollView_fragment_itemdetail"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout_fragment_itemdetail"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_layout_fragment_item_detail"
+        <TextView
+            android:id="@+id/dummy"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/dummy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </ScrollView>
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout

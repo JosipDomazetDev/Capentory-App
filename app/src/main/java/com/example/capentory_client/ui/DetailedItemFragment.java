@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.capentory_client.R;
@@ -23,8 +25,6 @@ import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 import com.google.android.material.textfield.TextInputLayout;
-
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Objects;
@@ -96,7 +96,7 @@ public class DetailedItemFragment extends DaggerFragment {
             if (mergedItem == null) {
                 txt.setText("Server gib Formular");
             } else {
-                txt.setText(mergedItem.getMergedItemJSONPayload().toString());
+                //txt.setText(mergedItem.getMergedItemJSONPayload().toString());
             }
         });
 
@@ -105,12 +105,25 @@ public class DetailedItemFragment extends DaggerFragment {
     }
 
     private void displayForm(View view, List<MergedItemField> fields) {
-        TextInputLayout textInputLayout = view.findViewById(R.id.text_input_layout_fragment_item_detail);
-
+        LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
         for (MergedItemField field : fields) {
+            TextInputLayout textInputLayout = new TextInputLayout(view.getContext());
+            textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
             EditText myEditText = new EditText(getContext()); // Pass it an Activity or Context
-            myEditText.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)); // Pass two args; must be LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, or an integer pixel value.
+            myEditText.setLayoutParams(new LinearLayout.LayoutParams(100, 40));
+            myEditText.setText("eeeeeeeee");
+
+            //myEditText.setId(field.getKey());
+
             textInputLayout.addView(myEditText);
+
+            TextView textView = new TextView(view.getContext());
+            textView.setText("rjhhehhhhhhhh");
+
+            linearLayout.addView(textInputLayout);
+            linearLayout.addView(textView);
+
         }
     }
 
