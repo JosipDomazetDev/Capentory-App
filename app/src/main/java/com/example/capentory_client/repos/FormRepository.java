@@ -16,16 +16,18 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class FormRepository extends Repository {
-    private StatusAwareLiveData<List<MergedItemField>> mergedItemFieldsLiveData = new StatusAwareLiveData<>();
+    private StatusAwareLiveData<Map<String, MergedItemField>> mergedItemFieldsLiveData = new StatusAwareLiveData<>();
 
     @Inject
     public FormRepository(Context context) {
@@ -33,25 +35,30 @@ public class FormRepository extends Repository {
     }
 
 
-    public StatusAwareLiveData<List<MergedItemField>> getForm() {
-        setForm();
+    public StatusAwareLiveData<Map<String, MergedItemField>> getForm() {
+
+        if(mergedItemFieldsLiveData.getValue() == null) {
+            setForm();
+        }
         return mergedItemFieldsLiveData;
     }
 
     private void setForm() {
+        mergedItemFieldsLiveData.postFetching();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.OPTIONS, getUrl(false,"actualitem/"), null, payload -> {
+                (Request.Method.OPTIONS, getUrl(false, "actualitem/"), null, payload -> {
                     try {
+                        Log.e("FETCHING","frefrfddde");
                         payload = payload.getJSONObject("actions").getJSONObject("POST");
-                        List<MergedItemField> mergedItemFields = new ArrayList<>();
+                        Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
                         Iterator<String> iterator = payload.keys();
 
                         while (iterator.hasNext()) {
                             String key = iterator.next();
-                            mergedItemFields.add(new MergedItemField(key, payload.getJSONObject(key)));
+                            mergedItemFieldsSet.put(key, new MergedItemField(key, payload.getJSONObject(key)));
                         }
 
-                        mergedItemFieldsLiveData.postSuccess(mergedItemFields);
+                        mergedItemFieldsLiveData.postSuccess(mergedItemFieldsSet);
                     } catch (JSONException error) {
                         mergedItemFieldsLiveData.postError(error);
                     }

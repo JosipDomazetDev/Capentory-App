@@ -146,31 +146,28 @@ public class ScanTextActivity extends AppCompatActivity {
                 public void receiveDetections(Detector.Detections<TextBlock> detections) {
                     final SparseArray<TextBlock> items = detections.getDetectedItems();
                     if (items.size() != 0) {
-                        textPreview.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (textFilterMode != 3)
-                                    readMessage = new StringBuilder();
+                        textPreview.post(() -> {
+                            if (textFilterMode != 3)
+                                readMessage = new StringBuilder();
 
-                                for (int i = 0; i < items.size(); i++) {
-                                    //Get current string from text block
-                                    String currentString = items.valueAt(i).getValue();
-                                    currentString = getFilteredString(i, currentString, textFilterMode, textRecognizer);
+                            for (int i = 0; i < items.size(); i++) {
+                                //Get current string from text block
+                                String currentString = items.valueAt(i).getValue();
+                                currentString = getFilteredString(i, currentString, textFilterMode, textRecognizer);
 
-                                    if (textFilterMode == 3) {
-                                        //Barcode Optimization
-                                        fillMap(currentString);
-                                        String mostFrequentCode = getMostFrequentCode();
-                                        if (determineDisplayedCode(i, currentString, mostFrequentCode, textRecognizer))
-                                            break;
-                                    }
-
-                                    if (!currentString.isEmpty()) {
-                                        readMessage.append(currentString).append("\n");
-                                    }
+                                if (textFilterMode == 3) {
+                                    //Barcode Optimization
+                                    fillMap(currentString);
+                                    String mostFrequentCode = getMostFrequentCode();
+                                    if (determineDisplayedCode(i, currentString, mostFrequentCode, textRecognizer))
+                                        break;
                                 }
-                                textPreview.setText(readMessage.toString());
+
+                                if (!currentString.isEmpty()) {
+                                    readMessage.append(currentString).append("\n");
+                                }
                             }
+                            textPreview.setText(readMessage.toString());
                         });
                     }
                 }

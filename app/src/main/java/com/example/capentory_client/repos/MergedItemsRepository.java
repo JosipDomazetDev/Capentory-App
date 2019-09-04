@@ -32,17 +32,16 @@ public class MergedItemsRepository extends Repository {
     @Inject
     public MergedItemsRepository(Context context) {
         super(context);
-        Log.e("eee", this.toString());
     }
 
 
     public StatusAwareLiveData<List<MergedItem>> getMergedItems(String currentRoomString) {
-        mergedItemsLiveData.postFetching();
         setItems(currentRoomString);
         return mergedItemsLiveData;
     }
 
     public void setItems(String currentRoomString) {
+        mergedItemsLiveData.postFetching();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, getUrl(true, "actualroom", currentRoomString), null, payload -> {
                     try {

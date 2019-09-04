@@ -14,23 +14,24 @@ public class MergedItemField {
 
     @NonNull
     private String key, type, label;
-    @NonNull
     private boolean required, readOnly;
 
     @Nullable
     private JSONArray choices;
 
-    public MergedItemField(String key, JSONObject payload) throws JSONException {
+    public MergedItemField(@NonNull String key, JSONObject payload) throws JSONException {
         this.key = key;
         type = payload.getString("type");
         label = payload.getString("label");
         required = payload.getBoolean("required");
         readOnly = payload.getBoolean("read_only");
         choices = payload.optJSONArray("choices");
+
+        field=payload;
     }
 
 
-    public JSONObject getField() {
+    public JSONObject getFieldAsJSON() {
         return field;
     }
 

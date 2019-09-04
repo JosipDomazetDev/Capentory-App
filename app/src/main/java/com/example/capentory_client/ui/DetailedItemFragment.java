@@ -8,13 +8,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.capentory_client.R;
@@ -24,12 +24,14 @@ import com.example.capentory_client.viewmodels.DetailItemFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -111,25 +113,22 @@ public class DetailedItemFragment extends DaggerFragment {
         validateButton.setOnClickListener(v -> handleValidate());
     }
 
-    private void displayForm(View view, List<MergedItemField> fields) throws JSONException {
+    private void displayForm(View view, Map<String, MergedItemField> mapFields) throws JSONException {
         JSONObject mergedItemJSONPayload = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue()).getMergedItemJSONPayload();
-        if (mergedItemJSONPayload.length() != fields.size()) {
-            return;
+
+        if (mergedItemJSONPayload.length() != mapFields.size()) {
+            //return;
         }
 
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
+        Iterator<String> iterator = mergedItemJSONPayload.keys();
 
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            MergedItemField currentField = getCurrentField(key, mapFields);
+            if (currentField == null || currentField.isReadOnly()) continue;
 
-        for (MergedItemField field : fields) {
-            TextInputLayout textInputLayout = new TextInputLayout(view.getContext());
-            textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-            EditText editText = new EditText(getContext());
-
-
-            mergedItemJSONPayload.get(field.getKey());
-
-            switch (field.getType().toLowerCase()) {
+            switch (currentField.getType().toLowerCase()) {
                 case "integer":
                     break;
 
@@ -137,11 +136,28 @@ public class DetailedItemFragment extends DaggerFragment {
                     break;
 
                 case "string":
-                    editText.setText(mergedItemJSONPayload.getString(field.getKey()));
+                    Log.e("eeeee", "eeeeee");
+                    TextInputLayout textInputLayout = new TextInputLayout(view.getContext());
+                    textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                    TextInputEditText editText = new TextInputEditText(Objects.requireNonNull(getContext()));
+                    editText.setText(mergedItemJSONPayload.getString(key));
+                    editText.setHint(currentField.getLabel());
+                    editText.setPadding(0,0,0,30);
+                    textInputLayout.addView(editText);
+                    linearLayout.addView(textInputLayout);
                     break;
 
                 case "field":
                     //Field => z.b. fk
+                    break;
+
+                case "boolean":
+                    Switch switch_ = new Switch(getContext());
+                    switch_.setChecked(mergedItemJSONPayload.getBoolean(key));
+                    switch_.setText(currentField.getLabel());
+                    switch_.setPadding(0,0,0,30);
+                    linearLayout.addView(switch_);
                     break;
 
                 case "choice":
@@ -149,17 +165,17 @@ public class DetailedItemFragment extends DaggerFragment {
 
                 default:
                     break;
-
-
             }
-
-
-            //editText.setId(field.getKey());
-            textInputLayout.addView(editText);
-            linearLayout.addView(textInputLayout);
-
         }
     }
+
+    private MergedItemField getCurrentField(String key, Map<String, MergedItemField> mapFields) throws JSONException {
+        if (mapFields.containsKey(key)) {
+            return mapFields.get(key);
+        }
+        return null;
+    }
+
 
     public void handleValidate() {
         itemxDetailSharedViewModel.setCurrentItemValidated(true);

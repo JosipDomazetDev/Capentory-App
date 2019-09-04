@@ -1,17 +1,19 @@
 package com.example.capentory_client.viewmodels;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.capentory_client.models.MergedItemField;
 import com.example.capentory_client.repos.FormRepository;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
+import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
-import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 public class DetailItemFragmentViewModel extends ViewModel {
-    private StatusAwareLiveData<List<MergedItemField>> fields;
+    private StatusAwareLiveData<Map<String, MergedItemField>> fields;
     private FormRepository formRepository;
 
     @Inject
@@ -31,7 +33,7 @@ public class DetailItemFragmentViewModel extends ViewModel {
         fields = formRepository.getForm();
     }
 
-    public StatusAwareLiveData<List<MergedItemField>> getFields() {
+    public LiveData<StatusAwareData<Map<String, MergedItemField>>> getFields() {
         return fields;
     }
 

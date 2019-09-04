@@ -32,11 +32,15 @@ public class ActualRoomsRepository extends Repository {
 
 
     public StatusAwareLiveData<List<ActualRoom>> getRooms() {
-        setRooms();
+        if (actualRoomsLiveData.getValue() == null) {
+            setRooms();
+        }
+
         return actualRoomsLiveData;
     }
 
     public void setRooms() {
+        actualRoomsLiveData.postFetching();
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
                 (Request.Method.GET, getUrl(true, "inventory", "actualroom"), null, payload -> {
                     try {
