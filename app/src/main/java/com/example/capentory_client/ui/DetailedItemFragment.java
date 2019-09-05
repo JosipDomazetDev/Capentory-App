@@ -8,14 +8,19 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.models.MergedItemField;
@@ -27,12 +32,17 @@ import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import javax.inject.Inject;
 
@@ -86,6 +96,7 @@ public class DetailedItemFragment extends DaggerFragment {
                     }
                     break;
                 case ERROR:
+                    fields.getError().printStackTrace();
                     basicNetworkErrorHandler.displayTextViewMessage(fields.getError());
                     break;
                 case FETCHING:
@@ -115,58 +126,105 @@ public class DetailedItemFragment extends DaggerFragment {
 
     private void displayForm(View view, Map<String, MergedItemField> mapFields) throws JSONException {
         JSONObject mergedItemJSONPayload = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue()).getMergedItemJSONPayload();
-
-        if (mergedItemJSONPayload.length() != mapFields.size()) {
-            //return;
-        }
+        Map<String, List<MergedItemField>> map = new HashMap<>();
 
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
         Iterator<String> iterator = mergedItemJSONPayload.keys();
 
         while (iterator.hasNext()) {
-            String key = iterator.next();
-            MergedItemField currentField = getCurrentField(key, mapFields);
-            if (currentField == null || currentField.isReadOnly()) continue;
+            MergedItemField currentField = getCurrentField(iterator.next(), mapFields);
 
-            switch (currentField.getType().toLowerCase()) {
-                case "integer":
-                    break;
+            // If the currentField is null this means that it wasn't included in the form request and therefore has no valid representation
+            if (currentField == null) continue;
+            String mapKeyCurrentFieldType = currentField.getType();
 
-                case "datetime":
-                    break;
+            if (map.containsKey(mapKeyCurrentFieldType)) {
+                List<MergedItemField> fields = map.get(mapKeyCurrentFieldType);
+                if (fields == null) continue;
 
-                case "string":
-                    Log.e("eeeee", "eeeeee");
-                    TextInputLayout textInputLayout = new TextInputLayout(view.getContext());
-                    textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                fields.add(currentField);
+                map.put(mapKeyCurrentFieldType, fields);
 
-                    TextInputEditText editText = new TextInputEditText(Objects.requireNonNull(getContext()));
-                    editText.setText(mergedItemJSONPayload.getString(key));
-                    editText.setHint(currentField.getLabel());
-                    editText.setPadding(0,0,0,30);
-                    textInputLayout.addView(editText);
-                    linearLayout.addView(textInputLayout);
-                    break;
-
-                case "field":
-                    //Field => z.b. fk
-                    break;
-
-                case "boolean":
-                    Switch switch_ = new Switch(getContext());
-                    switch_.setChecked(mergedItemJSONPayload.getBoolean(key));
-                    switch_.setText(currentField.getLabel());
-                    switch_.setPadding(0,0,0,30);
-                    linearLayout.addView(switch_);
-                    break;
-
-                case "choice":
-                    break;
-
-                default:
-                    break;
+            } else {
+                List<MergedItemField> fields = new ArrayList<>();
+                fields.add(currentField);
+                map.put(mapKeyCurrentFieldType, fields);
             }
         }
+
+        for (String mapKeyFieldType : new TreeMap<>(map).keySet()) {
+
+            List<MergedItemField> fieldsForType = map.get(mapKeyFieldType);
+            if (fieldsForType == null) continue;
+
+            for (MergedItemField currentField : fieldsForType) {
+                switch (currentField.getType().toLowerCase()) {
+                    case "integer":
+                        TextInputLayout textInputLayoutNumber = new TextInputLayout(view.getContext());
+                        textInputLayoutNumber.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                        TextInputEditText editNumber = new TextInputEditText(Objects.requireNonNull(getContext()));
+                        editNumber.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        editNumber.setText(mergedItemJSONPayload.getString(currentField.getKey()));
+                        editNumber.setHint(currentField.getLabel());
+                        editNumber.setPadding(0, 0, 0, 30);
+                        textInputLayoutNumber.addView(editNumber);
+
+                        linearLayout.addView(textInputLayoutNumber);
+                        break;
+
+                    case "datetime":
+                        //Textview
+                        break;
+
+                    case "string":
+                        Log.e("eeeee", "eeeeee");
+                        TextInputLayout textInputLayout = new TextInputLayout(view.getContext());
+                        textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                        TextInputEditText editText = new TextInputEditText(Objects.requireNonNull(getContext()));
+                        editText.setText(mergedItemJSONPayload.getString(currentField.getKey()));
+                        editText.setHint(currentField.getLabel());
+                        editText.setPadding(0, 0, 0, 30);
+                        textInputLayout.addView(editText);
+                        linearLayout.addView(textInputLayout);
+
+                        break;
+
+                    case "field":
+                        //Field => z.b. fk
+                        break;
+
+                    case "boolean":
+                        Switch switch_ = new Switch(getContext());
+                        switch_.setChecked(mergedItemJSONPayload.getBoolean(currentField.getKey()));
+
+                        switch_.setText(currentField.getLabel());
+                        switch_.setPadding(0, 0, 0, 30);
+                        linearLayout.addView(switch_);
+                        break;
+
+                    case "choice":
+                        Spinner spinner = new Spinner(getContext());
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, new String[]{"eee"});
+                        spinner.setAdapter(adapter);
+                        ArrayList<String> choices = getChoicesFromField(currentField.getChoices());
+
+                        linearLayout.addView(spinner);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+
+    }
+
+    private ArrayList<String> getChoicesFromField(JSONArray choices) {
+        return null;
     }
 
     private MergedItemField getCurrentField(String key, Map<String, MergedItemField> mapFields) throws JSONException {

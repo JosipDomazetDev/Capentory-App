@@ -332,21 +332,18 @@ public class ScanTextActivity extends AppCompatActivity {
     }
 
     public void copyText(View view) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                String msg = readMessage.toString().trim();
-                if (msg.isEmpty()) return;
-                ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("text", msg);
-                clipboard.setPrimaryClip(clip);
+        runOnUiThread(() -> {
+            String msg = readMessage.toString().trim();
+            if (msg.isEmpty()) return;
+            ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("text", msg);
+            clipboard.setPrimaryClip(clip);
 
-                Toast toast = Toast.makeText(getBaseContext(), "Kopiert! \n" + msg, Toast.LENGTH_LONG);
-                TextView v = toast.getView().findViewById(android.R.id.message);
-                if (v != null) v.setGravity(Gravity.CENTER);
+            Toast toast = Toast.makeText(getBaseContext(), "Kopiert! \n" + msg, Toast.LENGTH_LONG);
+            TextView v = toast.getView().findViewById(android.R.id.message);
+            if (v != null) v.setGravity(Gravity.CENTER);
 
-                toast.show();
-            }
+            toast.show();
         });
         finish();
     }
