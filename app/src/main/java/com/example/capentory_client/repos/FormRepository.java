@@ -36,8 +36,8 @@ public class FormRepository extends Repository {
 
 
     public StatusAwareLiveData<Map<String, MergedItemField>> getForm() {
-
-        if(mergedItemFieldsLiveData.getValue() == null) {
+        // Fetch only once for entire application, the for wont change
+        if (mergedItemFieldsLiveData.getValue() == null || mergedItemFieldsLiveData.getValue().getData() == null) {
             setForm();
         }
         return mergedItemFieldsLiveData;
@@ -48,7 +48,7 @@ public class FormRepository extends Repository {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.OPTIONS, getUrl(false, "actualitem/"), null, payload -> {
                     try {
-                        Log.e("FETCHING","frefrfddde");
+                        Log.e("FETCHING", "frefrfddde");
                         payload = payload.getJSONObject("actions").getJSONObject("POST");
                         Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
                         Iterator<String> iterator = payload.keys();

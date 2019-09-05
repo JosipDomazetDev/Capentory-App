@@ -32,10 +32,9 @@ public class ActualRoomsRepository extends Repository {
 
 
     public StatusAwareLiveData<List<ActualRoom>> getRooms() {
-        if (actualRoomsLiveData.getValue() == null) {
-            setRooms();
-        }
-
+        // Fetch only once for entire application, the rooms wont change
+        /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().getData() == null) {*/
+        setRooms();
         return actualRoomsLiveData;
     }
 

@@ -27,6 +27,7 @@ public class RoomFragmentViewModel extends ViewModel {
         if (rooms != null) {
             return;
         }
+
         rooms = ralphRepository.getRooms();
     }
 

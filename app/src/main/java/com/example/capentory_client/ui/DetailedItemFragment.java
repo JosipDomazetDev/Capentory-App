@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
@@ -129,6 +130,7 @@ public class DetailedItemFragment extends DaggerFragment {
         Map<String, List<MergedItemField>> map = new HashMap<>();
 
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
+        linearLayout.removeAllViews();
         Iterator<String> iterator = mergedItemJSONPayload.keys();
 
         while (iterator.hasNext()) {
@@ -152,7 +154,7 @@ public class DetailedItemFragment extends DaggerFragment {
             }
         }
 
-        for (String mapKeyFieldType : new TreeMap<>(map).keySet()) {
+        for (String mapKeyFieldType : new TreeMap<>(map).descendingKeySet()) {
 
             List<MergedItemField> fieldsForType = map.get(mapKeyFieldType);
             if (fieldsForType == null) continue;
@@ -162,12 +164,12 @@ public class DetailedItemFragment extends DaggerFragment {
                     case "integer":
                         TextInputLayout textInputLayoutNumber = new TextInputLayout(view.getContext());
                         textInputLayoutNumber.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        textInputLayoutNumber.setPadding(0, 0, 0, 40);
 
                         TextInputEditText editNumber = new TextInputEditText(Objects.requireNonNull(getContext()));
-                        editNumber.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        editNumber.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER);
                         editNumber.setText(mergedItemJSONPayload.getString(currentField.getKey()));
                         editNumber.setHint(currentField.getLabel());
-                        editNumber.setPadding(0, 0, 0, 30);
                         textInputLayoutNumber.addView(editNumber);
 
                         linearLayout.addView(textInputLayoutNumber);
@@ -181,11 +183,11 @@ public class DetailedItemFragment extends DaggerFragment {
                         Log.e("eeeee", "eeeeee");
                         TextInputLayout textInputLayout = new TextInputLayout(view.getContext());
                         textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        textInputLayout.setPadding(0, 0, 0, 40);
 
                         TextInputEditText editText = new TextInputEditText(Objects.requireNonNull(getContext()));
                         editText.setText(mergedItemJSONPayload.getString(currentField.getKey()));
                         editText.setHint(currentField.getLabel());
-                        editText.setPadding(0, 0, 0, 30);
                         textInputLayout.addView(editText);
                         linearLayout.addView(textInputLayout);
 
@@ -200,7 +202,7 @@ public class DetailedItemFragment extends DaggerFragment {
                         switch_.setChecked(mergedItemJSONPayload.getBoolean(currentField.getKey()));
 
                         switch_.setText(currentField.getLabel());
-                        switch_.setPadding(0, 0, 0, 30);
+                        switch_.setPadding(0, 0, 0, 40);
                         linearLayout.addView(switch_);
                         break;
 

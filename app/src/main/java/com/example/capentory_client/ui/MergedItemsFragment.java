@@ -180,8 +180,8 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
         itemxDetailSharedViewModel.getCurrentItemValidated().observe(getViewLifecycleOwner(), b -> {
             if (b) {
                 mergedItemFragmentViewModel.removeItem(itemxDetailSharedViewModel.getCurrentItem().getValue());
-            } else
                 itemxDetailSharedViewModel.setCurrentItemValidated(false);
+            }
         });
 
         return view;

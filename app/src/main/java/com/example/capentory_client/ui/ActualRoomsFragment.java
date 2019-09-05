@@ -1,22 +1,21 @@
 package com.example.capentory_client.ui;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.android.volley.VolleyError;
 import com.example.capentory_client.R;
 import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
@@ -25,8 +24,6 @@ import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.DropDownRoomAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -109,11 +106,28 @@ public class ActualRoomsFragment extends DaggerFragment {
         roomxItemSharedViewModel.getCurrentRoomValidated().observe(getViewLifecycleOwner(), b -> {
             if (b) {
                 roomFragmentViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
-            } else
                 roomxItemSharedViewModel.setCurrentRoomValidated(false);
+            }
+        });
+
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                        .setTitle("Inventurvorgang")
+                        .setMessage("Inventurvorgang läuft, wollen Sie ihn wirklich beenden?")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishInventory())
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+            }
         });
 
         return view;
+    }
+
+    private void handleFinishInventory() {
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
     private void displayProgressbarAndHideContent() {
@@ -136,4 +150,6 @@ public class ActualRoomsFragment extends DaggerFragment {
     public void onDetach() {
         super.onDetach();
     }
+
+
 }
