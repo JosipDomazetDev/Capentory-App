@@ -8,13 +8,16 @@ import android.util.Base64;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,42 +37,37 @@ public class ActualRoomsRepository extends Repository {
     public StatusAwareLiveData<List<ActualRoom>> getRooms() {
         // Fetch only once for entire application, the rooms wont change
         /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().getData() == null) {*/
-        setRooms();
+        initRequest(Request.Method.GET, getUrl(context, true, "inventory", "actualroom"));
+        setData();
         return actualRoomsLiveData;
     }
 
-    public void setRooms() {
+    @Override
+    protected void setData() {
         actualRoomsLiveData.postFetching();
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
-                (Request.Method.GET, getUrl(true, "inventory", "actualroom"), null, payload -> {
-                    try {
-                        List<ActualRoom> actualRooms = new ArrayList<>();
-                        for (int i = 0; i < payload.length(); i++) {
-                            actualRooms.add(new ActualRoom(payload.getJSONObject(i)));
-                        }
-                        actualRoomsLiveData.postSuccess(actualRooms);
-                    } catch (JSONException error) {
-                        actualRoomsLiveData.postError(error);
-                    }
-                }, error -> {
-                    actualRoomsLiveData.postError(error);
-                }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                HashMap<String, String> headers = new HashMap<>();
-                String credentials = "ralph" + ":" + "ralph";
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Content-Type", "application/json");
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-
-        NetworkSingleton.getInstance(context).
-                addToRequestQueue(jsonObjectRequest);
-
-
-        actualRoomsLiveData.postFetching();
+        launchRequest();
     }
+
+    @Override
+    protected void handleNetworkResponse(JSONObject payload) {
+        try {
+            List<ActualRoom> actualRooms = new ArrayList<>();
+            Iterator<String> keys = payload.keys();
+
+            while (keys.hasNext()) {
+                actualRooms.add(new ActualRoom(keys.next(), payload));
+            }
+
+            actualRoomsLiveData.postSuccess(actualRooms);
+        } catch (JSONException error) {
+            actualRoomsLiveData.postError(error);
+        }
+    }
+
+    @Override
+    protected void handleErrorResponse(Exception error) {
+        actualRoomsLiveData.postError(error);
+    }
+
+
 }

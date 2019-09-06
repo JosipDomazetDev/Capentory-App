@@ -24,15 +24,15 @@ public class MergedItem {
     public MergedItem(@NonNull String currentRoomNumber, JSONObject mergedItemJSONPayload) throws JSONException {
         this.currentRoomNumber = currentRoomNumber;
         this.mergedItemJSONPayload = mergedItemJSONPayload;
-        this.description = mergedItemJSONPayload.optString("desc", null);
+        this.description = mergedItemJSONPayload.getString("desc");
 
         JSONObject sapItem = mergedItemJSONPayload.optJSONObject("sap_item");
         if (sapItem == null) {
             this.anlageNummer = null;
             this.assetSubnumber = null;
         } else {
-            this.anlageNummer = sapItem.optString("anlage", null);
-            this.assetSubnumber = sapItem.optString("asset_subnumber", null);
+            this.anlageNummer = sapItem.getString("anlage");
+            this.assetSubnumber = sapItem.getString("asset_subnumber");
         }
     }
 

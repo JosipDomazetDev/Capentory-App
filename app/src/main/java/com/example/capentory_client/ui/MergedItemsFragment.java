@@ -136,6 +136,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
                     break;
                 case ERROR:
                     basicNetworkErrorHandler.displayTextViewMessage(statusAwareMergedItem.getError());
+                    statusAwareMergedItem.getError().printStackTrace();
                     hideProgressBarAndHideContent();
                     break;
                 case FETCHING:
@@ -225,7 +226,6 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
             //}
 
             if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
-                Log.e("eeeeeeee", "eee");
                 //  Received a barcode scan
                 try {
                     String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
@@ -270,7 +270,6 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
     }
 
     private void launchItemDetailFragmentFromBarcode(String barcode) {
-        Log.e("XXXXX", barcode);
         StatusAwareData<List<MergedItem>> statusAwareData = mergedItemFragmentViewModel.getMergedItems().getValue();
         if (statusAwareData == null) return;
         List<MergedItem> items = statusAwareData.getData();

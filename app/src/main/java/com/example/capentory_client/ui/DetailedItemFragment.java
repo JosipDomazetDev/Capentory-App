@@ -180,7 +180,6 @@ public class DetailedItemFragment extends DaggerFragment {
                         break;
 
                     case "string":
-                        Log.e("eeeee", "eeeeee");
                         TextInputLayout textInputLayout = new TextInputLayout(view.getContext());
                         textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                         textInputLayout.setPadding(0, 0, 0, 40);

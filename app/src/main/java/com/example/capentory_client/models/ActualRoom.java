@@ -15,12 +15,9 @@ public class ActualRoom {
     @Nullable
     private String roomDescription;
 
-    public ActualRoom(JSONObject actualRoomPayload) throws JSONException {
-        this.roomNumber = actualRoomPayload.getString("room_number");
-        if (roomNumber == null)
-            throw new JSONException("Der PK eines Raumes darf nicht null sein!");
-
-        this.roomDescription = actualRoomPayload.optString("description", null);
+    public ActualRoom(@NonNull String key, JSONObject actualRoomPayload) throws JSONException {
+        this.roomNumber = key;
+        this.roomDescription = actualRoomPayload.getString(key);
     }
 
     @NonNull
