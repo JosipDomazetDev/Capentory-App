@@ -49,6 +49,7 @@ public class BasicNetworkErrorHandler {
 
         String errorMsg = "";
         if (error instanceof JSONException) {
+            error.printStackTrace();
             errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
         }
         else if (error instanceof TimeoutError) {

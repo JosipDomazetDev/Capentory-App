@@ -1,5 +1,7 @@
 package com.example.capentory_client.ui;
 
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.provider.CalendarContract;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,13 +24,16 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItemField;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.DetailItemFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
+import com.example.capentory_client.viewmodels.adapter.KeyValueDropDownAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 import com.google.android.material.textfield.TextInputEditText;
@@ -36,6 +42,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -206,12 +213,24 @@ public class DetailedItemFragment extends DaggerFragment {
                         break;
 
                     case "choice":
+                        TextView textView = new TextView(getContext());
+                        textView.setText(currentField.getLabel());
+
+
+
                         Spinner spinner = new Spinner(getContext());
+                        KeyValueDropDownAdapter.DropDownEntry[] choices;
+                        try {
+                            choices = getChoicesFromField(Objects.requireNonNull(currentField.getChoices()));
+                        } catch (JSONException | NullPointerException e) {
+                            ToastUtility.displayCenteredToastMessage(getContext(), "Falsches Server-Format! Dropdowns können nicht angezeigt werden!", Toast.LENGTH_SHORT);
+                            break;
+                        }
 
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, new String[]{"eee"});
+                        KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, choices);
                         spinner.setAdapter(adapter);
-                        ArrayList<String> choices = getChoicesFromField(currentField.getChoices());
-
+                        spinner.setSelection(adapter.getItemIndexFromDescription(mergedItemJSONPayload.getString(currentField.getKey())));
+                        linearLayout.addView(textView);
                         linearLayout.addView(spinner);
                         break;
 
@@ -224,11 +243,17 @@ public class DetailedItemFragment extends DaggerFragment {
 
     }
 
-    private ArrayList<String> getChoicesFromField(JSONArray choices) {
-        return null;
+    private KeyValueDropDownAdapter.DropDownEntry[] getChoicesFromField(JSONArray choices) throws
+            JSONException {
+        KeyValueDropDownAdapter.DropDownEntry[] ret = new KeyValueDropDownAdapter.DropDownEntry[choices.length()];
+        for (int i = 0; i < ret.length; i++) {
+            ret[i] = new KeyValueDropDownAdapter.DropDownEntry(choices.getJSONObject(i));
+        }
+        return ret;
     }
 
-    private MergedItemField getCurrentField(String key, Map<String, MergedItemField> mapFields) throws JSONException {
+    private MergedItemField getCurrentField(String
+                                                    key, Map<String, MergedItemField> mapFields) throws JSONException {
         if (mapFields.containsKey(key)) {
             return mapFields.get(key);
         }

@@ -16,7 +16,7 @@ public class MergedItemField {
     private String key, type, label;
     private boolean required, readOnly;
 
-    @Nullable
+    @NonNull
     private JSONArray choices;
 
     public MergedItemField(@NonNull String key, JSONObject payload) throws JSONException {

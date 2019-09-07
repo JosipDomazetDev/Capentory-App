@@ -32,8 +32,6 @@ public class MergedItemsRepository extends Repository {
         this.currentRoomString = currentRoomString;
         initRequest(Request.Method.GET, getUrl(context, true, "actualroom", currentRoomString));
         setData();
-        retriesCounter = 0;
-
         return mergedItemsLiveData;
     }
 
