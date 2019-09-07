@@ -1,31 +1,23 @@
 package com.example.capentory_client.ui;
 
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.fragment.NavHostFragment;
-
-import android.provider.CalendarContract;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
@@ -42,7 +34,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -141,7 +132,7 @@ public class DetailedItemFragment extends DaggerFragment {
         Iterator<String> iterator = mergedItemJSONPayload.keys();
 
         while (iterator.hasNext()) {
-            MergedItemField currentField = getCurrentField(iterator.next(), mapFields);
+            MergedItemField currentField = getCurrentFieldFromKey(iterator.next(), mapFields);
 
             // If the currentField is null this means that it wasn't included in the form request and therefore has no valid representation
             if (currentField == null) continue;
@@ -167,6 +158,8 @@ public class DetailedItemFragment extends DaggerFragment {
             if (fieldsForType == null) continue;
 
             for (MergedItemField currentField : fieldsForType) {
+                if (currentField.isReadOnly()) continue;
+
                 switch (currentField.getType().toLowerCase()) {
                     case "integer":
                         TextInputLayout textInputLayoutNumber = new TextInputLayout(view.getContext());
@@ -183,7 +176,17 @@ public class DetailedItemFragment extends DaggerFragment {
                         break;
 
                     case "datetime":
-                        //Textview
+                        TextInputLayout textInputLayoutDate = new TextInputLayout(view.getContext());
+                        textInputLayoutDate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        textInputLayoutDate.setPadding(0, 0, 0, 40);
+
+                        TextInputEditText editDate = new TextInputEditText(Objects.requireNonNull(getContext()));
+                        editDate.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_DATETIME);
+                        editDate.setText(mergedItemJSONPayload.getString(currentField.getKey()));
+                        editDate.setHint(currentField.getLabel());
+                        textInputLayoutDate.addView(editDate);
+
+                        linearLayout.addView(textInputLayoutDate);
                         break;
 
                     case "string":
@@ -200,7 +203,15 @@ public class DetailedItemFragment extends DaggerFragment {
                         break;
 
                     case "field":
-                        //Field => z.b. fk
+                        TextInputLayout textInputLayoutField = new TextInputLayout(view.getContext());
+                        textInputLayoutField.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        textInputLayoutField.setPadding(0, 0, 0, 40);
+
+                        TextInputEditText editTextField = new TextInputEditText(Objects.requireNonNull(getContext()));
+                        editTextField.setText(mergedItemJSONPayload.getString(currentField.getKey()));
+                        editTextField.setHint(currentField.getLabel());
+                        textInputLayoutField.addView(editTextField);
+                        linearLayout.addView(textInputLayoutField);
                         break;
 
                     case "boolean":
@@ -215,8 +226,8 @@ public class DetailedItemFragment extends DaggerFragment {
                     case "choice":
                         TextView textView = new TextView(getContext());
                         textView.setText(currentField.getLabel());
-
-
+                        textView.setTextSize(12);
+                        textView.setTextColor(Color.parseColor("#b3b3b3"));
 
                         Spinner spinner = new Spinner(getContext());
                         KeyValueDropDownAdapter.DropDownEntry[] choices;
@@ -252,8 +263,7 @@ public class DetailedItemFragment extends DaggerFragment {
         return ret;
     }
 
-    private MergedItemField getCurrentField(String
-                                                    key, Map<String, MergedItemField> mapFields) throws JSONException {
+    private MergedItemField getCurrentFieldFromKey(String key, Map<String, MergedItemField> mapFields) {
         if (mapFields.containsKey(key)) {
             return mapFields.get(key);
         }
