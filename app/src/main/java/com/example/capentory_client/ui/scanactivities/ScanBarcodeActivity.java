@@ -8,10 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.hardware.Camera;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -39,11 +42,13 @@ import java.util.Collections;
 import java.util.Set;
 
 public class ScanBarcodeActivity extends Activity {
-    SurfaceView cameraPreview;
+    private SurfaceView cameraPreview;
     public static final int MY_PERMISSION_REQUEST_CAMERA = 2569;
     private boolean utilityModeActivated = false;
     private boolean useFlash = false;
-    CameraSource cameraSource;
+    private CameraSource cameraSource;
+    private MediaPlayer mediaPlayer;
+    private boolean lockedOnFirst=false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +57,7 @@ public class ScanBarcodeActivity extends Activity {
         if (getIntent().getExtras() != null)
             utilityModeActivated = ScanBarcodeActivityArgs.fromBundle(getIntent().getExtras()).getUtilityModeActivated();
 
+        mediaPlayer = MediaPlayer.create(this, R.raw.beep);
         cameraPreview = findViewById(R.id.camera_preview);
         createCameraSource();
     }
@@ -76,7 +82,6 @@ public class ScanBarcodeActivity extends Activity {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
                 try {
-
 
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -113,14 +118,18 @@ public class ScanBarcodeActivity extends Activity {
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
+                if (lockedOnFirst) return;
+
                 final SparseArray<Barcode> barcodeSparseArray = detections.getDetectedItems();
                 if (barcodeSparseArray.size() > 0) {
+                    lockedOnFirst = true;
                     Intent intent = new Intent();
                     final String barcode = String.valueOf(barcodeSparseArray.valueAt(0).displayValue);
                     final String format = getGoogleBarcodeFormat(barcodeSparseArray.valueAt(0).format);
 
                     intent.putExtra("barcode", barcode);
                     setResult(CommonStatusCodes.SUCCESS, intent);
+                    playBeep();
                     finish();
 
                     if (utilityModeActivated) {
@@ -209,4 +218,25 @@ public class ScanBarcodeActivity extends Activity {
         return supportedBarcodeFormats;
     }
 
+    public void playBeep() {
+        try {
+            Log.e("xxxxxxxxxxxx", "played");
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = MediaPlayer.create(this, R.raw.beep);
+            }
+
+            mediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.release();
+        mediaPlayer = null;
+    }
 }
