@@ -26,11 +26,11 @@ public class DetailItemFragmentViewModel extends ViewModel {
             return;
         }
 
-        fields = formRepository.getForm();
+        fields = formRepository.fetchData();
     }
 
-    public void reloadForm(String currentRoomString) {
-        fields = formRepository.getForm();
+    public void reloadForm() {
+        fields = formRepository.resetForm();
     }
 
     public LiveData<StatusAwareData<Map<String, MergedItemField>>> getFields() {

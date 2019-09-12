@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -15,9 +16,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
@@ -56,6 +59,8 @@ import dagger.android.support.DaggerFragment;
  */
 public class DetailedItemFragment extends DaggerFragment {
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
+    private ProgressBar progressBar;
+    private ConstraintLayout constraintLayout;
 
     public DetailedItemFragment() {
         // Required empty public constructor
@@ -80,7 +85,9 @@ public class DetailedItemFragment extends DaggerFragment {
 
         DetailItemFragmentViewModel detailItemFragmentViewModel = ViewModelProviders.of(this, providerFactory).get(DetailItemFragmentViewModel.class);
         BasicNetworkErrorHandler basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dummy));
-
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_fragment_item_detail);
+        progressBar = view.findViewById(R.id.progress_bar_fragment_item_detail);
+        constraintLayout = view.findViewById(R.id.content_fragment_item_detail);
 
         detailItemFragmentViewModel.fetchForm();
         detailItemFragmentViewModel.getFields().observe(getViewLifecycleOwner(), fields -> {
@@ -93,13 +100,15 @@ public class DetailedItemFragment extends DaggerFragment {
                     } catch (JSONException e) {
                         basicNetworkErrorHandler.displayTextViewMessage(e);
                     }
+                    hideProgressBarAndShowContent();
                     break;
                 case ERROR:
                     fields.getError().printStackTrace();
                     basicNetworkErrorHandler.displayTextViewMessage(fields.getError());
+                    hideProgressBarAndHideContent();
                     break;
                 case FETCHING:
-                    //displayProgressbarAndHideContent();
+                    displayProgressbarAndHideContent();
                     break;
 
             }
@@ -119,8 +128,34 @@ public class DetailedItemFragment extends DaggerFragment {
             }
         });
 
+        swipeRefreshLayout.setOnRefreshListener(
+                () -> {
+                    detailItemFragmentViewModel.reloadForm();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+        );
+
+
         ImageButton validateButton = view.findViewById(R.id.validate_btn_fragment_itemdetail);
         validateButton.setOnClickListener(v -> handleValidate());
+    }
+
+
+    private void hideProgressBarAndHideContent() {
+        progressBar.setVisibility(View.GONE);
+        constraintLayout.setVisibility(View.GONE);
+    }
+
+
+    private void displayProgressbarAndHideContent() {
+        progressBar.setVisibility(View.VISIBLE);
+        constraintLayout.setVisibility(View.GONE);
+    }
+
+
+    private void hideProgressBarAndShowContent() {
+        progressBar.setVisibility(View.GONE);
+        constraintLayout.setVisibility(View.VISIBLE);
     }
 
     private void displayForm(View view, Map<String, MergedItemField> mapFields) throws JSONException {

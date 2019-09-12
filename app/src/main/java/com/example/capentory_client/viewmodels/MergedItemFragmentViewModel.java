@@ -1,7 +1,6 @@
 package com.example.capentory_client.viewmodels;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.repos.MergedItemsRepository;
@@ -13,43 +12,38 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class MergedItemFragmentViewModel extends ViewModel {
-    private StatusAwareLiveData<List<MergedItem>> mergedItems;
-    private MergedItemsRepository mergedItemsRepository;
+public class MergedItemFragmentViewModel extends StatusFragmentViewModel {
 
 
     @Inject
     public MergedItemFragmentViewModel(MergedItemsRepository mergedItemsRepository) {
-        this.mergedItemsRepository = mergedItemsRepository;
+        super(mergedItemsRepository);
     }
 
-    public void fetchItems(String currentRoomString) {
-        if (mergedItems != null) {
-            return;
-        }
-
-        mergedItems = mergedItemsRepository.getMergedItems(currentRoomString);
-    }
-
-    public void reloadItems(String currentRoomString) {
-        mergedItems = mergedItemsRepository.getMergedItems(currentRoomString);
-    }
 
     public LiveData<StatusAwareData<List<MergedItem>>> getMergedItems() {
-        return mergedItems;
+        return statusAwareLiveData;
     }
 
     public void removeItem(MergedItem mergedItem) {
-        List<MergedItem> currentItems = Objects.requireNonNull(mergedItems.getValue()).getData();
+        List<MergedItem> currentItems = (List<MergedItem>) ((StatusAwareLiveData<StatusAwareData<List<MergedItem>>>) statusAwareLiveData).getValue().getData();
         if (currentItems == null) return;
 
         if (currentItems.remove(mergedItem))
-            mergedItems.postSuccess(currentItems);
+            statusAwareLiveData.postSuccess(currentItems);
     }
 
     @Override
-    protected void onCleared() {
-        super.onCleared();
+    public void fetchData() {
+        if (statusAwareLiveData != null) {
+            return;
+        }
+
+        statusAwareLiveData = repository.fetchData();
     }
 
+    @Override
+    public void reloadData() {
+        statusAwareLiveData = repository.fetchData();
+    }
 }

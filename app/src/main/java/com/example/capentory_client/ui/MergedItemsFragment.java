@@ -125,7 +125,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
 
 
         mergedItemFragmentViewModel = ViewModelProviders.of(this, providerFactory).get(MergedItemFragmentViewModel.class);
-        mergedItemFragmentViewModel.fetchItems(currentRoomString);
+        mergedItemFragmentViewModel.fetchData(currentRoomString);
 
 
         mergedItemFragmentViewModel.getMergedItems().observe(getViewLifecycleOwner(), statusAwareMergedItem -> {
@@ -208,7 +208,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
 
     //
     // After registering the broadcast receiver, the next step (below) is to define it.
-    // Here it's done in the MainActivity.java, but also can be handled by a separate class.
+    // Here it'statusAwareLiveData done in the MainActivity.java, but also can be handled by a separate class.
     // The logic of extracting the scanned data and displaying it on the screen
     // is executed in its own method (later in the code). Note the use of the
     // extra keys defined in the strings.xml file.

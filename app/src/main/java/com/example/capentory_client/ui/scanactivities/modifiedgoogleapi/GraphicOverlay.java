@@ -32,7 +32,7 @@ import java.util.Vector;
  * (i.e., the camera preview).  The creator can add graphics objects, update the objects, and remove
  * them, triggering the appropriate drawing and invalidation within the view.<p>
  *
- * Supports scaling and mirroring of the graphics relative the camera's preview properties.  The
+ * Supports scaling and mirroring of the graphics relative the camera'statusAwareLiveData preview properties.  The
  * idea is that detection items are expressed in terms of a preview size, but need to be scaled up
  * to the full view size, and also mirrored in the case of the front-facing camera.<p>
  *
@@ -42,7 +42,7 @@ import java.util.Vector;
  * <li>{@link Graphic#scaleX(float)} and {@link Graphic#scaleY(float)} adjust the size of the
  * supplied value from the preview scale to the view scale.</li>
  * <li>{@link Graphic#translateX(float)} and {@link Graphic#translateY(float)} adjust the coordinate
- * from the preview's coordinate system to the view coordinate system.</li>
+ * from the preview'statusAwareLiveData coordinate system to the view coordinate system.</li>
  * </ol>
  */
 public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
@@ -73,7 +73,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
          * <li>{@link Graphic#scaleX(float)} and {@link Graphic#scaleY(float)} adjust the size of
          * the supplied value from the preview scale to the view scale.</li>
          * <li>{@link Graphic#translateX(float)} and {@link Graphic#translateY(float)} adjust the
-         * coordinate from the preview's coordinate system to the view coordinate system.</li>
+         * coordinate from the preview'statusAwareLiveData coordinate system to the view coordinate system.</li>
          * </ol>
          *
          * @param canvas drawing canvas
@@ -96,7 +96,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         }
 
         /**
-         * Adjusts the x coordinate from the preview's coordinate system to the view coordinate
+         * Adjusts the x coordinate from the preview'statusAwareLiveData coordinate system to the view coordinate
          * system.
          */
         public float translateX(float x) {
@@ -108,7 +108,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         }
 
         /**
-         * Adjusts the y coordinate from the preview's coordinate system to the view coordinate
+         * Adjusts the y coordinate from the preview'statusAwareLiveData coordinate system to the view coordinate
          * system.
          */
         public float translateY(float y) {

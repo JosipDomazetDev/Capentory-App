@@ -2,8 +2,10 @@ package com.example.capentory_client.viewmodels.customlivedata;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
+import java.util.List;
 import java.util.Objects;
 
 public class StatusAwareLiveData<T> extends MutableLiveData<StatusAwareData<T>> {

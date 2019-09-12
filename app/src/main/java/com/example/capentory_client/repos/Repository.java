@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.capentory_client.models.MergedItemField;
+import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONObject;
 
@@ -112,5 +114,10 @@ public abstract class Repository {
         }
 
         return ip;
+    }
+
+
+    public StatusAwareLiveData fetchData() {
+        return null;
     }
 }

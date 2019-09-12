@@ -338,7 +338,7 @@ public class CameraSource {
      * Opens the camera and starts sending preview frames to the underlying detector.  The preview
      * frames are not displayed.
      *
-     * @throws IOException if the camera's preview texture or display could not be initialized
+     * @throws IOException if the camera'statusAwareLiveData preview texture or display could not be initialized
      */
     @RequiresPermission(Manifest.permission.CAMERA)
     public CameraSource start() throws IOException {
@@ -846,7 +846,7 @@ public class CameraSource {
     /**
      * Selects the most suitable preview and picture size, given the desired width and height.
      * <p/>
-     * Even though we may only need the preview size, it's necessary to find both the preview
+     * Even though we may only need the preview size, it'statusAwareLiveData necessary to find both the preview
      * size and the picture size of the camera together, because these need to have the same aspect
      * ratio.  On some hardware, if you would only set the preview size, you will get a distorted
      * image.
@@ -986,7 +986,7 @@ public class CameraSource {
 
     /**
      * Calculates the correct rotation for the given camera id and sets the rotation in the
-     * parameters.  It also sets the camera's display orientation and rotation.
+     * parameters.  It also sets the camera'statusAwareLiveData display orientation and rotation.
      *
      * @param parameters the camera parameters for which to set the rotation
      * @param cameraId   the camera id to set rotation based on
@@ -1105,7 +1105,7 @@ public class CameraSource {
 
         /**
          * Releases the underlying receiver.  This is only safe to do after the associated thread
-         * has completed, which is managed in camera source's release method above.
+         * has completed, which is managed in camera source'statusAwareLiveData release method above.
          */
         @SuppressLint("Assert")
         void release() {
@@ -1210,7 +1210,7 @@ public class CameraSource {
                 }
 
                 // The code below needs to run outside of synchronization, because this will allow
-                // the camera to add pending frame(s) while we are running detection on the current
+                // the camera to add pending frame(statusAwareLiveData) while we are running detection on the current
                 // frame.
 
                 try {

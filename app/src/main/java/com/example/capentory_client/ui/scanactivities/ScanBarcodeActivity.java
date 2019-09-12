@@ -8,20 +8,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.hardware.Camera;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.util.SparseArray;
-import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -129,7 +125,7 @@ public class ScanBarcodeActivity extends Activity {
 
                     intent.putExtra("barcode", barcode);
                     setResult(CommonStatusCodes.SUCCESS, intent);
-                    playBeep();
+                    startBeep();
                     finish();
 
                     if (utilityModeActivated) {
@@ -218,9 +214,8 @@ public class ScanBarcodeActivity extends Activity {
         return supportedBarcodeFormats;
     }
 
-    public void playBeep() {
+    public void startBeep() {
         try {
-            Log.e("xxxxxxxxxxxx", "played");
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
                 mediaPlayer.release();

@@ -36,7 +36,7 @@ public class ActualRoomsRepository extends Repository {
 
     public StatusAwareLiveData<List<ActualRoom>> getRooms() {
         // Fetch only once for entire application, the rooms wont change
-        /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().getData() == null) {*/
+        /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchData() == null) {*/
         initRequest(Request.Method.GET, getUrl(context, true, "inventory", "actualroom"));
         setData();
         return actualRoomsLiveData;

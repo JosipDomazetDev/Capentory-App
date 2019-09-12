@@ -26,13 +26,21 @@ public class FormRepository extends Repository {
     }
 
 
-    public StatusAwareLiveData<Map<String, MergedItemField>> getForm() {
+    public StatusAwareLiveData<Map<String, MergedItemField>> fetchData() {
         // Fetch only once for entire application, the form wont change
         if (mergedItemFieldsLiveData.getValue() == null || mergedItemFieldsLiveData.getValue().getData() == null) {
             initRequest(Request.Method.OPTIONS, getUrl(context, false, "actualitem/"));
             setData();
         }
 
+        return mergedItemFieldsLiveData;
+    }
+
+
+    public StatusAwareLiveData<Map<String, MergedItemField>> resetForm() {
+        // Fetch only once for entire application, the form wont change
+        initRequest(Request.Method.OPTIONS, getUrl(context, false, "actualitem/"));
+        setData();
         return mergedItemFieldsLiveData;
     }
 
