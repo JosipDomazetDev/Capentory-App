@@ -12,7 +12,7 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class MergedItemFragmentViewModel extends StatusFragmentViewModel {
+public class MergedItemFragmentViewModel extends StatusFragmentViewModel<List<MergedItem>> {
 
 
     @Inject
@@ -26,7 +26,7 @@ public class MergedItemFragmentViewModel extends StatusFragmentViewModel {
     }
 
     public void removeItem(MergedItem mergedItem) {
-        List<MergedItem> currentItems = (List<MergedItem>) ((StatusAwareLiveData<StatusAwareData<List<MergedItem>>>) statusAwareLiveData).getValue().getData();
+        List<MergedItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
 
         if (currentItems.remove(mergedItem))
@@ -41,6 +41,12 @@ public class MergedItemFragmentViewModel extends StatusFragmentViewModel {
 
         statusAwareLiveData = repository.fetchData();
     }
+
+    @Override
+    public LiveData<StatusAwareData<List<MergedItem>>> getData() {
+        return statusAwareLiveData;
+    }
+
 
     @Override
     public void reloadData() {

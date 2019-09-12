@@ -20,7 +20,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Repository {
+public abstract class Repository<L> {
     protected Context context;
     private static final int MAX_RETRIES = 8;
     int retriesCounter = 0;
@@ -117,7 +117,7 @@ public abstract class Repository {
     }
 
 
-    public StatusAwareLiveData fetchData() {
+    public StatusAwareLiveData<L> fetchData() {
         return null;
     }
 }
