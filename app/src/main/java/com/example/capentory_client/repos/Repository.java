@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.capentory_client.models.MergedItemField;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONObject;
@@ -75,9 +74,6 @@ public abstract class Repository<L> {
                 resetRetry();
                 return;
             }
-
-            Log.e("eee", "Retrying....");
-            Log.e("eee", "....");
             launchRequest();
             retriesCounter++;
         } else {
@@ -117,7 +113,7 @@ public abstract class Repository<L> {
     }
 
 
-    public StatusAwareLiveData<L> fetchData() {
+    public StatusAwareLiveData<L> getData(String... args) {
         return null;
     }
 }

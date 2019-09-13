@@ -89,8 +89,8 @@ public class DetailedItemFragment extends DaggerFragment {
         progressBar = view.findViewById(R.id.progress_bar_fragment_item_detail);
         constraintLayout = view.findViewById(R.id.content_fragment_item_detail);
 
-        detailItemFragmentViewModel.fetchForm();
-        detailItemFragmentViewModel.getFields().observe(getViewLifecycleOwner(), fields -> {
+        detailItemFragmentViewModel.fetchData();
+        detailItemFragmentViewModel.getData().observe(getViewLifecycleOwner(), fields -> {
 
             switch (fields.getStatus()) {
 
@@ -130,7 +130,7 @@ public class DetailedItemFragment extends DaggerFragment {
 
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
-                    detailItemFragmentViewModel.reloadForm();
+                    detailItemFragmentViewModel.reloadData();
                     swipeRefreshLayout.setRefreshing(false);
                 }
         );

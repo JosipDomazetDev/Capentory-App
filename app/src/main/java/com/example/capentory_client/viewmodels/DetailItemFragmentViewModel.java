@@ -8,38 +8,31 @@ import com.example.capentory_client.repos.FormRepository;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-public class DetailItemFragmentViewModel extends ViewModel {
-    private StatusAwareLiveData<Map<String, MergedItemField>> fields;
-    private FormRepository formRepository;
+public class DetailItemFragmentViewModel extends StatusFragmentViewModel<Map<String, MergedItemField>> {
 
     @Inject
     public DetailItemFragmentViewModel(FormRepository formRepository) {
-        this.formRepository = formRepository;
+        super(formRepository);
     }
 
-    public void fetchForm() {
-        if (fields != null) {
+
+    @Override
+    public void fetchData(String... args) {
+        if (statusAwareLiveData != null) {
             return;
         }
 
-        fields = formRepository.fetchData();
+        statusAwareLiveData = repository.getData();
     }
 
-    public void reloadForm() {
-        fields = formRepository.resetForm();
-    }
-
-    public LiveData<StatusAwareData<Map<String, MergedItemField>>> getFields() {
-        return fields;
-    }
 
     @Override
-    protected void onCleared() {
-        super.onCleared();
+    public void reloadData(String... args) {
+        statusAwareLiveData = repository.getData();
     }
-
 }

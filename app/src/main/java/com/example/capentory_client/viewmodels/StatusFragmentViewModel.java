@@ -15,9 +15,12 @@ public abstract class StatusFragmentViewModel<L> extends ViewModel {
         this.repository = repository;
     }
 
-    public abstract void fetchData();
+    public abstract void fetchData(String... args);
 
-    public abstract LiveData<StatusAwareData<L>> getData();
 
-    public abstract void reloadData();
+    public LiveData<StatusAwareData<L>> getData() {
+        return statusAwareLiveData;
+    }
+
+    public abstract void reloadData(String... args);
 }

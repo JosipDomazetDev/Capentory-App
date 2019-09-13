@@ -28,8 +28,12 @@ public class MergedItemsRepository extends Repository {
     }
 
 
-    public StatusAwareLiveData<List<MergedItem>> getMergedItems(String currentRoomString) {
-        this.currentRoomString = currentRoomString;
+    @Override
+    public StatusAwareLiveData getData(String... args) {
+        if (args.length != 1)
+            throw new IllegalArgumentException("MergedItemRepository only needs the currentRoom as argument!");
+
+        this.currentRoomString = args[0];
         initRequest(Request.Method.GET, getUrl(context, true, "actualroom", currentRoomString));
         setData();
         return mergedItemsLiveData;
@@ -62,6 +66,4 @@ public class MergedItemsRepository extends Repository {
     protected void handleErrorResponse(Exception error) {
         mergedItemsLiveData.postError(error);
     }
-
-
 }

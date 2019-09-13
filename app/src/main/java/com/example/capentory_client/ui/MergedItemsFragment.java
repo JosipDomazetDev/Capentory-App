@@ -151,7 +151,7 @@ public class MergedItemsFragment extends DaggerFragment implements RecyclerViewA
 
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
-                    mergedItemFragmentViewModel.reloadItems(currentRoomString);
+                    mergedItemFragmentViewModel.reloadData(currentRoomString);
                     swipeRefreshLayout.setRefreshing(false);
                 }
         );

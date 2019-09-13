@@ -26,7 +26,7 @@ public class FormRepository extends Repository {
     }
 
 
-    public StatusAwareLiveData<Map<String, MergedItemField>> fetchData() {
+    public StatusAwareLiveData<Map<String, MergedItemField>> getData(String... args) {
         // Fetch only once for entire application, the form wont change
         if (mergedItemFieldsLiveData.getValue() == null || mergedItemFieldsLiveData.getValue().getData() == null) {
             initRequest(Request.Method.OPTIONS, getUrl(context, false, "actualitem/"));
@@ -37,12 +37,6 @@ public class FormRepository extends Repository {
     }
 
 
-    public StatusAwareLiveData<Map<String, MergedItemField>> resetForm() {
-        // Fetch only once for entire application, the form wont change
-        initRequest(Request.Method.OPTIONS, getUrl(context, false, "actualitem/"));
-        setData();
-        return mergedItemFieldsLiveData;
-    }
 
     @Override
     protected void handleNetworkResponse(JSONObject payload) {

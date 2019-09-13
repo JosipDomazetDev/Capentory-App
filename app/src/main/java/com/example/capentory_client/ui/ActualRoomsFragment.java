@@ -72,10 +72,10 @@ public class ActualRoomsFragment extends DaggerFragment {
 
 
         roomFragmentViewModel = ViewModelProviders.of(this, providerFactory).get(RoomFragmentViewModel.class);
-        roomFragmentViewModel.fetchRooms();
+        roomFragmentViewModel.fetchData();
 
 
-        roomFragmentViewModel.getRooms().observe(getViewLifecycleOwner(), statusAwareActualRooms -> {
+        roomFragmentViewModel.getData().observe(getViewLifecycleOwner(), statusAwareActualRooms -> {
             switch (statusAwareActualRooms.getStatus()) {
                 case SUCCESS:
                     DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) statusAwareActualRooms.getData());
@@ -98,7 +98,7 @@ public class ActualRoomsFragment extends DaggerFragment {
 
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
-                    roomFragmentViewModel.reloadRooms();
+                    roomFragmentViewModel.reloadData();
                     swipeRefreshLayout.setRefreshing(false);
                 }
         );

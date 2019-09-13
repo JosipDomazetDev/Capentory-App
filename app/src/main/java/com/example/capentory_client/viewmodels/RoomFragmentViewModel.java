@@ -13,45 +13,35 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class RoomFragmentViewModel extends ViewModel {
-    private StatusAwareLiveData<List<ActualRoom>> rooms;
-    private ActualRoomsRepository ralphRepository;
+public class RoomFragmentViewModel extends StatusFragmentViewModel<List<ActualRoom>> {
 
 
     @Inject
     public RoomFragmentViewModel(ActualRoomsRepository ralphRepository) {
-        this.ralphRepository = ralphRepository;
+        super(ralphRepository);
     }
 
-    public void fetchRooms() {
-        if (rooms != null) {
-            return;
-        }
-
-        rooms = ralphRepository.getRooms();
-    }
-
-    public void reloadRooms() {
-        rooms = ralphRepository.getRooms();
-    }
-
-    public LiveData<StatusAwareData<List<ActualRoom>>> getRooms() {
-        return rooms;
-    }
 
     public void removeRoom(ActualRoom actualRoom) {
-        List<ActualRoom> currentRooms = Objects.requireNonNull(rooms.getValue()).getData();
+        List<ActualRoom> currentRooms = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentRooms == null) return;
 
         if (currentRooms.remove(actualRoom))
-            rooms.postSuccess(currentRooms);
+            statusAwareLiveData.postSuccess(currentRooms);
     }
 
 
     @Override
-    protected void onCleared() {
-        super.onCleared();
+    public void fetchData(String... args) {
+        if (statusAwareLiveData != null) {
+            return;
+        }
 
+        statusAwareLiveData = repository.getData(args);
     }
 
+    @Override
+    public void reloadData(String... args) {
+        statusAwareLiveData = repository.getData(args);
+    }
 }

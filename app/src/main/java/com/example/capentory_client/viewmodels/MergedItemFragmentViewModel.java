@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData;
 
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.repos.MergedItemsRepository;
-import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import java.util.List;
@@ -34,22 +33,17 @@ public class MergedItemFragmentViewModel extends StatusFragmentViewModel<List<Me
     }
 
     @Override
-    public void fetchData() {
+    public void fetchData(String... args) {
         if (statusAwareLiveData != null) {
             return;
         }
 
-        statusAwareLiveData = repository.fetchData();
-    }
-
-    @Override
-    public LiveData<StatusAwareData<List<MergedItem>>> getData() {
-        return statusAwareLiveData;
+        statusAwareLiveData = repository.getData(args);
     }
 
 
     @Override
-    public void reloadData() {
-        statusAwareLiveData = repository.fetchData();
+    public void reloadData(String... args) {
+        statusAwareLiveData = repository.getData(args);
     }
 }
