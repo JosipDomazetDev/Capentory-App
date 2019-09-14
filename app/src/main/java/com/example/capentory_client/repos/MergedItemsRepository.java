@@ -18,8 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MergedItemsRepository extends Repository {
-    private StatusAwareLiveData<List<MergedItem>> mergedItemsLiveData = new StatusAwareLiveData<>();
+public class MergedItemsRepository extends Repository<List<MergedItem>> {
     private String currentRoomString;
 
     @Inject
@@ -29,24 +28,19 @@ public class MergedItemsRepository extends Repository {
 
 
     @Override
-    public StatusAwareLiveData getData(String... args) {
+    public StatusAwareLiveData<List<MergedItem>> getData(String... args) {
         if (args.length != 1)
             throw new IllegalArgumentException("MergedItemRepository only needs the currentRoom as argument!");
 
         this.currentRoomString = args[0];
         initRequest(Request.Method.GET, getUrl(context, true, "actualroom", currentRoomString));
-        setData();
-        return mergedItemsLiveData;
+        fetchData();
+        return statusAwareRepoLiveData;
     }
 
-    @Override
-    protected void setData() {
-        mergedItemsLiveData.postFetching();
-        launchRequest();
-    }
 
     @Override
-    protected void handleNetworkResponse(JSONObject payload) {
+    protected void handleSuccessfulNetworkResponse(JSONObject payload) {
         try {
             JSONArray allItems = payload.optJSONArray("all_items");
             List<MergedItem> mergedItems = new ArrayList<>();
@@ -56,14 +50,11 @@ public class MergedItemsRepository extends Repository {
                 mergedItems.add(new MergedItem(currentRoomString, jsonItem));
             }
 
-            mergedItemsLiveData.postSuccess(mergedItems);
+            statusAwareRepoLiveData.postSuccess(mergedItems);
         } catch (JSONException error) {
-            mergedItemsLiveData.postError(error);
+            statusAwareRepoLiveData.postError(error);
         }
     }
 
-    @Override
-    protected void handleErrorResponse(Exception error) {
-        mergedItemsLiveData.postError(error);
-    }
+
 }

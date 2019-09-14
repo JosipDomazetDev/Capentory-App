@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Base64;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -22,8 +21,9 @@ import java.util.Map;
 public abstract class Repository<L> {
     protected Context context;
     private static final int MAX_RETRIES = 8;
-    int retriesCounter = 0;
+    private int retriesCounter = 0;
     private JsonObjectRequest jsonObjectRequest;
+    protected StatusAwareLiveData<L> statusAwareRepoLiveData;
 
     public Repository(Context context) {
         this.context = context;
@@ -33,15 +33,16 @@ public abstract class Repository<L> {
         jsonObjectRequest = getJsonObjectRequest(method, url);
     }
 
-    protected void launchRequest() {
-        NetworkSingleton.getInstance(context).
-                addToRequestQueue(jsonObjectRequest);
-    }
-
+    /**
+     * Create a  launchable JsonObjectRequest that will fetch data from the specified url
+     * @param method Specify the type of the request i.e. GET, POST ...
+     * @param url Specify the url
+     * @return JsonObjectRequest
+     */
     @NonNull
     private JsonObjectRequest getJsonObjectRequest(int method, String url) {
         return new JsonObjectRequest
-                (method, url, null, this::handleNetworkResponse_, this::handleRetry) {
+                (method, url, null, this::handleSuccessfulNetworkResponse_, this::handleRetry) {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
@@ -56,18 +57,23 @@ public abstract class Repository<L> {
         };
     }
 
-    private void handleNetworkResponse_(JSONObject jsonObject) {
-        handleNetworkResponse(jsonObject);
+
+    /*
+     Handle a successful response from the network
+     */
+    private void handleSuccessfulNetworkResponse_(JSONObject jsonObject) {
+        handleSuccessfulNetworkResponse(jsonObject);
         resetRetry();
     }
 
-    protected abstract void handleNetworkResponse(JSONObject payload);
+    protected abstract void handleSuccessfulNetworkResponse(JSONObject payload);
 
-    protected abstract void handleErrorResponse(Exception error);
 
-    protected abstract void setData();
 
-    protected void handleRetry(VolleyError error) {
+     /*
+     Handle a failure from the network
+     */
+    private void handleRetry(VolleyError error) {
         if (retriesCounter < MAX_RETRIES) {
             if (error instanceof TimeoutError) {
                 handleErrorResponse(error);
@@ -82,9 +88,38 @@ public abstract class Repository<L> {
         }
     }
 
-    protected void resetRetry() {
+    private void handleErrorResponse(Exception error) {
+        statusAwareRepoLiveData.postError(error);
+    }
+
+    private void resetRetry() {
         retriesCounter = 0;
     }
+
+
+    /**
+     * Try to fetch the data
+     */
+    protected void fetchData() {
+        statusAwareRepoLiveData.postFetching();
+        launchRequest();
+    }
+
+    /**
+     * Launch/Starts the previously initialized network request
+     */
+    private void launchRequest() {
+        NetworkSingleton.getInstance(context).
+                addToRequestQueue(jsonObjectRequest);
+    }
+
+    /**
+     * Override this method to handle how data is LiveData is passed to other classes (e.g. ViewModels)
+     * @param args optional params
+     * @return LiveData
+     */
+    public abstract StatusAwareLiveData<L> getData(String... args);
+
 
     protected static String getUrl(Context context, boolean addJsonFormatInUrl, String... path) {
         Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
@@ -113,7 +148,4 @@ public abstract class Repository<L> {
     }
 
 
-    public StatusAwareLiveData<L> getData(String... args) {
-        return null;
-    }
 }

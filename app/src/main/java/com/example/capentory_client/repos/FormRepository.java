@@ -17,8 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class FormRepository extends Repository {
-    private StatusAwareLiveData<Map<String, MergedItemField>> mergedItemFieldsLiveData = new StatusAwareLiveData<>();
+public class FormRepository extends Repository<Map<String, MergedItemField>> {
 
     @Inject
     public FormRepository(Context context) {
@@ -28,18 +27,18 @@ public class FormRepository extends Repository {
 
     public StatusAwareLiveData<Map<String, MergedItemField>> getData(String... args) {
         // Fetch only once for entire application, the form wont change
-        if (mergedItemFieldsLiveData.getValue() == null || mergedItemFieldsLiveData.getValue().getData() == null) {
+        if (statusAwareRepoLiveData.getValue() == null || statusAwareRepoLiveData.getValue().getData() == null) {
             initRequest(Request.Method.OPTIONS, getUrl(context, false, "actualitem/"));
-            setData();
+            fetchData();
         }
 
-        return mergedItemFieldsLiveData;
+        return statusAwareRepoLiveData;
     }
 
 
 
     @Override
-    protected void handleNetworkResponse(JSONObject payload) {
+    protected void handleSuccessfulNetworkResponse(JSONObject payload) {
         try {
             payload = payload.getJSONObject("actions").getJSONObject("POST");
             Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
@@ -49,21 +48,12 @@ public class FormRepository extends Repository {
                 String key = iterator.next();
                 mergedItemFieldsSet.put(key, new MergedItemField(key, payload.getJSONObject(key)));
             }
-            mergedItemFieldsLiveData.postSuccess(mergedItemFieldsSet);
+            statusAwareRepoLiveData.postSuccess(mergedItemFieldsSet);
         } catch (JSONException error) {
-            mergedItemFieldsLiveData.postError(error);
+            statusAwareRepoLiveData.postError(error);
         }
     }
 
-    @Override
-    protected void handleErrorResponse(Exception error) {
-        mergedItemFieldsLiveData.postError(error);
-    }
 
-    @Override
-    protected void setData() {
-        mergedItemFieldsLiveData.postFetching();
-        launchRequest();
-    }
 }
 
