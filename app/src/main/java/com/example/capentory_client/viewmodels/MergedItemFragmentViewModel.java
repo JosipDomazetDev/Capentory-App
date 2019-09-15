@@ -11,7 +11,7 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class MergedItemFragmentViewModel extends StatusFragmentViewModel<List<MergedItem>> {
+public class MergedItemFragmentViewModel extends NetworkViewModel<List<MergedItem>> {
 
 
     @Inject
@@ -19,10 +19,6 @@ public class MergedItemFragmentViewModel extends StatusFragmentViewModel<List<Me
         super(mergedItemsRepository);
     }
 
-
-    public LiveData<StatusAwareData<List<MergedItem>>> getMergedItems() {
-        return statusAwareLiveData;
-    }
 
     public void removeItem(MergedItem mergedItem) {
         List<MergedItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
@@ -38,12 +34,12 @@ public class MergedItemFragmentViewModel extends StatusFragmentViewModel<List<Me
             return;
         }
 
-        statusAwareLiveData = repository.getData(args);
+        statusAwareLiveData = jsonRepository.fetchData(args);
     }
 
 
     @Override
     public void reloadData(String... args) {
-        statusAwareLiveData = repository.getData(args);
+        statusAwareLiveData = jsonRepository.fetchData(args);
     }
 }

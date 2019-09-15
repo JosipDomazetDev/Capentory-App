@@ -1,70 +1,100 @@
 package com.example.capentory_client.ui;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.capentory_client.R;
-import com.example.capentory_client.models.ActualRoom;
-import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
-import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
+import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.example.capentory_client.viewmodels.NetworkViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
-
-import org.json.JSONException;
-
-import java.util.List;
-
-import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-import static com.example.capentory_client.viewmodels.wrappers.StatusAwareData.State.ERROR;
+public abstract class NetworkFragment<L> extends DaggerFragment {
 
-public class NetworkFragment extends DaggerFragment {
+    protected NetworkViewModel<L> networkViewModel;
+    private ProgressBar progressBar;
+    private View content;
+    private BasicNetworkErrorHandler basicNetworkErrorHandler;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private String[] args;
 
-    @Inject
-    ViewModelProviderFactory providerFactory;
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_item_detail, container, false);
+    public void init(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
+        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID, args);
 
-        /*detailItemFragmentViewModel.getFields().observe(getViewLifecycleOwner(), fields -> {
-
-            switch (fields.getStatus()) {
-
+        networkViewModel.fetchData(args);
+        networkViewModel.getData().observe(getViewLifecycleOwner(), statusAwareData -> {
+            switch (statusAwareData.getStatus()) {
                 case SUCCESS:
-                    try {
-                        displayForm(view, fields.getData());
-                    } catch (JSONException e) {
-                        basicNetworkErrorHandler.displayTextViewMessage(e);
-                    }
-                    hideProgressBarAndShowContent();
+                    handleSuccess(statusAwareData);
                     break;
                 case ERROR:
-                    fields.getError().printStackTrace();
-                    basicNetworkErrorHandler.displayTextViewMessage(fields.getError());
-                    hideProgressBarAndHideContent();
+                    handleError(statusAwareData);
                     break;
                 case FETCHING:
-                    displayProgressbarAndHideContent();
+                    handleFetching(statusAwareData);
                     break;
-
             }
-            if (fields.getStatus() != ERROR)
+            if (statusAwareData.getStatus() != StatusAwareData.State.ERROR)
                 basicNetworkErrorHandler.reset();
-        });*/
+
+        });
+
+
+        swipeRefreshLayout.setOnRefreshListener(
+                () -> {
+                    networkViewModel.reloadData(args);
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+        );
 
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
+
+    private void initWithIDs(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String[] args) {
+        this.networkViewModel = networkViewModel;
+        this.basicNetworkErrorHandler = basicNetworkErrorHandler;
+        this.progressBar = view.findViewById(progressBarID);
+        progressBar.bringToFront();
+        this.content = content;
+        this.swipeRefreshLayout = view.findViewById(swipeRefreshLayoutID);
+        this.args = args;
+    }
+
+    protected void handleSuccess(StatusAwareData<L> statusAwareData) {
+        hideProgressBarAndShowContent();
+    }
+
+
+    protected void handleError(StatusAwareData<L> statusAwareData) {
+        basicNetworkErrorHandler.displayTextViewMessage(statusAwareData.getError());
+        hideProgressBarAndHideContent();
+    }
+
+
+    protected void handleFetching(StatusAwareData<L> statusAwareData) {
+        displayProgressbarAndHideContent();
+    }
+
+
+
+    private void displayProgressbarAndHideContent() {
+        progressBar.setVisibility(View.VISIBLE);
+        content.setVisibility(View.GONE);
+    }
+
+
+    private void hideProgressBarAndShowContent() {
+        progressBar.setVisibility(View.GONE);
+        content.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBarAndHideContent() {
+        progressBar.setVisibility(View.GONE);
+        content.setVisibility(View.GONE);
     }
 
 }

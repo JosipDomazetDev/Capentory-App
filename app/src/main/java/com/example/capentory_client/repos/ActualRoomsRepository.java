@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class ActualRoomsRepository extends Repository<List<ActualRoom>> {
+public class ActualRoomsRepository extends JsonRepository<List<ActualRoom>> {
 
     @Inject
     public ActualRoomsRepository(Context context) {
@@ -27,17 +27,17 @@ public class ActualRoomsRepository extends Repository<List<ActualRoom>> {
 
 
     @Override
-    public StatusAwareLiveData<List<ActualRoom>> getData(String... args) {
+    public StatusAwareLiveData<List<ActualRoom>> fetchData(String... args) {
         // Fetch only once for entire application, the rooms wont change
-        /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().getData() == null) {*/
+        /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchData() == null) {*/
         initRequest(Request.Method.GET, getUrl(context, true, "inventory", "actualroom"));
-        fetchData();
+        launchRequest();
         return statusAwareRepoLiveData;
     }
 
 
     @Override
-    protected void handleSuccessfulNetworkResponse(JSONObject payload) {
+    protected void handleSuccessfulResponse(JSONObject payload) {
         try {
             List<ActualRoom> actualRooms = new ArrayList<>();
             Iterator<String> keys = payload.keys();

@@ -3,6 +3,7 @@ package com.example.capentory_client.ui;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
@@ -48,8 +48,6 @@ import java.util.TreeMap;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,21 +55,13 @@ import dagger.android.support.DaggerFragment;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class DetailedItemFragment extends DaggerFragment {
+public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItemField>> {
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
-    private ProgressBar progressBar;
-    private ConstraintLayout constraintLayout;
+    private BasicNetworkErrorHandler basicNetworkErrorHandler;
+    private View view;
 
     public DetailedItemFragment() {
         // Required empty public constructor
-    }
-
-    @Inject
-    ViewModelProviderFactory providerFactory;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -79,46 +69,26 @@ public class DetailedItemFragment extends DaggerFragment {
         return inflater.inflate(R.layout.fragment_item_detail, container, false);
     }
 
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        this.view = view;
+        LinearLayout linearLayout = view.findViewById(R.id.content_fragment_item_detail);
+        basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dummy));
 
-        DetailItemFragmentViewModel detailItemFragmentViewModel = ViewModelProviders.of(this, providerFactory).get(DetailItemFragmentViewModel.class);
-        BasicNetworkErrorHandler basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dummy));
-        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_fragment_item_detail);
-        progressBar = view.findViewById(R.id.progress_bar_fragment_item_detail);
-        constraintLayout = view.findViewById(R.id.content_fragment_item_detail);
-
-        detailItemFragmentViewModel.fetchData();
-        detailItemFragmentViewModel.getData().observe(getViewLifecycleOwner(), fields -> {
-
-            switch (fields.getStatus()) {
-
-                case SUCCESS:
-                    try {
-                        displayForm(view, fields.getData());
-                    } catch (JSONException e) {
-                        basicNetworkErrorHandler.displayTextViewMessage(e);
-                    }
-                    hideProgressBarAndShowContent();
-                    break;
-                case ERROR:
-                    fields.getError().printStackTrace();
-                    basicNetworkErrorHandler.displayTextViewMessage(fields.getError());
-                    hideProgressBarAndHideContent();
-                    break;
-                case FETCHING:
-                    displayProgressbarAndHideContent();
-                    break;
-
-            }
-            if (fields.getStatus() != StatusAwareData.State.ERROR)
-                basicNetworkErrorHandler.reset();
-        });
+        init(ViewModelProviders.of(this, providerFactory).get(DetailItemFragmentViewModel.class),
+                basicNetworkErrorHandler,
+                view,
+                R.id.progress_bar_fragment_item_detail,
+                linearLayout,
+                R.id.swipe_refresh_fragment_item_detail);
 
 
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
-
         itemxDetailSharedViewModel.getCurrentItem().observe(getViewLifecycleOwner(), mergedItem -> {
             TextView txt = view.findViewById(R.id.dummy);
             if (mergedItem == null) {
@@ -128,37 +98,24 @@ public class DetailedItemFragment extends DaggerFragment {
             }
         });
 
-        swipeRefreshLayout.setOnRefreshListener(
-                () -> {
-                    detailItemFragmentViewModel.reloadData();
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-        );
-
 
         ImageButton validateButton = view.findViewById(R.id.validate_btn_fragment_itemdetail);
         validateButton.setOnClickListener(v -> handleValidate());
     }
 
 
-    private void hideProgressBarAndHideContent() {
-        progressBar.setVisibility(View.GONE);
-        constraintLayout.setVisibility(View.GONE);
+    @Override
+    protected void handleSuccess(StatusAwareData<Map<String, MergedItemField>> statusAwareData) {
+        super.handleSuccess(statusAwareData);
+        try {
+            displayForm(statusAwareData.getData(), view);
+        } catch (JSONException e) {
+            basicNetworkErrorHandler.displayTextViewMessage(e);
+        }
     }
 
 
-    private void displayProgressbarAndHideContent() {
-        progressBar.setVisibility(View.VISIBLE);
-        constraintLayout.setVisibility(View.GONE);
-    }
-
-
-    private void hideProgressBarAndShowContent() {
-        progressBar.setVisibility(View.GONE);
-        constraintLayout.setVisibility(View.VISIBLE);
-    }
-
-    private void displayForm(View view, Map<String, MergedItemField> mapFields) throws JSONException {
+    private void displayForm(Map<String, MergedItemField> mapFields, View view) throws JSONException {
         JSONObject mergedItemJSONPayload = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue()).getMergedItemJSONPayload();
         Map<String, List<MergedItemField>> map = new HashMap<>();
 

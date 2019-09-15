@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class FormRepository extends Repository<Map<String, MergedItemField>> {
+public class FormRepository extends JsonRepository<Map<String, MergedItemField>> {
 
     @Inject
     public FormRepository(Context context) {
@@ -25,20 +25,20 @@ public class FormRepository extends Repository<Map<String, MergedItemField>> {
     }
 
 
-    public StatusAwareLiveData<Map<String, MergedItemField>> getData(String... args) {
+    @Override
+    public StatusAwareLiveData<Map<String, MergedItemField>> fetchData(String... args) {
         // Fetch only once for entire application, the form wont change
         if (statusAwareRepoLiveData.getValue() == null || statusAwareRepoLiveData.getValue().getData() == null) {
             initRequest(Request.Method.OPTIONS, getUrl(context, false, "actualitem/"));
-            fetchData();
+            launchRequest();
         }
 
         return statusAwareRepoLiveData;
     }
 
 
-
     @Override
-    protected void handleSuccessfulNetworkResponse(JSONObject payload) {
+    protected void handleSuccessfulResponse(JSONObject payload) {
         try {
             payload = payload.getJSONObject("actions").getJSONObject("POST");
             Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();

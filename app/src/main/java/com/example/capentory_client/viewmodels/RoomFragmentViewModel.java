@@ -1,19 +1,14 @@
 package com.example.capentory_client.viewmodels;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
-
 import com.example.capentory_client.models.ActualRoom;
 import com.example.capentory_client.repos.ActualRoomsRepository;
-import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
-import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class RoomFragmentViewModel extends StatusFragmentViewModel<List<ActualRoom>> {
+public class RoomFragmentViewModel extends NetworkViewModel<List<ActualRoom>> {
 
 
     @Inject
@@ -37,11 +32,11 @@ public class RoomFragmentViewModel extends StatusFragmentViewModel<List<ActualRo
             return;
         }
 
-        statusAwareLiveData = repository.getData(args);
+        statusAwareLiveData = jsonRepository.fetchData(args);
     }
 
     @Override
     public void reloadData(String... args) {
-        statusAwareLiveData = repository.getData(args);
+        statusAwareLiveData = jsonRepository.fetchData(args);
     }
 }

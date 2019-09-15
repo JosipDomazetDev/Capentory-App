@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MergedItemsRepository extends Repository<List<MergedItem>> {
+public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
     private String currentRoomString;
 
     @Inject
@@ -28,19 +28,19 @@ public class MergedItemsRepository extends Repository<List<MergedItem>> {
 
 
     @Override
-    public StatusAwareLiveData<List<MergedItem>> getData(String... args) {
+    public StatusAwareLiveData<List<MergedItem>> fetchData(String... args) {
         if (args.length != 1)
             throw new IllegalArgumentException("MergedItemRepository only needs the currentRoom as argument!");
 
         this.currentRoomString = args[0];
         initRequest(Request.Method.GET, getUrl(context, true, "actualroom", currentRoomString));
-        fetchData();
+        launchRequest();
         return statusAwareRepoLiveData;
     }
 
 
     @Override
-    protected void handleSuccessfulNetworkResponse(JSONObject payload) {
+    protected void handleSuccessfulResponse(JSONObject payload) {
         try {
             JSONArray allItems = payload.optJSONArray("all_items");
             List<MergedItem> mergedItems = new ArrayList<>();
