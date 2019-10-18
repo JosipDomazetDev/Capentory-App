@@ -22,4 +22,5 @@ public abstract class ItemFragmentViewModelsModule {
     @IntoMap
     @ViewModelKey(DetailItemFragmentViewModel.class)
     public abstract ViewModel bindDetailItemFragmentViewModel(DetailItemFragmentViewModel viewModel);
+
 }

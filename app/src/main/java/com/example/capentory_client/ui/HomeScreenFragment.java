@@ -53,7 +53,7 @@ public class HomeScreenFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_screen, container, false);
         createNotificationChannel();
 
@@ -72,7 +72,7 @@ public class HomeScreenFragment extends Fragment {
             lastClickTime = SystemClock.elapsedRealtime();
 
             startInventory();
-            Navigation.findNavController(v).navigate(R.id.action_homeScreenFragment_to_roomFragment);
+            Navigation.findNavController(v).navigate(R.id.openLoginFragment);
         });
 
     }

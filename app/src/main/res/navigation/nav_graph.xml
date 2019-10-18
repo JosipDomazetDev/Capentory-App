@@ -37,7 +37,7 @@
         android:id="@+id/itemDetailFragment"
         android:name="com.example.capentory_client.ui.DetailedItemFragment"
         android:label="Gegenstandsvalidierung"
-        tools:layout="@layout/fragment_item_detail"/>
+        tools:layout="@layout/fragment_item_detail" />
 
 
     <fragment
@@ -51,6 +51,13 @@
         android:name="com.example.capentory_client.ui.AboutFragment"
         android:label="Über uns"
         tools:layout="@layout/fragment_about" />
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.capentory_client.ui.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+
     <activity
         android:id="@+id/scanBarcodeActivity"
         android:name="com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity"
@@ -72,10 +79,14 @@
     <action
         android:id="@+id/openSettingsFragment"
         app:destination="@id/settingsFragment" />
+    <action
+        android:id="@+id/openLoginFragment"
+        app:destination="@id/loginFragment" />
 
     <action
         android:id="@+id/utilScanText"
         app:destination="@id/scanTextActivity" />
+
 
     <action
         android:id="@+id/utilBarcodeScan"
@@ -85,11 +96,6 @@
             android:defaultValue="true"
             app:argType="boolean" />
     </action>
-    <activity
-        android:id="@+id/flashScanBarcodeActivity"
-        android:name="com.example.capentory_client.ui.scanactivities.FlashScanBarcodeActivity"
-        android:label="activity_flash_barcode_scan_acitivity"
-        tools:layout="@layout/activity_flash_barcode_scan_acitivity" />
 
 
 </navigation>
