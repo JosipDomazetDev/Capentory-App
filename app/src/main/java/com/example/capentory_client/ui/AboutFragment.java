@@ -35,20 +35,16 @@ public class AboutFragment extends Fragment {
         ImageView zebraImg = view.findViewById(R.id.zebra_logo);
         ImageView rennwegImg = view.findViewById(R.id.rennweg_logo);
 
-        zebraImg.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Uri uri = Uri.parse("https://www.zebra.com/");
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
+        zebraImg.setOnClickListener(v -> {
+            Uri uri = Uri.parse("https://www.zebra.com/");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
         });
 
-        rennwegImg.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Uri uri = Uri.parse("https://www.htl.rennweg.at/");
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
+        rennwegImg.setOnClickListener(v -> {
+            Uri uri = Uri.parse("https://www.htl.rennweg.at/");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
         });
 
         return view;

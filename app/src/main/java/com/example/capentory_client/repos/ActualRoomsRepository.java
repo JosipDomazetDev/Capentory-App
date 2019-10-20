@@ -30,7 +30,7 @@ public class ActualRoomsRepository extends JsonRepository<List<ActualRoom>> {
     public StatusAwareLiveData<List<ActualRoom>> fetchData(String... args) {
         // Fetch only once for entire application, the rooms wont change
         /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchData() == null) {*/
-        initRequest(Request.Method.GET, getUrl(context, true, "inventory", "actualroom"));
+        initRequest(Request.Method.GET, getUrl(context, true, "api","inventory", "actualroom"));
         launchRequest();
         return statusAwareRepoLiveData;
     }

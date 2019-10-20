@@ -24,7 +24,6 @@ public class MainActivity extends DaggerAppCompatActivity {
             R.id.settingsFragment, R.id.homeScreenFragment, R.id.roomFragment, R.id.itemsFragment, R.id.itemDetailFragment};
 
 
-    TextView txtView;
     protected DrawerLayout drawer;
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;

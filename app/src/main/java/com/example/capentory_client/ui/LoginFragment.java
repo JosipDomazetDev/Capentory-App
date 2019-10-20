@@ -1,53 +1,106 @@
 package com.example.capentory_client.ui;
 
 
-import android.app.ActionBar;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.Cryptography;
+import com.example.capentory_client.androidutility.ToastUtility;
+import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.example.capentory_client.viewmodels.LoginFragmentViewModel;
+import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
+import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
+
+import java.util.Objects;
+
+import javax.inject.Inject;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginFragment extends Fragment {
+public class LoginFragment extends NetworkFragment<String> {
 
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     public LoginFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
-
-        return view;
+        return inflater.inflate(R.layout.fragment_login, container, false);
     }
-
 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Window w = getActivity().getWindow();
-        //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+        TextView userField = view.findViewById(R.id.user_fragment_login);
+        TextView passField = view.findViewById(R.id.password_fragment_login);
+
+
+        init(ViewModelProviders.of(this, providerFactory).get(LoginFragmentViewModel.class),
+                new BasicNetworkErrorHandler(getContext(), userField),
+                view,
+                R.id.progress_bar_fragment_login);
+
+
+        view.findViewById(R.id.login_btn_fragment_login).setOnClickListener(v -> {
+            String userString = userField.getText().toString();
+            String passwordString = passField.getText().toString();
+            fetchManually(userString, passwordString);
+        });
+
+
     }
+
+
+    @Override
+    protected void handleSuccess(StatusAwareData<String> statusAwareData) {
+        super.handleSuccess(statusAwareData);
+
+        //Move this to viewmodel
+        Cryptography cryptography = new Cryptography(getContext());
+        SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences("саpеntorу_sharеd_prеf", MODE_PRIVATE).edit();
+        editor.putString("api_tоkеn", cryptography.encrypt(statusAwareData.getData()));
+        editor.putBoolean("logged_in", true);
+        editor.apply();
+        ToastUtility.displayCenteredToastMessage(getContext(), "Token erfolgreich generiert!", Toast.LENGTH_LONG);
+        NavHostFragment.findNavController(this).popBackStack();
+    }
+
+
+    @Override
+    protected void displayProgressbarAndHideContent() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void hideProgressBarAndShowContent() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void hideProgressBarAndHideContent() {
+        progressBar.setVisibility(View.GONE);
+    }
+
 }

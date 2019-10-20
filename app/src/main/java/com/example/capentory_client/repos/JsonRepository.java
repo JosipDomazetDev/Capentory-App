@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Base64;
 
+import com.android.volley.Request;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.capentory_client.androidutility.PreferenceUtility;
+import com.example.capentory_client.androidutility.Cryptography;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONObject;
@@ -68,6 +70,7 @@ public abstract class JsonRepository<L> {
 
     /**
      * Inform liveData about error
+     *
      * @param error that occurred
      */
     private void handleErrorResponse(Exception error) {
@@ -79,6 +82,25 @@ public abstract class JsonRepository<L> {
      */
     private void resetRetry() {
         retriesCounter = 0;
+    }
+
+
+    /**
+     * Create a  launchable JsonObjectRequest that will fetch data from the specified url with a body (e.g. for user/password)
+     *
+     * @param url Specify the url
+     * @return JsonObjectRequest
+     */
+    protected void initPost(String url, Map<String, String> params) {
+        jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.POST, url, new JSONObject(params), this::handleSuccessfulResponse_, this::handleRetry) {
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
     }
 
 
@@ -95,16 +117,17 @@ public abstract class JsonRepository<L> {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
-                String credentials = "ralph" + ":" + "ralph";
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                 headers.put("Content-Type", "application/json");
-                headers.put("Authorization", auth);
+                Cryptography cryptography = new Cryptography(context);
+                String api_tоkеn = cryptography.decrypt(PreferenceUtility.getFromNonDefPref(context, "api_tоkеn"));
+                headers.put("Authorization", "Token "
+                        + api_tоkеn);
                 headers.put("Connection", "close");
                 return headers;
             }
         };
     }
+
     /**
      * Launch/Starts the previously initialized network request
      */
@@ -128,15 +151,15 @@ public abstract class JsonRepository<L> {
 
     /**
      * Get an url
-     * @param context used to retrieve ip and port from settings
+     *
+     * @param context            used to retrieve ip and port from settings
      * @param addJsonFormatInUrl whether url should explicitly query for json
-     * @param path specifies paths
+     * @param path               specifies paths
      * @return the Url
      */
     protected static String getUrl(Context context, boolean addJsonFormatInUrl, String... path) {
         Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
-                .encodedAuthority(getSocket(context))
-                .appendPath("api");
+                .encodedAuthority(getSocket(context));
 
         for (String s : path) {
             urlBuilder.appendPath(s);
@@ -149,6 +172,7 @@ public abstract class JsonRepository<L> {
 
     /**
      * Get the socket from the settings
+     *
      * @param context used to retrieve ip and port from settings
      * @return the socket as String in the form of IP:Port
      */

@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/gradient_homescreen"
-    android:fitsSystemWindows="true">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="25dp"
-            android:paddingTop="50dp"
-            android:paddingRight="25dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -27,20 +22,20 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/login_curve" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
         </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingTop="50dp"
+            android:paddingRight="20dp">
+
 
             <TextView
-                android:id="@+id/font"
+                android:id="@+id/title_text_view_fragment_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
@@ -56,11 +51,30 @@
                 android:textSize="44sp"
                 android:textStyle="bold" />
 
+
+            <TextView
+                android:id="@+id/subtitle_text_view_fragment_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+
+                android:letterSpacing="0.08"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:text="Loggen Sie sich ein!"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#FFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+
+
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="70dp"
                 android:layout_marginBottom="8dp"
                 android:textColorHint="#FFF"
                 app:boxCornerRadiusBottomEnd="10dp"
@@ -105,6 +119,39 @@
                     android:inputType="textPassword"
                     android:textColor="#FFF" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/login_btn_fragment_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:backgroundTint="#FFF"
+                android:letterSpacing="0.04"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="Anmelden"
+                android:textAllCaps="false"
+                android:textColor="#0F82C0"
+
+                android:textSize="18sp"
+                app:cornerRadius="6dp"
+                app:strokeColor="#FFF"
+                app:strokeWidth="1dp" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar_fragment_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:indeterminate="true"
+                android:indeterminateBehavior="repeat"
+                android:visibility="gone"
+                android:padding="10dp" />
         </LinearLayout>
-    </LinearLayout>
+
+    </RelativeLayout>
 </ScrollView>

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.capentory_client.dagger.ViewModelKey;
 import com.example.capentory_client.viewmodels.DetailItemFragmentViewModel;
+import com.example.capentory_client.viewmodels.LoginFragmentViewModel;
 import com.example.capentory_client.viewmodels.MergedItemFragmentViewModel;
 
 import dagger.Binds;
@@ -23,4 +24,8 @@ public abstract class ItemFragmentViewModelsModule {
     @ViewModelKey(DetailItemFragmentViewModel.class)
     public abstract ViewModel bindDetailItemFragmentViewModel(DetailItemFragmentViewModel viewModel);
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(LoginFragmentViewModel.class)
+    public abstract ViewModel bindLoginFragmentViewModel(LoginFragmentViewModel viewModel);
 }

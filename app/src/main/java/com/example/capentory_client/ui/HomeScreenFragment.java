@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.PreferenceUtility;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -71,8 +72,10 @@ public class HomeScreenFragment extends Fragment {
             }
             lastClickTime = SystemClock.elapsedRealtime();
 
-            startInventory();
-            Navigation.findNavController(v).navigate(R.id.openLoginFragment);
+            if (PreferenceUtility.isLoggedIn(getContext())) {
+                startInventory();
+                Navigation.findNavController(v).navigate(R.id.action_homeScreenFragment_to_roomFragment);
+            } else Navigation.findNavController(v).navigate(R.id.loginFragment);
         });
 
     }

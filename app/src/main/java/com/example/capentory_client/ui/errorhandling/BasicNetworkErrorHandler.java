@@ -6,9 +6,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.ClientError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.androidutility.ToastUtility;
 
 import org.json.JSONException;
@@ -27,9 +30,6 @@ public class BasicNetworkErrorHandler {
         this.context = context;
     }
 
-    public void displayErrorToastMessage(Throwable error) {
-        ToastUtility.displayCenteredToastMessage(context, getCentralizedErrorMessage(error), Toast.LENGTH_LONG);
-    }
 
     public void displayTextViewMessage(Throwable error) {
         if (errorView == null || !(errorView instanceof TextView)) return;
@@ -38,12 +38,12 @@ public class BasicNetworkErrorHandler {
         textView.setFocusable(true);
         textView.setClickable(true);
         textView.setFocusableInTouchMode(true);
-        textView.setError(getCentralizedErrorMessage(error));
+        textView.setError(getCentralizedErrorMessage(error, context));
         textView.requestFocus();
     }
 
 
-    private String getCentralizedErrorMessage(Throwable error) {
+    private String getCentralizedErrorMessage(Throwable error, Context context) {
         if (error == null) return null;
         error.printStackTrace();
 
@@ -51,14 +51,21 @@ public class BasicNetworkErrorHandler {
         if (error instanceof JSONException) {
             error.printStackTrace();
             errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
-        }
-        else if (error instanceof TimeoutError) {
+        } else if (error instanceof TimeoutError) {
             errorMsg = "Zeitüberschreitungsfehler ist aufgetreten!";
             error.printStackTrace();
-        }
-        else if (error instanceof VolleyError) {
-            errorMsg = "Ein Verbindungsfehler ist aufgetreten!";
-            error.printStackTrace();
+        } else if (error instanceof VolleyError) {
+            if (error instanceof ClientError) {
+                errorMsg = "Benutzername oder Passwort war falsch!";
+                error.printStackTrace();
+            } else if (error instanceof AuthFailureError) {
+                errorMsg = "Credentials sind ungültig oder Sie haben zu wenige Rechte. Bitte versuchen Sie sich nochmal anzumelden!";
+                PreferenceUtility.logout(context);
+                error.printStackTrace();
+            } else {
+                errorMsg = "Ein Verbindungsfehler ist aufgetreten!";
+                error.printStackTrace();
+            }
         }
 
         String exceptionMsg = "";
@@ -74,7 +81,7 @@ public class BasicNetworkErrorHandler {
         if (errorView == null || !(errorView instanceof TextView)) return;
 
         TextView textView = (TextView) errorView;
-        textView.setError(getCentralizedErrorMessage(null));
+        textView.setError(getCentralizedErrorMessage(null, context));
     }
 }
 

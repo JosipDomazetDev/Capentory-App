@@ -33,7 +33,7 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
             throw new IllegalArgumentException("MergedItemRepository only needs the currentRoom as argument!");
 
         this.currentRoomString = args[0];
-        initRequest(Request.Method.GET, getUrl(context, true, "actualroom", currentRoomString));
+        initRequest(Request.Method.GET, getUrl(context, true, "api","actualroom", currentRoomString));
         launchRequest();
         return statusAwareRepoLiveData;
     }

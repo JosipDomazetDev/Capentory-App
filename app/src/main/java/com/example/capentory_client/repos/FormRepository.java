@@ -29,7 +29,7 @@ public class FormRepository extends JsonRepository<Map<String, MergedItemField>>
     public StatusAwareLiveData<Map<String, MergedItemField>> fetchData(String... args) {
         // Fetch only once for entire application, the form wont change
         if (statusAwareRepoLiveData.getValue() == null || statusAwareRepoLiveData.getValue().getData() == null) {
-            initRequest(Request.Method.OPTIONS, getUrl(context, false, "actualitem/"));
+            initRequest(Request.Method.OPTIONS, getUrl(context, false, "api","actualitem/"));
             launchRequest();
         }
 

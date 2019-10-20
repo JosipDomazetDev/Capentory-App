@@ -4,6 +4,7 @@ import com.example.capentory_client.dagger.daggerviewmodels.ItemFragmentViewMode
 import com.example.capentory_client.dagger.daggerviewmodels.RoomFragmentViewModelsModule;
 import com.example.capentory_client.ui.ActualRoomsFragment;
 import com.example.capentory_client.ui.DetailedItemFragment;
+import com.example.capentory_client.ui.LoginFragment;
 import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.ui.MergedItemsFragment;
 import com.example.capentory_client.viewmodels.DetailItemFragmentViewModel;
@@ -29,6 +30,11 @@ public abstract class ActivityBuildersModule {
     @ContributesAndroidInjector(
             modules = {ItemFragmentViewModelsModule.class})
     abstract DetailedItemFragment contributeDetailItemFragment();
+
+    @ContributesAndroidInjector(
+            modules = {ItemFragmentViewModelsModule.class})
+    abstract LoginFragment contributeLoginFragment();
+
 
 
 

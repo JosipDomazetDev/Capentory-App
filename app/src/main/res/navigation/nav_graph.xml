@@ -55,7 +55,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.capentory_client.ui.LoginFragment"
-        android:label="fragment_login"
+        android:label="Login"
         tools:layout="@layout/fragment_login" />
 
     <activity
@@ -79,9 +79,7 @@
     <action
         android:id="@+id/openSettingsFragment"
         app:destination="@id/settingsFragment" />
-    <action
-        android:id="@+id/openLoginFragment"
-        app:destination="@id/loginFragment" />
+
 
     <action
         android:id="@+id/utilScanText"

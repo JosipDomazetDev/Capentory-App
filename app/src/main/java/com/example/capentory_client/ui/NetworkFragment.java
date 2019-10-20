@@ -14,17 +14,40 @@ import dagger.android.support.DaggerFragment;
 public abstract class NetworkFragment<L> extends DaggerFragment {
 
     protected NetworkViewModel<L> networkViewModel;
-    private ProgressBar progressBar;
+    protected ProgressBar progressBar;
     private View content;
     private BasicNetworkErrorHandler basicNetworkErrorHandler;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private String[] args;
-
 
     public void init(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
-        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID, args);
+        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
         networkViewModel.fetchData(args);
+        initObserve(networkViewModel, basicNetworkErrorHandler);
+
+
+        swipeRefreshLayout.setOnRefreshListener(
+                () -> {
+                    networkViewModel.reloadData(args);
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+        );
+
+    }
+
+    /**
+     * This one dooesn't fetch automatically
+     *
+     * @param networkViewModel
+     * @param basicNetworkErrorHandler
+     * @param view
+     * @param progressBarID
+     */
+    public void init(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID) {
+        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, -1);
+    }
+
+    private void initObserve(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler) {
         networkViewModel.getData().observe(getViewLifecycleOwner(), statusAwareData -> {
             switch (statusAwareData.getStatus()) {
                 case SUCCESS:
@@ -41,28 +64,26 @@ public abstract class NetworkFragment<L> extends DaggerFragment {
                 basicNetworkErrorHandler.reset();
 
         });
-
-
-        swipeRefreshLayout.setOnRefreshListener(
-                () -> {
-                    networkViewModel.reloadData(args);
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-        );
-
     }
 
 
-
-    private void initWithIDs(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String[] args) {
+    private void initWithIDs(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID) {
         this.networkViewModel = networkViewModel;
         this.basicNetworkErrorHandler = basicNetworkErrorHandler;
-        this.progressBar = view.findViewById(progressBarID);
+        if (progressBarID != -1)
+            this.progressBar = view.findViewById(progressBarID);
         progressBar.bringToFront();
         this.content = content;
-        this.swipeRefreshLayout = view.findViewById(swipeRefreshLayoutID);
-        this.args = args;
+        if (swipeRefreshLayoutID != -1)
+            this.swipeRefreshLayout = view.findViewById(swipeRefreshLayoutID);
     }
+
+
+    protected void fetchManually(String... args) {
+        networkViewModel.fetchData(args);
+        initObserve(networkViewModel, basicNetworkErrorHandler);
+    }
+
 
     protected void handleSuccess(StatusAwareData<L> statusAwareData) {
         hideProgressBarAndShowContent();
@@ -80,21 +101,21 @@ public abstract class NetworkFragment<L> extends DaggerFragment {
     }
 
 
-
-    private void displayProgressbarAndHideContent() {
+    protected void displayProgressbarAndHideContent() {
         progressBar.setVisibility(View.VISIBLE);
         content.setVisibility(View.GONE);
     }
 
 
-    private void hideProgressBarAndShowContent() {
+    protected void hideProgressBarAndShowContent() {
         progressBar.setVisibility(View.GONE);
         content.setVisibility(View.VISIBLE);
     }
 
-    private void hideProgressBarAndHideContent() {
+    protected void hideProgressBarAndHideContent() {
         progressBar.setVisibility(View.GONE);
         content.setVisibility(View.GONE);
+
     }
 
 }
