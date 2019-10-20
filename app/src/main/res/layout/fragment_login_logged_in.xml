@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:scaleType="centerCrop"
+                android:src="@drawable/login_curve" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingTop="50dp"
+            android:paddingRight="20dp">
+
+
+            <TextView
+                android:id="@+id/title_text_view_fragment_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:fontFamily="@font/righteous"
+
+                android:letterSpacing="0.08"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:text="@string/project_title"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#FFF"
+                android:textSize="44sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/subtitle_text_view_fragment_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+
+                android:letterSpacing="0.08"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:text="Wollen Sie sich ausloggen?"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#FFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/desc_text_view_fragment_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+
+                android:letterSpacing="0.08"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:text="Sie haben die Möglichkeit ihr Token nur auf diesem Gerät zu löschen oder es zusätzlich auch auf dem Server zu löschen. Die zweite Option benötigt eine Netzwerkverbindung."
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#FFF"
+                android:textSize="14sp"
+                />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/logout_locally_btn_fragment_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:backgroundTint="#FFF"
+                android:letterSpacing="0.04"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="Lokal Abmelden"
+                android:textAllCaps="false"
+                android:textColor="#0F82C0"
+
+                android:textSize="18sp"
+                app:cornerRadius="6dp"
+                app:strokeColor="#FFF"
+                app:strokeWidth="1dp" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/logout_server_btn_fragment_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:backgroundTint="#FFF"
+                android:letterSpacing="0.04"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="Auch am Server abmelden"
+                android:textAllCaps="false"
+                android:textColor="#0F82C0"
+
+                android:textSize="18sp"
+                app:cornerRadius="6dp"
+                app:strokeColor="#FFF"
+                app:strokeWidth="1dp" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar_fragment_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:indeterminate="true"
+                android:indeterminateBehavior="repeat"
+                android:padding="10dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</ScrollView>

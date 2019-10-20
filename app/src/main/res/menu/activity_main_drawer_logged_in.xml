@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <item android:title="Inventurfunktionen">
+        <menu>
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/utilBarcodeScan"
+                    android:checkable="false"
+                    android:icon="@drawable/scan_icon_ios_black"
+                    android:menuCategory="secondary"
+                    android:title="Kamerascan" />
+                <item
+                    android:id="@+id/utilScanText"
+                    android:checkable="false"
+                    android:icon="@drawable/scan_text_icon_ios_black"
+                    android:menuCategory="secondary"
+                    android:title="Textscan" />
+
+
+                <item
+                    android:id="@+id/roomFragment"
+                    android:icon="@drawable/ic_play_arrow_black_24dp"
+                    android:menuCategory="secondary"
+                    android:title="Inventur beginnen" />
+
+
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="Angemedlt als Josip">
+        <menu>
+            <item
+                android:id="@+id/loginFragment"
+                android:icon="@drawable/ic_account_circle_white_24dp"
+                android:menuCategory="secondary"
+                android:title="Ausloggen" />
+
+        </menu>
+    </item>
+
+    <item android:title="Zusätzliches">
+        <menu>
+
+            <item
+                android:id="@+id/aboutFragment"
+                android:icon="@drawable/ic_info_outline_black_24dp"
+                android:menuCategory="secondary"
+                android:title="@string/about_us" />
+        </menu>
+    </item>
+
+
+
+</menu>

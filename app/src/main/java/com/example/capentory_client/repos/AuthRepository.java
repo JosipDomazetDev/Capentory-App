@@ -3,19 +3,21 @@ package com.example.capentory_client.repos;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.capentory_client.models.MergedItemField;
+import com.android.volley.Request;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 public class AuthRepository extends JsonRepository<String> {
+    protected StatusAwareLiveData<Boolean> logoutSuccessful = new StatusAwareLiveData<>();
+
+
     @Inject
     public AuthRepository(Context context) {
         super(context);
@@ -45,5 +47,24 @@ public class AuthRepository extends JsonRepository<String> {
         } catch (JSONException error) {
             statusAwareRepoLiveData.postError(error);
         }
+    }
+
+
+    public StatusAwareLiveData<Boolean> logout() {
+        RobustJsonObjectRequestExecutioner robustJsonObjectRequestExecutioner = new RobustJsonObjectRequestExecutioner(context,
+                Request.Method.POST, getUrl(context, false, "api-token-auth","logout/"), null, new ResponseHandler() {
+            @Override
+            public void handleSuccess(JSONObject payload) {
+                logoutSuccessful.postSuccess(true);
+            }
+
+            @Override
+            public void handleError(Exception error) {
+                logoutSuccessful.postError(error);
+            }
+        });
+        logoutSuccessful.postFetching();
+        robustJsonObjectRequestExecutioner.launchRequest();
+        return logoutSuccessful;
     }
 }

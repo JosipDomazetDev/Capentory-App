@@ -2,6 +2,7 @@ package com.example.capentory_client.ui;
 
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TabHost;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -13,10 +14,11 @@ import dagger.android.support.DaggerFragment;
 
 public abstract class NetworkFragment<L> extends DaggerFragment {
 
+
     protected NetworkViewModel<L> networkViewModel;
     protected ProgressBar progressBar;
     private View content;
-    private BasicNetworkErrorHandler basicNetworkErrorHandler;
+    protected BasicNetworkErrorHandler basicNetworkErrorHandler;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public void init(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
@@ -54,10 +56,10 @@ public abstract class NetworkFragment<L> extends DaggerFragment {
                     handleSuccess(statusAwareData);
                     break;
                 case ERROR:
-                    handleError(statusAwareData);
+                    handleError(statusAwareData.getError());
                     break;
                 case FETCHING:
-                    handleFetching(statusAwareData);
+                    handleFetching();
                     break;
             }
             if (statusAwareData.getStatus() != StatusAwareData.State.ERROR)
@@ -90,13 +92,13 @@ public abstract class NetworkFragment<L> extends DaggerFragment {
     }
 
 
-    protected void handleError(StatusAwareData<L> statusAwareData) {
-        basicNetworkErrorHandler.displayTextViewMessage(statusAwareData.getError());
+    protected void handleError(Throwable error) {
+        basicNetworkErrorHandler.displayTextViewMessage(error);
         hideProgressBarAndHideContent();
     }
 
 
-    protected void handleFetching(StatusAwareData<L> statusAwareData) {
+    protected void handleFetching() {
         displayProgressbarAndHideContent();
     }
 

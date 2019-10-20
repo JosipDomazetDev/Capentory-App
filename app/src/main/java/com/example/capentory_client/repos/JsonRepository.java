@@ -105,7 +105,7 @@ public abstract class JsonRepository<L> {
 
 
     /**
-     * Create a  launchable JsonObjectRequest that will fetch data from the specified url
+     * set the  launchable JsonObjectRequest that will fetch data from the specified url
      *
      * @param method Specify the type of the request i.e. GET, POST ...
      * @param url    Specify the url
@@ -116,16 +116,21 @@ public abstract class JsonRepository<L> {
                 (method, url, null, this::handleSuccessfulResponse_, this::handleRetry) {
             @Override
             public Map<String, String> getHeaders() {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                Cryptography cryptography = new Cryptography(context);
-                String api_tоkеn = cryptography.decrypt(PreferenceUtility.getFromNonDefPref(context, "api_tоkеn"));
-                headers.put("Authorization", "Token "
-                        + api_tоkеn);
-                headers.put("Connection", "close");
-                return headers;
+                return getHeadersWithToken();
             }
         };
+    }
+
+
+    public Map<String, String> getHeadersWithToken() {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        Cryptography cryptography = new Cryptography(context);
+        String api_tоkеn = cryptography.decrypt(PreferenceUtility.getFromNonDefPref(context, "api_tоkеn"));
+        headers.put("Authorization", "Token "
+                + api_tоkеn);
+        headers.put("Connection", "close");
+        return headers;
     }
 
     /**
