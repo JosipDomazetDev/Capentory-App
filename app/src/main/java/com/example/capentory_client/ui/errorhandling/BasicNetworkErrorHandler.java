@@ -60,7 +60,6 @@ public class BasicNetworkErrorHandler {
                 error.printStackTrace();
             } else if (error instanceof AuthFailureError) {
                 errorMsg = "Credentials sind ungültig oder Sie haben zu wenige Rechte. Bitte versuchen Sie sich nochmal anzumelden!";
-                PreferenceUtility.logout(context);
                 error.printStackTrace();
             } else {
                 errorMsg = "Ein Verbindungsfehler ist aufgetreten!";

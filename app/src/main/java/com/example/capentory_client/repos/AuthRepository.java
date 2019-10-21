@@ -52,7 +52,7 @@ public class AuthRepository extends JsonRepository<String> {
 
     public StatusAwareLiveData<Boolean> logout() {
         RobustJsonObjectRequestExecutioner robustJsonObjectRequestExecutioner = new RobustJsonObjectRequestExecutioner(context,
-                Request.Method.POST, getUrl(context, false, "api-token-auth","logout/"), null, new ResponseHandler() {
+                Request.Method.POST, getUrl(context, false, "api-token-clear/"), null, new ResponseHandler() {
             @Override
             public void handleSuccess(JSONObject payload) {
                 logoutSuccessful.postSuccess(true);
