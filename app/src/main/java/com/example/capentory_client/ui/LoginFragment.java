@@ -25,7 +25,6 @@ import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.LoginFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
-import com.google.android.material.navigation.NavigationView;
 
 import java.io.IOException;
 import java.security.KeyStoreException;
@@ -53,7 +52,7 @@ public class LoginFragment extends NetworkFragment<String> {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        Log.e("XXXX", String.valueOf(PreferenceUtility.isLoggedIn(getContext())));
 
         if (PreferenceUtility.isLoggedIn(getContext())) {
             return inflater.inflate(R.layout.fragment_login_logged_in, container, false);
@@ -77,16 +76,10 @@ public class LoginFragment extends NetworkFragment<String> {
             e.printStackTrace();
         }
 
-        SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences("саpеntorу_sharеd_prеf", MODE_PRIVATE).edit();
-        editor.remove("api_tоkеn");
-        editor.putBoolean("logged_in", false);
-        editor.apply();
         ToastUtility.displayCenteredToastMessage(getContext(), "Abmeldung erfolgreich!", Toast.LENGTH_LONG);
-        NavHostFragment.findNavController(this).popBackStack();
-
-
         PreferenceUtility.logout(getContext());
-        DisplayUtility.displayLogOutMenu(getContext(), getActivity());
+        DisplayUtility.displayLoggedOutMenu(getActivity());
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
 
@@ -94,16 +87,12 @@ public class LoginFragment extends NetworkFragment<String> {
         ((LoginFragmentViewModel) (networkViewModel)).logout();
 
         ((LoginFragmentViewModel) (networkViewModel)).getLogoutSuccessful().observe(getViewLifecycleOwner(), booleanStatusAwareData -> {
-            Log.e("XXXX", booleanStatusAwareData.getStatus().name());
 
             switch (booleanStatusAwareData.getStatus()) {
                 case SUCCESS:
-                    Log.e("XXXX", String.valueOf(booleanStatusAwareData.getData()));
                     clearLocally();
-
                     break;
                 case ERROR:
-                    Log.e("XXXXX", "agebgeen");
                     handleError(booleanStatusAwareData.getError());
                     break;
                 case FETCHING:
@@ -120,12 +109,9 @@ public class LoginFragment extends NetworkFragment<String> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView userField = view.findViewById(R.id.user_fragment_login);
-        TextView passField = view.findViewById(R.id.password_fragment_login);
-
 
         init(ViewModelProviders.of(this, providerFactory).get(LoginFragmentViewModel.class),
-                new BasicNetworkErrorHandler(getContext(), userField),
+                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.subtitle_text_view_fragment_login)),
                 view,
                 R.id.progress_bar_fragment_login);
 
@@ -134,6 +120,9 @@ public class LoginFragment extends NetworkFragment<String> {
             view.findViewById(R.id.logout_locally_btn_fragment_login).setOnClickListener(v -> clearLocally());
             view.findViewById(R.id.logout_server_btn_fragment_login).setOnClickListener(v -> clearOnServer());
         } else {
+            TextView userField = view.findViewById(R.id.user_fragment_login);
+            TextView passField = view.findViewById(R.id.password_fragment_login);
+
             view.findViewById(R.id.login_btn_fragment_login).setOnClickListener(v -> {
                 String userString = userField.getText().toString();
                 String passwordString = passField.getText().toString();
@@ -152,14 +141,14 @@ public class LoginFragment extends NetworkFragment<String> {
 
         //Move this to viewmodel
         Cryptography cryptography = new Cryptography(getContext());
-        SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences("саpеntorу_sharеd_prеf", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences(PreferenceUtility.LOG_SERVER, MODE_PRIVATE).edit();
         editor.putString("api_tоkеn", cryptography.encrypt(statusAwareData.getData()));
         editor.putBoolean("logged_in", true);
         editor.apply();
-        ToastUtility.displayCenteredToastMessage(getContext(), "Token erfolgreich generiert!", Toast.LENGTH_LONG);
-        NavHostFragment.findNavController(this).popBackStack();
 
-        DisplayUtility.displayLogInMenu(getContext(), getActivity());
+        ToastUtility.displayCenteredToastMessage(getContext(), "Token erfolgreich generiert!", Toast.LENGTH_LONG);
+        DisplayUtility.displayLoggedInMenu(getActivity());
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
 

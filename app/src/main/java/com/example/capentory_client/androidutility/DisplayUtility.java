@@ -17,15 +17,13 @@ public final class DisplayUtility {
     }
 
 
-    public static void displayLogInMenu(Context context, Activity activity) {
-        PreferenceUtility.logout(context);
+    public static void displayLoggedInMenu(Activity activity) {
         NavigationView navigationView = Objects.requireNonNull(activity).findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
         navigationView.inflateMenu(R.menu.activity_main_drawer_logged_in);
     }
 
-    public static void displayLogOutMenu(Context context, Activity activity) {
-        PreferenceUtility.logout(context);
+    public static void displayLoggedOutMenu(Activity activity) {
         NavigationView navigationView = Objects.requireNonNull(activity).findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
         navigationView.inflateMenu(R.menu.activity_main_drawer_logged_out);

@@ -37,9 +37,9 @@ public class MainActivity extends DaggerAppCompatActivity {
 
 
         if (PreferenceUtility.isLoggedIn(this)) {
-            DisplayUtility.displayLogInMenu(this, this);
+            DisplayUtility.displayLoggedInMenu(this);
         } else {
-            DisplayUtility.displayLogOutMenu(this, this);
+            DisplayUtility.displayLoggedOutMenu( this);
         }
 
     }
