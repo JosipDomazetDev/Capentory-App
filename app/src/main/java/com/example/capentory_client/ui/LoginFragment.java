@@ -18,6 +18,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.Cryptography;
+import com.example.capentory_client.androidutility.DisplayUtility;
+import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.LoginFragmentViewModel;
@@ -25,6 +27,10 @@ import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -47,29 +53,66 @@ public class LoginFragment extends NetworkFragment<String> {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       /* if (PreferenceUtility.isLoggedIn(getContext())) {
-            Cryptography cryptography = new Cryptography(getContext());
-            try {
-                cryptography.removeKeys();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (CertificateException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences("саpеntorу_sharеd_prеf", MODE_PRIVATE).edit();
-            editor.remove("api_tоkеn");
-            editor.putBoolean("logged_in", false);
-            editor.apply();
-            ToastUtility.displayCenteredToastMessage(getContext(), "Abmeldung erfolgreich!", Toast.LENGTH_LONG);
-            NavHostFragment.findNavController(this).popBackStack();
-        }*/
 
+        if (PreferenceUtility.isLoggedIn(getContext())) {
+            return inflater.inflate(R.layout.fragment_login_logged_in, container, false);
+
+        }
         return inflater.inflate(R.layout.fragment_login, container, false);
+
+    }
+
+    public void clearLocally() {
+        Cryptography cryptography = new Cryptography(getContext());
+        try {
+            cryptography.removeKeys();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences("саpеntorу_sharеd_prеf", MODE_PRIVATE).edit();
+        editor.remove("api_tоkеn");
+        editor.putBoolean("logged_in", false);
+        editor.apply();
+        ToastUtility.displayCenteredToastMessage(getContext(), "Abmeldung erfolgreich!", Toast.LENGTH_LONG);
+        NavHostFragment.findNavController(this).popBackStack();
+
+
+        PreferenceUtility.logout(getContext());
+        DisplayUtility.displayLogOutMenu(getContext(), getActivity());
+    }
+
+
+    public void clearOnServer() {
+        ((LoginFragmentViewModel) (networkViewModel)).logout();
+
+        ((LoginFragmentViewModel) (networkViewModel)).getLogoutSuccessful().observe(getViewLifecycleOwner(), booleanStatusAwareData -> {
+            Log.e("XXXX", booleanStatusAwareData.getStatus().name());
+
+            switch (booleanStatusAwareData.getStatus()) {
+                case SUCCESS:
+                    Log.e("XXXX", String.valueOf(booleanStatusAwareData.getData()));
+                    clearLocally();
+
+                    break;
+                case ERROR:
+                    Log.e("XXXXX", "agebgeen");
+                    handleError(booleanStatusAwareData.getError());
+                    break;
+                case FETCHING:
+                    handleFetching();
+                    break;
+            }
+            if (booleanStatusAwareData.getStatus() != StatusAwareData.State.ERROR)
+                basicNetworkErrorHandler.reset();
+        });
     }
 
 
@@ -87,38 +130,16 @@ public class LoginFragment extends NetworkFragment<String> {
                 R.id.progress_bar_fragment_login);
 
 
-        view.findViewById(R.id.login_btn_fragment_login).setOnClickListener(v -> {
-            /*String userString = userField.getText().toString();
-            String passwordString = passField.getText().toString();
-            fetchManually(userString, passwordString);
-
-
-            NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
-            navigationView.getMenu().clear();
-            navigationView.inflateMenu(R.menu.activity_main_drawer_logged_in);*/
-
-            ((LoginFragmentViewModel) (networkViewModel)).logout();
-
-            ((LoginFragmentViewModel) (networkViewModel)).getLogoutSuccessful().observe(getViewLifecycleOwner(), booleanStatusAwareData -> {
-                Log.e("XXXX", booleanStatusAwareData.getStatus().name());
-
-                switch (booleanStatusAwareData.getStatus()) {
-                    case SUCCESS:
-                        Log.e("XXXX", String.valueOf(booleanStatusAwareData.getData()));
-                        break;
-                    case ERROR:
-                        Log.e("XXXXX","agebgeen");
-                        handleError(booleanStatusAwareData.getError());
-                        break;
-                    case FETCHING:
-                        handleFetching();
-                        break;
-                }
-                if (booleanStatusAwareData.getStatus() != StatusAwareData.State.ERROR)
-                    basicNetworkErrorHandler.reset();
+        if (PreferenceUtility.isLoggedIn(getContext())) {
+            view.findViewById(R.id.logout_locally_btn_fragment_login).setOnClickListener(v -> clearLocally());
+            view.findViewById(R.id.logout_server_btn_fragment_login).setOnClickListener(v -> clearOnServer());
+        } else {
+            view.findViewById(R.id.login_btn_fragment_login).setOnClickListener(v -> {
+                String userString = userField.getText().toString();
+                String passwordString = passField.getText().toString();
+                fetchManually(userString, passwordString);
             });
-        });
-
+        }
 
 
     }
@@ -137,6 +158,8 @@ public class LoginFragment extends NetworkFragment<String> {
         editor.apply();
         ToastUtility.displayCenteredToastMessage(getContext(), "Token erfolgreich generiert!", Toast.LENGTH_LONG);
         NavHostFragment.findNavController(this).popBackStack();
+
+        DisplayUtility.displayLogInMenu(getContext(), getActivity());
     }
 
 

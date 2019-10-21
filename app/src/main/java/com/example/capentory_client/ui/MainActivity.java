@@ -3,7 +3,6 @@ package com.example.capentory_client.ui;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -14,6 +13,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.DisplayUtility;
+import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.google.android.material.navigation.NavigationView;
 
 import dagger.android.support.DaggerAppCompatActivity;
@@ -34,6 +35,12 @@ public class MainActivity extends DaggerAppCompatActivity {
         setContentView(R.layout.activity_main);
         setupNavigation();
 
+
+        if (PreferenceUtility.isLoggedIn(this)) {
+            DisplayUtility.displayLogInMenu(this, this);
+        } else {
+            DisplayUtility.displayLogOutMenu(this, this);
+        }
 
     }
 
@@ -63,7 +70,6 @@ public class MainActivity extends DaggerAppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
-
 
 
     @Override

@@ -31,7 +31,7 @@
         </menu>
     </item>
 
-    <item android:title="Angemedlt als Josip">
+    <item android:title="Sie sind angemeldet">
         <menu>
             <item
                 android:id="@+id/loginFragment"
@@ -52,7 +52,6 @@
                 android:title="@string/about_us" />
         </menu>
     </item>
-
 
 
 </menu>
