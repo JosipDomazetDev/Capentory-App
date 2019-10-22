@@ -5,8 +5,10 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.capentory_client.androidutility.Cryptography;
 import com.example.capentory_client.androidutility.PreferenceUtility;
@@ -53,13 +55,20 @@ public class RobustJsonObjectRequest extends JsonObjectRequest {
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        Cryptography cryptography = new Cryptography(context);
-        String api_tоkеn = cryptography.decrypt(PreferenceUtility.getFromNonDefPref(context, "api_tоkеn"));
         headers.put("Authorization", "Token "
-                + api_tоkеn);
+                + PreferenceUtility.getToken(context));
         headers.put("Connection", "close");
         return headers;
     }
 
+    @Override
+    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+        // 204 means empty body but response was successful (this is not handled by android per default)
+        int EMPTY_BODY_CODE = 204;
+        if (response.statusCode == EMPTY_BODY_CODE) {
+            return Response.success(new JSONObject(), HttpHeaderParser.parseCacheHeaders(response));
+        }
 
+        return super.parseNetworkResponse(response);
+    }
 }

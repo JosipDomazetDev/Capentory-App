@@ -1,6 +1,7 @@
 package com.example.capentory_client.repos;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -10,7 +11,7 @@ import com.android.volley.VolleyError;
 import org.json.JSONObject;
 
 class RobustJsonObjectRequestExecutioner {
-    RobustJsonObjectRequest robustJsonObjectRequest;
+    private RobustJsonObjectRequest robustJsonObjectRequest;
 
     private static final int MAX_RETRIES = 8;
     private int retriesCounter = 0;

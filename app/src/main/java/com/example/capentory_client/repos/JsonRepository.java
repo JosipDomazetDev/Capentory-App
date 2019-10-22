@@ -125,10 +125,8 @@ public abstract class JsonRepository<L> {
     public Map<String, String> getHeadersWithToken() {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        Cryptography cryptography = new Cryptography(context);
-        String api_tоkеn = cryptography.decrypt(PreferenceUtility.getFromNonDefPref(context, "api_tоkеn"));
         headers.put("Authorization", "Token "
-                + api_tоkеn);
+                + PreferenceUtility.getToken(context));
         headers.put("Connection", "close");
         return headers;
     }

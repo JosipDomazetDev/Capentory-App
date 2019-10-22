@@ -2,51 +2,41 @@ package com.example.capentory_client.androidutility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Gravity;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.Collections;
 import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public final class PreferenceUtility {
-    public static String LOG_SERVER = "capentory_logs_server";
+    private static String PREF_KEY = "саpentorу_lоgs_sеrvеr_shared_pref";
+    public static String TOKEN_KEY = "саpentorу_lоgging_tag_kеу";
 
     // Private constructor to prevent instantiation
     private PreferenceUtility() {
         throw new UnsupportedOperationException();
     }
 
-
-    public static String getFromNonDefPref(Context context, String key) {
-        SharedPreferences preferences = Objects.requireNonNull(context).getSharedPreferences(LOG_SERVER, MODE_PRIVATE);
-        return preferences.getString(key, "");
+    public static String getToken(Context context) {
+        Cryptography cryptography = new Cryptography(context);
+        SharedPreferences preferences = Objects.requireNonNull(context).getSharedPreferences(PREF_KEY, MODE_PRIVATE);
+        return cryptography.decrypt(preferences.getString(TOKEN_KEY, ""));
     }
-
 
     public static boolean isLoggedIn(Context context) {
-        SharedPreferences sharedPreferences = Objects.requireNonNull(context).getSharedPreferences(LOG_SERVER, MODE_PRIVATE);
-        return sharedPreferences.getBoolean("logged_in", false);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(context).getSharedPreferences(PREF_KEY, MODE_PRIVATE);
+        return !Objects.requireNonNull(sharedPreferences.getString(TOKEN_KEY, "")).isEmpty();
     }
 
-
-    public static void logout(Context context)
-    {
-        Log.e("XXXXX","CLEARRRRINGGG");
-
-        SharedPreferences.Editor editor = Objects.requireNonNull(context).getSharedPreferences(LOG_SERVER, MODE_PRIVATE).edit();
-        editor.remove("api_tоkеn");
-        editor.putBoolean("logged_in", false);
+    public static void logout(Context context) {
+        SharedPreferences.Editor editor = Objects.requireNonNull(context).getSharedPreferences(PREF_KEY, MODE_PRIVATE).edit();
+        editor.remove(TOKEN_KEY);
         editor.apply();
     }
 
-    public static void loginContext(Context context) {
-        SharedPreferences.Editor editor = Objects.requireNonNull(context).getSharedPreferences(LOG_SERVER, MODE_PRIVATE).edit();
-        editor.putBoolean("logged_in", true);
+    public static void login(Context context, String token) {
+        Cryptography cryptography = new Cryptography(context);
+        SharedPreferences.Editor editor = Objects.requireNonNull(context).getSharedPreferences(PreferenceUtility.PREF_KEY, MODE_PRIVATE).edit();
+        editor.putString(PreferenceUtility.TOKEN_KEY, cryptography.encrypt(token));
         editor.apply();
     }
 }

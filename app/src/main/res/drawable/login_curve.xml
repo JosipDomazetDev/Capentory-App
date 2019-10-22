@@ -6,7 +6,7 @@
     android:viewportHeight="512">
     <group>
         <path
-            android:pathData="M-190.0,65.0a371.5,360.0,0,1,0,813.0,0.0a371.5,330.0,0,1,0,-843.0,0.0z">
+            android:pathData="M-270.0,100.0a371.5,400.0,0,1,0,813.0,0.0a371.5,470.0,0,1,0,-843.0,0.0z">
             <aapt:attr name="android:fillColor">
                 <gradient
                     android:startY="569"

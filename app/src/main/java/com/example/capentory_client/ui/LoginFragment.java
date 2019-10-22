@@ -3,7 +3,6 @@ package com.example.capentory_client.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +51,6 @@ public class LoginFragment extends NetworkFragment<String> {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.e("XXXX", String.valueOf(PreferenceUtility.isLoggedIn(getContext())));
-
         if (PreferenceUtility.isLoggedIn(getContext())) {
             return inflater.inflate(R.layout.fragment_login_logged_in, container, false);
 
@@ -79,12 +76,16 @@ public class LoginFragment extends NetworkFragment<String> {
         ToastUtility.displayCenteredToastMessage(getContext(), "Abmeldung erfolgreich!", Toast.LENGTH_LONG);
         PreferenceUtility.logout(getContext());
         DisplayUtility.displayLoggedOutMenu(getActivity());
+        DisplayUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
         NavHostFragment.findNavController(this).popBackStack();
     }
 
 
     public void clearOnServer() {
-        ((LoginFragmentViewModel) (networkViewModel)).logout();
+        // already logged out when this happens????
+
+        if (PreferenceUtility.isLoggedIn(getContext()))
+            ((LoginFragmentViewModel) (networkViewModel)).logout();
 
         ((LoginFragmentViewModel) (networkViewModel)).getLogoutSuccessful().observe(getViewLifecycleOwner(), booleanStatusAwareData -> {
 
@@ -138,16 +139,10 @@ public class LoginFragment extends NetworkFragment<String> {
     protected void handleSuccess(StatusAwareData<String> statusAwareData) {
         super.handleSuccess(statusAwareData);
 
-
-        //Move this to viewmodel
-        Cryptography cryptography = new Cryptography(getContext());
-        SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences(PreferenceUtility.LOG_SERVER, MODE_PRIVATE).edit();
-        editor.putString("api_tоkеn", cryptography.encrypt(statusAwareData.getData()));
-        editor.putBoolean("logged_in", true);
-        editor.apply();
-
+        PreferenceUtility.login(getContext(), statusAwareData.getData());
         ToastUtility.displayCenteredToastMessage(getContext(), "Token erfolgreich generiert!", Toast.LENGTH_LONG);
         DisplayUtility.displayLoggedInMenu(getActivity());
+        DisplayUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
         NavHostFragment.findNavController(this).popBackStack();
     }
 
