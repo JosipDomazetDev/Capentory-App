@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.example.capentory_client.viewmodels.MergedItemFragmentViewModel;
@@ -53,7 +54,7 @@ import javax.inject.Inject;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class MergedItemsFragment extends NetworkFragment<List<MergedItem>> implements RecyclerViewAdapter.ItemClickListener {
+public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, MergedItemsRepository, MergedItemFragmentViewModel> implements RecyclerViewAdapter.ItemClickListener {
     private RecyclerView recyclerView;
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
@@ -152,7 +153,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>> imple
 
         itemxDetailSharedViewModel.getCurrentItemValidated().observe(getViewLifecycleOwner(), b -> {
             if (b) {
-                ((MergedItemFragmentViewModel) networkViewModel).removeItem(itemxDetailSharedViewModel.getCurrentItem().getValue());
+                networkViewModel.removeItem(itemxDetailSharedViewModel.getCurrentItem().getValue());
                 itemxDetailSharedViewModel.setCurrentItemValidated(false);
             }
         });

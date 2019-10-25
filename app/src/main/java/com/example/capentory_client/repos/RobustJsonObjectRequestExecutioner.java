@@ -1,7 +1,6 @@
 package com.example.capentory_client.repos;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -17,15 +16,21 @@ class RobustJsonObjectRequestExecutioner {
     private int retriesCounter = 0;
     private Context context;
 
-    public RobustJsonObjectRequestExecutioner(Context context, int method, String url, @Nullable JSONObject jsonRequest, ResponseHandler responseHandler) {
+    public RobustJsonObjectRequestExecutioner(Context context, int method, String url, @Nullable JSONObject jsonRequest, NetworkSuccessHandler successHandler, NetworkErrorHandler errorHandler) {
         this.robustJsonObjectRequest = new RobustJsonObjectRequest(context, method, url,
                 jsonRequest,
-                payload -> handleSuccessfulResponse(payload, responseHandler), error -> handleRetry(error, responseHandler));
+                payload -> handleSuccessfulResponse(payload, successHandler), error -> handleRetry(error, errorHandler));
         this.context = context;
     }
 
-    private void handleSuccessfulResponse(JSONObject payload, ResponseHandler responseHandler) {
-        responseHandler.handleSuccess(payload);
+    public void shouldAuthenticate(boolean authenticate) {
+        if (authenticate) {
+            robustJsonObjectRequest.enableAuthentication();
+        } else robustJsonObjectRequest.disableAuthentication();
+    }
+
+    private void handleSuccessfulResponse(JSONObject payload, NetworkSuccessHandler successHandler) {
+        successHandler.handleSuccess(payload);
         resetRetry();
     }
 
@@ -41,20 +46,20 @@ class RobustJsonObjectRequestExecutioner {
     /**
      * If the requests fails try again
      *
-     * @param error           error hat was thrown on last attempt
-     * @param responseHandler
+     * @param error        error hat was thrown on last attempt
+     * @param errorHandler
      */
-    private void handleRetry(VolleyError error, ResponseHandler responseHandler) {
+    private void handleRetry(VolleyError error, NetworkErrorHandler errorHandler) {
         if (retriesCounter < MAX_RETRIES) {
             if (error instanceof TimeoutError) {
-                responseHandler.handleError(error);
+                errorHandler.handleError(error);
                 resetRetry();
                 return;
             }
             launchRequest();
             retriesCounter++;
         } else {
-            responseHandler.handleError(error);
+            errorHandler.handleError(error);
             resetRetry();
         }
     }

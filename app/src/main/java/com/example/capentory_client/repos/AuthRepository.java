@@ -1,7 +1,6 @@
 package com.example.capentory_client.repos;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
@@ -16,7 +15,7 @@ import javax.inject.Inject;
 
 public class AuthRepository extends JsonRepository<String> {
     protected StatusAwareLiveData<Boolean> logoutSuccessful = new StatusAwareLiveData<>();
-
+    private final String LOGOUT_REQUEST_KEY = "logout_request";
 
     @Inject
     public AuthRepository(Context context) {
@@ -25,7 +24,8 @@ public class AuthRepository extends JsonRepository<String> {
 
 
     @Override
-    public StatusAwareLiveData<String> fetchData(String... args) {
+    public StatusAwareLiveData<String> fetchMainData(String... args) {
+
         if (args.length != 2) {
             throw new IllegalArgumentException("Passwort und Benutzer sind zu spezifizieren");
         }
@@ -34,37 +34,28 @@ public class AuthRepository extends JsonRepository<String> {
         postParam.put("username", args[0]);
         postParam.put("password", args[1]);
 
-        initPost(getUrl(context, false, "api-token-auth/"), postParam);
-        launchRequest();
-        return statusAwareRepoLiveData;
+        addMainRequest(Request.Method.POST, getUrl(context, false, "api-token-auth/"), postParam, false);
+        launchMainRequest();
+        return mainContentRepoData;
     }
 
 
     @Override
-    protected void handleSuccessfulResponse(JSONObject payload) {
+    protected void handleMainSuccessfulResponse(JSONObject payload) {
         try {
-            statusAwareRepoLiveData.postSuccess(payload.getString("token"));
+            mainContentRepoData.postSuccess(payload.getString("token"));
         } catch (JSONException error) {
-            statusAwareRepoLiveData.postError(error);
+            mainContentRepoData.postError(error);
         }
     }
 
 
     public StatusAwareLiveData<Boolean> logout() {
-        RobustJsonObjectRequestExecutioner robustJsonObjectRequestExecutioner = new RobustJsonObjectRequestExecutioner(context,
-                Request.Method.POST, getUrl(context, false, "api-token-clear/"), null, new ResponseHandler() {
-            @Override
-            public void handleSuccess(JSONObject payload) {
-                logoutSuccessful.postSuccess(true);
-            }
-
-            @Override
-            public void handleError(Exception error) {
-                logoutSuccessful.postError(error);
-            }
-        });
+        addRequest(LOGOUT_REQUEST_KEY, Request.Method.POST, getUrl(context, false, "api-token-clear/"),
+                payload -> logoutSuccessful.postSuccess(true));
         logoutSuccessful.postFetching();
-        robustJsonObjectRequestExecutioner.launchRequest();
+        launchRequestFromKey(LOGOUT_REQUEST_KEY);
+
         return logoutSuccessful;
     }
 }

@@ -25,8 +25,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItemField;
+import com.example.capentory_client.repos.FormRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.DetailItemFragmentViewModel;
+import com.example.capentory_client.viewmodels.NetworkViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.KeyValueDropDownAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
@@ -55,7 +57,7 @@ import javax.inject.Inject;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItemField>> {
+public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItemField>, FormRepository, DetailItemFragmentViewModel> {
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private BasicNetworkErrorHandler basicNetworkErrorHandler;
     private View view;

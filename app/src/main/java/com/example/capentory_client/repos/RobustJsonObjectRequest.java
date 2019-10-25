@@ -21,21 +21,11 @@ import java.util.Map;
 public class RobustJsonObjectRequest extends JsonObjectRequest {
 
     private Context context;
+    private boolean sendToken = true;
 
     public RobustJsonObjectRequest(Context context, int method, String url, @Nullable JSONObject jsonRequest, Response.Listener<JSONObject> listener, @Nullable Response.ErrorListener errorListener) {
         super(method, url, jsonRequest, listener, errorListener);
         this.context = context;
-    }
-
-
-    /**
-     * Create a  POST JsonObjectRequest that will fetch data from the specified url with a body (e.g. for user/password)
-     *
-     * @param url Specify the url
-     * @return JsonObjectRequest
-     */
-    protected RobustJsonObjectRequest(String url, Map<String, String> params, Response.Listener<JSONObject> listener, @Nullable Response.ErrorListener errorListener) {
-        super(Request.Method.POST, url, new JSONObject(params), listener, errorListener);
     }
 
 
@@ -50,14 +40,24 @@ public class RobustJsonObjectRequest extends JsonObjectRequest {
         super(method, url, null, listener, errorListener);
     }
 
+    public void disableAuthentication() {
+        sendToken = false;
+    }
+
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
 
+        if (sendToken) {
+            HashMap<String, String> headers = new HashMap<>();
+            headers.put("Content-Type", "application/json");
+            headers.put("Authorization", "Token "
+                    + PreferenceUtility.getToken(context));
+            headers.put("Connection", "close");
+            return headers;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Token "
-                + PreferenceUtility.getToken(context));
-        headers.put("Connection", "close");
         return headers;
     }
 
@@ -70,5 +70,9 @@ public class RobustJsonObjectRequest extends JsonObjectRequest {
         }
 
         return super.parseNetworkResponse(response);
+    }
+
+    public void enableAuthentication() {
+        sendToken = true;
     }
 }

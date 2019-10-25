@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class RoomFragmentViewModel extends NetworkViewModel<List<ActualRoom>> {
+public class RoomFragmentViewModel extends NetworkViewModel<List<ActualRoom>, ActualRoomsRepository> {
 
 
     @Inject
@@ -32,11 +32,11 @@ public class RoomFragmentViewModel extends NetworkViewModel<List<ActualRoom>> {
             return;
         }
 
-        statusAwareLiveData = jsonRepository.fetchData(args);
+        statusAwareLiveData = jsonRepository.fetchMainData(args);
     }
 
     @Override
     public void reloadData(String... args) {
-        statusAwareLiveData = jsonRepository.fetchData(args);
+        statusAwareLiveData = jsonRepository.fetchMainData(args);
     }
 }

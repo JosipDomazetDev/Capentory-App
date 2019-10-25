@@ -1,7 +1,6 @@
 package com.example.capentory_client.ui;
 
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,7 @@ import com.example.capentory_client.androidutility.Cryptography;
 import com.example.capentory_client.androidutility.DisplayUtility;
 import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.androidutility.ToastUtility;
+import com.example.capentory_client.repos.AuthRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.LoginFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
@@ -33,13 +33,11 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-import static android.content.Context.MODE_PRIVATE;
-
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginFragment extends NetworkFragment<String> {
+public class LoginFragment extends NetworkFragment<String, AuthRepository, LoginFragmentViewModel> {
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -85,24 +83,9 @@ public class LoginFragment extends NetworkFragment<String> {
         // already logged out when this happens????
 
         if (PreferenceUtility.isLoggedIn(getContext()))
-            ((LoginFragmentViewModel) (networkViewModel)).logout();
+            networkViewModel.logout();
 
-        ((LoginFragmentViewModel) (networkViewModel)).getLogoutSuccessful().observe(getViewLifecycleOwner(), booleanStatusAwareData -> {
-
-            switch (booleanStatusAwareData.getStatus()) {
-                case SUCCESS:
-                    clearLocally();
-                    break;
-                case ERROR:
-                    handleError(booleanStatusAwareData.getError());
-                    break;
-                case FETCHING:
-                    handleFetching();
-                    break;
-            }
-            if (booleanStatusAwareData.getStatus() != StatusAwareData.State.ERROR)
-                basicNetworkErrorHandler.reset();
-        });
+        initSpecificObserve(networkViewModel.getLogoutSuccessful(), liveData -> clearLocally());
     }
 
 

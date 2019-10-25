@@ -2,9 +2,9 @@ package com.example.capentory_client.repos;
 
 import org.json.JSONObject;
 
-public interface ResponseHandler {
+public interface NetworkErrorHandler {
 
-    void handleSuccess(JSONObject payload);
 
     void handleError(Exception error);
 }
+

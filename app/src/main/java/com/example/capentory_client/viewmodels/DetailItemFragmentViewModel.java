@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-public class DetailItemFragmentViewModel extends NetworkViewModel<Map<String, MergedItemField>> {
+public class DetailItemFragmentViewModel extends NetworkViewModel<Map<String, MergedItemField>, FormRepository> {
 
     @Inject
     public DetailItemFragmentViewModel(FormRepository formRepository) {
@@ -21,12 +21,12 @@ public class DetailItemFragmentViewModel extends NetworkViewModel<Map<String, Me
             return;
         }
 
-        statusAwareLiveData = jsonRepository.fetchData();
+        statusAwareLiveData = jsonRepository.fetchMainData();
     }
 
 
     @Override
     public void reloadData(String... args) {
-        statusAwareLiveData = jsonRepository.fetchData();
+        statusAwareLiveData = jsonRepository.fetchMainData();
     }
 }

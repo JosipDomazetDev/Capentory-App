@@ -27,17 +27,17 @@ public class ActualRoomsRepository extends JsonRepository<List<ActualRoom>> {
 
 
     @Override
-    public StatusAwareLiveData<List<ActualRoom>> fetchData(String... args) {
+    public StatusAwareLiveData<List<ActualRoom>> fetchMainData(String... args) {
         // Fetch only once for entire application, the rooms wont change
-        /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchData() == null) {*/
-        initRequest(Request.Method.GET, getUrl(context, true, "api","inventory", "actualroom"));
-        launchRequest();
-        return statusAwareRepoLiveData;
+        /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchMainData() == null) {*/
+        addMainRequest(Request.Method.GET, getUrl(context, true, "api","inventory", "actualroom"));
+        launchMainRequest();
+        return mainContentRepoData;
     }
 
 
     @Override
-    protected void handleSuccessfulResponse(JSONObject payload) {
+    protected void handleMainSuccessfulResponse(JSONObject payload) {
         try {
             List<ActualRoom> actualRooms = new ArrayList<>();
             Iterator<String> keys = payload.keys();
@@ -46,9 +46,9 @@ public class ActualRoomsRepository extends JsonRepository<List<ActualRoom>> {
                 actualRooms.add(new ActualRoom(keys.next(), payload));
             }
 
-            statusAwareRepoLiveData.postSuccess(actualRooms);
+            mainContentRepoData.postSuccess(actualRooms);
         } catch (JSONException error) {
-            statusAwareRepoLiveData.postError(error);
+            mainContentRepoData.postError(error);
         }
     }
 

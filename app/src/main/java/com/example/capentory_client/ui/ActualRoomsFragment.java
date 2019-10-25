@@ -20,6 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.models.ActualRoom;
+import com.example.capentory_client.repos.ActualRoomsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
@@ -41,7 +42,7 @@ import dagger.android.support.DaggerFragment;
  * Activities that contain this fragment must implement the
  * to handle interaction events.
  */
-public class ActualRoomsFragment extends NetworkFragment<List<ActualRoom>> {
+public class ActualRoomsFragment extends NetworkFragment<List<ActualRoom>, ActualRoomsRepository, RoomFragmentViewModel> {
     private Spinner roomDropDown;
 
 
@@ -84,7 +85,7 @@ public class ActualRoomsFragment extends NetworkFragment<List<ActualRoom>> {
 
         roomxItemSharedViewModel.getCurrentRoomValidated().observe(getViewLifecycleOwner(), b -> {
             if (b) {
-                ((RoomFragmentViewModel) (networkViewModel)).removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
+                networkViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
                 roomxItemSharedViewModel.setCurrentRoomValidated(false);
             }
         });

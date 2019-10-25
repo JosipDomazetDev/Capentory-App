@@ -2,30 +2,30 @@ package com.example.capentory_client.ui;
 
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TabHost;
 
+import androidx.lifecycle.LiveData;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.capentory_client.repos.JsonRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.NetworkViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import dagger.android.support.DaggerFragment;
 
-public abstract class NetworkFragment<L> extends DaggerFragment {
+public abstract class NetworkFragment<P, R extends JsonRepository<P>, V extends NetworkViewModel<P, R>> extends DaggerFragment {
 
-
-    protected NetworkViewModel<L> networkViewModel;
+    protected V networkViewModel;
     protected ProgressBar progressBar;
     private View content;
     protected BasicNetworkErrorHandler basicNetworkErrorHandler;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    public void init(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
+    public void init(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
         initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
         networkViewModel.fetchData(args);
-        initObserve(networkViewModel, basicNetworkErrorHandler);
+        initObserve(networkViewModel);
 
 
         swipeRefreshLayout.setOnRefreshListener(
@@ -45,15 +45,16 @@ public abstract class NetworkFragment<L> extends DaggerFragment {
      * @param view
      * @param progressBarID
      */
-    public void init(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID) {
+    public void init(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID) {
         initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, -1);
     }
 
-    private void initObserve(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler) {
-        networkViewModel.getData().observe(getViewLifecycleOwner(), statusAwareData -> {
+
+    public <T> void initSpecificObserve(LiveData<StatusAwareData<T>> data, LiveDataSuccessHandler<T> liveDataSuccessHandler) {
+        data.observe(getViewLifecycleOwner(), statusAwareData -> {
             switch (statusAwareData.getStatus()) {
                 case SUCCESS:
-                    handleSuccess(statusAwareData);
+                    liveDataSuccessHandler.handleSuccess(statusAwareData);
                     break;
                 case ERROR:
                     handleError(statusAwareData.getError());
@@ -68,8 +69,12 @@ public abstract class NetworkFragment<L> extends DaggerFragment {
         });
     }
 
+    private void initObserve(V networkViewModel) {
+        initSpecificObserve( networkViewModel.getData(), this::handleSuccess);
+    }
 
-    private void initWithIDs(NetworkViewModel<L> networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID) {
+
+    private void initWithIDs(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID) {
         this.networkViewModel = networkViewModel;
         this.basicNetworkErrorHandler = basicNetworkErrorHandler;
         if (progressBarID != -1)
@@ -83,11 +88,11 @@ public abstract class NetworkFragment<L> extends DaggerFragment {
 
     protected void fetchManually(String... args) {
         networkViewModel.fetchData(args);
-        initObserve(networkViewModel, basicNetworkErrorHandler);
+        initObserve(networkViewModel);
     }
 
 
-    protected void handleSuccess(StatusAwareData<L> statusAwareData) {
+    protected void handleSuccess(StatusAwareData<P> statusAwareData) {
         hideProgressBarAndShowContent();
     }
 
@@ -120,4 +125,7 @@ public abstract class NetworkFragment<L> extends DaggerFragment {
 
     }
 
+    interface LiveDataSuccessHandler<P> {
+        void handleSuccess(StatusAwareData<P> liveData);
+    }
 }

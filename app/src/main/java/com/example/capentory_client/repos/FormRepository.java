@@ -26,19 +26,19 @@ public class FormRepository extends JsonRepository<Map<String, MergedItemField>>
 
 
     @Override
-    public StatusAwareLiveData<Map<String, MergedItemField>> fetchData(String... args) {
+    public StatusAwareLiveData<Map<String, MergedItemField>> fetchMainData(String... args) {
         // Fetch only once for entire application, the form wont change
-        if (statusAwareRepoLiveData.getValue() == null || statusAwareRepoLiveData.getValue().getData() == null) {
-            initRequest(Request.Method.OPTIONS, getUrl(context, false, "api","actualitem/"));
-            launchRequest();
+        if (mainContentRepoData.getValue() == null || mainContentRepoData.getValue().getData() == null) {
+            addMainRequest(Request.Method.OPTIONS, getUrl(context, false, "api", "actualitem/"));
+            launchMainRequest();
         }
 
-        return statusAwareRepoLiveData;
+        return mainContentRepoData;
     }
 
 
     @Override
-    protected void handleSuccessfulResponse(JSONObject payload) {
+    protected void handleMainSuccessfulResponse(JSONObject payload) {
         try {
             payload = payload.getJSONObject("actions").getJSONObject("POST");
             Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
@@ -48,9 +48,9 @@ public class FormRepository extends JsonRepository<Map<String, MergedItemField>>
                 String key = iterator.next();
                 mergedItemFieldsSet.put(key, new MergedItemField(key, payload.getJSONObject(key)));
             }
-            statusAwareRepoLiveData.postSuccess(mergedItemFieldsSet);
+            mainContentRepoData.postSuccess(mergedItemFieldsSet);
         } catch (JSONException error) {
-            statusAwareRepoLiveData.postError(error);
+            mainContentRepoData.postError(error);
         }
     }
 

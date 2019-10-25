@@ -28,19 +28,20 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
 
 
     @Override
-    public StatusAwareLiveData<List<MergedItem>> fetchData(String... args) {
+    public StatusAwareLiveData<List<MergedItem>> fetchMainData(String... args) {
         if (args.length != 1)
             throw new IllegalArgumentException("MergedItemRepository only needs the currentRoom as argument!");
 
         this.currentRoomString = args[0];
-        initRequest(Request.Method.GET, getUrl(context, true, "api","actualroom", currentRoomString));
-        launchRequest();
-        return statusAwareRepoLiveData;
+        addMainRequest(Request.Method.GET, getUrl(context, true, "api", "actualroom", currentRoomString));
+        launchMainRequest();
+
+        return mainContentRepoData;
     }
 
 
     @Override
-    protected void handleSuccessfulResponse(JSONObject payload) {
+    protected void handleMainSuccessfulResponse(JSONObject payload) {
         try {
             JSONArray allItems = payload.optJSONArray("all_items");
             List<MergedItem> mergedItems = new ArrayList<>();
@@ -50,9 +51,9 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
                 mergedItems.add(new MergedItem(currentRoomString, jsonItem));
             }
 
-            statusAwareRepoLiveData.postSuccess(mergedItems);
+            mainContentRepoData.postSuccess(mergedItems);
         } catch (JSONException error) {
-            statusAwareRepoLiveData.postError(error);
+            mainContentRepoData.postError(error);
         }
     }
 
