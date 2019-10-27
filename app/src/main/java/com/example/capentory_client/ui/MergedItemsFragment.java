@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -120,7 +119,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(currentRoomString));
 
 
-        init(ViewModelProviders.of(this, providerFactory).get(MergedItemFragmentViewModel.class),
+        initWithFetch(ViewModelProviders.of(this, providerFactory).get(MergedItemFragmentViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.room_number_label_fragment_mergeditems)),
                 view,
                 R.id.progress_bar_fragment_mergeditems,

@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import androidx.activity.OnBackPressedCallback;
@@ -16,7 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.models.ActualRoom;
@@ -33,8 +31,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
-
-import dagger.android.support.DaggerFragment;
 
 
 /**
@@ -65,7 +61,7 @@ public class ActualRoomsFragment extends NetworkFragment<List<ActualRoom>, Actua
         final Button btn_fragment_room = view.findViewById(R.id.button_fragment_room);
         roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
 
-        init(ViewModelProviders.of(this, providerFactory).get(RoomFragmentViewModel.class),
+        initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomFragmentViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom)),
                 view,
                 R.id.progress_bar_fragment_actualrooms,

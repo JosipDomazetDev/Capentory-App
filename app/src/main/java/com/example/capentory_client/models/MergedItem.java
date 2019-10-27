@@ -14,6 +14,7 @@ import java.util.Objects;
  * Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
  */
 public class MergedItem {
+    private int pkItemId;
     @NonNull
     private String currentRoomNumber;
     @NonNull
@@ -21,10 +22,12 @@ public class MergedItem {
     @Nullable
     private String anlageNummer, assetSubnumber, description;
 
+
     public MergedItem(@NonNull String currentRoomNumber, JSONObject mergedItemJSONPayload) throws JSONException {
         this.currentRoomNumber = currentRoomNumber;
         this.mergedItemJSONPayload = mergedItemJSONPayload;
         this.description = mergedItemJSONPayload.getString("desc");
+        this.pkItemId = mergedItemJSONPayload.getInt("item_ID");
 
         JSONObject sapItem = mergedItemJSONPayload.optJSONObject("sap_item");
         if (sapItem == null) {
@@ -34,6 +37,10 @@ public class MergedItem {
             this.anlageNummer = sapItem.getString("anlage");
             this.assetSubnumber = sapItem.getString("asset_subnumber");
         }
+    }
+
+    public int getPkItemId() {
+        return pkItemId;
     }
 
     @NonNull

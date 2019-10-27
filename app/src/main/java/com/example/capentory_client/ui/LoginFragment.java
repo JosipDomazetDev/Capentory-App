@@ -85,7 +85,7 @@ public class LoginFragment extends NetworkFragment<String, AuthRepository, Login
         if (PreferenceUtility.isLoggedIn(getContext()))
             networkViewModel.logout();
 
-        initSpecificObserve(networkViewModel.getLogoutSuccessful(), liveData -> clearLocally());
+        observeSpecificLiveData(networkViewModel.getLogoutSuccessful(), liveData -> clearLocally());
     }
 
 
@@ -94,7 +94,7 @@ public class LoginFragment extends NetworkFragment<String, AuthRepository, Login
         super.onViewCreated(view, savedInstanceState);
 
 
-        init(ViewModelProviders.of(this, providerFactory).get(LoginFragmentViewModel.class),
+        initWithoutFetch(ViewModelProviders.of(this, providerFactory).get(LoginFragmentViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.subtitle_text_view_fragment_login)),
                 view,
                 R.id.progress_bar_fragment_login);

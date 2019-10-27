@@ -63,4 +63,9 @@ dependencies {
 
     implementation 'androidx.preference:preference:1.1.0-rc01'
     implementation 'androidx.preference:preference-ktx:1.1.0-rc01'
+
+
+    //Gson
+
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

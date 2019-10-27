@@ -21,11 +21,11 @@ public abstract class NetworkFragment<P, R extends JsonRepository<P>, V extends 
     protected BasicNetworkErrorHandler basicNetworkErrorHandler;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    public void init(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
+    public void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
         initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
         networkViewModel.fetchData(args);
-        initObserve(networkViewModel);
+        observeMainLiveData(networkViewModel);
 
 
         swipeRefreshLayout.setOnRefreshListener(
@@ -45,12 +45,12 @@ public abstract class NetworkFragment<P, R extends JsonRepository<P>, V extends 
      * @param view
      * @param progressBarID
      */
-    public void init(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID) {
+    public void initWithoutFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID) {
         initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, -1);
     }
 
 
-    public <T> void initSpecificObserve(LiveData<StatusAwareData<T>> data, LiveDataSuccessHandler<T> liveDataSuccessHandler) {
+    public <T> void observeSpecificLiveData(LiveData<StatusAwareData<T>> data, LiveDataSuccessHandler<T> liveDataSuccessHandler) {
         data.observe(getViewLifecycleOwner(), statusAwareData -> {
             switch (statusAwareData.getStatus()) {
                 case SUCCESS:
@@ -69,8 +69,8 @@ public abstract class NetworkFragment<P, R extends JsonRepository<P>, V extends 
         });
     }
 
-    private void initObserve(V networkViewModel) {
-        initSpecificObserve( networkViewModel.getData(), this::handleSuccess);
+    private void observeMainLiveData(V networkViewModel) {
+        observeSpecificLiveData(networkViewModel.getData(), this::handleSuccess);
     }
 
 
@@ -88,7 +88,7 @@ public abstract class NetworkFragment<P, R extends JsonRepository<P>, V extends 
 
     protected void fetchManually(String... args) {
         networkViewModel.fetchData(args);
-        initObserve(networkViewModel);
+        observeMainLiveData(networkViewModel);
     }
 
 
