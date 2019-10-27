@@ -177,7 +177,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                 mergedItemFieldViewMap.put(currentField, editText);
                 break;
 
-            case "field":
+            /*case "field":
                 TextInputLayout textInputLayoutField = new TextInputLayout(view.getContext());
                 textInputLayoutField.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 textInputLayoutField.setPadding(0, 0, 0, 40);
@@ -191,7 +191,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                 linearLayout.addView(textInputLayoutField);
                 mergedItemFieldViewMap.put(currentField, editTextField);
                 break;
-
+*/
             case "boolean":
                 Switch switch_ = new Switch(getContext());
                 switch_.setChecked(mergedItemJSONPayload.getBoolean(currentField.getKey()));
@@ -275,7 +275,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         //itemxDetailSharedViewModel.setValidatedData();
 
 
-        itemxDetailSharedViewModel.setCurrentItemValidated(true);
+        itemxDetailSharedViewModel.setValidationEntryForCurrentItem(validationEntry);
         NavHostFragment.findNavController(this).popBackStack();
 
     }
@@ -298,7 +298,9 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
             case "string":
-                return (T) ((TextInputEditText) generatedView).getText().toString();
+                String s = ((TextInputEditText) generatedView).getText().toString();
+                if (s.equals("null")) return null;
+                return (T) s;
 
 
             case "field":
@@ -310,8 +312,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
             case "choice":
-                int key = ((KeyValueDropDownAdapter.DropDownEntry) ((Spinner) generatedView).getSelectedItem()).getKey();
-                return (T) Integer.valueOf(key);
+                String key = ((KeyValueDropDownAdapter.DropDownEntry) ((Spinner) generatedView).getSelectedItem()).getDescription();
+                return (T) key;
             default:
                 return null;
         }

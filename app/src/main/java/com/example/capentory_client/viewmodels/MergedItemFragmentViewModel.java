@@ -1,14 +1,22 @@
 package com.example.capentory_client.viewmodels;
 
-import com.example.capentory_client.models.MergedItem;
-import com.example.capentory_client.repos.MergedItemsRepository;
+import androidx.lifecycle.LiveData;
 
+import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.models.ValidationEntry;
+import com.example.capentory_client.repos.MergedItemsRepository;
+import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
+import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
 
 public class MergedItemFragmentViewModel extends NetworkViewModel<List<MergedItem>, MergedItemsRepository> {
+    private List<ValidationEntry> validationEntries = new ArrayList<>();
+    private StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
 
 
     @Inject
@@ -39,4 +47,18 @@ public class MergedItemFragmentViewModel extends NetworkViewModel<List<MergedIte
     public void reloadData(String... args) {
         statusAwareLiveData = jsonRepository.fetchMainData(args);
     }
+
+    public void addValidationEntry(ValidationEntry validationEntry) {
+        validationEntries.add(validationEntry);
+    }
+
+    public void sendValidationEntriesToServer() {
+        validateSuccessful = jsonRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries));
+    }
+
+    public LiveData<StatusAwareData<Boolean>> getValidationSuccessful() {
+        return validateSuccessful;
+    }
+
+
 }

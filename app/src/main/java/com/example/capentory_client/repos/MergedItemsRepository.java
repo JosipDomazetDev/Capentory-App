@@ -4,6 +4,7 @@ package com.example.capentory_client.repos;
 import android.content.Context;
 
 import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
@@ -12,7 +13,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,6 +23,9 @@ import javax.inject.Singleton;
 @Singleton
 public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
     private String currentRoomString;
+    protected StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
+    private final String VALIDATION_REQUEST_KEY = "request_validation";
+
 
     @Inject
     public MergedItemsRepository(Context context) {
@@ -55,6 +61,23 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
         } catch (JSONException error) {
             mainContentRepoData.postError(error);
         }
+    }
+
+
+    public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(String validationEntriesAsJson) {
+
+        Map<String, String> postParam = new HashMap<>();
+
+
+        try {
+            addRequest(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "upload"), new JSONArray(validationEntriesAsJson),
+                    payload -> validateSuccessful.postSuccess(true));
+            validateSuccessful.postFetching();
+            launchRequestFromKey(VALIDATION_REQUEST_KEY);
+        } catch (JSONException e) {
+            validateSuccessful.postError(e);
+        }
+        return validateSuccessful;
     }
 
 

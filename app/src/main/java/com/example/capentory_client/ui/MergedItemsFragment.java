@@ -135,25 +135,23 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         });
 
 
-        finishRoom.setOnClickListener(v -> {
-            roomxItemSharedViewModel.setCurrentRoomValidated(true);
-            new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                    .setTitle("Alles erledigt?")
-                    .setMessage("Wollen Sie die Validierung für diesen Raum beenden?")
-                    .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
-                    .setNegativeButton(android.R.string.no, null)
-                    .show();
-        });
+        finishRoom.setOnClickListener(v -> new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                .setTitle("Alles erledigt?")
+                .setMessage("Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
+                .setNegativeButton(android.R.string.no, null)
+                .show());
 
         addItem.setOnClickListener(v -> {
             itemxDetailSharedViewModel.setCurrentItem(null);
             NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
         });
 
-        itemxDetailSharedViewModel.getCurrentItemValidated().observe(getViewLifecycleOwner(), b -> {
-            if (b) {
+        itemxDetailSharedViewModel.getValidationEntryForCurrentItem().observe(getViewLifecycleOwner(), validationEntry -> {
+            if (validationEntry != null) {
                 networkViewModel.removeItem(itemxDetailSharedViewModel.getCurrentItem().getValue());
-                itemxDetailSharedViewModel.setCurrentItemValidated(false);
+                itemxDetailSharedViewModel.setValidationEntryForCurrentItem(null);
+                networkViewModel.addValidationEntry(validationEntry);
             }
         });
 
@@ -166,8 +164,16 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
     }
 
     private void handleFinishRoom() {
-        roomxItemSharedViewModel.setCurrentRoomValidated(true);
-        NavHostFragment.findNavController(this).popBackStack();
+        networkViewModel.sendValidationEntriesToServer();
+
+        observeSpecificLiveData(networkViewModel.getValidationSuccessful(), liveData -> {
+            if (liveData == null || liveData.getData() == null) return;
+
+            if (liveData.getData()) {
+                roomxItemSharedViewModel.setCurrentRoomValidated(true);
+                NavHostFragment.findNavController(this).popBackStack();
+            }
+        });
     }
 
     private void displayRecyclerView(RecyclerViewAdapter adapter, StatusAwareData<List<MergedItem>> statusAwareMergedItem, TextView textView) {

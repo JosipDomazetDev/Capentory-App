@@ -4,10 +4,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.models.ValidationEntry;
 
 public class ItemxDetailSharedViewModel extends ViewModel {
     private final MutableLiveData<MergedItem> currentItem = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> currentItemValidated = new MutableLiveData<>();
+    private final MutableLiveData<ValidationEntry> validationEntryForCurrentItem =new MutableLiveData<>();
 
     public void setCurrentItem(MergedItem item) {
         currentItem.setValue(item);
@@ -17,11 +18,11 @@ public class ItemxDetailSharedViewModel extends ViewModel {
         return currentItem;
     }
 
-    public void setCurrentItemValidated(Boolean b) {
-        currentItemValidated.setValue(b);
+    public void setValidationEntryForCurrentItem(ValidationEntry validationEntryForCurrentItem) {
+        this.validationEntryForCurrentItem.setValue(validationEntryForCurrentItem);
     }
 
-    public MutableLiveData<Boolean> getCurrentItemValidated() {
-        return currentItemValidated;
+    public MutableLiveData<ValidationEntry> getValidationEntryForCurrentItem() {
+        return validationEntryForCurrentItem;
     }
 }

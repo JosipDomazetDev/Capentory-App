@@ -9,7 +9,7 @@ import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 import javax.inject.Inject;
 
 public class LoginFragmentViewModel extends NetworkViewModel<String, AuthRepository> {
-    protected StatusAwareLiveData<Boolean> logoutSuccessful;
+    private StatusAwareLiveData<Boolean> logoutSuccessful;
 
 
     @Inject

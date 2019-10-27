@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -32,6 +34,17 @@ public abstract class JsonRepository<L> {
         ));
     }
 
+    public void addRequest(String key, int method, String url, JSONObject jsonRequest, NetworkSuccessHandler successHandler) {
+        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, jsonRequest, successHandler, this::handleErrorResponse
+        ));
+    }
+
+    public void addRequest(String key, int method, String url, JSONArray jsonRequest, NetworkSuccessHandler successHandler) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("validation_entries", jsonRequest);
+        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, jsonObject, successHandler, this::handleErrorResponse
+        ));
+    }
 
     public void addMainRequest(int method, String url) {
         addRequest(MAIN_REQUEST_KEY, method, url, this::handleMainSuccessfulResponse);
