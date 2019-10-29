@@ -26,6 +26,8 @@ public class KeyValueDropDownAdapter extends ArrayAdapter<KeyValueDropDownAdapte
     }
 
     public int getItemIndexFromDescription(String desc) {
+        if (desc.isEmpty()) return 0;
+
         for (int i = 0; i < items.length; i++) {
             if (desc.equals(items[i].getDescription())) {
                 return i;

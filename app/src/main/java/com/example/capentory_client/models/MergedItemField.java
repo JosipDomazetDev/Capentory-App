@@ -1,16 +1,12 @@
 package com.example.capentory_client.models;
 
-import android.view.View;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MergedItemField {
-    private JSONObject field;
+public class MergedItemField implements Comparable<MergedItemField> {
 
     @NonNull
     private String key, type, label;
@@ -26,14 +22,8 @@ public class MergedItemField {
         required = payload.getBoolean("required");
         readOnly = payload.getBoolean("read_only");
         choices = payload.optJSONArray("choices");
-
-        field=payload;
     }
 
-
-    public JSONObject getFieldAsJSON() {
-        return field;
-    }
 
     @NonNull
     public String getKey() {
@@ -58,8 +48,46 @@ public class MergedItemField {
         return readOnly;
     }
 
-    @Nullable
+    @NonNull
     public JSONArray getChoices() {
         return choices;
+    }
+
+    @Override
+    public int compareTo(MergedItemField that) {
+
+
+        if (this.type.compareTo(that.type) < 0) {
+            return 1;
+        } else if (this.type.compareTo(that.type) > 0) {
+            return -1;
+        }
+
+        if (this.key.compareTo(that.key) < 0) {
+            return -1;
+        } else if (this.key.compareTo(that.key) > 0) {
+            return 1;
+        }
+
+
+        if (this.label.compareTo(that.label) < 0) {
+            return -1;
+        } else if (this.label.compareTo(that.label) > 0) {
+            return 1;
+        }
+
+        if (Boolean.compare(this.required, that.required) == -1) {
+            return -1;
+        } else if (Boolean.compare(this.required, that.required) == 1) {
+            return 1;
+        }
+
+        if (Boolean.compare(this.readOnly, that.readOnly) == -1) {
+            return -1;
+        } else if (Boolean.compare(this.readOnly, that.readOnly) == 1) {
+            return 1;
+        }
+
+        return 1;
     }
 }

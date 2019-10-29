@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -41,7 +42,9 @@ public abstract class JsonRepository<L> {
 
     public void addRequest(String key, int method, String url, JSONArray jsonRequest, NetworkSuccessHandler successHandler) throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("validation_entries", jsonRequest);
+        jsonObject.put("stocktaking", 23214);
+        jsonObject.put("validations", jsonRequest);
+        Log.e("xxxx",jsonObject.toString());
         requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, jsonObject, successHandler, this::handleErrorResponse
         ));
     }

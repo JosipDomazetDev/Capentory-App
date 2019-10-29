@@ -9,8 +9,14 @@ import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveDat
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -48,12 +54,29 @@ public class FormRepository extends JsonRepository<Map<String, MergedItemField>>
                 String key = iterator.next();
                 mergedItemFieldsSet.put(key, new MergedItemField(key, payload.getJSONObject(key)));
             }
-            mainContentRepoData.postSuccess(mergedItemFieldsSet);
+            mainContentRepoData.postSuccess(sortByValue(mergedItemFieldsSet));
         } catch (JSONException error) {
             mainContentRepoData.postError(error);
         }
     }
 
 
+    private static <K, V> Map<K, V> sortByValue(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
+        Collections.sort(list, new Comparator<Object>() {
+            @SuppressWarnings("unchecked")
+            public int compare(Object o1, Object o2) {
+                return ((Comparable<V>) ((Map.Entry<K, V>) (o1)).getValue()).compareTo(((Map.Entry<K, V>) (o2)).getValue());
+            }
+        });
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Iterator<Map.Entry<K, V>> it = list.iterator(); it.hasNext();) {
+            Map.Entry<K, V> entry = it.next();
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result;
+    }
 }
 

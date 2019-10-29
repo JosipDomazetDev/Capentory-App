@@ -135,15 +135,26 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         });
 
 
-        finishRoom.setOnClickListener(v -> new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                .setTitle("Alles erledigt?")
-                .setMessage("Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?")
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
-                .setNegativeButton(android.R.string.no, null)
-                .show());
+        finishRoom.setOnClickListener(v -> {
+            if (networkViewModel.getAmountOfItemsLeft() > 0) {
+                new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                        .setTitle("Fehlen " + networkViewModel.getAmountOfItemsLeft() + " Gegenstände?")
+                        .setMessage("Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden? " + +networkViewModel.getAmountOfItemsLeft() + " Gegenstände werden als fehlend markiert!")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+            } else {
+                new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                        .setTitle("Alles erledigt?")
+                        .setMessage("Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+            }
+        });
 
         addItem.setOnClickListener(v -> {
-            itemxDetailSharedViewModel.setCurrentItem(null);
+            itemxDetailSharedViewModel.setCurrentItem(new MergedItem(currentRoomString, -1, "Neues Item"));
             NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
         });
 
@@ -175,6 +186,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
             }
         });
     }
+
 
     private void displayRecyclerView(RecyclerViewAdapter adapter, StatusAwareData<List<MergedItem>> statusAwareMergedItem, TextView textView) {
         if (adapter == null) return;

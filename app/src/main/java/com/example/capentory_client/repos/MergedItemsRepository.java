@@ -2,6 +2,7 @@ package com.example.capentory_client.repos;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -64,13 +65,9 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
     }
 
 
-    public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(String validationEntriesAsJson) {
-
-        Map<String, String> postParam = new HashMap<>();
-
-
+    public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(JSONArray validationEntriesAsJson) {
         try {
-            addRequest(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "upload"), new JSONArray(validationEntriesAsJson),
+            addRequest(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "upload"), validationEntriesAsJson,
                     payload -> validateSuccessful.postSuccess(true));
             validateSuccessful.postFetching();
             launchRequestFromKey(VALIDATION_REQUEST_KEY);

@@ -45,7 +45,8 @@ public class MergedItemFragmentViewModel extends NetworkViewModel<List<MergedIte
 
     @Override
     public void reloadData(String... args) {
-        statusAwareLiveData = jsonRepository.fetchMainData(args);
+        if (validationEntries.isEmpty())
+            statusAwareLiveData = jsonRepository.fetchMainData(args);
     }
 
     public void addValidationEntry(ValidationEntry validationEntry) {
@@ -53,6 +54,7 @@ public class MergedItemFragmentViewModel extends NetworkViewModel<List<MergedIte
     }
 
     public void sendValidationEntriesToServer() {
+
         validateSuccessful = jsonRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries));
     }
 
@@ -61,4 +63,7 @@ public class MergedItemFragmentViewModel extends NetworkViewModel<List<MergedIte
     }
 
 
+    public int getAmountOfItemsLeft() {
+        return Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData()).size();
+    }
 }

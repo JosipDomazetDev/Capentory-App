@@ -14,6 +14,7 @@ import java.util.Objects;
  * Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
  */
 public class MergedItem {
+    public static final String ROOM_JSON_KEY = "room";
     private int pkItemId;
     @NonNull
     private String currentRoomNumber;
@@ -37,6 +38,14 @@ public class MergedItem {
             this.anlageNummer = sapItem.getString("anlage");
             this.assetSubnumber = sapItem.getString("asset_subnumber");
         }
+    }
+
+
+    public MergedItem(@NonNull String currentRoomNumber, @NonNull int pkItemId, @NonNull String description) {
+        this.currentRoomNumber = currentRoomNumber;
+        this.pkItemId = pkItemId;
+        this.description = description;
+        mergedItemJSONPayload = new JSONObject();
     }
 
     public int getPkItemId() {

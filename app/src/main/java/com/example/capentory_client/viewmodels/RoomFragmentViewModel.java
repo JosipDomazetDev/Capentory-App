@@ -9,7 +9,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class RoomFragmentViewModel extends NetworkViewModel<List<ActualRoom>, ActualRoomsRepository> {
-
+    private boolean startedRemoving = false;
 
     @Inject
     public RoomFragmentViewModel(ActualRoomsRepository ralphRepository) {
@@ -21,14 +21,16 @@ public class RoomFragmentViewModel extends NetworkViewModel<List<ActualRoom>, Ac
         List<ActualRoom> currentRooms = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentRooms == null) return;
 
-        if (currentRooms.remove(actualRoom))
+        if (currentRooms.remove(actualRoom)) {
             statusAwareLiveData.postSuccess(currentRooms);
+            startedRemoving = true;
+        }
     }
 
 
     @Override
     public void fetchData(String... args) {
-        if (statusAwareLiveData != null) {
+        if (statusAwareLiveData != null || startedRemoving) {
             return;
         }
 
