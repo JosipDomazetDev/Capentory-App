@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, MergedItemsRepository> {
     private List<ValidationEntry> validationEntries = new ArrayList<>();
-    private StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
+    private StatusAwareLiveData<Boolean> validateSuccessful;
 
 
     @Inject

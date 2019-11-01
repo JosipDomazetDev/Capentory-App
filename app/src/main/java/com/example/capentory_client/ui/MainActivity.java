@@ -17,6 +17,8 @@ import com.example.capentory_client.androidutility.DisplayUtility;
 import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONException;
+
 import dagger.android.support.DaggerAppCompatActivity;
 
 public class MainActivity extends DaggerAppCompatActivity {
@@ -24,6 +26,17 @@ public class MainActivity extends DaggerAppCompatActivity {
     private static final int[] TOP_LEVEL_DESTINATIONS = new int[]{
             R.id.settingsFragment, R.id.homeScreenFragment, R.id.roomFragment, R.id.itemsFragment, R.id.itemDetailFragment};
 
+    private static int STOCKTAKING_ID = 0;
+
+    public static int getStocktakingId() throws JSONException {
+        if (STOCKTAKING_ID == -1)
+            throw new IllegalArgumentException("Sie müssen eine Inventur anlegen!");
+        return STOCKTAKING_ID;
+    }
+
+    public static void setStocktakingId(int stocktakingId) {
+        STOCKTAKING_ID = stocktakingId;
+    }
 
     protected DrawerLayout drawer;
     private NavController navController;
@@ -39,7 +52,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         if (PreferenceUtility.isLoggedIn(this)) {
             DisplayUtility.displayLoggedInMenu(this);
         } else {
-            DisplayUtility.displayLoggedOutMenu( this);
+            DisplayUtility.displayLoggedOutMenu(this);
         }
 
     }

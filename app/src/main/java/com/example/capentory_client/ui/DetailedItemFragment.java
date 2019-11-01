@@ -3,6 +3,7 @@ package com.example.capentory_client.ui;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -112,9 +113,11 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         JSONObject mergedItemJSONPayload = mergedItem.getFieldsWithValues();
 
         ((TextView) view.findViewById(R.id.barcode_fragment_itemdetail))
-                .setText(String.format(getString(R.string.barcode_detailitem_fragment), mergedItem.getCheckedDisplayBarcode()));
+                .setText(Html.fromHtml(
+                        String.format(getString(R.string.barcode_detailitem_fragment), mergedItem.getCheckedDisplayBarcode())));
         ((TextView) view.findViewById(R.id.bezeichnung_fragment_itemdetail))
-                .setText(String.format(getString(R.string.bez_detailitem_fragment), mergedItem.getCheckedDisplayName()));
+                .setText(Html.fromHtml(
+                        String.format(getString(R.string.bez_detailitem_fragment), mergedItem.getCheckedDisplayName())));
 
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
         linearLayout.removeAllViews();
@@ -134,7 +137,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         if (currentField.isReadOnly()) {
             TextView textView = new TextView(Objects.requireNonNull(getContext()));
             textView.setText(currentField.getVerboseName() + ": " + mergedItemJSONPayload.opt(currentField.getKey()));
-            textView.setPadding(0, 0, 0, 40);
+            textView.setPadding(4, 0, 0, 40);
             linearLayout.addView(textView);
         } else
             switch (currentField.getType().toLowerCase()) {

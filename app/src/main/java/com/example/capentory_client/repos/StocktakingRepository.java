@@ -56,10 +56,9 @@ public class StocktakingRepository extends JsonRepository<List<SerializerEntry>>
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name", name);
 
-            addRequest(POST_STOCKTAKING_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "htlinventoryrooms"), jsonObject,
-                    payload -> postStocktakingSuccessful.postSuccess(true));
-            postStocktakingSuccessful.postFetching();
-            launchRequestFromKey(POST_STOCKTAKING_REQUEST_KEY);
+            addRequestWithContent(POST_STOCKTAKING_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "htlinventoryrooms"), jsonObject,
+                    payload -> postStocktakingSuccessful.postSuccess(true), postStocktakingSuccessful);
+            launchRequestFromKey(POST_STOCKTAKING_REQUEST_KEY, postStocktakingSuccessful);
         } catch (JSONException e) {
             postStocktakingSuccessful.postError(e);
         }

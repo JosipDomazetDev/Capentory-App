@@ -36,7 +36,7 @@ public class LoginRepository extends JsonRepository<String> {
         postParam.put("username", args[0]);
         postParam.put("password", args[1]);
 
-        addMainRequest(Request.Method.POST, getUrl(context, false, "api-token-auth/"), postParam, false);
+        addMainRequestWithContent(Request.Method.POST, getUrl(context, false, "api-token-auth/"), postParam, false);
         launchMainRequest();
         return mainContentRepoData;
     }
@@ -54,9 +54,8 @@ public class LoginRepository extends JsonRepository<String> {
 
     public StatusAwareLiveData<Boolean> logout() {
         addRequest(LOGOUT_REQUEST_KEY, Request.Method.POST, getUrl(context, false, "api-token-clear/"),
-                payload -> logoutSuccessful.postSuccess(true));
-        logoutSuccessful.postFetching();
-        launchRequestFromKey(LOGOUT_REQUEST_KEY);
+                payload -> logoutSuccessful.postSuccess(true), logoutSuccessful);
+        launchRequestFromKey(LOGOUT_REQUEST_KEY,logoutSuccessful);
 
         return logoutSuccessful;
     }

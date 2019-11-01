@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +72,9 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
             SerializerEntry selectedRoom = (SerializerEntry) serializerDropDown.getSelectedItem();
             if (selectedRoom == null) return;
 
-            networkViewModel.postStocktaking(((EditText) view.findViewById(R.id.edittext_stocktacking_fragment_stocktaking)).getText().toString());
+            Navigation.findNavController(view).navigate(R.id.action_stocktakingFragment_to_roomFragment);
+
+           /* networkViewModel.postStocktaking(((EditText) view.findViewById(R.id.edittext_stocktacking_fragment_stocktaking)).getText().toString());
 
             observeSpecificLiveData(networkViewModel.getPostStocktakingSuccessful(), liveData -> {
                 if (liveData == null || liveData.getData() == null) return;
@@ -79,7 +82,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
                 if (liveData.getData()) {
                     Navigation.findNavController(view).navigate(R.id.action_stocktakingFragment_to_roomFragment);
                 }
-            });
+            });*/
 
         });
     }

@@ -55,7 +55,7 @@ public class BasicNetworkErrorHandler {
             errorMsg = "Zeitüberschreitungsfehler ist aufgetreten!";
             error.printStackTrace();
         } else if (error instanceof VolleyError) {
-            if (error instanceof ClientError && ((ClientError) error).networkResponse.statusCode != 404) {
+            if (error instanceof ClientError /*&& ((ClientError) error).networkResponse.statusCode != 404*/) {
                 errorMsg = "Benutzername oder Passwort war falsch!";
                 error.printStackTrace();
             } else if (error instanceof AuthFailureError) {

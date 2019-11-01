@@ -47,12 +47,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:paddingBottom="14dp"
+                    android:paddingBottom="20dp"
                     android:text="Bitte validieren Sie das Item tatsächlich!"
                     android:textAlignment="center"
                     android:textColor="#292929"
                     android:textSize="16sp"
-                    android:textStyle="bold"
+                    android:textStyle="italic"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -63,12 +63,11 @@
                     android:id="@+id/barcode_fragment_itemdetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="16dp"
                     android:text="42333"
                     android:textAlignment="center"
                     android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dummy" />
 
@@ -77,12 +76,10 @@
                     android:id="@+id/bezeichnung_fragment_itemdetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="16dp"
                     android:text="Laptop"
-                    android:textAlignment="center"
                     android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/barcode_fragment_itemdetail" />
 
@@ -91,8 +88,8 @@
                     android:id="@+id/content_fragment_item_detail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:orientation="vertical"
-                    android:layout_marginTop="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -122,7 +119,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/rounded_edges_green"
                             android:padding="20dp"
-                            android:src="@drawable/ic_done_white_24dp"
+                            android:src="@drawable/ic_check_white_48dp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -133,7 +130,7 @@
                             android:layout_marginStart="40dp"
                             android:background="@drawable/rounded_edges_red"
                             android:padding="20dp"
-                            android:src="@drawable/ic_cross_white_24dp"
+                            android:src="@drawable/ic_cross_white_48dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/validate_btn_fragment_itemdetail"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -141,6 +138,5 @@
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

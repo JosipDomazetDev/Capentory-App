@@ -23,13 +23,14 @@ public class ValidationEntry {
 
 
     public static JSONArray getValidationEntriesAsJson(List<ValidationEntry> list) {
-        JSONArray ret=new JSONArray();
+        JSONArray ret = new JSONArray();
         try {
             for (ValidationEntry validationEntry : list) {
                 if (validationEntry.withoutChange) continue;
 
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(PK_JSON_KEY, validationEntry.pkItem);
+
                 for (Field fieldChange : validationEntry.fieldChanges) {
                     jsonObject.put(fieldChange.fieldName, fieldChange.fieldValue);
                 }

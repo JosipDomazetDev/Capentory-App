@@ -5,9 +5,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.capentory_client.models.MergedItem;
-import com.example.capentory_client.models.Room;
+import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONArray;
@@ -15,10 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -58,7 +55,7 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
 
 
             while (itemKeys.hasNext()) {
-                mergedItems.add(new MergedItem(currentRoomString,itemKeys.next(), payload));
+                mergedItems.add(new MergedItem(currentRoomString, itemKeys.next(), payload));
             }
 
             mainContentRepoData.postSuccess(mergedItems);
@@ -70,10 +67,13 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
 
     public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(JSONArray validationEntriesAsJson) {
         try {
-            addRequest(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "htlinventoryrooms"), validationEntriesAsJson,
-                    payload -> validateSuccessful.postSuccess(true));
-            validateSuccessful.postFetching();
-            launchRequestFromKey(VALIDATION_REQUEST_KEY);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("stocktaking", MainActivity.getStocktakingId());
+            jsonObject.put("validations", validationEntriesAsJson);
+            Log.e("eeeee", jsonObject.toString());
+            addRequestWithContent(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "htlinventoryrooms"), jsonObject,
+                    payload -> validateSuccessful.postSuccess(true), validateSuccessful);
+            launchRequestFromKey(VALIDATION_REQUEST_KEY,validateSuccessful);
         } catch (JSONException e) {
             validateSuccessful.postError(e);
         }

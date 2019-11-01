@@ -1,5 +1,6 @@
 package com.example.capentory_client.ui;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -121,8 +122,6 @@ public abstract class NetworkFragment<P, R extends JsonRepository<P>, V extends 
 
     protected void hideProgressBarAndHideContent() {
         progressBar.setVisibility(View.GONE);
-        content.setVisibility(View.GONE);
-
     }
 
     interface LiveDataSuccessHandler<P> {

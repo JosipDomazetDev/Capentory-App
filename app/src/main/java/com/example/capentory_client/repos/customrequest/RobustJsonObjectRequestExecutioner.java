@@ -27,7 +27,7 @@ public class RobustJsonObjectRequestExecutioner {
         this.context = context;
     }
 
-    public void shouldAuthenticate(boolean authenticate) {
+    public void toggleAuthenticate(boolean authenticate) {
         if (authenticate) {
             robustJsonObjectRequest.enableAuthentication();
         } else robustJsonObjectRequest.disableAuthentication();

@@ -10,8 +10,6 @@ import com.example.capentory_client.repos.customrequest.NetworkSuccessHandler;
 import com.example.capentory_client.repos.customrequest.RobustJsonObjectRequestExecutioner;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -30,42 +28,36 @@ public abstract class JsonRepository<L> {
     }
 
 
-    public void addRequest(String key, int method, String url, NetworkSuccessHandler successHandler) {
-        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, null, successHandler, this::handleErrorResponse
-        ));
-    }
-    public void addRequest(String key, int method, String url, JSONObject jsonRequest, NetworkSuccessHandler successHandler) {
-        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, jsonRequest, successHandler, this::handleErrorResponse
+    public void addRequest(String key, int method, String url, NetworkSuccessHandler successHandler, StatusAwareLiveData specificLiveData) {
+        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, null, successHandler, error -> handleErrorResponse(error, specificLiveData)
         ));
     }
 
-    public void addRequest(String key, int method, String url, JSONArray jsonRequest, NetworkSuccessHandler successHandler) throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("stocktaking", 23214);
-        jsonObject.put("validations", jsonRequest);
-        requests.put(key,
-                new RobustJsonObjectRequestExecutioner(context, method, url, jsonObject, successHandler, this::handleErrorResponse));
+
+    public void addRequestWithContent(String key, int method, String url, JSONObject jsonRequest, NetworkSuccessHandler successHandler, StatusAwareLiveData specificLiveData) {
+        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, jsonRequest, successHandler, error -> handleErrorResponse(error, specificLiveData)
+        ));
     }
+
 
     public void addMainRequest(int method, String url) {
-        addRequest(MAIN_REQUEST_KEY, method, url, this::handleMainSuccessfulResponse);
+        addRequest(MAIN_REQUEST_KEY, method, url, this::handleMainSuccessfulResponse, mainContentRepoData);
+    }
+
+
+    protected void addMainRequestWithContent(int method, String url, Map<String, String> toSend, boolean authenticate) {
+        addRequestWithContent(MAIN_REQUEST_KEY, method, url, new JSONObject(toSend), this::handleMainSuccessfulResponse, mainContentRepoData);
+        Objects.requireNonNull(requests.get(MAIN_REQUEST_KEY)).toggleAuthenticate(authenticate);
     }
 
     public void launchMainRequest() {
-        launchRequestFromKey(MAIN_REQUEST_KEY);
+        launchRequestFromKey(MAIN_REQUEST_KEY, mainContentRepoData);
     }
 
 
-    protected void addMainRequest(int method, String url, Map<String, String> toSend, boolean authenticate) {
-        requests.put(MAIN_REQUEST_KEY,
-                new RobustJsonObjectRequestExecutioner(context, method, url, new JSONObject(toSend), this::handleMainSuccessfulResponse, this::handleErrorResponse));
-        Objects.requireNonNull(requests.get(MAIN_REQUEST_KEY)).shouldAuthenticate(authenticate);
-    }
-
-
-    public void launchRequestFromKey(String key) {
+    public void launchRequestFromKey(String key, StatusAwareLiveData specificLiveData) {
         Objects.requireNonNull(requests.get(key)).launchRequest();
-        mainContentRepoData.postFetching();
+        specificLiveData.postFetching();
     }
 
 
@@ -83,8 +75,8 @@ public abstract class JsonRepository<L> {
      *
      * @param error that occurred
      */
-    private void handleErrorResponse(Exception error) {
-        mainContentRepoData.postError(error);
+    private void handleErrorResponse(Exception error, StatusAwareLiveData specificLiveData) {
+        specificLiveData.postError(error);
     }
 
 
