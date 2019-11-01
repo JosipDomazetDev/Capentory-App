@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class MergedItemField implements Comparable<MergedItemField> {
 
     @NonNull
-    private String key, type, label;
+    private String key, type, verboseName;
     private boolean required, readOnly;
 
     @NonNull
@@ -17,10 +17,10 @@ public class MergedItemField implements Comparable<MergedItemField> {
 
     public MergedItemField(@NonNull String key, JSONObject payload) throws JSONException {
         this.key = key;
-        type = payload.getString("type");
-        label = payload.getString("label");
-        required = payload.getBoolean("required");
-        readOnly = payload.getBoolean("read_only");
+        payload = payload.getJSONObject(key);
+        readOnly = payload.getBoolean("readOnly");
+        type = payload.optString("type", "");
+        verboseName = payload.getString("verboseFieldName");
         choices = payload.optJSONArray("choices");
     }
 
@@ -36,8 +36,8 @@ public class MergedItemField implements Comparable<MergedItemField> {
     }
 
     @NonNull
-    public String getLabel() {
-        return label;
+    public String getVerboseName() {
+        return verboseName;
     }
 
     public boolean isRequired() {
@@ -56,6 +56,12 @@ public class MergedItemField implements Comparable<MergedItemField> {
     @Override
     public int compareTo(MergedItemField that) {
 
+        if (Boolean.compare(this.readOnly, that.readOnly) == -1) {
+            return -1;
+        } else if (Boolean.compare(this.readOnly, that.readOnly) == 1) {
+            return 1;
+        }
+
 
         if (this.type.compareTo(that.type) < 0) {
             return 1;
@@ -70,23 +76,12 @@ public class MergedItemField implements Comparable<MergedItemField> {
         }
 
 
-        if (this.label.compareTo(that.label) < 0) {
+        if (this.verboseName.compareTo(that.verboseName) < 0) {
             return -1;
-        } else if (this.label.compareTo(that.label) > 0) {
+        } else if (this.verboseName.compareTo(that.verboseName) > 0) {
             return 1;
         }
 
-        if (Boolean.compare(this.required, that.required) == -1) {
-            return -1;
-        } else if (Boolean.compare(this.required, that.required) == 1) {
-            return 1;
-        }
-
-        if (Boolean.compare(this.readOnly, that.readOnly) == -1) {
-            return -1;
-        } else if (Boolean.compare(this.readOnly, that.readOnly) == 1) {
-            return 1;
-        }
 
         return 1;
     }

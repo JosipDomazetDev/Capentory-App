@@ -3,9 +3,10 @@ package com.example.capentory_client.dagger.daggerviewmodels;
 import androidx.lifecycle.ViewModel;
 
 import com.example.capentory_client.dagger.ViewModelKey;
-import com.example.capentory_client.viewmodels.DetailItemFragmentViewModel;
-import com.example.capentory_client.viewmodels.LoginFragmentViewModel;
-import com.example.capentory_client.viewmodels.MergedItemFragmentViewModel;
+import com.example.capentory_client.viewmodels.DetailItemViewModel;
+import com.example.capentory_client.viewmodels.LoginViewModel;
+import com.example.capentory_client.viewmodels.MergedItemViewModel;
+import com.example.capentory_client.viewmodels.StocktakingViewModel;
 
 import dagger.Binds;
 import dagger.Module;
@@ -16,16 +17,21 @@ public abstract class ItemFragmentViewModelsModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(MergedItemFragmentViewModel.class)
-    public abstract ViewModel bindItemFragmentViewModel(MergedItemFragmentViewModel viewModel);
+    @ViewModelKey(MergedItemViewModel.class)
+    public abstract ViewModel bindItemFragmentViewModel(MergedItemViewModel viewModel);
 
     @Binds
     @IntoMap
-    @ViewModelKey(DetailItemFragmentViewModel.class)
-    public abstract ViewModel bindDetailItemFragmentViewModel(DetailItemFragmentViewModel viewModel);
+    @ViewModelKey(DetailItemViewModel.class)
+    public abstract ViewModel bindDetailItemFragmentViewModel(DetailItemViewModel viewModel);
 
     @Binds
     @IntoMap
-    @ViewModelKey(LoginFragmentViewModel.class)
-    public abstract ViewModel bindLoginFragmentViewModel(LoginFragmentViewModel viewModel);
+    @ViewModelKey(LoginViewModel.class)
+    public abstract ViewModel bindLoginFragmentViewModel(LoginViewModel viewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(StocktakingViewModel.class)
+    public abstract ViewModel bindStocktakingFragmentViewModel(StocktakingViewModel viewModel);
 }

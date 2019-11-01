@@ -12,11 +12,11 @@ import java.util.List;
 
 public class ValidationEntry {
     private static final String PK_JSON_KEY = "itemId";
-    private int pkItem;
+    private String pkItem;
     private boolean withoutChange;
     private List<Field> fieldChanges;
 
-    public ValidationEntry(int pkItem) {
+    public ValidationEntry(String pkItem) {
         this.pkItem = pkItem;
         this.fieldChanges = new ArrayList<>();
     }

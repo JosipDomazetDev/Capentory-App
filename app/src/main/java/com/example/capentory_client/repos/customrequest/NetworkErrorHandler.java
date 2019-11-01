@@ -1,4 +1,4 @@
-package com.example.capentory_client.repos;
+package com.example.capentory_client.repos.customrequest;
 
 import org.json.JSONObject;
 

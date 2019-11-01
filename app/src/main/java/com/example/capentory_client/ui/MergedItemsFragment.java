@@ -32,7 +32,7 @@ import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
-import com.example.capentory_client.viewmodels.MergedItemFragmentViewModel;
+import com.example.capentory_client.viewmodels.MergedItemViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
@@ -53,7 +53,7 @@ import javax.inject.Inject;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, MergedItemsRepository, MergedItemFragmentViewModel> implements RecyclerViewAdapter.ItemClickListener {
+public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, MergedItemsRepository, MergedItemViewModel> implements RecyclerViewAdapter.ItemClickListener {
     private RecyclerView recyclerView;
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
@@ -119,7 +119,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(currentRoomString));
 
 
-        initWithFetch(ViewModelProviders.of(this, providerFactory).get(MergedItemFragmentViewModel.class),
+        initWithFetch(ViewModelProviders.of(this, providerFactory).get(MergedItemViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.room_number_label_fragment_mergeditems)),
                 view,
                 R.id.progress_bar_fragment_mergeditems,
@@ -154,7 +154,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         });
 
         addItem.setOnClickListener(v -> {
-            itemxDetailSharedViewModel.setCurrentItem(new MergedItem(currentRoomString, -1, "Neues Item"));
+            itemxDetailSharedViewModel.setCurrentItem(new MergedItem(currentRoomString, "-1", "Neues Item"));
             NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
         });
 

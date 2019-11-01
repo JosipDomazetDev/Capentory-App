@@ -2,12 +2,12 @@ package com.example.capentory_client.dagger;
 
 import com.example.capentory_client.dagger.daggerviewmodels.ItemFragmentViewModelsModule;
 import com.example.capentory_client.dagger.daggerviewmodels.RoomFragmentViewModelsModule;
-import com.example.capentory_client.ui.ActualRoomsFragment;
+import com.example.capentory_client.ui.RoomsFragment;
 import com.example.capentory_client.ui.DetailedItemFragment;
 import com.example.capentory_client.ui.LoginFragment;
 import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.ui.MergedItemsFragment;
-import com.example.capentory_client.viewmodels.DetailItemFragmentViewModel;
+import com.example.capentory_client.ui.StocktakingFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -20,7 +20,7 @@ public abstract class ActivityBuildersModule {
 
     @ContributesAndroidInjector(
             modules = {RoomFragmentViewModelsModule.class})
-    abstract ActualRoomsFragment contributeRoomFragment();
+    abstract RoomsFragment contributeRoomFragment();
 
     @ContributesAndroidInjector(
             modules = {ItemFragmentViewModelsModule.class})
@@ -35,7 +35,7 @@ public abstract class ActivityBuildersModule {
             modules = {ItemFragmentViewModelsModule.class})
     abstract LoginFragment contributeLoginFragment();
 
-
-
-
+    @ContributesAndroidInjector(
+            modules = {ItemFragmentViewModelsModule.class})
+    abstract StocktakingFragment contributeStocktakingFragment();
 }

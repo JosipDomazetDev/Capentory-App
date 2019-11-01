@@ -14,13 +14,13 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class MergedItemFragmentViewModel extends NetworkViewModel<List<MergedItem>, MergedItemsRepository> {
+public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, MergedItemsRepository> {
     private List<ValidationEntry> validationEntries = new ArrayList<>();
     private StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
 
 
     @Inject
-    public MergedItemFragmentViewModel(MergedItemsRepository mergedItemsRepository) {
+    public MergedItemViewModel(MergedItemsRepository mergedItemsRepository) {
         super(mergedItemsRepository);
     }
 
@@ -54,7 +54,6 @@ public class MergedItemFragmentViewModel extends NetworkViewModel<List<MergedIte
     }
 
     public void sendValidationEntriesToServer() {
-
         validateSuccessful = jsonRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries));
     }
 

@@ -9,8 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="@android:color/holo_orange_light"
-        tools:context=".ui.ActualRoomsFragment">
+        tools:context=".ui.RoomsFragment">
 
         <ProgressBar
             android:id="@+id/progress_bar_fragment_actualrooms"

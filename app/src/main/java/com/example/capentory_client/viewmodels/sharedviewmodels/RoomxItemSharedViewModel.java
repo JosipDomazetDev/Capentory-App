@@ -4,18 +4,18 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.capentory_client.models.ActualRoom;
+import com.example.capentory_client.models.Room;
 
 public class RoomxItemSharedViewModel extends ViewModel {
-    private final MutableLiveData<ActualRoom> currentRoom = new MutableLiveData<>();
+    private final MutableLiveData<Room> currentRoom = new MutableLiveData<>();
     private final MutableLiveData<Boolean> currentRoomValidated = new MutableLiveData<>();
 
 
-    public void setCurrentRoom(ActualRoom actualRoom) {
-        currentRoom.setValue(actualRoom);
+    public void setCurrentRoom(Room room) {
+        currentRoom.setValue(room);
     }
 
-    public LiveData<ActualRoom> getCurrentRoom() {
+    public LiveData<Room> getCurrentRoom() {
         return currentRoom;
     }
 

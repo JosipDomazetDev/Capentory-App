@@ -118,4 +118,6 @@
     <string name="project_title">Capentory</string>
     <string name="about_us">Über uns</string>
     <string name="icons_legal_notice">Icons powered by  <a href="https://icons8.de/">icons8</a>. Die Verwendung ist durch  <a href="https://icons8.com/license">Verlinkung zulässig.</a></string>
+    <string name="barcode_detailitem_fragment">Barcode: %1$s</string>
+    <string name="bez_detailitem_fragment">Bezeichnung: %1$s</string>
 </resources>

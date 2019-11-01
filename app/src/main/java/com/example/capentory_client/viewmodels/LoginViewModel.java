@@ -2,19 +2,19 @@ package com.example.capentory_client.viewmodels;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.capentory_client.repos.AuthRepository;
+import com.example.capentory_client.repos.LoginRepository;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import javax.inject.Inject;
 
-public class LoginFragmentViewModel extends NetworkViewModel<String, AuthRepository> {
+public class LoginViewModel extends NetworkViewModel<String, LoginRepository> {
     private StatusAwareLiveData<Boolean> logoutSuccessful;
 
 
     @Inject
-    public LoginFragmentViewModel(AuthRepository authRepository) {
-        super(authRepository);
+    public LoginViewModel(LoginRepository loginRepository) {
+        super(loginRepository);
 
     }
 

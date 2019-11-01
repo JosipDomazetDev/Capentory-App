@@ -19,9 +19,9 @@ import com.example.capentory_client.androidutility.Cryptography;
 import com.example.capentory_client.androidutility.DisplayUtility;
 import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.androidutility.ToastUtility;
-import com.example.capentory_client.repos.AuthRepository;
+import com.example.capentory_client.repos.LoginRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
-import com.example.capentory_client.viewmodels.LoginFragmentViewModel;
+import com.example.capentory_client.viewmodels.LoginViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
@@ -37,7 +37,7 @@ import javax.inject.Inject;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginFragment extends NetworkFragment<String, AuthRepository, LoginFragmentViewModel> {
+public class LoginFragment extends NetworkFragment<String, LoginRepository, LoginViewModel> {
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -94,7 +94,7 @@ public class LoginFragment extends NetworkFragment<String, AuthRepository, Login
         super.onViewCreated(view, savedInstanceState);
 
 
-        initWithoutFetch(ViewModelProviders.of(this, providerFactory).get(LoginFragmentViewModel.class),
+        initWithoutFetch(ViewModelProviders.of(this, providerFactory).get(LoginViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.subtitle_text_view_fragment_login)),
                 view,
                 R.id.progress_bar_fragment_login);

@@ -74,7 +74,7 @@ public class HomeScreenFragment extends Fragment {
 
             if (PreferenceUtility.isLoggedIn(getContext())) {
                 startInventory();
-                Navigation.findNavController(v).navigate(R.id.action_homeScreenFragment_to_roomFragment);
+                Navigation.findNavController(v).navigate(R.id.action_homeScreenFragment_to_stocktakingFragment);
             } else Navigation.findNavController(v).navigate(R.id.loginFragment);
         });
 

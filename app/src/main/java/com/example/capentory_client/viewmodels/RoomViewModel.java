@@ -1,27 +1,27 @@
 package com.example.capentory_client.viewmodels;
 
-import com.example.capentory_client.models.ActualRoom;
-import com.example.capentory_client.repos.ActualRoomsRepository;
+import com.example.capentory_client.models.Room;
+import com.example.capentory_client.repos.RoomsRepository;
 
 import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class RoomFragmentViewModel extends NetworkViewModel<List<ActualRoom>, ActualRoomsRepository> {
+public class RoomViewModel extends NetworkViewModel<List<Room>, RoomsRepository> {
     private boolean startedRemoving = false;
 
     @Inject
-    public RoomFragmentViewModel(ActualRoomsRepository ralphRepository) {
+    public RoomViewModel(RoomsRepository ralphRepository) {
         super(ralphRepository);
     }
 
 
-    public void removeRoom(ActualRoom actualRoom) {
-        List<ActualRoom> currentRooms = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
+    public void removeRoom(Room room) {
+        List<Room> currentRooms = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentRooms == null) return;
 
-        if (currentRooms.remove(actualRoom)) {
+        if (currentRooms.remove(room)) {
             statusAwareLiveData.postSuccess(currentRooms);
             startedRemoving = true;
         }

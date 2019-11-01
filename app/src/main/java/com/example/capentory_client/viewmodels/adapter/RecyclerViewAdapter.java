@@ -44,8 +44,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.anlage_textview.setText(mergedItems.get(position).getDisplayedAnlageNummer());
-        holder.anlage_bez_textview.setText(mergedItems.get(position).getDisplayedDescription());
+        holder.anlage_textview.setText(mergedItems.get(position).getCheckedDisplayBarcode());
+        holder.anlage_bez_textview.setText(mergedItems.get(position).getCheckedDisplayName());
     }
 
     @Override

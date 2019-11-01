@@ -23,10 +23,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class FormRepository extends JsonRepository<Map<String, MergedItemField>> {
+public class DetailItemRepository extends JsonRepository<Map<String, MergedItemField>> {
 
     @Inject
-    public FormRepository(Context context) {
+    public DetailItemRepository(Context context) {
         super(context);
     }
 
@@ -35,7 +35,7 @@ public class FormRepository extends JsonRepository<Map<String, MergedItemField>>
     public StatusAwareLiveData<Map<String, MergedItemField>> fetchMainData(String... args) {
         // Fetch only once for entire application, the form wont change
         if (mainContentRepoData.getValue() == null || mainContentRepoData.getValue().getData() == null) {
-            addMainRequest(Request.Method.OPTIONS, getUrl(context, false, "api", "actualitem/"));
+            addMainRequest(Request.Method.OPTIONS, getUrl(context, false, "api", "htlinventoryitems/"));
             launchMainRequest();
         }
 
@@ -46,13 +46,13 @@ public class FormRepository extends JsonRepository<Map<String, MergedItemField>>
     @Override
     protected void handleMainSuccessfulResponse(JSONObject payload) {
         try {
-            payload = payload.getJSONObject("actions").getJSONObject("POST");
             Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
+            payload = payload.getJSONObject("displayFields");
             Iterator<String> iterator = payload.keys();
 
             while (iterator.hasNext()) {
                 String key = iterator.next();
-                mergedItemFieldsSet.put(key, new MergedItemField(key, payload.getJSONObject(key)));
+                mergedItemFieldsSet.put(key, new MergedItemField(key, payload));
             }
             mainContentRepoData.postSuccess(sortByValue(mergedItemFieldsSet));
         } catch (JSONException error) {
@@ -71,7 +71,7 @@ public class FormRepository extends JsonRepository<Map<String, MergedItemField>>
         });
 
         Map<K, V> result = new LinkedHashMap<>();
-        for (Iterator<Map.Entry<K, V>> it = list.iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<K, V>> it = list.iterator(); it.hasNext(); ) {
             Map.Entry<K, V> entry = it.next();
             result.put(entry.getKey(), entry.getValue());
         }

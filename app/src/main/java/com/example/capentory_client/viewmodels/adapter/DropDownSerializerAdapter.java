@@ -11,15 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.models.Room;
+import com.example.capentory_client.models.SerializerEntry;
 
 import java.util.ArrayList;
 
-public class DropDownRoomAdapter extends ArrayAdapter<Room> {
+public class DropDownSerializerAdapter  extends ArrayAdapter<SerializerEntry> {
 
 
-    public DropDownRoomAdapter(Context context, ArrayList<Room> rooms) {
-        super(context, 0, rooms);
+    public DropDownSerializerAdapter(Context context, ArrayList<SerializerEntry> actualRooms) {
+        super(context, 0, actualRooms);
     }
 
     @NonNull
@@ -42,11 +42,11 @@ public class DropDownRoomAdapter extends ArrayAdapter<Room> {
 
         TextView textViewRoomNumber = convertView.findViewById(R.id.room_tv);
         TextView textViewDescription = convertView.findViewById(R.id.room_desc_tv);
-        Room currentItem = getItem(position);
+        SerializerEntry currentSer = getItem(position);
 
-        if (currentItem != null) {
-            textViewRoomNumber.setText(currentItem.getDisplayNumber());
-            textViewDescription.setText(currentItem.getDisplayedRoomDescription());
+        if (currentSer != null) {
+            textViewRoomNumber.setText(currentSer.getKey());
+            textViewDescription.setText(currentSer.getDescription());
         }
 
         return convertView;

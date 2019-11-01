@@ -15,40 +15,36 @@ import java.util.Objects;
  */
 public class MergedItem {
     public static final String ROOM_JSON_KEY = "room";
-    private int pkItemId;
     @NonNull
-    private String currentRoomNumber;
+    private String pkItemId, currentRoomNumber;
     @NonNull
-    private JSONObject mergedItemJSONPayload;
+    private JSONObject itemAsJson, fields;
     @Nullable
-    private String anlageNummer, assetSubnumber, description;
+    private String barcode, displayName;
 
 
-    public MergedItem(@NonNull String currentRoomNumber, JSONObject mergedItemJSONPayload) throws JSONException {
-        this.currentRoomNumber = currentRoomNumber;
-        this.mergedItemJSONPayload = mergedItemJSONPayload;
-        this.description = mergedItemJSONPayload.getString("desc");
-        this.pkItemId = mergedItemJSONPayload.getInt("item_ID");
+    public MergedItem(@NonNull String currentRoomString, @NonNull String pkItemId, JSONObject payload) throws JSONException {
+        this.currentRoomNumber = currentRoomString;
+        this.pkItemId = pkItemId;
 
-        JSONObject sapItem = mergedItemJSONPayload.optJSONObject("sap_item");
-        if (sapItem == null) {
-            this.anlageNummer = null;
-            this.assetSubnumber = null;
-        } else {
-            this.anlageNummer = sapItem.getString("anlage");
-            this.assetSubnumber = sapItem.getString("asset_subnumber");
-        }
+        payload = payload.getJSONObject(pkItemId);
+        this.barcode = payload.getString("barcode");
+        this.displayName = payload.getString("displayName");
+        this.itemAsJson = payload;
+        this.fields = payload.getJSONObject("fields");
     }
 
 
-    public MergedItem(@NonNull String currentRoomNumber, @NonNull int pkItemId, @NonNull String description) {
+    public MergedItem(@NonNull String currentRoomNumber, @NonNull String pkItemId, @NonNull String displayName) {
         this.currentRoomNumber = currentRoomNumber;
         this.pkItemId = pkItemId;
-        this.description = description;
-        mergedItemJSONPayload = new JSONObject();
+        this.displayName = displayName;
+        itemAsJson = new JSONObject();
+        fields = new JSONObject();
     }
 
-    public int getPkItemId() {
+    @NonNull
+    public String getPkItemId() {
         return pkItemId;
     }
 
@@ -58,31 +54,25 @@ public class MergedItem {
     }
 
     @NonNull
-    public JSONObject getMergedItemJSONPayload() {
-        return mergedItemJSONPayload;
+    public JSONObject getItemAsJson() {
+        return itemAsJson;
     }
 
-    @Nullable
-    public String getAnlageNummer() {
-        return anlageNummer;
-    }
-
-    @Nullable
-    public String getDescription() {
-        return description;
+    @NonNull
+    public JSONObject getFieldsWithValues() {
+        return fields;
     }
 
     @Nullable
     public String getBarcode() {
-        if (anlageNummer == null) return null;
-        StringBuilder barcodeBuilder = new StringBuilder(anlageNummer);
-
-        if (assetSubnumber == null || Objects.equals(assetSubnumber, "null"))
-            barcodeBuilder.append("");
-        else barcodeBuilder.append(assetSubnumber);
-
-        return barcodeBuilder.toString();
+        return barcode;
     }
+
+    @Nullable
+    public String getDisplayName() {
+        return displayName;
+    }
+
 
     /**
      * Compare the scannedBarcode
@@ -91,19 +81,19 @@ public class MergedItem {
      * @return if matches
      */
     public boolean equalsBarcode(String scannedBarcode) {
-        if (anlageNummer == null) return false;
+        if (barcode == null) return false;
 
         // 12340000 = 12340000
         boolean normalCond = Objects.equals(getBarcode(), scannedBarcode);
         if (normalCond) return true;
 
-        if (anlageNummer.length() == scannedBarcode.length()) {
+        if (barcode.length() == scannedBarcode.length()) {
             // 1234 = 1234 (scannedBarcode maybe doesn't include zeros => only compare to anlage)
-            return Objects.equals(anlageNummer, scannedBarcode);
+            return Objects.equals(barcode, scannedBarcode);
 
-        } else if (anlageNummer.length() < scannedBarcode.length()) {
+        } else if (barcode.length() < scannedBarcode.length()) {
             // 1234 = 1234|0000| (scannedBarcode includes zeros but local barcode doesn't (=> cut and compare to anlage))
-            return Objects.equals(anlageNummer, scannedBarcode.substring(0, anlageNummer.length()));
+            return Objects.equals(barcode, scannedBarcode.substring(0, barcode.length()));
         }
 
         // If the scannedBarcode however is shorther than even anlage every hope is lost
@@ -112,16 +102,18 @@ public class MergedItem {
 
     public boolean applySearchBarFilter(@NonNull String filter) {
         filter = filter.toLowerCase().trim();
-        return getDisplayedAnlageNummer().toLowerCase().trim().contains(filter) || getDisplayedDescription().toLowerCase().trim().contains(filter);
+        return getCheckedDisplayBarcode().toLowerCase().trim().contains(filter) || getCheckedDisplayName().toLowerCase().trim().contains(filter);
     }
 
-    public String getDisplayedAnlageNummer() {
-        if (anlageNummer == null) return "N/A";
-        return anlageNummer;
+    public String getCheckedDisplayName() {
+        if (displayName == null) return "N/A";
+        return displayName;
     }
 
-    public String getDisplayedDescription() {
-        if (description == null) return "N/A";
-        return description;
+    public String getCheckedDisplayBarcode() {
+        if (barcode == null) return "N/A";
+        return barcode;
     }
+
+
 }

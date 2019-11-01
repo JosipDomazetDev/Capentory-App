@@ -1,4 +1,4 @@
-package com.example.capentory_client.repos;
+package com.example.capentory_client.repos.customrequest;
 
 import android.content.Context;
 
@@ -6,10 +6,14 @@ import androidx.annotation.Nullable;
 
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.example.capentory_client.repos.customrequest.NetworkErrorHandler;
+import com.example.capentory_client.repos.customrequest.NetworkSingleton;
+import com.example.capentory_client.repos.customrequest.NetworkSuccessHandler;
+import com.example.capentory_client.repos.customrequest.RobustJsonObjectRequest;
 
 import org.json.JSONObject;
 
-class RobustJsonObjectRequestExecutioner {
+public class RobustJsonObjectRequestExecutioner {
     private RobustJsonObjectRequest robustJsonObjectRequest;
 
     private static final int MAX_RETRIES = 8;
@@ -38,7 +42,7 @@ class RobustJsonObjectRequestExecutioner {
     /**
      * Launch/Starts the previously initialized network request
      */
-    protected void launchRequest() {
+    public void launchRequest() {
         NetworkSingleton.getInstance(context).
                 addToRequestQueue(robustJsonObjectRequest);
     }

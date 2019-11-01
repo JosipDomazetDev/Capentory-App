@@ -21,14 +21,14 @@
         android:label="Home"
         tools:layout="@layout/fragment_home_screen">
         <action
-            android:id="@+id/action_homeScreenFragment_to_roomFragment"
-            app:destination="@id/roomFragment" />
+            android:id="@+id/action_homeScreenFragment_to_stocktakingFragment"
+            app:destination="@id/stocktakingFragment" />
     </fragment>
     <fragment
         android:id="@+id/roomFragment"
-        android:name="com.example.capentory_client.ui.ActualRoomsFragment"
+        android:name="com.example.capentory_client.ui.RoomsFragment"
         android:label="Raumauswahl"
-        tools:layout="@layout/fragment_actualrooms">
+        tools:layout="@layout/fragment_rooms">
         <action
             android:id="@+id/action_roomFragment_to_itemsFragment"
             app:destination="@id/itemsFragment" />
@@ -94,6 +94,14 @@
             android:defaultValue="true"
             app:argType="boolean" />
     </action>
+    <fragment
+        android:id="@+id/stocktakingFragment"
+        android:name="com.example.capentory_client.ui.StocktakingFragment"
+        android:label="Inventuranlegung" >
+        <action
+            android:id="@+id/action_stocktakingFragment_to_roomFragment"
+            app:destination="@id/roomFragment" />
+    </fragment>
 
 
 </navigation>

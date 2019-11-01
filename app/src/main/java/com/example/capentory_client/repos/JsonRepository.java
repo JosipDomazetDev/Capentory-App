@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
+import com.example.capentory_client.repos.customrequest.NetworkSuccessHandler;
+import com.example.capentory_client.repos.customrequest.RobustJsonObjectRequestExecutioner;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONArray;
@@ -34,7 +34,6 @@ public abstract class JsonRepository<L> {
         requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, null, successHandler, this::handleErrorResponse
         ));
     }
-
     public void addRequest(String key, int method, String url, JSONObject jsonRequest, NetworkSuccessHandler successHandler) {
         requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, jsonRequest, successHandler, this::handleErrorResponse
         ));
@@ -44,9 +43,8 @@ public abstract class JsonRepository<L> {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("stocktaking", 23214);
         jsonObject.put("validations", jsonRequest);
-        Log.e("xxxx",jsonObject.toString());
-        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, jsonObject, successHandler, this::handleErrorResponse
-        ));
+        requests.put(key,
+                new RobustJsonObjectRequestExecutioner(context, method, url, jsonObject, successHandler, this::handleErrorResponse));
     }
 
     public void addMainRequest(int method, String url) {

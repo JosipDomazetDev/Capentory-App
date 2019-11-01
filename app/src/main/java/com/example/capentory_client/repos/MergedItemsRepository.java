@@ -7,6 +7,7 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.models.Room;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONArray;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ import javax.inject.Singleton;
 @Singleton
 public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
     private String currentRoomString;
-    protected StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
+    private StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
     private final String VALIDATION_REQUEST_KEY = "request_validation";
 
 
@@ -40,7 +42,7 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
             throw new IllegalArgumentException("MergedItemRepository only needs the currentRoom as argument!");
 
         this.currentRoomString = args[0];
-        addMainRequest(Request.Method.GET, getUrl(context, true, "api", "actualroom", currentRoomString));
+        addMainRequest(Request.Method.GET, getUrl(context, true, "api", "htlinventoryrooms", currentRoomString));
         launchMainRequest();
 
         return mainContentRepoData;
@@ -50,12 +52,13 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
     @Override
     protected void handleMainSuccessfulResponse(JSONObject payload) {
         try {
-            JSONArray allItems = payload.optJSONArray("all_items");
             List<MergedItem> mergedItems = new ArrayList<>();
+            payload = payload.getJSONObject("items");
+            Iterator<String> itemKeys = payload.keys();
 
-            for (int i = 0; i < allItems.length(); i++) {
-                JSONObject jsonItem = allItems.getJSONObject(i);
-                mergedItems.add(new MergedItem(currentRoomString, jsonItem));
+
+            while (itemKeys.hasNext()) {
+                mergedItems.add(new MergedItem(currentRoomString,itemKeys.next(), payload));
             }
 
             mainContentRepoData.postSuccess(mergedItems);
@@ -67,7 +70,7 @@ public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
 
     public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(JSONArray validationEntriesAsJson) {
         try {
-            addRequest(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "upload"), validationEntriesAsJson,
+            addRequest(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "htlinventoryrooms"), validationEntriesAsJson,
                     payload -> validateSuccessful.postSuccess(true));
             validateSuccessful.postFetching();
             launchRequestFromKey(VALIDATION_REQUEST_KEY);

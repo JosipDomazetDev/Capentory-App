@@ -17,10 +17,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.models.ActualRoom;
-import com.example.capentory_client.repos.ActualRoomsRepository;
+import com.example.capentory_client.models.Room;
+import com.example.capentory_client.repos.RoomsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
-import com.example.capentory_client.viewmodels.RoomFragmentViewModel;
+import com.example.capentory_client.viewmodels.RoomViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.DropDownRoomAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
@@ -38,11 +38,11 @@ import javax.inject.Inject;
  * Activities that contain this fragment must implement the
  * to handle interaction events.
  */
-public class ActualRoomsFragment extends NetworkFragment<List<ActualRoom>, ActualRoomsRepository, RoomFragmentViewModel> {
+public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, RoomViewModel> {
     private Spinner roomDropDown;
 
 
-    public ActualRoomsFragment() {
+    public RoomsFragment() {
         // Required empty public constructor
     }
 
@@ -50,8 +50,8 @@ public class ActualRoomsFragment extends NetworkFragment<List<ActualRoom>, Actua
     ViewModelProviderFactory providerFactory;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_actualrooms, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_rooms, container, false);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ActualRoomsFragment extends NetworkFragment<List<ActualRoom>, Actua
         final Button btn_fragment_room = view.findViewById(R.id.button_fragment_room);
         roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
 
-        initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomFragmentViewModel.class),
+        initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom)),
                 view,
                 R.id.progress_bar_fragment_actualrooms,
@@ -72,7 +72,7 @@ public class ActualRoomsFragment extends NetworkFragment<List<ActualRoom>, Actua
 
         final RoomxItemSharedViewModel roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
         btn_fragment_room.setOnClickListener(v -> {
-            ActualRoom selectedRoom = (ActualRoom) roomDropDown.getSelectedItem();
+            Room selectedRoom = (Room) roomDropDown.getSelectedItem();
             if (selectedRoom == null) return;
             roomxItemSharedViewModel.setCurrentRoom(selectedRoom);
             Navigation.findNavController(view).navigate(R.id.action_roomFragment_to_itemsFragment);
@@ -106,9 +106,9 @@ public class ActualRoomsFragment extends NetworkFragment<List<ActualRoom>, Actua
     }
 
     @Override
-    protected void handleSuccess(StatusAwareData<List<ActualRoom>> statusAwareData) {
+    protected void handleSuccess(StatusAwareData<List<Room>> statusAwareData) {
         super.handleSuccess(statusAwareData);
-        DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<ActualRoom>) statusAwareData.getData());
+        DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<Room>) statusAwareData.getData());
         roomDropDown.setAdapter(adapter);
         //roomDropDown.notify();
     }

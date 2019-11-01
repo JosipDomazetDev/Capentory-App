@@ -12,13 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-public class AuthRepository extends JsonRepository<String> {
+@Singleton
+public class LoginRepository extends JsonRepository<String> {
     protected StatusAwareLiveData<Boolean> logoutSuccessful = new StatusAwareLiveData<>();
     private final String LOGOUT_REQUEST_KEY = "logout_request";
 
     @Inject
-    public AuthRepository(Context context) {
+    public LoginRepository(Context context) {
         super(context);
     }
 

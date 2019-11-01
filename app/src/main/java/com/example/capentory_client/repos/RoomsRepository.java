@@ -4,7 +4,7 @@ package com.example.capentory_client.repos;
 import android.content.Context;
 
 import com.android.volley.Request;
-import com.example.capentory_client.models.ActualRoom;
+import com.example.capentory_client.models.Room;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONException;
@@ -18,19 +18,19 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class ActualRoomsRepository extends JsonRepository<List<ActualRoom>> {
+public class RoomsRepository extends JsonRepository<List<Room>> {
 
     @Inject
-    public ActualRoomsRepository(Context context) {
+    public RoomsRepository(Context context) {
         super(context);
     }
 
 
     @Override
-    public StatusAwareLiveData<List<ActualRoom>> fetchMainData(String... args) {
+    public StatusAwareLiveData<List<Room>> fetchMainData(String... args) {
         // Fetch only once for entire application, the rooms wont change
         /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchMainData() == null) {*/
-        addMainRequest(Request.Method.GET, getUrl(context, true, "api","inventory", "actualroom"));
+        addMainRequest(Request.Method.GET, getUrl(context, true, "api", "htlinventory"));
         launchMainRequest();
         return mainContentRepoData;
     }
@@ -39,14 +39,15 @@ public class ActualRoomsRepository extends JsonRepository<List<ActualRoom>> {
     @Override
     protected void handleMainSuccessfulResponse(JSONObject payload) {
         try {
-            List<ActualRoom> actualRooms = new ArrayList<>();
-            Iterator<String> keys = payload.keys();
+            List<Room> rooms = new ArrayList<>();
+            payload = payload.getJSONObject("rooms");
+            Iterator<String> roomKeys = payload.keys();
 
-            while (keys.hasNext()) {
-                actualRooms.add(new ActualRoom(keys.next(), payload));
+            while (roomKeys.hasNext()) {
+                rooms.add(new Room(roomKeys.next(), payload));
             }
 
-            mainContentRepoData.postSuccess(actualRooms);
+            mainContentRepoData.postSuccess(rooms);
         } catch (JSONException error) {
             mainContentRepoData.postError(error);
         }

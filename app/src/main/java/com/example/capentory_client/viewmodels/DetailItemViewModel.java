@@ -1,17 +1,17 @@
 package com.example.capentory_client.viewmodels;
 
 import com.example.capentory_client.models.MergedItemField;
-import com.example.capentory_client.repos.FormRepository;
+import com.example.capentory_client.repos.DetailItemRepository;
 
 import java.util.Map;
 
 import javax.inject.Inject;
 
-public class DetailItemFragmentViewModel extends NetworkViewModel<Map<String, MergedItemField>, FormRepository> {
+public class DetailItemViewModel extends NetworkViewModel<Map<String, MergedItemField>, DetailItemRepository> {
 
     @Inject
-    public DetailItemFragmentViewModel(FormRepository formRepository) {
-        super(formRepository);
+    public DetailItemViewModel(DetailItemRepository detailItemRepository) {
+        super(detailItemRepository);
     }
 
 
