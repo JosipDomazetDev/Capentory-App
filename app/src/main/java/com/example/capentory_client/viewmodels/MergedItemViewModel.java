@@ -17,7 +17,7 @@ import javax.inject.Inject;
 public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, MergedItemsRepository> {
     private List<ValidationEntry> validationEntries = new ArrayList<>();
     private StatusAwareLiveData<Boolean> validateSuccessful;
-
+    private boolean startedRemoving;
 
     @Inject
     public MergedItemViewModel(MergedItemsRepository mergedItemsRepository) {
@@ -29,8 +29,10 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
         List<MergedItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
 
-        if (currentItems.remove(mergedItem))
+        if (currentItems.remove(mergedItem)) {
             statusAwareLiveData.postSuccess(currentItems);
+            startedRemoving = true;
+        }
     }
 
     @Override
@@ -39,14 +41,14 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
             return;
         }
 
-        statusAwareLiveData = jsonRepository.fetchMainData(args);
+        statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
 
     @Override
     public void reloadData(String... args) {
-        if (validationEntries.isEmpty())
-            statusAwareLiveData = jsonRepository.fetchMainData(args);
+        if (!startedRemoving)
+            statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
     public void addValidationEntry(ValidationEntry validationEntry) {
@@ -54,7 +56,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
     }
 
     public void sendValidationEntriesToServer() {
-        validateSuccessful = jsonRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries));
+        validateSuccessful = networkRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries));
     }
 
     public LiveData<StatusAwareData<Boolean>> getValidationSuccessful() {

@@ -1,7 +1,5 @@
 package com.example.capentory_client.viewmodels;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 
 import com.example.capentory_client.models.SerializerEntry;
@@ -29,16 +27,16 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
         }
 
 
-        statusAwareLiveData = jsonRepository.fetchMainData(args);
+        statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
     @Override
     public void reloadData(String... args) {
-        statusAwareLiveData = jsonRepository.fetchMainData(args);
+        statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
     public void postStocktaking(String name) {
-        postStocktakingSuccessful = jsonRepository.postStocktaking(name);
+        postStocktakingSuccessful = networkRepository.postStocktaking(name);
     }
 
     public LiveData<StatusAwareData<Boolean>> getPostStocktakingSuccessful() {

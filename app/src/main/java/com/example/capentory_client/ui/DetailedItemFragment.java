@@ -42,7 +42,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -60,7 +59,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private BasicNetworkErrorHandler basicNetworkErrorHandler;
     private View view;
-    private Map<MergedItemField, View> mergedItemFieldViewMap = new HashMap<>();
+    // "comment" ==> to generated View for the Field
+    private Map<String, View> mergedItemFieldViewMap = new HashMap<>();
 
     public DetailedItemFragment() {
         // Required empty public constructor
@@ -80,7 +80,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
         LinearLayout linearLayout = view.findViewById(R.id.content_fragment_item_detail);
-        basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dummy));
+        basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.otherroom_textview_fragment_itemdetail));
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(DetailItemViewModel.class),
                 basicNetworkErrorHandler,
@@ -92,8 +92,33 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
 
+        MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem().getValue();
+        if (mergedItem != null && mergedItem.isSearchedForItem()) {
+            networkViewModel.fetchSearchedForItem(mergedItem.getBarcode());
+            observeSpecificLiveData(networkViewModel.getSearchedForItem(), liveData -> handleSearchedForItemResponse(view, liveData));
+        }
+
+
         ImageButton validateButton = view.findViewById(R.id.validate_btn_fragment_itemdetail);
         validateButton.setOnClickListener(v -> handleValidate());
+
+
+        ImageButton cancelButton = view.findViewById(R.id.cancel_btn_fragment_itemdetail);
+        cancelButton.setOnClickListener(v -> handleCancel());
+    }
+
+    private void handleSearchedForItemResponse(@NonNull View view, StatusAwareData<MergedItem> liveData) {
+        itemxDetailSharedViewModel.setCurrentItem(liveData.getData());
+        TextView textView = view.findViewById(R.id.otherroom_textview_fragment_itemdetail);
+        assert liveData.getData() != null;
+
+        if (liveData.getData().isNewItem())
+            textView.setText(getString(R.string.text_unkown_item_fragment_detailitem));
+        else
+            textView.setText(getString(R.string.text_kown_but_different_room_item_fragment_detailitem));
+
+        textView.setVisibility(View.VISIBLE);
+        handleSuccess(networkViewModel.getData().getValue());
     }
 
 
@@ -110,7 +135,10 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
     private void displayForm(View view) throws JSONException {
         MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue());
-        JSONObject mergedItemJSONPayload = mergedItem.getFieldsWithValues();
+        if (mergedItem.isSearchedForItem()) return;
+
+
+        JSONObject fieldsWithValues = mergedItem.getFieldsWithValues();
 
         ((TextView) view.findViewById(R.id.barcode_fragment_itemdetail))
                 .setText(Html.fromHtml(
@@ -121,22 +149,22 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
         linearLayout.removeAllViews();
-        Map<String, MergedItemField> formFromOptions = Objects.requireNonNull(networkViewModel.getData().getValue()).getData();
-        assert formFromOptions != null;
+        Map<String, MergedItemField> mapFieldNameToField = Objects.requireNonNull(networkViewModel.getData().getValue()).getData();
+        assert mapFieldNameToField != null;
 
-        for (String s : formFromOptions.keySet()) {
-            displayViewForType(view, mergedItemJSONPayload, linearLayout,
-                    Objects.requireNonNull(formFromOptions.get(s)));
+        for (String fieldName : mapFieldNameToField.keySet()) {
+            displayViewForType(fieldsWithValues, Objects.requireNonNull(mapFieldNameToField.get(fieldName)), view, linearLayout
+            );
         }
 
 
     }
 
     @SuppressLint("SetTextI18n")
-    private void displayViewForType(View view, JSONObject mergedItemJSONPayload, LinearLayout linearLayout, MergedItemField currentField) throws JSONException {
+    private void displayViewForType(JSONObject fieldsWithValuesFromItem, MergedItemField currentField, View view, LinearLayout linearLayout) throws JSONException {
         if (currentField.isReadOnly()) {
             TextView textView = new TextView(Objects.requireNonNull(getContext()));
-            textView.setText(currentField.getVerboseName() + ": " + mergedItemJSONPayload.opt(currentField.getKey()));
+            textView.setText(currentField.getVerboseName() + ": " + fieldsWithValuesFromItem.opt(currentField.getKey()));
             textView.setPadding(4, 0, 0, 40);
             linearLayout.addView(textView);
         } else
@@ -148,12 +176,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                     TextInputEditText editNumber = new TextInputEditText(Objects.requireNonNull(getContext()));
                     editNumber.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER);
-                    editNumber.setText(mergedItemJSONPayload.optString(currentField.getKey()));
+                    editNumber.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
                     editNumber.setHint(currentField.getVerboseName());
                     textInputLayoutNumber.addView(editNumber);
 
                     linearLayout.addView(textInputLayoutNumber);
-                    mergedItemFieldViewMap.put(currentField, editNumber);
+                    mergedItemFieldViewMap.put(currentField.getKey(), editNumber);
                     break;
 
                 case "datetime":
@@ -163,12 +191,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                     TextInputEditText editDate = new TextInputEditText(Objects.requireNonNull(getContext()));
                     editDate.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_DATETIME);
-                    editDate.setText(mergedItemJSONPayload.optString(currentField.getKey()));
+                    editDate.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
                     editDate.setHint(currentField.getVerboseName());
                     textInputLayoutDate.addView(editDate);
 
                     linearLayout.addView(textInputLayoutDate);
-                    mergedItemFieldViewMap.put(currentField, editDate);
+                    mergedItemFieldViewMap.put(currentField.getKey(), editDate);
                     break;
 
                 case "string":
@@ -177,12 +205,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     textInputLayout.setPadding(0, 0, 0, 40);
 
                     TextInputEditText editText = new TextInputEditText(Objects.requireNonNull(getContext()));
-                    editText.setText(mergedItemJSONPayload.optString(currentField.getKey()));
+                    editText.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
                     editText.setHint(currentField.getVerboseName());
                     textInputLayout.addView(editText);
                     linearLayout.addView(textInputLayout);
 
-                    mergedItemFieldViewMap.put(currentField, editText);
+                    mergedItemFieldViewMap.put(currentField.getKey(), editText);
                     break;
 
             /*case "field":
@@ -202,12 +230,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 */
                 case "boolean":
                     Switch switch_ = new Switch(getContext());
-                    switch_.setChecked(mergedItemJSONPayload.optBoolean(currentField.getKey()));
+                    switch_.setChecked(fieldsWithValuesFromItem.optBoolean(currentField.getKey()));
 
                     switch_.setText(currentField.getVerboseName());
                     switch_.setPadding(0, 0, 0, 40);
                     linearLayout.addView(switch_);
-                    mergedItemFieldViewMap.put(currentField, switch_);
+                    mergedItemFieldViewMap.put(currentField.getKey(), switch_);
                     break;
 
                 case "choice":
@@ -227,11 +255,11 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                     KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, choices);
                     spinner.setAdapter(adapter);
-                    spinner.setSelection(adapter.getItemIndexFromDescription(mergedItemJSONPayload.optString(currentField.getKey())));
+                    spinner.setSelection(adapter.getItemIndexFromDescription(fieldsWithValuesFromItem.optString(currentField.getKey())));
                     linearLayout.addView(textView);
                     linearLayout.addView(spinner);
 
-                    mergedItemFieldViewMap.put(currentField, spinner);
+                    mergedItemFieldViewMap.put(currentField.getKey(), spinner);
                     break;
 
                 default:
@@ -249,37 +277,39 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         return ret;
     }
 
-    private MergedItemField getCurrentFieldFromKey(String key, Map<String, MergedItemField> mapFields) {
-        if (mapFields.containsKey(key)) {
-            return mapFields.get(key);
-        }
-        return null;
-    }
-
 
     public void handleValidate() {
         MergedItem currentItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue());
         ValidationEntry validationEntry = getValidationEntryFromFormData(currentItem);
-
         itemxDetailSharedViewModel.setValidationEntryForCurrentItem(validationEntry);
         NavHostFragment.findNavController(this).popBackStack();
+    }
 
+
+    private void handleCancel() {
+        itemxDetailSharedViewModel.setValidationEntryForCurrentItem(new ValidationEntry(ValidationEntry.NOT_FOUND));
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
     @NonNull
     private ValidationEntry getValidationEntryFromFormData(MergedItem currentItem) {
-        Iterator<String> keysFromItems = currentItem.getFieldsWithValues().keys();
+        // Prepare the ValidationEntry for the currentItem
         ValidationEntry validationEntry = new ValidationEntry(currentItem.getPkItemId());
         List<ValidationEntry.Field> changes = new ArrayList<>();
+        // fieldName, MergedItemField
+        Map<String, MergedItemField> mapFieldNameToField = Objects.requireNonNull(networkViewModel.getData().getValue()).getData();
+        assert mapFieldNameToField != null;
 
-        while (keysFromItems.hasNext()) {
-            String fieldName = keysFromItems.next();
-            //TODO, fieldname as key instead of the entire mergeditemfield
-            Object valueFromForm = getValueFromForm(getCurrentFieldFromKey(fieldName, Objects.requireNonNull(Objects.requireNonNull(networkViewModel.getData().getValue()).getData())));
+        for (String fieldName : mapFieldNameToField.keySet()) {
+            Object valueFromForm = getValueFromForm(mapFieldNameToField.get(fieldName));
             if (valueFromForm == null) continue;
 
             try {
-                if (!currentItem.getFieldsWithValues().get(fieldName).equals(valueFromForm)) {
+                if (currentItem.isNewItem()) {
+                    // this means a new Item should be created, therefore take all values
+                    changes.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
+                } else if (!currentItem.getFieldsWithValues().get(fieldName).equals(valueFromForm)) {
+                    // for existing items compare if something changed
                     changes.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
                 }
             } catch (JSONException e) {
@@ -295,7 +325,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     @SuppressWarnings("unchecked")
     public <T> T getValueFromForm(MergedItemField fieldForItem) {
 
-        View generatedView = mergedItemFieldViewMap.get(fieldForItem);
+        View generatedView = mergedItemFieldViewMap.get(fieldForItem.getKey());
 
         if (generatedView == null) return null;
 

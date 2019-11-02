@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MergedItemsRepository extends JsonRepository<List<MergedItem>> {
+public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
     private String currentRoomString;
     private StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
     private final String VALIDATION_REQUEST_KEY = "request_validation";

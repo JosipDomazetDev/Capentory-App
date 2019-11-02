@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -59,6 +60,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
     private RecyclerViewAdapter adapter;
     private TextView noItemTextView;
+    private String currentRoomString;
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -115,7 +117,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
 
 
         roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
-        String currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomNumber();
+        currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomNumber();
         roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(currentRoomString));
 
 
@@ -136,36 +138,54 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
 
 
         finishRoom.setOnClickListener(v -> {
-            if (networkViewModel.getAmountOfItemsLeft() > 0) {
-                new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                        .setTitle("Fehlen " + networkViewModel.getAmountOfItemsLeft() + " Gegenstände?")
-                        .setMessage("Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden? " + +networkViewModel.getAmountOfItemsLeft() + " Gegenstände werden als fehlend markiert!")
-                        .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
-                        .setNegativeButton(android.R.string.no, null)
-                        .show();
+            String title;
+            String message;
+            if (networkViewModel.getAmountOfItemsLeft() == 1) {
+                title = "Fehlt ein Gegenstand?";
+                message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden? Ein Gegenstand wird als fehlend markiert!";
+            } else if (networkViewModel.getAmountOfItemsLeft() > 1) {
+                title = "Fehlen " + networkViewModel.getAmountOfItemsLeft() + " Gegenstände?";
+                message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden? " + networkViewModel.getAmountOfItemsLeft() + " Gegenstände werden als fehlend markiert!";
             } else {
-                new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                        .setTitle("Alles erledigt?")
-                        .setMessage("Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?")
-                        .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
-                        .setNegativeButton(android.R.string.no, null)
-                        .show();
+                title = "Alle Items im Raum gescannt?";
+                message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?";
             }
+
+            new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
         });
 
         addItem.setOnClickListener(v -> {
-            itemxDetailSharedViewModel.setCurrentItem(new MergedItem(currentRoomString, "-1", "Neues Item"));
+            itemxDetailSharedViewModel.setCurrentItem(MergedItem.createNewEmptyItem(currentRoomString));
             NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
         });
 
         itemxDetailSharedViewModel.getValidationEntryForCurrentItem().observe(getViewLifecycleOwner(), validationEntry -> {
             if (validationEntry != null) {
-                networkViewModel.removeItem(itemxDetailSharedViewModel.getCurrentItem().getValue());
                 itemxDetailSharedViewModel.setValidationEntryForCurrentItem(null);
-                networkViewModel.addValidationEntry(validationEntry);
+                if (!validationEntry.isMissingItem())
+                    networkViewModel.addValidationEntry(validationEntry);
+
+                networkViewModel.removeItem(itemxDetailSharedViewModel.getCurrentItem().getValue());
             }
         });
 
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                        .setTitle("Raumeinträge")
+                        .setMessage("Wollen Sie die Änderungen für diesen Raum wirklich verwerfen und zum vorherigen Bildschirm zurückkehren?")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> NavHostFragment.findNavController(MergedItemsFragment.this).popBackStack())
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+            }
+        });
     }
 
     @Override
@@ -277,7 +297,10 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
             }
         }
 
-        ToastUtility.displayCenteredToastMessage(getContext(), "Scanergebnis ist nicht in der Liste!\n" + barcode, Toast.LENGTH_LONG);
+        itemxDetailSharedViewModel.setCurrentItem(MergedItem.createSearchedForItem(currentRoomString, barcode));
+        NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+
+        //ToastUtility.displayCenteredToastMessage(getContext(), "Scanergebnis ist nicht in der Liste!\n" + barcode, Toast.LENGTH_LONG);
     }
 
     @Override

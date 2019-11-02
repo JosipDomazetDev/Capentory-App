@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ValidationEntry {
+    public static final String NOT_FOUND = "-404";
     private static final String PK_JSON_KEY = "itemId";
     private String pkItem;
-    private boolean withoutChange;
     private List<Field> fieldChanges;
 
     public ValidationEntry(String pkItem) {
@@ -26,7 +26,6 @@ public class ValidationEntry {
         JSONArray ret = new JSONArray();
         try {
             for (ValidationEntry validationEntry : list) {
-                if (validationEntry.withoutChange) continue;
 
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(PK_JSON_KEY, validationEntry.pkItem);
@@ -55,12 +54,13 @@ public class ValidationEntry {
 
     public void finishWithChanges(List<Field> changes) {
         if (changes.isEmpty()) {
-            withoutChange = true;
             return;
         }
-
-        withoutChange = false;
         fieldChanges = changes;
+    }
+
+    public boolean isMissingItem() {
+        return pkItem.equals(NOT_FOUND);
     }
 
 

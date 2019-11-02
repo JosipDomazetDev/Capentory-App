@@ -15,8 +15,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class LoginRepository extends JsonRepository<String> {
-    protected StatusAwareLiveData<Boolean> logoutSuccessful = new StatusAwareLiveData<>();
+public class LoginRepository extends NetworkRepository<String> {
+    private StatusAwareLiveData<Boolean> logoutSuccessful = new StatusAwareLiveData<>();
     private final String LOGOUT_REQUEST_KEY = "logout_request";
 
     @Inject

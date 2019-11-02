@@ -1,20 +1,19 @@
 package com.example.capentory_client.ui;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.lifecycle.LiveData;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.capentory_client.repos.JsonRepository;
+import com.example.capentory_client.repos.NetworkRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.NetworkViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import dagger.android.support.DaggerFragment;
 
-public abstract class NetworkFragment<P, R extends JsonRepository<P>, V extends NetworkViewModel<P, R>> extends DaggerFragment {
+public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V extends NetworkViewModel<P, R>> extends DaggerFragment {
 
     protected V networkViewModel;
     protected ProgressBar progressBar;

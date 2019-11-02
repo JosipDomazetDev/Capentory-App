@@ -43,11 +43,27 @@
                 android:visibility="visible">
 
                 <TextView
-                    android:id="@+id/dummy"
+                    android:id="@+id/otherroom_textview_fragment_itemdetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:paddingBottom="20dp"
+                    android:text="Dieser Gegenstand ist aus einem anderen Raum!"
+                    android:textAlignment="center"
+                    android:textColor="#4CAF50"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dummy" />
+
+
+                <TextView
+                    android:id="@+id/dummy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:text="Bitte validieren Sie das Item tatsächlich!"
                     android:textAlignment="center"
                     android:textColor="#292929"
@@ -57,7 +73,6 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
 
                 <TextView
                     android:id="@+id/barcode_fragment_itemdetail"
@@ -69,7 +84,7 @@
                     android:textAlignment="center"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/dummy" />
+                    app:layout_constraintTop_toBottomOf="@+id/otherroom_textview_fragment_itemdetail" />
 
 
                 <TextView
@@ -103,7 +118,7 @@
                         android:orientation="vertical"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/dummy" />
+                        app:layout_constraintTop_toBottomOf="@+id/otherroom_textview_fragment_itemdetail" />
 
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -118,8 +133,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/rounded_edges_green"
-                            android:padding="20dp"
-                            android:src="@drawable/ic_check_white_48dp"
+                            android:padding="25dp"
+                            android:src="@drawable/ic_check_white_36dp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -129,8 +144,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="40dp"
                             android:background="@drawable/rounded_edges_red"
-                            android:padding="20dp"
-                            android:src="@drawable/ic_cross_white_48dp"
+                            android:padding="25dp"
+                            android:src="@drawable/ic_close_white_36dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/validate_btn_fragment_itemdetail"
                             app:layout_constraintTop_toTopOf="parent" />

@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class RoomsRepository extends JsonRepository<List<Room>> {
+public class RoomsRepository extends NetworkRepository<List<Room>> {
 
     @Inject
     public RoomsRepository(Context context) {

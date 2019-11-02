@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class StocktakingRepository extends JsonRepository<List<SerializerEntry>> {
+public class StocktakingRepository extends NetworkRepository<List<SerializerEntry>> {
     private StatusAwareLiveData<Boolean> postStocktakingSuccessful = new StatusAwareLiveData<>();
     private final String POST_STOCKTAKING_REQUEST_KEY = "request_post_stocktaking";
 

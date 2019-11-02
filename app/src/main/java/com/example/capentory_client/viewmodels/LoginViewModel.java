@@ -21,17 +21,17 @@ public class LoginViewModel extends NetworkViewModel<String, LoginRepository> {
 
     @Override
     public void fetchData(String... args) {
-        statusAwareLiveData = jsonRepository.fetchMainData(args);
+        statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
     @Override
     public void reloadData(String... args) {
-        statusAwareLiveData = jsonRepository.fetchMainData();
+        statusAwareLiveData = networkRepository.fetchMainData();
     }
 
 
     public void logout() {
-        logoutSuccessful = jsonRepository.logout();
+        logoutSuccessful = networkRepository.logout();
     }
 
     public LiveData<StatusAwareData<Boolean>> getLogoutSuccessful() {

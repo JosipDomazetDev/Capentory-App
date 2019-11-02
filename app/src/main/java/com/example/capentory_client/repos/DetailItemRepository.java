@@ -2,14 +2,17 @@ package com.example.capentory_client.repos;
 
 import android.content.Context;
 
+import com.android.volley.ClientError;
 import com.android.volley.Request;
+import com.android.volley.VolleyError;
+import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.MergedItemField;
+import com.example.capentory_client.repos.customrequest.NetworkErrorHandler;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -23,7 +26,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class DetailItemRepository extends JsonRepository<Map<String, MergedItemField>> {
+public class DetailItemRepository extends NetworkRepository<Map<String, MergedItemField>> {
+    private final String SEARCHED_ITEM_REQUEST_KEY = "request_searched_item";
+    private StatusAwareLiveData<MergedItem> searchedForItem = new StatusAwareLiveData<>();
 
     @Inject
     public DetailItemRepository(Context context) {
@@ -61,6 +66,27 @@ public class DetailItemRepository extends JsonRepository<Map<String, MergedItemF
     }
 
 
+    public StatusAwareLiveData<MergedItem> fetchSearchedForItem(String barcode) {
+        addRequest(SEARCHED_ITEM_REQUEST_KEY, Request.Method.GET,
+                getUrl(context, false, "api", "htlinventoryitems", barcode),
+                payload -> {
+                    try {
+                        searchedForItem.postSuccess(new MergedItem(payload, payload.keys().next(), barcode));
+                    } catch (JSONException error) {
+                        searchedForItem.postError(error);
+                    }
+                }, error -> {
+                    if (error instanceof ClientError && ((ClientError) error).networkResponse.statusCode == 404) {
+                        searchedForItem.postSuccess(new MergedItem(barcode));
+                    } else super.handleErrorResponse(error, searchedForItem);
+
+                });
+        launchRequestFromKey(SEARCHED_ITEM_REQUEST_KEY, searchedForItem);
+
+        return searchedForItem;
+    }
+
+
     private static <K, V> Map<K, V> sortByValue(Map<K, V> map) {
         List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
         Collections.sort(list, new Comparator<Object>() {
@@ -78,5 +104,7 @@ public class DetailItemRepository extends JsonRepository<Map<String, MergedItemF
 
         return result;
     }
+
+
 }
 

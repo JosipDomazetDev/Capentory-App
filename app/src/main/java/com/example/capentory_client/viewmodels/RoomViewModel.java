@@ -34,11 +34,11 @@ public class RoomViewModel extends NetworkViewModel<List<Room>, RoomsRepository>
             return;
         }
 
-        statusAwareLiveData = jsonRepository.fetchMainData(args);
+        statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
     @Override
     public void reloadData(String... args) {
-        statusAwareLiveData = jsonRepository.fetchMainData(args);
+        statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 }

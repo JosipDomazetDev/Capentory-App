@@ -64,9 +64,8 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
                 view,
                 R.id.progress_bar_fragment_stocktaking,
                 view.findViewById(R.id.content_stocktaking_fragment),
-                R.id.swipe_refresh
+                R.id.swipe_refresh_fragment_stocktaking
         );
-
 
         btnStocktaking.setOnClickListener(v -> {
             SerializerEntry selectedRoom = (SerializerEntry) serializerDropDown.getSelectedItem();

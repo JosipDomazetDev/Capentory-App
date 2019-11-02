@@ -121,4 +121,6 @@
     <string name="barcode_detailitem_fragment"><![CDATA[<b>Barcode:</b> %1$s]]></string>
     <string name="bez_detailitem_fragment"><![CDATA[<b>Bezeichnung:</b> %1$s]]>
         </string>
+    <string name="text_unkown_item_fragment_detailitem">Dieser Gegenstand ist aus einem unbekanntem Raum!</string>
+    <string name="text_kown_but_different_room_item_fragment_detailitem">Dieser Gegenstand ist aus einem anderem Raum!</string>
 </resources>
