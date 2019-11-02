@@ -30,13 +30,8 @@ public class Room {
     }
 
     @NonNull
-    public String getDisplayNumber() {
+    public String getDisplayedNumber() {
         return displayNumber;
-    }
-
-    @Nullable
-    public String getDisplayDescriptions() {
-        return displayDescriptions;
     }
 
     public String getDisplayedRoomDescription() {

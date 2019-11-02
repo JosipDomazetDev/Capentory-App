@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.android.volley.Request;
 import com.example.capentory_client.models.Room;
+import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONException;
@@ -30,7 +31,7 @@ public class RoomsRepository extends NetworkRepository<List<Room>> {
     public StatusAwareLiveData<List<Room>> fetchMainData(String... args) {
         // Fetch only once for entire application, the rooms wont change
         /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchMainData() == null) {*/
-        addMainRequest(Request.Method.GET, getUrl(context, true, "api", "htlinventory"));
+        addMainRequest(Request.Method.GET, getUrl(context, true,MainActivity.getSerializer().getRoomUrl()));
         launchMainRequest();
         return mainContentRepoData;
     }
@@ -40,7 +41,6 @@ public class RoomsRepository extends NetworkRepository<List<Room>> {
     protected void handleMainSuccessfulResponse(JSONObject payload) {
         try {
             List<Room> rooms = new ArrayList<>();
-            payload = payload.getJSONObject("rooms");
             Iterator<String> roomKeys = payload.keys();
 
             while (roomKeys.hasNext()) {

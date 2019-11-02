@@ -88,10 +88,6 @@ public class MergedItem {
         return pkItemId.equals("-2");
     }
 
-    public boolean isKnownItem() {
-        return !isNewItem() && !isSearchedForItem();
-    }
-
     @NonNull
     public String getPkItemId() {
         return pkItemId;

@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +18,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.SerializerEntry;
 import com.example.capentory_client.repos.StocktakingRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
@@ -59,6 +63,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         final Button btnStocktaking = view.findViewById(R.id.button_fragment_stocktaking);
         serializerDropDown = view.findViewById(R.id.db_dropdown_fragment_stocktaking);
 
+        Log.e("XXXX", "XXXXX");
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(StocktakingViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),
                 view,
@@ -68,20 +73,25 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         );
 
         btnStocktaking.setOnClickListener(v -> {
-            SerializerEntry selectedRoom = (SerializerEntry) serializerDropDown.getSelectedItem();
-            if (selectedRoom == null) return;
+            SerializerEntry selectedSerializer = (SerializerEntry) serializerDropDown.getSelectedItem();
+            if (selectedSerializer == null) return;
 
-            Navigation.findNavController(view).navigate(R.id.action_stocktakingFragment_to_roomFragment);
+            EditText name = view.findViewById(R.id.name_edittext_stocktacking_fragment_stocktaking);
+            EditText comment = view.findViewById(R.id.comment_edittext_stocktacking_fragment_stocktaking);
 
-           /* networkViewModel.postStocktaking(((EditText) view.findViewById(R.id.edittext_stocktacking_fragment_stocktaking)).getText().toString());
+            if (TextUtils.isEmpty(name.getText())) {
+                ToastUtility.displayCenteredToastMessage(getContext(), "Ihre Inventur muss einen Namen haben!", Toast.LENGTH_SHORT);
+                return;
+            }
 
-            observeSpecificLiveData(networkViewModel.getPostStocktakingSuccessful(), liveData -> {
+            networkViewModel.postStocktaking(name.getText().toString(), comment.getText().toString());
+            observeSpecificLiveData(networkViewModel.getPostedStocktaking(), liveData -> {
                 if (liveData == null || liveData.getData() == null) return;
 
-                if (liveData.getData()) {
-                    Navigation.findNavController(view).navigate(R.id.action_stocktakingFragment_to_roomFragment);
-                }
-            });*/
+                MainActivity.setSerializer(selectedSerializer);
+                MainActivity.setStocktaking(liveData.getData());
+                Navigation.findNavController(view).navigate(R.id.action_stocktakingFragment_to_roomFragment);
+            });
 
         });
     }

@@ -39,7 +39,7 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
             throw new IllegalArgumentException("MergedItemRepository only needs the currentRoom as argument!");
 
         this.currentRoomString = args[0];
-        addMainRequest(Request.Method.GET, getUrl(context, true, "api", "htlinventoryrooms", currentRoomString));
+        addMainRequest(Request.Method.GET, getUrl(context, true, MainActivity.getSerializer().getRoomUrl(), currentRoomString));
         launchMainRequest();
 
         return mainContentRepoData;
@@ -68,12 +68,12 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
     public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(JSONArray validationEntriesAsJson) {
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("stocktaking", MainActivity.getStocktakingId());
+            jsonObject.put("stocktaking", MainActivity.getStocktaking().getStocktakingId());
             jsonObject.put("validations", validationEntriesAsJson);
             Log.e("eeeee", jsonObject.toString());
-            addRequestWithContent(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, "api", "htlinventoryrooms"), jsonObject,
+            addRequestWithContent(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, MainActivity.getSerializer().getRoomUrl(), currentRoomString + "/"), jsonObject,
                     payload -> validateSuccessful.postSuccess(true), validateSuccessful);
-            launchRequestFromKey(VALIDATION_REQUEST_KEY,validateSuccessful);
+            launchRequestFromKey(VALIDATION_REQUEST_KEY, validateSuccessful);
         } catch (JSONException e) {
             validateSuccessful.postError(e);
         }

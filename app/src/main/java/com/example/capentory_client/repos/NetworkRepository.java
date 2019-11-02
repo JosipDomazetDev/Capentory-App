@@ -29,9 +29,8 @@ public abstract class NetworkRepository<L> {
     }
 
 
-
-    public void addRequest(String key, int method, String url, NetworkSuccessHandler successHandler,  NetworkErrorHandler networkErrorHandler) {
-        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, null, successHandler,networkErrorHandler)
+    public void addRequest(String key, int method, String url, NetworkSuccessHandler successHandler, NetworkErrorHandler networkErrorHandler) {
+        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, null, successHandler, networkErrorHandler)
         );
     }
 
@@ -101,21 +100,23 @@ public abstract class NetworkRepository<L> {
      * Get an url
      *
      * @param context            used to retrieve ip and port from settings
-     * @param addJsonFormatInUrl whether url should explicitly query for json
      * @param path               specifies paths
      * @return the Url
      */
-    protected static String getUrl(Context context, boolean addJsonFormatInUrl, String... path) {
+    protected static String getUrl(Context context, boolean combinedPath, String... path) {
         Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
                 .encodedAuthority(getSocket(context));
 
-        for (String s : path) {
+        if (combinedPath) {
+            urlBuilder.encodedPath(path[0]);
+            for (int i = 1; i < path.length; i++) {
+                urlBuilder.appendPath(path[i]);
+            }
+        } else for (String s : path) {
             urlBuilder.appendPath(s);
         }
 
-        if (addJsonFormatInUrl) {
-            return urlBuilder.appendQueryParameter("format", "json").build().toString();
-        } else return urlBuilder.build().toString();
+        return urlBuilder.appendQueryParameter("format", "json").build().toString();
     }
 
     /**

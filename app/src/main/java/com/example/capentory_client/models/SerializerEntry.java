@@ -7,19 +7,25 @@ import org.json.JSONObject;
 
 public class SerializerEntry {
     @NonNull
-    private String key, url, description;
+    private String key, roomUrl, itemUrl, description;
 
 
     public SerializerEntry(@NonNull String key, JSONObject payload) throws JSONException {
         this.key = key;
         JSONObject jsonObject = payload.getJSONObject(key);
-        this.url = jsonObject.getString("url");
+        this.roomUrl = jsonObject.getString("roomUrl");
+        this.itemUrl = jsonObject.getString("itemUrl");
         this.description = jsonObject.getString("description");
     }
 
     @NonNull
-    public String getUrl() {
-        return url;
+    public String getRoomUrl() {
+        return roomUrl;
+    }
+
+    @NonNull
+    public String getItemUrl() {
+        return itemUrl;
     }
 
     @NonNull

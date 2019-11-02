@@ -67,7 +67,7 @@ public class HomeScreenFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         view.findViewById(R.id.btn_start_inventory_fragment_home_screen).setOnClickListener(v -> {
-            if (SystemClock.elapsedRealtime() - lastClickTime < 500) {
+            if (SystemClock.elapsedRealtime() - lastClickTime < 700) {
                 return;
             }
             lastClickTime = SystemClock.elapsedRealtime();

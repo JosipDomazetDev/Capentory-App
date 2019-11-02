@@ -80,7 +80,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
         LinearLayout linearLayout = view.findViewById(R.id.content_fragment_item_detail);
-        basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.otherroom_textview_fragment_itemdetail));
+        basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dummy));
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(DetailItemViewModel.class),
                 basicNetworkErrorHandler,
@@ -135,7 +135,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
     private void displayForm(View view) throws JSONException {
         MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue());
-        if (mergedItem.isSearchedForItem()) return;
+        StatusAwareData<Map<String, MergedItemField>> mapStatusAwareData = Objects.requireNonNull(networkViewModel.getData().getValue());
+        if (mergedItem.isSearchedForItem() || mapStatusAwareData.getData() == null) return;
 
 
         JSONObject fieldsWithValues = mergedItem.getFieldsWithValues();
@@ -149,7 +150,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
         linearLayout.removeAllViews();
-        Map<String, MergedItemField> mapFieldNameToField = Objects.requireNonNull(networkViewModel.getData().getValue()).getData();
+        Map<String, MergedItemField> mapFieldNameToField = mapStatusAwareData.getData();
         assert mapFieldNameToField != null;
 
         for (String fieldName : mapFieldNameToField.keySet()) {
@@ -255,7 +256,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                     KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, choices);
                     spinner.setAdapter(adapter);
-                    spinner.setSelection(adapter.getItemIndexFromDescription(fieldsWithValuesFromItem.optString(currentField.getKey())));
+                    spinner.setSelection(adapter.getItemIndexFromKey(fieldsWithValuesFromItem.optInt(currentField.getKey(),-1)));
                     linearLayout.addView(textView);
                     linearLayout.addView(spinner);
 
@@ -353,8 +354,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
             case "choice":
-                String key = ((KeyValueDropDownAdapter.DropDownEntry) ((Spinner) generatedView).getSelectedItem()).getDescription();
-                return (T) key;
+                int key = ((KeyValueDropDownAdapter.DropDownEntry) ((Spinner) generatedView).getSelectedItem()).getKey();
+                return (T) Integer.valueOf(key);
             default:
                 return null;
         }

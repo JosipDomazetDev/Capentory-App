@@ -3,6 +3,7 @@ package com.example.capentory_client.viewmodels;
 import androidx.lifecycle.LiveData;
 
 import com.example.capentory_client.models.SerializerEntry;
+import com.example.capentory_client.models.Stocktaking;
 import com.example.capentory_client.repos.StocktakingRepository;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
@@ -12,8 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>, StocktakingRepository> {
-    private StatusAwareLiveData<Boolean> postStocktakingSuccessful;
-
+    private StatusAwareLiveData<Stocktaking> postedStocktaking;
 
     @Inject
     public StocktakingViewModel(StocktakingRepository jsonRepository) {
@@ -22,7 +22,7 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
 
     @Override
     public void fetchData(String... args) {
-        if (statusAwareLiveData != null ) {
+        if (statusAwareLiveData != null) {
             return;
         }
 
@@ -35,11 +35,11 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
         statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
-    public void postStocktaking(String name) {
-        postStocktakingSuccessful = networkRepository.postStocktaking(name);
+    public void postStocktaking(String name, String comment) {
+        postedStocktaking = networkRepository.postStocktaking(name,comment);
     }
 
-    public LiveData<StatusAwareData<Boolean>> getPostStocktakingSuccessful() {
-        return postStocktakingSuccessful;
+    public LiveData<StatusAwareData<Stocktaking>> getPostedStocktaking() {
+        return postedStocktaking;
     }
 }

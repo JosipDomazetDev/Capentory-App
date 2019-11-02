@@ -15,6 +15,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.DisplayUtility;
 import com.example.capentory_client.androidutility.PreferenceUtility;
+import com.example.capentory_client.models.SerializerEntry;
+import com.example.capentory_client.models.Stocktaking;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
@@ -26,21 +28,34 @@ public class MainActivity extends DaggerAppCompatActivity {
     private static final int[] TOP_LEVEL_DESTINATIONS = new int[]{
             R.id.settingsFragment, R.id.homeScreenFragment, R.id.roomFragment, R.id.itemsFragment, R.id.itemDetailFragment};
 
-    private static int STOCKTAKING_ID = 0;
+    private static Stocktaking stocktaking;
+    private static SerializerEntry serializer;
 
-    public static int getStocktakingId() throws JSONException {
-        if (STOCKTAKING_ID == -1)
+    public static Stocktaking getStocktaking() {
+        if (stocktaking == null)
             throw new IllegalArgumentException("Sie müssen eine Inventur anlegen!");
-        return STOCKTAKING_ID;
+        return stocktaking;
     }
 
-    public static void setStocktakingId(int stocktakingId) {
-        STOCKTAKING_ID = stocktakingId;
+    public static void setStocktaking(Stocktaking stocktaking) {
+        MainActivity.stocktaking = stocktaking;
     }
+
+    public static void setSerializer(SerializerEntry selectedSerializer) {
+        serializer = selectedSerializer;
+    }
+
+    public static SerializerEntry getSerializer() {
+        if (serializer == null)
+            throw new IllegalArgumentException("Sie müssen eine Inventur anlegen und eine Datenbank auswählen!");
+        return serializer;
+    }
+
 
     protected DrawerLayout drawer;
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

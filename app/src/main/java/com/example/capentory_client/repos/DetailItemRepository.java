@@ -4,10 +4,9 @@ import android.content.Context;
 
 import com.android.volley.ClientError;
 import com.android.volley.Request;
-import com.android.volley.VolleyError;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.MergedItemField;
-import com.example.capentory_client.repos.customrequest.NetworkErrorHandler;
+import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONException;
@@ -40,7 +39,7 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
     public StatusAwareLiveData<Map<String, MergedItemField>> fetchMainData(String... args) {
         // Fetch only once for entire application, the form wont change
         if (mainContentRepoData.getValue() == null || mainContentRepoData.getValue().getData() == null) {
-            addMainRequest(Request.Method.OPTIONS, getUrl(context, false, "api", "htlinventoryitems/"));
+            addMainRequest(Request.Method.OPTIONS, getUrl(context, true, MainActivity.getSerializer().getItemUrl()));
             launchMainRequest();
         }
 
@@ -68,7 +67,7 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
 
     public StatusAwareLiveData<MergedItem> fetchSearchedForItem(String barcode) {
         addRequest(SEARCHED_ITEM_REQUEST_KEY, Request.Method.GET,
-                getUrl(context, false, "api", "htlinventoryitems", barcode),
+                getUrl(context, true,MainActivity.getSerializer().getItemUrl(), barcode),
                 payload -> {
                     try {
                         searchedForItem.postSuccess(new MergedItem(payload, payload.keys().next(), barcode));

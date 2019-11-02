@@ -25,11 +25,11 @@ public class KeyValueDropDownAdapter extends ArrayAdapter<KeyValueDropDownAdapte
         items = dropDownEntries;
     }
 
-    public int getItemIndexFromDescription(String desc) {
-        if (desc.isEmpty()) return 0;
+    public int getItemIndexFromKey(int key) {
+        if (key == -1) return 0;
 
         for (int i = 0; i < items.length; i++) {
-            if (desc.equals(items[i].getDescription())) {
+            if (key == (items[i].getKey())) {
                 return i;
             }
         }
