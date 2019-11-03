@@ -63,8 +63,8 @@ public abstract class NetworkRepository<L> {
 
 
     public void launchRequestFromKey(String key, StatusAwareLiveData specificLiveData) {
-        Objects.requireNonNull(requests.get(key)).launchRequest();
         specificLiveData.postFetching();
+        Objects.requireNonNull(requests.get(key)).launchRequest();
     }
 
 

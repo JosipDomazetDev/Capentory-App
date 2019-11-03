@@ -98,7 +98,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
 
 
     protected void handleError(Throwable error) {
-        basicNetworkErrorHandler.displayTextViewMessage(error);
+        basicNetworkErrorHandler.displayTextViewErrorMessage(error);
         hideProgressBarAndHideContent();
     }
 

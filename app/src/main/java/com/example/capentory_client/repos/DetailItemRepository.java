@@ -27,7 +27,6 @@ import javax.inject.Singleton;
 @Singleton
 public class DetailItemRepository extends NetworkRepository<Map<String, MergedItemField>> {
     private final String SEARCHED_ITEM_REQUEST_KEY = "request_searched_item";
-    private StatusAwareLiveData<MergedItem> searchedForItem = new StatusAwareLiveData<>();
 
     @Inject
     public DetailItemRepository(Context context) {
@@ -66,6 +65,8 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
 
 
     public StatusAwareLiveData<MergedItem> fetchSearchedForItem(String barcode) {
+        StatusAwareLiveData<MergedItem> searchedForItem = new StatusAwareLiveData<>();
+
         addRequest(SEARCHED_ITEM_REQUEST_KEY, Request.Method.GET,
                 getUrl(context, true,MainActivity.getSerializer().getItemUrl(), barcode),
                 payload -> {

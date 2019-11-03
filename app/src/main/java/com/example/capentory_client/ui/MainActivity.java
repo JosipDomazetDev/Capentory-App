@@ -26,7 +26,7 @@ import dagger.android.support.DaggerAppCompatActivity;
 public class MainActivity extends DaggerAppCompatActivity {
     //TODO: Update this for every fragment
     private static final int[] TOP_LEVEL_DESTINATIONS = new int[]{
-            R.id.settingsFragment, R.id.homeScreenFragment, R.id.roomFragment, R.id.itemsFragment, R.id.itemDetailFragment};
+            R.id.settingsFragment, R.id.homeScreenFragment, R.id.stocktakingFragment, R.id.roomFragment, R.id.itemsFragment, R.id.itemDetailFragment};
 
     private static Stocktaking stocktaking;
     private static SerializerEntry serializer;
@@ -51,6 +51,11 @@ public class MainActivity extends DaggerAppCompatActivity {
         return serializer;
     }
 
+    public static void clearInventory() {
+        MainActivity.setSerializer(null);
+        MainActivity.setStocktaking(null);
+    }
+
 
     protected DrawerLayout drawer;
     private NavController navController;
@@ -71,7 +76,6 @@ public class MainActivity extends DaggerAppCompatActivity {
         }
 
     }
-
 
     private void setupNavigation() {
         drawer = findViewById(R.id.drawer_layout);

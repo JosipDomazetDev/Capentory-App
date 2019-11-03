@@ -1,7 +1,8 @@
 package com.example.capentory_client.models;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import android.util.Log;
+
+import com.example.capentory_client.ui.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,56 +12,84 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ValidationEntry {
-    public static final String NOT_FOUND = "-404";
+    private static final String NOT_FOUND = "-404";
     private static final String PK_JSON_KEY = "itemId";
+    private static final String BARCODE_JSON_KEY = "barcode";
+    private MergedItem mergedItem;
     private String pkItem;
-    private List<Field> fieldChanges;
+    private String barcode;
+    private List<Field> fieldChanges = new ArrayList<>();
 
-    public ValidationEntry(String pkItem) {
+    private ValidationEntry(String pkItem) {
         this.pkItem = pkItem;
-        this.fieldChanges = new ArrayList<>();
+    }
+
+    public ValidationEntry(MergedItem mergedItem) {
+        this.mergedItem = mergedItem;
+        pkItem = mergedItem.getPkItemId();
+        barcode = mergedItem.getBarcode();
     }
 
 
-    public static JSONArray getValidationEntriesAsJson(List<ValidationEntry> list) {
-        JSONArray ret = new JSONArray();
-        try {
-            for (ValidationEntry validationEntry : list) {
-
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put(PK_JSON_KEY, validationEntry.pkItem);
-
-                for (Field fieldChange : validationEntry.fieldChanges) {
-                    jsonObject.put(fieldChange.fieldName, fieldChange.fieldValue);
-                }
-                ret.put(jsonObject);
+    public static JSONObject getValidationEntriesAsJson(List<ValidationEntry> validationEntries) throws JSONException {
+       /* POST (for each room):
+        POST (for each room):
+            {
+                stocktaking: <Stocktaking-ID>,
+                validations: [
+                    {
+                        "itemID": <itemID>,
+                        "barcode": <Scanned Barcode> | null,
+                        <fieldName>: <Value>,
+                        ...
+                    }
+                ]
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }*/
+        JSONObject ret = new JSONObject();
+        JSONArray validationEntriesAsJson = new JSONArray();
+
+        ret.put("stocktaking", MainActivity.getStocktaking().getStocktakingId());
+        for (ValidationEntry validationEntry : validationEntries) {
+            validationEntriesAsJson.put(getValidationEntryAsJson(validationEntry));
         }
+        ret.put("validations", validationEntriesAsJson);
 
         return ret;
     }
 
- /*   @SuppressWarnings("unchecked")
-    public static ValidationEntry createMissingEntry(MergedItem item) {
-        ValidationEntry validationEntry = new ValidationEntry(item.getPkItemId());
-        validationEntry.withoutChange = false;
-        List<Field> changes = new ArrayList<>();
-        changes.add(new Field(MergedItem.ROOM_JSON_KEY, -1));
-        validationEntry.finishWithChanges(changes);
-        return validationEntry;
-    }*/
-
-    public void finishWithChanges(List<Field> changes) {
-        if (changes.isEmpty()) {
-            return;
+    private static JSONObject getValidationEntryAsJson(ValidationEntry validationEntry) throws JSONException {
+        JSONObject validationEntryAsJson = new JSONObject();
+        validationEntryAsJson.put(PK_JSON_KEY, validationEntry.pkItem);
+        if (validationEntry.mergedItem.isNewItem()) {
+            // New Items require a barcode
+            validationEntryAsJson.put(BARCODE_JSON_KEY, validationEntry.barcode);
         }
-        fieldChanges = changes;
+
+        for (Field fieldChange : validationEntry.fieldChanges) {
+            validationEntryAsJson.put(fieldChange.fieldName, fieldChange.fieldValue);
+        }
+
+        return validationEntryAsJson;
+    }
+
+    public static ValidationEntry createMissingItemEntry() {
+        return new ValidationEntry(NOT_FOUND);
     }
 
     public boolean isMissingItem() {
         return pkItem.equals(NOT_FOUND);
+    }
+
+    public void addChangedFieldFromFormValue(String fieldName, Object valueFromForm) throws JSONException {
+        if (mergedItem.isNewItem()) {
+            // this means a new Item should be created, therefore take all values
+            fieldChanges.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
+        } else if (!mergedItem.getFieldsWithValues().get(fieldName).equals(valueFromForm)) {
+            // for existing items compare if something changed
+            fieldChanges.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
+        }
+
     }
 
 

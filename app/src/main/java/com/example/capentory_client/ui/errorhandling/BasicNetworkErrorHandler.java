@@ -1,18 +1,13 @@
 package com.example.capentory_client.ui.errorhandling;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.ClientError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.example.capentory_client.R;
-import com.example.capentory_client.androidutility.PreferenceUtility;
-import com.example.capentory_client.androidutility.ToastUtility;
 
 import org.json.JSONException;
 
@@ -31,19 +26,32 @@ public class BasicNetworkErrorHandler {
     }
 
 
-    public void displayTextViewMessage(Throwable error) {
+    public void displayTextViewMessage(String msg) {
         if (errorView == null || !(errorView instanceof TextView)) return;
 
         TextView textView = (TextView) errorView;
         textView.setFocusable(true);
         textView.setClickable(true);
         textView.setFocusableInTouchMode(true);
-        textView.setError(getCentralizedErrorMessage(error, context));
+        textView.setError(msg);
         textView.requestFocus();
     }
 
 
-    private String getCentralizedErrorMessage(Throwable error, Context context) {
+
+    public void displayTextViewErrorMessage(Throwable error) {
+        if (errorView == null || !(errorView instanceof TextView)) return;
+
+        TextView textView = (TextView) errorView;
+        textView.setFocusable(true);
+        textView.setClickable(true);
+        textView.setFocusableInTouchMode(true);
+        textView.setError(getCentralizedErrorMessage(error));
+        textView.requestFocus();
+    }
+
+
+    private String getCentralizedErrorMessage(Throwable error) {
         if (error == null) return null;
         error.printStackTrace();
 
@@ -80,7 +88,7 @@ public class BasicNetworkErrorHandler {
         if (errorView == null || !(errorView instanceof TextView)) return;
 
         TextView textView = (TextView) errorView;
-        textView.setError(getCentralizedErrorMessage(null, context));
+        textView.setError(null);
     }
 }
 

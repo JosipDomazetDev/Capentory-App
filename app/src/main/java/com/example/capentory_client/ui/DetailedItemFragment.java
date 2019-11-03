@@ -128,7 +128,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         try {
             displayForm(view);
         } catch (JSONException e) {
-            basicNetworkErrorHandler.displayTextViewMessage(e);
+            basicNetworkErrorHandler.displayTextViewErrorMessage(e);
         }
     }
 
@@ -256,7 +256,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                     KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, choices);
                     spinner.setAdapter(adapter);
-                    spinner.setSelection(adapter.getItemIndexFromKey(fieldsWithValuesFromItem.optInt(currentField.getKey(),-1)));
+                    spinner.setSelection(adapter.getItemIndexFromKey(fieldsWithValuesFromItem.optInt(currentField.getKey(), -1)));
                     linearLayout.addView(textView);
                     linearLayout.addView(spinner);
 
@@ -288,15 +288,15 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     private void handleCancel() {
-        itemxDetailSharedViewModel.setValidationEntryForCurrentItem(new ValidationEntry(ValidationEntry.NOT_FOUND));
+        itemxDetailSharedViewModel.setValidationEntryForCurrentItem(ValidationEntry.createMissingItemEntry());
         NavHostFragment.findNavController(this).popBackStack();
     }
 
     @NonNull
     private ValidationEntry getValidationEntryFromFormData(MergedItem currentItem) {
         // Prepare the ValidationEntry for the currentItem
-        ValidationEntry validationEntry = new ValidationEntry(currentItem.getPkItemId());
-        List<ValidationEntry.Field> changes = new ArrayList<>();
+        ValidationEntry validationEntry = new ValidationEntry(currentItem);
+
         // fieldName, MergedItemField
         Map<String, MergedItemField> mapFieldNameToField = Objects.requireNonNull(networkViewModel.getData().getValue()).getData();
         assert mapFieldNameToField != null;
@@ -306,19 +306,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
             if (valueFromForm == null) continue;
 
             try {
-                if (currentItem.isNewItem()) {
-                    // this means a new Item should be created, therefore take all values
-                    changes.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
-                } else if (!currentItem.getFieldsWithValues().get(fieldName).equals(valueFromForm)) {
-                    // for existing items compare if something changed
-                    changes.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
-                }
+                validationEntry.addChangedFieldFromFormValue(fieldName, valueFromForm);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
-        validationEntry.finishWithChanges(changes);
         return validationEntry;
     }
 

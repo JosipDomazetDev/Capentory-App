@@ -23,7 +23,6 @@ import javax.inject.Singleton;
 @Singleton
 public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
     private String currentRoomString;
-    private StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
     private final String VALIDATION_REQUEST_KEY = "request_validation";
 
 
@@ -53,7 +52,6 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
             payload = payload.getJSONObject("items");
             Iterator<String> itemKeys = payload.keys();
 
-
             while (itemKeys.hasNext()) {
                 mergedItems.add(new MergedItem(currentRoomString, itemKeys.next(), payload));
             }
@@ -65,18 +63,12 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
     }
 
 
-    public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(JSONArray validationEntriesAsJson) {
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("stocktaking", MainActivity.getStocktaking().getStocktakingId());
-            jsonObject.put("validations", validationEntriesAsJson);
-            Log.e("eeeee", jsonObject.toString());
-            addRequestWithContent(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, MainActivity.getSerializer().getRoomUrl(), currentRoomString + "/"), jsonObject,
-                    payload -> validateSuccessful.postSuccess(true), validateSuccessful);
-            launchRequestFromKey(VALIDATION_REQUEST_KEY, validateSuccessful);
-        } catch (JSONException e) {
-            validateSuccessful.postError(e);
-        }
+    public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(JSONObject validationEntriesAsJson) {
+        StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
+        addRequestWithContent(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, MainActivity.getSerializer().getRoomUrl(), currentRoomString + "/"), validationEntriesAsJson,
+                payload -> validateSuccessful.postSuccess(true), validateSuccessful);
+        launchRequestFromKey(VALIDATION_REQUEST_KEY, validateSuccessful);
+
         return validateSuccessful;
     }
 

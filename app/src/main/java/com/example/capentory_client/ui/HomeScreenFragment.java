@@ -41,7 +41,7 @@ public class HomeScreenFragment extends Fragment {
     //https://stackoverflow.com/questions/5608720/android-preventing-double-click-on-a-button/9950832
     private long lastClickTime = 0;
 
-    private static final String CHANNEL_ID = "inventory_channel_01";
+
 
 
     public HomeScreenFragment() {
@@ -55,10 +55,7 @@ public class HomeScreenFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home_screen, container, false);
-        createNotificationChannel();
-
-        return view;
+        return inflater.inflate(R.layout.fragment_home_screen, container, false);
     }
 
 
@@ -73,7 +70,6 @@ public class HomeScreenFragment extends Fragment {
             lastClickTime = SystemClock.elapsedRealtime();
 
             if (PreferenceUtility.isLoggedIn(getContext())) {
-                startInventory();
                 Navigation.findNavController(v).navigate(R.id.action_homeScreenFragment_to_stocktakingFragment);
             } else Navigation.findNavController(v).navigate(R.id.loginFragment);
         });
@@ -118,43 +114,6 @@ public class HomeScreenFragment extends Fragment {
         }
     }
 
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = Objects.requireNonNull(getActivity()).getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-
-    public void startInventory() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(Objects.requireNonNull(getContext()), CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_info_outline_black_24dp)
-                .setContentTitle("Inventur-Status")
-                .setContentText("Inventur läuft! Klicken um zurückzugelangen.")
-                .setColor(Color.parseColor("#2196F3"))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
-                intent, 0);
-        builder.setContentIntent(pendingIntent);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(10, builder.build());
-
-    }
 
 
 }

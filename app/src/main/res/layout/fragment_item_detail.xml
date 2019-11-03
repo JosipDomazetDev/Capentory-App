@@ -47,7 +47,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:paddingBottom="20dp"
                     android:text="Dieser Gegenstand ist aus einem anderen Raum!"
                     android:textAlignment="center"
                     android:textColor="#4CAF50"
@@ -74,28 +73,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/barcode_fragment_itemdetail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="16dp"
-                    android:textAlignment="center"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/otherroom_textview_fragment_itemdetail" />
-
-
-                <TextView
-                    android:id="@+id/bezeichnung_fragment_itemdetail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="16dp"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/barcode_fragment_itemdetail" />
-
 
                 <LinearLayout
                     android:id="@+id/content_fragment_item_detail"
@@ -106,19 +83,59 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/bezeichnung_fragment_itemdetail">
+                    app:layout_constraintTop_toBottomOf="@+id/otherroom_textview_fragment_itemdetail">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="#D8D8D8" />
+
+                    <TextView
+                        android:id="@+id/barcode_fragment_itemdetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="16dp"
+                        android:textAlignment="center"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/bezeichnung_fragment_itemdetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="20dp" />
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="#D8D8D8" />
 
                     <LinearLayout
                         android:id="@+id/linearLayout_fragment_itemdetail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:orientation="vertical"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/otherroom_textview_fragment_itemdetail" />
+                        android:orientation="vertical" />
 
-
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="#D8D8D8" />
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/button_constraintLayout"
                         android:layout_width="wrap_content"
@@ -149,6 +166,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

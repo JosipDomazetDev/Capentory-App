@@ -123,4 +123,5 @@
         </string>
     <string name="text_unkown_item_fragment_detailitem">Dieser Gegenstand ist aus einem unbekanntem Raum!</string>
     <string name="text_kown_but_different_room_item_fragment_detailitem">Dieser Gegenstand ist aus einem anderem Raum!</string>
+    <string name="started_inventory_fragment_rooms">Gestartete Inventur: %1$s</string>
 </resources>

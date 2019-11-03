@@ -14,9 +14,12 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_start_inventory_fragment_home_screen"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="36dp"
+            android:layout_width="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintWidth_max="300dp"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:text="Inventur beginnen"

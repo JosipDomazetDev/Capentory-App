@@ -19,7 +19,6 @@ import javax.inject.Singleton;
 
 @Singleton
 public class StocktakingRepository extends NetworkRepository<List<SerializerEntry>> {
-    private StatusAwareLiveData<Stocktaking> postedStocktaking = new StatusAwareLiveData<>();
     private final String POST_STOCKTAKING_REQUEST_KEY = "request_post_stocktaking";
 
 
@@ -53,23 +52,30 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
 
 
     public StatusAwareLiveData<Stocktaking> postStocktaking(String name, String comment) {
+        // In this case we want to create a new LiveDataObject each time because the Stocktaking will be saved statically later
+        // and we cannot overwrite it since we are leaving the screen at the same time
+        // (this isn't an issue with other fragments e.g. old data being displayed shortly before new data is displayed)
+        StatusAwareLiveData<Stocktaking> postedStocktaking = new StatusAwareLiveData<>();
+
+        JSONObject jsonObject = new JSONObject();
         try {
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("name", name);
             jsonObject.put("comment", comment);
-
-            addRequestWithContent(POST_STOCKTAKING_REQUEST_KEY, Request.Method.POST, getUrl(context, false, "api", "stocktaking/"), jsonObject,
-                    payload -> {
-                        try {
-                            postedStocktaking.postSuccess(new Stocktaking(payload));
-                        } catch (JSONException e) {
-                            postedStocktaking.postError(e);
-                        }
-                    }, postedStocktaking);
-            launchRequestFromKey(POST_STOCKTAKING_REQUEST_KEY, postedStocktaking);
         } catch (JSONException e) {
             postedStocktaking.postError(e);
+            return postedStocktaking;
         }
+
+        addRequestWithContent(POST_STOCKTAKING_REQUEST_KEY, Request.Method.POST, getUrl(context, false, "api", "stocktaking/"), jsonObject,
+                payload -> {
+                    try {
+                        postedStocktaking.postSuccess(new Stocktaking(payload));
+                    } catch (JSONException e) {
+                        postedStocktaking.postError(e);
+                    }
+                }, postedStocktaking);
+        launchRequestFromKey(POST_STOCKTAKING_REQUEST_KEY, postedStocktaking);
+
         return postedStocktaking;
     }
 

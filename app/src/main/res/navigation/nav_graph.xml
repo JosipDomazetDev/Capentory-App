@@ -97,9 +97,11 @@
     <fragment
         android:id="@+id/stocktakingFragment"
         android:name="com.example.capentory_client.ui.StocktakingFragment"
-        android:label="Inventuranlegung" >
+        android:label="Inventuranlegung">
         <action
-            android:id="@+id/action_stocktakingFragment_to_roomFragment"
+            android:id="@+id/ignore_action_stocktakingFragment_to_roomFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true"
             app:destination="@id/roomFragment" />
     </fragment>
 

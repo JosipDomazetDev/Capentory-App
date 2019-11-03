@@ -3,10 +3,14 @@ package com.example.capentory_client.repos;
 
 import android.content.Context;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.android.volley.Request;
 import com.example.capentory_client.models.Room;
+import com.example.capentory_client.models.Stocktaking;
 import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
+import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +24,8 @@ import javax.inject.Singleton;
 
 @Singleton
 public class RoomsRepository extends NetworkRepository<List<Room>> {
+    private final String FINISH_REQUEST_KEY = "request_finish";
+
 
     @Inject
     public RoomsRepository(Context context) {
@@ -31,7 +37,7 @@ public class RoomsRepository extends NetworkRepository<List<Room>> {
     public StatusAwareLiveData<List<Room>> fetchMainData(String... args) {
         // Fetch only once for entire application, the rooms wont change
         /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchMainData() == null) {*/
-        addMainRequest(Request.Method.GET, getUrl(context, true,MainActivity.getSerializer().getRoomUrl()));
+        addMainRequest(Request.Method.GET, getUrl(context, true, MainActivity.getSerializer().getRoomUrl()));
         launchMainRequest();
         return mainContentRepoData;
     }
@@ -54,4 +60,20 @@ public class RoomsRepository extends NetworkRepository<List<Room>> {
     }
 
 
+    public MutableLiveData<StatusAwareData<Boolean>> finishInventory() {
+        StatusAwareLiveData<Boolean> finishSuccessful = new StatusAwareLiveData<>();
+
+        addRequest(FINISH_REQUEST_KEY, Request.Method.POST, getUrl(context, false,
+                "api", "stocktaking", String.valueOf(MainActivity.getStocktaking().getStocktakingId()), "finish/"),
+                payload -> {
+                    try {
+                        finishSuccessful.postSuccess(payload.getBoolean("success"));
+                    } catch (JSONException e) {
+                        finishSuccessful.postError(e);
+                    }
+                }, finishSuccessful);
+        launchRequestFromKey(FINISH_REQUEST_KEY, finishSuccessful);
+
+        return finishSuccessful;
+    }
 }

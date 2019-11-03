@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 
 @Singleton
 public class LoginRepository extends NetworkRepository<String> {
-    private StatusAwareLiveData<Boolean> logoutSuccessful = new StatusAwareLiveData<>();
     private final String LOGOUT_REQUEST_KEY = "logout_request";
 
     @Inject
@@ -53,6 +52,7 @@ public class LoginRepository extends NetworkRepository<String> {
 
 
     public StatusAwareLiveData<Boolean> logout() {
+        StatusAwareLiveData<Boolean> logoutSuccessful = new StatusAwareLiveData<>();
         addRequest(LOGOUT_REQUEST_KEY, Request.Method.POST, getUrl(context, false, "api-token-clear/"),
                 payload -> logoutSuccessful.postSuccess(true), logoutSuccessful);
         launchRequestFromKey(LOGOUT_REQUEST_KEY,logoutSuccessful);

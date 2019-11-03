@@ -8,6 +8,8 @@ import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -56,7 +58,11 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
     }
 
     public void sendValidationEntriesToServer() {
-        validateSuccessful = networkRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries));
+        try {
+            validateSuccessful = networkRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries));
+        } catch (JSONException e) {
+            statusAwareLiveData.postError(e);
+        }
     }
 
     public LiveData<StatusAwareData<Boolean>> getValidationSuccessful() {

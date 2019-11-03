@@ -1,15 +1,23 @@
 package com.example.capentory_client.ui;
 
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,7 +49,8 @@ import javax.inject.Inject;
  */
 public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, StocktakingRepository, StocktakingViewModel> {
     private Spinner serializerDropDown;
-
+    private static final String CHANNEL_ID = "inventory_channel_01";
+    public static final int NOTIFICATION_INV_STARTED_ID = 10;
 
     public StocktakingFragment() {
         // Required empty public constructor
@@ -53,7 +62,9 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_stocktaking, container, false);
+        View inflate = inflater.inflate(R.layout.fragment_stocktaking, container, false);
+        createNotificationChannel();
+        return inflate;
     }
 
     @Override
@@ -63,7 +74,6 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         final Button btnStocktaking = view.findViewById(R.id.button_fragment_stocktaking);
         serializerDropDown = view.findViewById(R.id.db_dropdown_fragment_stocktaking);
 
-        Log.e("XXXX", "XXXXX");
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(StocktakingViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),
                 view,
@@ -72,27 +82,31 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
                 R.id.swipe_refresh_fragment_stocktaking
         );
 
-        btnStocktaking.setOnClickListener(v -> {
-            SerializerEntry selectedSerializer = (SerializerEntry) serializerDropDown.getSelectedItem();
-            if (selectedSerializer == null) return;
+        btnStocktaking.setOnClickListener(v -> tryToStartInventory(view));
+    }
 
-            EditText name = view.findViewById(R.id.name_edittext_stocktacking_fragment_stocktaking);
-            EditText comment = view.findViewById(R.id.comment_edittext_stocktacking_fragment_stocktaking);
+    private void tryToStartInventory(@NonNull View view) {
+        SerializerEntry selectedSerializer = (SerializerEntry) serializerDropDown.getSelectedItem();
+        if (selectedSerializer == null) return;
 
-            if (TextUtils.isEmpty(name.getText())) {
-                ToastUtility.displayCenteredToastMessage(getContext(), "Ihre Inventur muss einen Namen haben!", Toast.LENGTH_SHORT);
-                return;
-            }
+        EditText name = view.findViewById(R.id.name_edittext_stocktacking_fragment_stocktaking);
+        EditText comment = view.findViewById(R.id.comment_edittext_stocktacking_fragment_stocktaking);
 
-            networkViewModel.postStocktaking(name.getText().toString(), comment.getText().toString());
-            observeSpecificLiveData(networkViewModel.getPostedStocktaking(), liveData -> {
-                if (liveData == null || liveData.getData() == null) return;
+        if (TextUtils.isEmpty(name.getText())) {
+            ToastUtility.displayCenteredToastMessage(getContext(), "Ihre Inventur muss einen Namen haben!", Toast.LENGTH_SHORT);
+            return;
+        }
 
-                MainActivity.setSerializer(selectedSerializer);
-                MainActivity.setStocktaking(liveData.getData());
-                Navigation.findNavController(view).navigate(R.id.action_stocktakingFragment_to_roomFragment);
-            });
+        networkViewModel.postStocktaking(name.getText().toString(), comment.getText().toString());
+        observeSpecificLiveData(networkViewModel.getPostedStocktaking(), liveData -> {
+            if (liveData == null || liveData.getData() == null) return;
+            // Stocktaking was created, now we can start with the inventory process itself!
 
+            createStartNotification();
+            MainActivity.setStocktaking(liveData.getData());
+            MainActivity.setSerializer(selectedSerializer);
+            NavHostFragment.findNavController(this).popBackStack();
+            Navigation.findNavController(view).navigate(R.id.roomFragment);
         });
     }
 
@@ -102,6 +116,43 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         DropDownSerializerAdapter adapter = new DropDownSerializerAdapter(Objects.requireNonNull(getContext()), (ArrayList<SerializerEntry>) statusAwareData.getData());
         serializerDropDown.setAdapter(adapter);
         //serializerDropDown.notify();
+    }
+
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = Objects.requireNonNull(getActivity()).getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
+    public void createStartNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(Objects.requireNonNull(getContext()), CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_info_outline_white_24dp)
+                .setContentTitle("Inventur-Status")
+                .setContentText("Inventur läuft! Klicken um zurückzugelangen.")
+                .setColor(Color.parseColor("#2196F3"))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
+                intent, 0);
+        builder.setContentIntent(pendingIntent);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(NOTIFICATION_INV_STARTED_ID, builder.build());
     }
 
 

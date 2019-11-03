@@ -36,7 +36,7 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
     }
 
     public void postStocktaking(String name, String comment) {
-        postedStocktaking = networkRepository.postStocktaking(name,comment);
+        postedStocktaking = networkRepository.postStocktaking(name, comment);
     }
 
     public LiveData<StatusAwareData<Stocktaking>> getPostedStocktaking() {
