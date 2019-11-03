@@ -197,14 +197,14 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
     private void handleFinishRoom() {
         networkViewModel.sendValidationEntriesToServer();
 
-        observeSpecificLiveData(networkViewModel.getValidationSuccessful(), liveData -> {
-            if (liveData == null || liveData.getData() == null) return;
+            observeSpecificLiveData(networkViewModel.getValidationSuccessful(), liveData -> {
+                if (liveData == null || liveData.getData() == null) return;
 
-            if (liveData.getData()) {
-                roomxItemSharedViewModel.setCurrentRoomValidated(true);
-                NavHostFragment.findNavController(this).popBackStack();
-            }
-        });
+                if (liveData.getData()) {
+                    roomxItemSharedViewModel.setCurrentRoomValidated(true);
+                    NavHostFragment.findNavController(this).popBackStack();
+                }
+            });
     }
 
 

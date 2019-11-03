@@ -25,6 +25,7 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
     private String currentRoomString;
     private final String VALIDATION_REQUEST_KEY = "request_validation";
 
+    // StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
 
     @Inject
     public MergedItemsRepository(Context context) {
@@ -65,6 +66,7 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
 
     public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(JSONObject validationEntriesAsJson) {
         StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
+
         addRequestWithContent(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, MainActivity.getSerializer().getRoomUrl(), currentRoomString + "/"), validationEntriesAsJson,
                 payload -> validateSuccessful.postSuccess(true), validateSuccessful);
         launchRequestFromKey(VALIDATION_REQUEST_KEY, validateSuccessful);

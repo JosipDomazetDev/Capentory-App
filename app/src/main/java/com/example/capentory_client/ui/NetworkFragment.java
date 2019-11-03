@@ -67,6 +67,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
                 basicNetworkErrorHandler.reset();
 
         });
+
     }
 
     private void observeMainLiveData(V networkViewModel) {

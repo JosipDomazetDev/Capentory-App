@@ -129,7 +129,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="8dp"
-                    android:paddingTop="20dp"
+                    android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:text="Inventur anlegen"
                     android:textAllCaps="false"
