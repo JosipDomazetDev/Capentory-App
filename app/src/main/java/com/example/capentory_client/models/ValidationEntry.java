@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ValidationEntry {
     private static final String NOT_FOUND = "-404";
-    private static final String PK_JSON_KEY = "itemId";
+    private static final String PK_JSON_KEY = "itemID";
     private static final String BARCODE_JSON_KEY = "barcode";
     private MergedItem mergedItem;
     private String pkItem;
@@ -54,6 +54,8 @@ public class ValidationEntry {
             validationEntriesAsJson.put(getValidationEntryAsJson(validationEntry));
         }
         ret.put("validations", validationEntriesAsJson);
+
+        Log.e("XXXX",validationEntries.toString());
 
         return ret;
     }

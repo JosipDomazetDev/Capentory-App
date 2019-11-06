@@ -14,6 +14,9 @@ import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 import dagger.android.support.DaggerFragment;
 
 public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V extends NetworkViewModel<P, R>> extends DaggerFragment {
+    interface RefreshHandler {
+        void handleRefresh();
+    }
 
     protected V networkViewModel;
     protected ProgressBar progressBar;
@@ -34,8 +37,24 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
                     swipeRefreshLayout.setRefreshing(false);
                 }
         );
-
     }
+
+
+    public void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, RefreshHandler refreshHandler, String... args) {
+        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
+
+        networkViewModel.fetchData(args);
+        observeMainLiveData(networkViewModel);
+
+
+        swipeRefreshLayout.setOnRefreshListener(
+                () -> {
+                    refreshHandler.handleRefresh();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+        );
+    }
+
 
     /**
      * This one dooesn't fetch automatically

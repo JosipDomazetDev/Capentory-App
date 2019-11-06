@@ -26,7 +26,7 @@ import com.example.capentory_client.repos.RoomsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.RoomViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
-import com.example.capentory_client.viewmodels.adapter.DropDownRoomAdapter;
+import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
@@ -137,7 +137,8 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     @Override
     protected void handleSuccess(StatusAwareData<List<Room>> statusAwareData) {
         super.handleSuccess(statusAwareData);
-        DropDownRoomAdapter adapter = new DropDownRoomAdapter(Objects.requireNonNull(getContext()), (ArrayList<Room>) statusAwareData.getData());
+        GenericDropDownAdapter<Room> adapter =
+                new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<Room>) statusAwareData.getData());
         roomDropDown.setAdapter(adapter);
         //roomDropDown.notify();
     }

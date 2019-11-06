@@ -14,6 +14,7 @@ import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveDat
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -99,8 +100,35 @@ public abstract class NetworkRepository<L> {
     /**
      * Get an url
      *
-     * @param context            used to retrieve ip and port from settings
-     * @param path               specifies paths
+     * @param context used to retrieve ip and port from settings
+     * @param path    specifies paths
+     * @return the Url
+     */
+    protected static String getUrl(Context context, boolean combinedPath,String[] path, Map<String, String> queryParams) {
+        Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
+                .encodedAuthority(getSocket(context));
+
+        if (combinedPath) {
+            urlBuilder.encodedPath(path[0]);
+            for (int i = 1; i < path.length; i++) {
+                urlBuilder.appendPath(path[i]);
+            }
+        } else for (String s : path) {
+            urlBuilder.appendPath(s);
+        }
+
+        for (Map.Entry<String, String> keyValueEntry : queryParams.entrySet()) {
+            urlBuilder.appendQueryParameter(keyValueEntry.getKey(), keyValueEntry.getValue());
+        }
+
+        return urlBuilder.appendQueryParameter("format", "json").build().toString();
+    }
+
+    /**
+     * Get an url
+     *
+     * @param context used to retrieve ip and port from settings
+     * @param path    specifies paths
      * @return the Url
      */
     protected static String getUrl(Context context, boolean combinedPath, String... path) {
@@ -115,6 +143,7 @@ public abstract class NetworkRepository<L> {
         } else for (String s : path) {
             urlBuilder.appendPath(s);
         }
+
 
         return urlBuilder.appendQueryParameter("format", "json").build().toString();
     }

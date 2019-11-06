@@ -2,10 +2,12 @@ package com.example.capentory_client.models;
 
 import androidx.annotation.NonNull;
 
+import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SerializerEntry {
+public class SerializerEntry implements GenericDropDownAdapter.DropDownEntry {
     @NonNull
     private String key, roomUrl, itemUrl, description;
 
@@ -36,5 +38,15 @@ public class SerializerEntry {
     @NonNull
     public String getKey() {
         return key;
+    }
+
+    @Override
+    public String displayName() {
+        return getKey();
+    }
+
+    @Override
+    public String displayDescription() {
+        return getDescription();
     }
 }

@@ -3,18 +3,18 @@ package com.example.capentory_client.models;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Stocktaking {
+public class Stocktaking implements GenericDropDownAdapter.DropDownEntry {
 
     private int stocktakingId;
     @NonNull
     private String name;
     @Nullable
     private String comment;
-
-
 
 
     public Stocktaking(JSONObject payload) throws JSONException {
@@ -36,5 +36,15 @@ public class Stocktaking {
     @NonNull
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String displayName() {
+        return getName();
+    }
+
+    @Override
+    public String displayDescription() {
+        return getComment();
     }
 }

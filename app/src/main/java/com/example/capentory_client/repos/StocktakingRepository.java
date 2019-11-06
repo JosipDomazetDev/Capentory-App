@@ -11,15 +11,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class StocktakingRepository extends NetworkRepository<List<SerializerEntry>> {
-    private final String POST_STOCKTAKING_REQUEST_KEY = "request_post_stocktaking";
+    private final String GET_STOCKTAKINGS_REQUEST_KEY = "request_get_stocktakings";
+    // This one musn't be reset
+    private StatusAwareLiveData<List<Stocktaking>> activeStocktakingsLiveData = new StatusAwareLiveData<>();
 
 
     @Inject
@@ -51,32 +55,36 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
     }
 
 
-    public StatusAwareLiveData<Stocktaking> postStocktaking(String name, String comment) {
+    public StatusAwareLiveData<List<Stocktaking>> fetchStocktakings() {
         // In this case we want to create a new LiveDataObject each time because the Stocktaking will be saved statically later
         // and we cannot overwrite it since we are leaving the screen at the same time
         // (this isn't an issue with other fragments e.g. old data being displayed shortly before new data is displayed)
-        StatusAwareLiveData<Stocktaking> postedStocktaking = new StatusAwareLiveData<>();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("name", name);
-            jsonObject.put("comment", comment);
-        } catch (JSONException e) {
-            postedStocktaking.postError(e);
-            return postedStocktaking;
-        }
+        Map<String, String> paras = new HashMap<>();
+        paras.put("date_finished__isnull, ", "True");
+        paras.put("time_finish_isnull", "True");
 
-        addRequestWithContent(POST_STOCKTAKING_REQUEST_KEY, Request.Method.POST, getUrl(context, false, "api", "stocktaking/"), jsonObject,
+        addRequest(GET_STOCKTAKINGS_REQUEST_KEY, Request.Method.GET,
+                getUrl(context, false, new String[]{"api", "stocktaking_room_validation/"}, paras),
                 payload -> {
                     try {
-                        postedStocktaking.postSuccess(new Stocktaking(payload));
-                    } catch (JSONException e) {
-                        postedStocktaking.postError(e);
-                    }
-                }, postedStocktaking);
-        launchRequestFromKey(POST_STOCKTAKING_REQUEST_KEY, postedStocktaking);
 
-        return postedStocktaking;
+                        List<Stocktaking> activeStocktakings = new ArrayList<>();
+                        Iterator<String> stocktakingKeys = payload.keys();
+
+                        while (stocktakingKeys.hasNext()) {
+                            activeStocktakings.add(new Stocktaking(payload));
+                        }
+
+                        activeStocktakingsLiveData.postSuccess(activeStocktakings);
+                    } catch (JSONException e) {
+                        activeStocktakingsLiveData.postError(e);
+                    }
+                }, activeStocktakingsLiveData);
+
+        launchRequestFromKey(GET_STOCKTAKINGS_REQUEST_KEY, activeStocktakingsLiveData);
+
+        return activeStocktakingsLiveData;
     }
 
 

@@ -52,7 +52,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/content_stocktaking_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="300dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -61,7 +61,7 @@
 
 
                 <Spinner
-                    android:id="@+id/db_dropdown_fragment_stocktaking"
+                    android:id="@+id/db_dropdown_serializer_fragment_stocktaking"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -74,49 +74,28 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/name_textinput_layout_fragment_stocktaking"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/yourcardid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-
-                    android:layout_marginTop="25dp"
-                    android:padding="14dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="14dp"
+                    android:elevation="1dp"
+                    android:innerRadius="0dp"
+                    android:shape="ring"
+                    android:thicknessRatio="1.9"
+                    app:cardCornerRadius="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/db_dropdown_fragment_stocktaking">
+                    app:layout_constraintTop_toBottomOf="@+id/db_dropdown_serializer_fragment_stocktaking">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/name_edittext_stocktacking_fragment_stocktaking"
+                    <Spinner
+                        android:id="@+id/db_dropdown_stocktaking_fragment_stocktaking"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints="Wie soll Ihre Inventur heißen?"
-                        android:hint="Wie soll Ihre Inventur heißen?"
-                        android:inputType="" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/comment_textinput_layout_fragment_stocktaking"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="14dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/name_textinput_layout_fragment_stocktaking">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/comment_edittext_stocktacking_fragment_stocktaking"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints="Kommentarfeld"
-                        android:hint="Kommentarfeld"
-                        android:inputType="" />
-
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_height="match_parent" />
+                </androidx.cardview.widget.CardView>
 
 
                 <com.google.android.material.button.MaterialButton

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,30 +82,36 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         this.view = view;
         LinearLayout linearLayout = view.findViewById(R.id.content_fragment_item_detail);
         basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dummy));
+        itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(DetailItemViewModel.class),
                 basicNetworkErrorHandler,
                 view,
                 R.id.progress_bar_fragment_item_detail,
                 linearLayout,
-                R.id.swipe_refresh_fragment_item_detail);
-
-
-        itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
-
-        MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem().getValue();
-        if (mergedItem != null && mergedItem.isSearchedForItem()) {
-            networkViewModel.fetchSearchedForItem(mergedItem.getBarcode());
-            observeSpecificLiveData(networkViewModel.getSearchedForItem(), liveData -> handleSearchedForItemResponse(view, liveData));
-        }
+                R.id.swipe_refresh_fragment_item_detail, () -> {
+                    networkViewModel.reloadData();
+                    StatusAwareData<MergedItem> searchedForItemLiveData = networkViewModel.getSearchedForItem().getValue();
+                    if (searchedForItemLiveData != null && searchedForItemLiveData.getStatus() == StatusAwareData.State.ERROR) {
+                        fetchSearchedForItem(view);
+                    }
+                });
+        fetchSearchedForItem(view);
 
 
         ImageButton validateButton = view.findViewById(R.id.validate_btn_fragment_itemdetail);
         validateButton.setOnClickListener(v -> handleValidate());
 
-
         ImageButton cancelButton = view.findViewById(R.id.cancel_btn_fragment_itemdetail);
         cancelButton.setOnClickListener(v -> handleCancel());
+    }
+
+    private void fetchSearchedForItem(@NonNull View view) {
+        MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem().getValue();
+        if (mergedItem != null && mergedItem.isSearchedForItem()) {
+            networkViewModel.fetchSearchedForItem(mergedItem.getBarcode());
+            observeSpecificLiveData(networkViewModel.getSearchedForItem(), liveData -> handleSearchedForItemResponse(view, liveData));
+        }
     }
 
     private void handleSearchedForItemResponse(@NonNull View view, StatusAwareData<MergedItem> liveData) {

@@ -37,7 +37,8 @@ public class RoomsRepository extends NetworkRepository<List<Room>> {
     public StatusAwareLiveData<List<Room>> fetchMainData(String... args) {
         // Fetch only once for entire application, the rooms wont change
         /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchMainData() == null) {*/
-        addMainRequest(Request.Method.GET, getUrl(context, true, MainActivity.getSerializer().getRoomUrl()));
+        addMainRequest(Request.Method.GET, getUrl(context, true,
+                MainActivity.getSerializer().getRoomUrl(), String.valueOf(MainActivity.getStocktaking().getStocktakingId())));
         launchMainRequest();
         return mainContentRepoData;
     }

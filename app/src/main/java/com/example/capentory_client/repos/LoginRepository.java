@@ -31,6 +31,8 @@ public class LoginRepository extends NetworkRepository<String> {
             throw new IllegalArgumentException("Passwort und Benutzer sind zu spezifizieren");
         }
 
+        mainContentRepoData = new StatusAwareLiveData<>();
+
         Map<String, String> postParam = new HashMap<>();
         postParam.put("username", args[0]);
         postParam.put("password", args[1]);
@@ -39,6 +41,8 @@ public class LoginRepository extends NetworkRepository<String> {
         launchMainRequest();
         return mainContentRepoData;
     }
+
+
 
 
     @Override
@@ -55,7 +59,7 @@ public class LoginRepository extends NetworkRepository<String> {
         StatusAwareLiveData<Boolean> logoutSuccessful = new StatusAwareLiveData<>();
         addRequest(LOGOUT_REQUEST_KEY, Request.Method.POST, getUrl(context, false, "api-token-clear/"),
                 payload -> logoutSuccessful.postSuccess(true), logoutSuccessful);
-        launchRequestFromKey(LOGOUT_REQUEST_KEY,logoutSuccessful);
+        launchRequestFromKey(LOGOUT_REQUEST_KEY, logoutSuccessful);
 
         return logoutSuccessful;
     }

@@ -11,15 +11,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.models.Room;
 
 import java.util.ArrayList;
 
-public class DropDownRoomAdapter extends ArrayAdapter<Room> {
+public class GenericDropDownAdapter<T extends GenericDropDownAdapter.DropDownEntry> extends ArrayAdapter<T> {
 
 
-    public DropDownRoomAdapter(Context context, ArrayList<Room> rooms) {
-        super(context, 0, rooms);
+    public interface DropDownEntry {
+        String displayName();
+        String displayDescription();
+    }
+
+    public GenericDropDownAdapter(Context context, ArrayList<T> entry) {
+        super(context, 0, entry);
     }
 
     @NonNull
@@ -40,13 +44,13 @@ public class DropDownRoomAdapter extends ArrayAdapter<Room> {
             );
         }
 
-        TextView textViewRoomNumber = convertView.findViewById(R.id.room_tv);
-        TextView textViewDescription = convertView.findViewById(R.id.room_desc_tv);
-        Room currentItem = getItem(position);
+        TextView name = convertView.findViewById(R.id.name_tv);
+        TextView description = convertView.findViewById(R.id.desc_tv);
+        T entry = getItem(position);
 
-        if (currentItem != null) {
-            textViewRoomNumber.setText(currentItem.getDisplayedNumber());
-            textViewDescription.setText(currentItem.getDisplayedRoomDescription());
+        if (entry != null) {
+            name.setText(entry.displayName());
+            description.setText(entry.displayDescription());
         }
 
         return convertView;

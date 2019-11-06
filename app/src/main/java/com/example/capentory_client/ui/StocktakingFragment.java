@@ -18,24 +18,22 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.androidutility.ToastUtility;
+import com.example.capentory_client.models.Room;
 import com.example.capentory_client.models.SerializerEntry;
+import com.example.capentory_client.models.Stocktaking;
 import com.example.capentory_client.repos.StocktakingRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.StocktakingViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
-import com.example.capentory_client.viewmodels.adapter.DropDownSerializerAdapter;
+import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import java.util.ArrayList;
@@ -50,7 +48,9 @@ import javax.inject.Inject;
 public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, StocktakingRepository, StocktakingViewModel> {
     private Spinner serializerDropDown;
     private static final String CHANNEL_ID = "inventory_channel_01";
-    public static final int NOTIFICATION_INV_STARTED_ID = 10;
+    static final int NOTIFICATION_INV_STARTED_ID = 10;
+    private Spinner stocktakingDropDown;
+
 
     public StocktakingFragment() {
         // Required empty public constructor
@@ -70,9 +70,11 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         final Button btnStocktaking = view.findViewById(R.id.button_fragment_stocktaking);
-        serializerDropDown = view.findViewById(R.id.db_dropdown_fragment_stocktaking);
+        serializerDropDown = view.findViewById(R.id.db_dropdown_serializer_fragment_stocktaking);
+        stocktakingDropDown = view.findViewById(R.id.db_dropdown_stocktaking_fragment_stocktaking);
+        Log.e("eeee", "eee");
+        Log.e("eeee", "eee");
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(StocktakingViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),
@@ -82,38 +84,39 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
                 R.id.swipe_refresh_fragment_stocktaking
         );
 
+        //networkViewModel.postStocktaking(name.getText().toString(), comment.getText().toString());
+        networkViewModel.fetchStocktakings();
+        observeSpecificLiveData(networkViewModel.getStocktakings(), liveData -> {
+            if (liveData == null || liveData.getData() == null) return;
+            // Stocktaking was created, now we can start with the inventory process itself!
+
+            GenericDropDownAdapter<Stocktaking> adapter =
+                    new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<Stocktaking>) liveData.getData());
+            stocktakingDropDown.setAdapter(adapter);
+
+        });
+
         btnStocktaking.setOnClickListener(v -> tryToStartInventory(view));
     }
 
     private void tryToStartInventory(@NonNull View view) {
         SerializerEntry selectedSerializer = (SerializerEntry) serializerDropDown.getSelectedItem();
         if (selectedSerializer == null) return;
+        Stocktaking selectedStocktaking = (Stocktaking) serializerDropDown.getSelectedItem();
+        if (selectedStocktaking == null) return;
 
-        EditText name = view.findViewById(R.id.name_edittext_stocktacking_fragment_stocktaking);
-        EditText comment = view.findViewById(R.id.comment_edittext_stocktacking_fragment_stocktaking);
+        createStartNotification();
 
-        if (TextUtils.isEmpty(name.getText())) {
-            ToastUtility.displayCenteredToastMessage(getContext(), "Ihre Inventur muss einen Namen haben!", Toast.LENGTH_SHORT);
-            return;
-        }
-
-        networkViewModel.postStocktaking(name.getText().toString(), comment.getText().toString());
-        observeSpecificLiveData(networkViewModel.getPostedStocktaking(), liveData -> {
-            if (liveData == null || liveData.getData() == null) return;
-            // Stocktaking was created, now we can start with the inventory process itself!
-
-            createStartNotification();
-            MainActivity.setStocktaking(liveData.getData());
-            MainActivity.setSerializer(selectedSerializer);
-            NavHostFragment.findNavController(this).popBackStack();
-            Navigation.findNavController(view).navigate(R.id.roomFragment);
-        });
+        MainActivity.setStocktaking(selectedStocktaking);
+        MainActivity.setSerializer(selectedSerializer);
+        NavHostFragment.findNavController(this).popBackStack();
+        Navigation.findNavController(view).navigate(R.id.roomFragment);
     }
 
     @Override
     protected void handleSuccess(StatusAwareData<List<SerializerEntry>> statusAwareData) {
         super.handleSuccess(statusAwareData);
-        DropDownSerializerAdapter adapter = new DropDownSerializerAdapter(Objects.requireNonNull(getContext()), (ArrayList<SerializerEntry>) statusAwareData.getData());
+        GenericDropDownAdapter adapter = new GenericDropDownAdapter(Objects.requireNonNull(getContext()), (ArrayList<SerializerEntry>) statusAwareData.getData());
         serializerDropDown.setAdapter(adapter);
         //serializerDropDown.notify();
     }

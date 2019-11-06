@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/room_tv"
+        android:id="@+id/name_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -15,14 +15,14 @@
 
 
     <TextView
-        android:id="@+id/room_desc_tv"
+        android:id="@+id/desc_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_margin="16dp"
         android:layout_marginStart="30dp"
-        android:layout_toEndOf="@+id/room_tv"
+        android:layout_toEndOf="@+id/name_tv"
         android:text="NWT Labor"
         android:textColor="#000"
         android:textSize="13sp" />

@@ -13,7 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>, StocktakingRepository> {
-    private StatusAwareLiveData<Stocktaking> postedStocktaking;
+    private StatusAwareLiveData<List<Stocktaking>> stocktakingsLiveData;
 
     @Inject
     public StocktakingViewModel(StocktakingRepository jsonRepository) {
@@ -33,13 +33,16 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
     @Override
     public void reloadData(String... args) {
         statusAwareLiveData = networkRepository.fetchMainData(args);
+        stocktakingsLiveData = networkRepository.fetchStocktakings();
     }
 
-    public void postStocktaking(String name, String comment) {
-        postedStocktaking = networkRepository.postStocktaking(name, comment);
+    public void fetchStocktakings() {
+        stocktakingsLiveData = networkRepository.fetchStocktakings();
     }
 
-    public LiveData<StatusAwareData<Stocktaking>> getPostedStocktaking() {
-        return postedStocktaking;
+    public LiveData<StatusAwareData<List<Stocktaking>>> getStocktakings() {
+        return stocktakingsLiveData;
     }
+
+
 }
