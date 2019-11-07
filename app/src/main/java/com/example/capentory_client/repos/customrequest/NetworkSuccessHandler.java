@@ -4,6 +4,6 @@ import org.json.JSONObject;
 
 public interface NetworkSuccessHandler {
 
-    void handleSuccess(JSONObject payload);
+    void handleSuccess(String payload);
 
 }

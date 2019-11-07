@@ -118,7 +118,8 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
 
         roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
         currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomNumber();
-        roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(currentRoomString));
+        String displayRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getDisplayedNumber();
+        roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(displayRoomString));
 
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(MergedItemViewModel.class),
@@ -197,14 +198,14 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
     private void handleFinishRoom() {
         networkViewModel.sendValidationEntriesToServer();
 
-            observeSpecificLiveData(networkViewModel.getValidationSuccessful(), liveData -> {
-                if (liveData == null || liveData.getData() == null) return;
+        observeSpecificLiveData(networkViewModel.getValidationSuccessful(), liveData -> {
+            if (liveData == null || liveData.getData() == null) return;
 
-                if (liveData.getData()) {
-                    roomxItemSharedViewModel.setCurrentRoomValidated(true);
-                    NavHostFragment.findNavController(this).popBackStack();
-                }
-            });
+            if (liveData.getData()) {
+                roomxItemSharedViewModel.setCurrentRoomValidated(true);
+                NavHostFragment.findNavController(this).popBackStack();
+            }
+        });
     }
 
 

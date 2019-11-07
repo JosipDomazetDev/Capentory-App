@@ -69,7 +69,6 @@
                 android:textStyle="bold" />
 
 
-
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -122,7 +121,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/login_btn_fragment_login"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="30dp"
@@ -135,11 +134,12 @@
                 android:text="Anmelden"
                 android:textAllCaps="false"
                 android:textColor="#0F82C0"
-
                 android:textSize="18sp"
                 app:cornerRadius="6dp"
+                app:layout_constraintWidth_max="300dp"
                 app:strokeColor="#FFF"
                 app:strokeWidth="1dp" />
+
 
             <ProgressBar
                 android:id="@+id/progress_bar_fragment_login"
@@ -149,8 +149,8 @@
                 android:layout_marginTop="16dp"
                 android:indeterminate="true"
                 android:indeterminateBehavior="repeat"
-                android:visibility="gone"
-                android:padding="10dp" />
+                android:padding="10dp"
+                android:visibility="gone" />
         </LinearLayout>
 
     </RelativeLayout>

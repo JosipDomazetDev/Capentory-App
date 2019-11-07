@@ -91,9 +91,11 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                 linearLayout,
                 R.id.swipe_refresh_fragment_item_detail, () -> {
                     networkViewModel.reloadData();
-                    StatusAwareData<MergedItem> searchedForItemLiveData = networkViewModel.getSearchedForItem().getValue();
-                    if (searchedForItemLiveData != null && searchedForItemLiveData.getStatus() == StatusAwareData.State.ERROR) {
-                        fetchSearchedForItem(view);
+                    if (networkViewModel.getSearchedForItem() != null) {
+                        StatusAwareData<MergedItem> searchedForItemLiveData = networkViewModel.getSearchedForItem().getValue();
+                        if (searchedForItemLiveData != null && searchedForItemLiveData.getStatus() == StatusAwareData.State.ERROR) {
+                            fetchSearchedForItem(view);
+                        }
                     }
                 });
         fetchSearchedForItem(view);

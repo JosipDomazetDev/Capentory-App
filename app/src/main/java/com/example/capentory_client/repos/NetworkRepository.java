@@ -4,24 +4,22 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.example.capentory_client.repos.customrequest.NetworkErrorHandler;
 import com.example.capentory_client.repos.customrequest.NetworkSuccessHandler;
-import com.example.capentory_client.repos.customrequest.RobustJsonObjectRequestExecutioner;
+import com.example.capentory_client.repos.customrequest.RobustJsonRequestExecutioner;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public abstract class NetworkRepository<L> {
     protected Context context;
     protected StatusAwareLiveData<L> mainContentRepoData = new StatusAwareLiveData<>();
-    protected Map<String, RobustJsonObjectRequestExecutioner> requests = new HashMap<>();
+    protected Map<String, RobustJsonRequestExecutioner> requests = new HashMap<>();
     private static final String MAIN_REQUEST_KEY = "main_request";
 
 
@@ -31,19 +29,19 @@ public abstract class NetworkRepository<L> {
 
 
     public void addRequest(String key, int method, String url, NetworkSuccessHandler successHandler, NetworkErrorHandler networkErrorHandler) {
-        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, null, successHandler, networkErrorHandler)
+        requests.put(key, new RobustJsonRequestExecutioner(context, method, url, null, successHandler, networkErrorHandler)
         );
     }
 
 
     public void addRequest(String key, int method, String url, NetworkSuccessHandler successHandler, StatusAwareLiveData specificLiveData) {
-        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, null, successHandler, error -> handleErrorResponse(error, specificLiveData)
+        requests.put(key, new RobustJsonRequestExecutioner(context, method, url, null, successHandler, error -> handleErrorResponse(error, specificLiveData)
         ));
     }
 
 
     public void addRequestWithContent(String key, int method, String url, JSONObject jsonRequest, NetworkSuccessHandler successHandler, StatusAwareLiveData specificLiveData) {
-        requests.put(key, new RobustJsonObjectRequestExecutioner(context, method, url, jsonRequest, successHandler, error -> handleErrorResponse(error, specificLiveData)
+        requests.put(key, new RobustJsonRequestExecutioner(context, method, url, jsonRequest.toString(), successHandler, error -> handleErrorResponse(error, specificLiveData)
         ));
     }
 
@@ -71,11 +69,11 @@ public abstract class NetworkRepository<L> {
 
     /**
      * Handle a successful response from the network
-     * Override: what to do with the payload
+     * Override: what to do with the stringPayload
      *
-     * @param payload response as JSONObject from the server
+     * @param stringPayload response as JSONObject from the server
      */
-    protected abstract void handleMainSuccessfulResponse(JSONObject payload);
+    protected abstract void handleMainSuccessfulResponse(String stringPayload);
 
 
     /**
@@ -104,11 +102,11 @@ public abstract class NetworkRepository<L> {
      * @param path    specifies paths
      * @return the Url
      */
-    protected static String getUrl(Context context, boolean combinedPath,String[] path, Map<String, String> queryParams) {
+    protected static String getUrl(Context context, boolean firstPathIsCombinedPath,String[] path, Map<String, String> queryParams) {
         Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
                 .encodedAuthority(getSocket(context));
 
-        if (combinedPath) {
+        if (firstPathIsCombinedPath) {
             urlBuilder.encodedPath(path[0]);
             for (int i = 1; i < path.length; i++) {
                 urlBuilder.appendPath(path[i]);
@@ -131,11 +129,11 @@ public abstract class NetworkRepository<L> {
      * @param path    specifies paths
      * @return the Url
      */
-    protected static String getUrl(Context context, boolean combinedPath, String... path) {
+    protected static String getUrl(Context context, boolean firstPathIsCombinedPath, String... path) {
         Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
                 .encodedAuthority(getSocket(context));
 
-        if (combinedPath) {
+        if (firstPathIsCombinedPath) {
             urlBuilder.encodedPath(path[0]);
             for (int i = 1; i < path.length; i++) {
                 urlBuilder.appendPath(path[i]);

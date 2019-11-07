@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 public class RoomViewModel extends NetworkViewModel<List<Room>, RoomsRepository> {
     private int amountOfValidatedRooms = 0;
-    private MutableLiveData<StatusAwareData<Boolean>> finishSuccessful;
 
     @Inject
     public RoomViewModel(RoomsRepository ralphRepository) {
@@ -30,6 +29,14 @@ public class RoomViewModel extends NetworkViewModel<List<Room>, RoomsRepository>
         if (currentRooms.remove(room)) {
             statusAwareLiveData.postSuccess(currentRooms);
             amountOfValidatedRooms++;
+        }
+    }
+
+    public boolean noRoomsLeft() {
+        try {
+            return Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData()).isEmpty();
+        } catch (NullPointerException e) {
+            return false;
         }
     }
 
@@ -48,14 +55,8 @@ public class RoomViewModel extends NetworkViewModel<List<Room>, RoomsRepository>
 
     @Override
     public void reloadData(String... args) {
-        statusAwareLiveData = networkRepository.fetchMainData(args);
+        if (!noRoomsLeft())
+            statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
-    public void finishInventory() {
-        finishSuccessful = networkRepository.finishInventory();
-    }
-
-    public LiveData<StatusAwareData<Boolean>> getFinishSuccessful() {
-        return finishSuccessful;
-    }
 }

@@ -24,9 +24,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.models.Room;
+import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.SerializerEntry;
 import com.example.capentory_client.models.Stocktaking;
 import com.example.capentory_client.repos.StocktakingRepository;
@@ -73,8 +74,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         final Button btnStocktaking = view.findViewById(R.id.button_fragment_stocktaking);
         serializerDropDown = view.findViewById(R.id.db_dropdown_serializer_fragment_stocktaking);
         stocktakingDropDown = view.findViewById(R.id.db_dropdown_stocktaking_fragment_stocktaking);
-        Log.e("eeee", "eee");
-        Log.e("eeee", "eee");
+        Log.e("eeeee", "eee");
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(StocktakingViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),
@@ -88,11 +88,16 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         networkViewModel.fetchStocktakings();
         observeSpecificLiveData(networkViewModel.getStocktakings(), liveData -> {
             if (liveData == null || liveData.getData() == null) return;
+
             // Stocktaking was created, now we can start with the inventory process itself!
+            if (liveData.getData().isEmpty())
+                ToastUtility.displayCenteredToastMessage(getContext(), "Sie müssen erst eine Inventur am Server anlegen!", Toast.LENGTH_LONG);
+
 
             GenericDropDownAdapter<Stocktaking> adapter =
                     new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<Stocktaking>) liveData.getData());
             stocktakingDropDown.setAdapter(adapter);
+
 
         });
 
@@ -102,7 +107,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     private void tryToStartInventory(@NonNull View view) {
         SerializerEntry selectedSerializer = (SerializerEntry) serializerDropDown.getSelectedItem();
         if (selectedSerializer == null) return;
-        Stocktaking selectedStocktaking = (Stocktaking) serializerDropDown.getSelectedItem();
+        Stocktaking selectedStocktaking = (Stocktaking) stocktakingDropDown.getSelectedItem();
         if (selectedStocktaking == null) return;
 
         createStartNotification();
@@ -116,7 +121,11 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     @Override
     protected void handleSuccess(StatusAwareData<List<SerializerEntry>> statusAwareData) {
         super.handleSuccess(statusAwareData);
-        GenericDropDownAdapter adapter = new GenericDropDownAdapter(Objects.requireNonNull(getContext()), (ArrayList<SerializerEntry>) statusAwareData.getData());
+        if (statusAwareData.getData() == null) return;
+        if (statusAwareData.getData().isEmpty())
+            ToastUtility.displayCenteredToastMessage(getContext(), "Dieser Server unterstützt keine Inventuren!", Toast.LENGTH_LONG);
+
+        GenericDropDownAdapter<SerializerEntry> adapter = new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<SerializerEntry>) statusAwareData.getData());
         serializerDropDown.setAdapter(adapter);
         //serializerDropDown.notify();
     }

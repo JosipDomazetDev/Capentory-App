@@ -14,8 +14,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,7 +41,9 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
             throw new IllegalArgumentException("MergedItemRepository only needs the currentRoom as argument!");
 
         this.currentRoomString = args[0];
-        addMainRequest(Request.Method.GET, getUrl(context, true, MainActivity.getSerializer().getRoomUrl(), currentRoomString));
+        Map<String, String> paras = new HashMap<>();
+        paras.put("stocktaking_id", String.valueOf(MainActivity.getStocktaking().getStocktakingId()));
+        addMainRequest(Request.Method.GET, getUrl(context, true, new String[]{MainActivity.getSerializer().getRoomUrl(), currentRoomString}, paras));
         launchMainRequest();
 
         return mainContentRepoData;
@@ -47,9 +51,11 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
 
 
     @Override
-    protected void handleMainSuccessfulResponse(JSONObject payload) {
+    protected void handleMainSuccessfulResponse(String stringPayload) {
         try {
             List<MergedItem> mergedItems = new ArrayList<>();
+            JSONObject payload = new JSONObject(stringPayload);
+
             payload = payload.getJSONObject("items");
             Iterator<String> itemKeys = payload.keys();
 

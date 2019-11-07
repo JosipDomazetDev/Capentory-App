@@ -48,8 +48,9 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
 
 
     @Override
-    protected void handleMainSuccessfulResponse(JSONObject payload) {
+    protected void handleMainSuccessfulResponse(String stringPayload) {
         try {
+            JSONObject payload = new JSONObject(stringPayload);
             Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
             payload = payload.getJSONObject("displayFields");
             Iterator<String> iterator = payload.keys();
@@ -70,8 +71,9 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
 
         addRequest(SEARCHED_ITEM_REQUEST_KEY, Request.Method.GET,
                 getUrl(context, true, MainActivity.getSerializer().getItemUrl(), barcode),
-                payload -> {
+                stringPayload -> {
                     try {
+                        JSONObject payload = new JSONObject(stringPayload);
                         searchedForItem.postSuccess(new MergedItem(payload, payload.keys().next(), barcode));
                     } catch (JSONException error) {
                         searchedForItem.postError(error);

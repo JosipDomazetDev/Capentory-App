@@ -7,6 +7,7 @@ import com.example.capentory_client.models.SerializerEntry;
 import com.example.capentory_client.models.Stocktaking;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,8 +33,9 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
     }
 
     @Override
-    protected void handleMainSuccessfulResponse(JSONObject payload) {
+    protected void handleMainSuccessfulResponse(String stringPayload) {
         try {
+            JSONObject payload = new JSONObject(stringPayload);
             List<SerializerEntry> serializerEntries = new ArrayList<>();
             Iterator<String> keys = payload.keys();
 
@@ -61,19 +63,18 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
         // (this isn't an issue with other fragments e.g. old data being displayed shortly before new data is displayed)
 
         Map<String, String> paras = new HashMap<>();
-        paras.put("date_finished__isnull, ", "True");
+        paras.put("date_finished__isnull", "True");
         paras.put("time_finish_isnull", "True");
 
         addRequest(GET_STOCKTAKINGS_REQUEST_KEY, Request.Method.GET,
-                getUrl(context, false, new String[]{"api", "stocktaking_room_validation/"}, paras),
-                payload -> {
+                getUrl(context, false, new String[]{"api", "stocktaking/"}, paras),
+                stringPayload -> {
                     try {
-
+                        JSONArray payload = new JSONArray(stringPayload);
                         List<Stocktaking> activeStocktakings = new ArrayList<>();
-                        Iterator<String> stocktakingKeys = payload.keys();
 
-                        while (stocktakingKeys.hasNext()) {
-                            activeStocktakings.add(new Stocktaking(payload));
+                        for (int i = 0; i < payload.length(); i++) {
+                            activeStocktakings.add(new Stocktaking(payload.getJSONObject(i)));
                         }
 
                         activeStocktakingsLiveData.postSuccess(activeStocktakings);

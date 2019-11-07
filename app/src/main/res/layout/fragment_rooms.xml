@@ -31,29 +31,55 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dropdown_text_fragment_actualroom" />
 
-            <Spinner
-                android:id="@+id/room_dropdown_fragment_room"
-                android:layout_width="fill_parent"
+
+            <TextView
+                android:id="@+id/no_rooms_fragment_rooms"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:padding="0dp"
+                android:text="Sie haben alle Räume erfolgreich invetarisiert! Sie können die Inventur nun am Server beenden."
+                android:textAlignment="center"
+                android:textColor="#4CAF50"
+                android:textSize="17sp"
                 android:visibility="gone"
-                android:layout_marginTop="28dp"
-                android:layout_marginEnd="15dp"
-                android:background="@drawable/dropdown_background"
-                android:padding="1dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dropdown_text_fragment_actualroom" />
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview_rooms_dropdown_fragment_rooms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="14dp"
+                android:elevation="2dp"
+                android:shape="ring"
+                android:thicknessRatio="2"
+                android:visibility="gone"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dropdown_text_fragment_actualroom">
+
+                <Spinner
+                    android:id="@+id/room_dropdown_fragment_room"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#2196F3" />
+            </androidx.cardview.widget.CardView>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/choose_room_button_fragment_room"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                app:layout_constraintWidth_max="300dp"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
@@ -67,6 +93,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_max="300dp"
                 app:strokeWidth="2dp" />
 
 
@@ -81,15 +108,16 @@
                 android:layout_marginBottom="16dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:text="Inventur beenden"
+                android:text="Ich bin fertig"
                 android:textAllCaps="false"
                 android:textColor="#F44336"
                 android:textSize="15sp"
+                android:textStyle="normal"
                 app:cornerRadius="6dp"
                 app:layout_constraintBottom_toTopOf="@+id/choose_room_button_fragment_room"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/room_dropdown_fragment_room"
+                app:layout_constraintTop_toBottomOf="@+id/cardview_rooms_dropdown_fragment_rooms"
                 app:layout_constraintVertical_bias="1.0"
                 app:layout_constraintWidth_max="300dp"
                 app:strokeColor="#F44336"

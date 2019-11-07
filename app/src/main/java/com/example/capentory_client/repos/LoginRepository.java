@@ -46,8 +46,9 @@ public class LoginRepository extends NetworkRepository<String> {
 
 
     @Override
-    protected void handleMainSuccessfulResponse(JSONObject payload) {
+    protected void handleMainSuccessfulResponse(String stringPayload) {
         try {
+            JSONObject payload = new JSONObject(stringPayload);
             mainContentRepoData.postSuccess(payload.getString("token"));
         } catch (JSONException error) {
             mainContentRepoData.postError(error);
@@ -58,7 +59,7 @@ public class LoginRepository extends NetworkRepository<String> {
     public StatusAwareLiveData<Boolean> logout() {
         StatusAwareLiveData<Boolean> logoutSuccessful = new StatusAwareLiveData<>();
         addRequest(LOGOUT_REQUEST_KEY, Request.Method.POST, getUrl(context, false, "api-token-clear/"),
-                payload -> logoutSuccessful.postSuccess(true), logoutSuccessful);
+                stringPayload -> logoutSuccessful.postSuccess(true), logoutSuccessful);
         launchRequestFromKey(LOGOUT_REQUEST_KEY, logoutSuccessful);
 
         return logoutSuccessful;
