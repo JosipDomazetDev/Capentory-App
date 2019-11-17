@@ -5,7 +5,7 @@
         <item>Kein Filter</item>
         <item>Alphanumerisch (Deutsch)</item>
         <item>Alphabetisch (Deutsch)</item>
-        <item>Nummern (z.B. optimiert für Barcodes)</item>
+        <item>Nummern (optimiert für Barcodes)</item>
         <item>IP-Adressen</item>
     </string-array>
 

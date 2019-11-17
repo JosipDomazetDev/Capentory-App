@@ -109,9 +109,15 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
 
     private void tryToStartInventory(@NonNull View view) {
         SerializerEntry selectedSerializer = (SerializerEntry) serializerDropDown.getSelectedItem();
-        if (selectedSerializer == null) return;
+        if (selectedSerializer == null) {
+            ToastUtility.displayCenteredToastMessage(getContext(), "Server unterstützt keine Inventuren!", Toast.LENGTH_LONG);
+            return;
+        }
         Stocktaking selectedStocktaking = (Stocktaking) stocktakingDropDown.getSelectedItem();
-        if (selectedStocktaking == null) return;
+        if (selectedStocktaking == null) {
+            ToastUtility.displayCenteredToastMessage(getContext(), "Sie müssen erst eine Inventur am Server anlegen!", Toast.LENGTH_LONG);
+            return;
+        }
 
         createStartNotification();
 

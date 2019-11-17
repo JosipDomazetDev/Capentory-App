@@ -116,14 +116,15 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     }
 
     private void handleSearchedForItemResponse(@NonNull View view, StatusAwareData<MergedItem> liveData) {
-        itemxDetailSharedViewModel.setCurrentItem(liveData.getData());
+        MergedItem mergedItem = liveData.getData();
+        itemxDetailSharedViewModel.setCurrentItem(mergedItem);
         TextView textView = view.findViewById(R.id.otherroom_textview_fragment_itemdetail);
-        assert liveData.getData() != null;
+        assert mergedItem != null;
 
-        if (liveData.getData().isNewItem())
+        if (mergedItem.isNewItem())
             textView.setText(getString(R.string.text_unkown_item_fragment_detailitem));
         else
-            textView.setText(getString(R.string.text_kown_but_different_room_item_fragment_detailitem));
+            textView.setText(String.format(getString(R.string.text_kown_but_different_room_item_fragment_detailitem), mergedItem.getDescriptionaryRoom()));
 
         textView.setVisibility(View.VISIBLE);
         handleSuccess(networkViewModel.getData().getValue());
