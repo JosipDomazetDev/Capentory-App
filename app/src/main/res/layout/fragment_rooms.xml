@@ -69,7 +69,6 @@
                     android:id="@+id/room_dropdown_fragment_room"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:backgroundTint="#2196F3" />
             </androidx.cardview.widget.CardView>
 
@@ -93,7 +92,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_max="300dp"
+                app:layout_constraintWidth_max="400dp"
                 app:strokeWidth="2dp" />
 
 
@@ -119,7 +118,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardview_rooms_dropdown_fragment_rooms"
                 app:layout_constraintVertical_bias="1.0"
-                app:layout_constraintWidth_max="300dp"
+                app:layout_constraintWidth_max="400dp"
                 app:strokeColor="#F44336"
                 app:strokeWidth="1dp" />
 

@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, MergedItemsRepository> {
     private List<ValidationEntry> validationEntries = new ArrayList<>();
+    private List<MergedItem> alreadyValidatedItems = new ArrayList<>();
     private StatusAwareLiveData<Boolean> validateSuccessful;
     private boolean startedRemoving;
 
@@ -27,13 +28,18 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
     }
 
 
-    public void removeItem(MergedItem mergedItem) {
+    public void removeItemByFoundIncrease(MergedItem mergedItem) {
         List<MergedItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
 
-        if (currentItems.remove(mergedItem)) {
-            statusAwareLiveData.postSuccess(currentItems);
-            startedRemoving = true;
+        mergedItem.increaseTimesFoundCurrent();
+        startedRemoving = true;
+
+        if (mergedItem.getTimesFoundCurrent() >= mergedItem.getTimesFoundLast()) {
+            if (currentItems.remove(mergedItem)) {
+                statusAwareLiveData.postSuccess(currentItems);
+                alreadyValidatedItems.add(mergedItem);
+            }
         }
     }
 
@@ -71,6 +77,34 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
 
 
     public int getAmountOfItemsLeft() {
-        return Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData()).size();
+        List<MergedItem> mergedItems = Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData());
+        int c = 0;
+        for (MergedItem mergedItem : mergedItems) {
+            c += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
+        }
+        return c;
+    }
+
+    public void removeItemDirectly(MergedItem mergedItem) {
+        List<MergedItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
+        if (currentItems == null) return;
+
+        if (currentItems.remove(mergedItem)) {
+            statusAwareLiveData.postSuccess(currentItems);
+            startedRemoving = true;
+        }
+    }
+
+    public boolean alreadyValidated(String barcode) {
+        MergedItem alreadyValidatedItem = getMergedItemFromBarcode(barcode);
+        return alreadyValidatedItem != null;
+    }
+
+    private MergedItem getMergedItemFromBarcode(String barcode) {
+        for (MergedItem alreadyValidatedItem : alreadyValidatedItems) {
+            if (alreadyValidatedItem.equalsBarcode(barcode))
+                return alreadyValidatedItem;
+        }
+        return null;
     }
 }

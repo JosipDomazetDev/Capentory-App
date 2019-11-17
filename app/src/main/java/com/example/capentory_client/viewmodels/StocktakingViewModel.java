@@ -22,11 +22,6 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
 
     @Override
     public void fetchData(String... args) {
-        if (statusAwareLiveData != null) {
-            return;
-        }
-
-
         statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 

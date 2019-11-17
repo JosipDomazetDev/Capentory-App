@@ -19,27 +19,63 @@
             android:layout_height="match_parent"
             android:padding="20dp">
 
-            <TextView
-                android:id="@+id/anlage_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="400000467489"
-                android:textColor="#000"
-                android:textSize="12sp" />
+            <RelativeLayout
+                android:id="@+id/item_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/anlage_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="400000467489"
+                    android:textColor="#000"
+                    android:textSize="12sp" />
 
 
-            <TextView
-                android:id="@+id/anlage_bez_textview"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/anlage_bez_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="30dp"
+                    android:layout_toEndOf="@+id/anlage_textview"
+                    android:text="HP Color LaserJet Enterprise M750n Printer D3L08A"
+                    android:textColor="#000"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/optional_counter_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="30dp"
-                android:layout_toEndOf="@+id/anlage_textview"
-                android:text="HP Color LaserJet Enterprise M750n Printer D3L08A"
-                android:textColor="#000"
-                android:textSize="16sp" />
+                android:layout_below="@id/item_container"
+                android:layout_centerHorizontal="true">
+
+                <View
+                    android:id="@+id/sep"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="#D8D8D8" />
+
+
+                <TextView
+                    android:id="@+id/counter_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/sep"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="1/3"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+            </RelativeLayout>
 
 
         </RelativeLayout>

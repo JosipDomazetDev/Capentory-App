@@ -44,8 +44,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.anlage_textview.setText(mergedItems.get(position).getCheckedDisplayBarcode());
-        holder.anlage_bez_textview.setText(mergedItems.get(position).getCheckedDisplayName());
+        MergedItem mergedItem = mergedItems.get(position);
+        holder.anlage_textview.setText(mergedItem.getCheckedDisplayBarcode());
+        holder.anlage_bez_textview.setText(mergedItem.getCheckedDisplayName());
+
+        if (mergedItem.getTimesFoundCurrent() > 1) {
+            holder.counter_textview.setText(String.format("Gefunden: %1$s", (mergedItem.getTimesFoundCurrent() + "/" + mergedItem.getTimesFoundLast())));
+            holder.optional_counter_container.setVisibility(View.VISIBLE);
+        } else holder.optional_counter_container.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -62,14 +69,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         TextView anlage_textview;
         TextView anlage_bez_textview;
-        RelativeLayout actualitem_container;
+        TextView counter_textview;
+        View optional_counter_container;
         ItemClickListener itemClickListener;
 
         public ViewHolder(View itemView, ItemClickListener itemClickListener) {
             super(itemView);
             anlage_textview = itemView.findViewById(R.id.anlage_textview);
             anlage_bez_textview = itemView.findViewById(R.id.anlage_bez_textview);
-            actualitem_container = itemView.findViewById(R.id.actualitem_container);
+            counter_textview = itemView.findViewById(R.id.counter_textview);
+            optional_counter_container = itemView.findViewById(R.id.optional_counter_container);
 
             this.itemClickListener = itemClickListener;
             itemView.setOnClickListener(this);

@@ -19,11 +19,12 @@ public class GenericDropDownAdapter<T extends GenericDropDownAdapter.DropDownEnt
 
     public interface DropDownEntry {
         String displayName();
+
         String displayDescription();
     }
 
-    public GenericDropDownAdapter(Context context, ArrayList<T> entry) {
-        super(context, 0, entry);
+    public GenericDropDownAdapter(Context context, ArrayList<T> entries) {
+        super(context, 0, entries);
     }
 
     @NonNull
@@ -46,13 +47,16 @@ public class GenericDropDownAdapter<T extends GenericDropDownAdapter.DropDownEnt
 
         TextView name = convertView.findViewById(R.id.name_tv);
         TextView description = convertView.findViewById(R.id.desc_tv);
-        T entry = getItem(position);
 
-        if (entry != null) {
-            name.setText(entry.displayName());
-            description.setText(entry.displayDescription());
+        T entry;
+        try {
+            entry = getItem(position);
+            if (entry != null) {
+                name.setText(entry.displayName());
+                description.setText(entry.displayDescription());
+            }
+        } catch (Exception ignored) {
         }
-
         return convertView;
     }
 }

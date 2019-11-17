@@ -80,6 +80,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:orientation="vertical"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -151,7 +152,8 @@
                             android:padding="25dp"
                             android:src="@drawable/ic_check_white_36dp"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:contentDescription="check button" />
 
                         <ImageButton
                             android:id="@+id/cancel_btn_fragment_itemdetail"
@@ -163,7 +165,8 @@
                             android:src="@drawable/ic_close_white_36dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/validate_btn_fragment_itemdetail"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:contentDescription="cancel button" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 

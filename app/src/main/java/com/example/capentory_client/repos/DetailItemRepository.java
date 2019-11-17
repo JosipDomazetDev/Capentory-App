@@ -2,7 +2,6 @@ package com.example.capentory_client.repos;
 
 import android.content.Context;
 
-import com.android.volley.ClientError;
 import com.android.volley.Request;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.MergedItemField;
@@ -74,16 +73,15 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
                 stringPayload -> {
                     try {
                         JSONObject payload = new JSONObject(stringPayload);
-                        searchedForItem.postSuccess(new MergedItem(payload, payload.keys().next(), barcode));
+                        if (payload.length() == 0) {
+                            searchedForItem.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode));
+                        } else {
+                            searchedForItem.postSuccess(new MergedItem(payload.keys().next(), payload));
+                        }
                     } catch (JSONException error) {
                         searchedForItem.postError(error);
                     }
-                }, error -> {
-                    if (error instanceof ClientError && ((ClientError) error).networkResponse.statusCode == 404) {
-                        searchedForItem.postSuccess(new MergedItem(barcode));
-                    } else super.handleErrorResponse(error, searchedForItem);
-
-                });
+                }, searchedForItem);
         launchRequestFromKey(SEARCHED_ITEM_REQUEST_KEY, searchedForItem);
 
         return searchedForItem;

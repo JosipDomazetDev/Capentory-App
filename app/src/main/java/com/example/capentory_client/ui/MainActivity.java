@@ -3,6 +3,7 @@ package com.example.capentory_client.ui;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -15,6 +16,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.DisplayUtility;
 import com.example.capentory_client.androidutility.PreferenceUtility;
+import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.SerializerEntry;
 import com.example.capentory_client.models.Stocktaking;
 import com.google.android.material.navigation.NavigationView;
@@ -129,4 +131,6 @@ public class MainActivity extends DaggerAppCompatActivity {
         return NavigationUI.onNavDestinationSelected(item, navController)
                 || super.onOptionsItemSelected(item);
     }
+
+
 }

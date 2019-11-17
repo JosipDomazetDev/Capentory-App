@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,6 +61,7 @@ public class RoomsRepository extends NetworkRepository<List<Room>> {
                 rooms.add(new Room(roomKeys.next(), payload));
             }
 
+            Collections.sort(rooms);
             mainContentRepoData.postSuccess(rooms);
         } catch (JSONException error) {
             mainContentRepoData.postError(error);

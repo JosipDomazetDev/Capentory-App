@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ValidationEntry {
-    private static final String NOT_FOUND = "-404";
+    private static final String CANCEL_CODE = "-205";
     private static final String PK_JSON_KEY = "itemID";
     private static final String BARCODE_JSON_KEY = "barcode";
     private MergedItem mergedItem;
@@ -55,7 +55,7 @@ public class ValidationEntry {
         }
         ret.put("validations", validationEntriesAsJson);
 
-        Log.e("XXXX",validationEntries.toString());
+        Log.e("XXXX", validationEntriesAsJson.toString());
 
         return ret;
     }
@@ -75,12 +75,12 @@ public class ValidationEntry {
         return validationEntryAsJson;
     }
 
-    public static ValidationEntry createMissingItemEntry() {
-        return new ValidationEntry(NOT_FOUND);
+    public static ValidationEntry createCanceledEntry() {
+        return new ValidationEntry(CANCEL_CODE);
     }
 
-    public boolean isMissingItem() {
-        return pkItem.equals(NOT_FOUND);
+    public boolean isCanceledItem() {
+        return pkItem.equals(CANCEL_CODE);
     }
 
     public void addChangedFieldFromFormValue(String fieldName, Object valueFromForm) throws JSONException {

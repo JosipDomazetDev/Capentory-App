@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,9 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -297,7 +294,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     private void handleCancel() {
-        itemxDetailSharedViewModel.setValidationEntryForCurrentItem(ValidationEntry.createMissingItemEntry());
+        itemxDetailSharedViewModel.setValidationEntryForCurrentItem(ValidationEntry.createCanceledEntry());
         NavHostFragment.findNavController(this).popBackStack();
     }
 

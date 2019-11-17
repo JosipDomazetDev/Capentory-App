@@ -2,14 +2,12 @@ package com.example.capentory_client.repos;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,7 +58,7 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
             Iterator<String> itemKeys = payload.keys();
 
             while (itemKeys.hasNext()) {
-                mergedItems.add(new MergedItem(currentRoomString, itemKeys.next(), payload));
+                mergedItems.add(new MergedItem(itemKeys.next(), payload));
             }
 
             mainContentRepoData.postSuccess(mergedItems);

@@ -1,7 +1,5 @@
 package com.example.capentory_client.models;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -14,66 +12,54 @@ import java.util.Objects;
  * Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
  */
 public class MergedItem {
-    public static final String ROOM_JSON_KEY = "room";
+    private static final String NEW_ITEM_CODE = "-1", SEARCHED_FOR_ITEM_CODE = "-2";
     @NonNull
-    private String pkItemId, currentRoomNumber;
+    private String pkItemId;
     @NonNull
     private JSONObject itemAsJson, fields;
     @Nullable
     private String barcode, displayName;
+    private int timesFoundLast, timesFoundCurrent = 0;
 
 
     // Standard
-    public MergedItem(@NonNull String currentRoomString, @NonNull String pkItemId, @NonNull JSONObject payload) throws JSONException {
-        this.currentRoomNumber = currentRoomString;
+    public MergedItem(@NonNull String pkItemId, @NonNull JSONObject payload) throws JSONException {
         this.pkItemId = pkItemId;
         extractFromJson(pkItemId, payload);
     }
 
-    // For scanned known item
-    public MergedItem(@NonNull JSONObject payload, @NonNull String pkItemId, @NonNull String barcode) throws JSONException {
-        this.pkItemId = pkItemId;
-        extractFromJson(pkItemId, payload);
-    }
-
-    private MergedItem(@NonNull String currentRoomNumber, @NonNull String pkItemId, @NonNull String displayName) {
-        this.currentRoomNumber = currentRoomNumber;
-        this.pkItemId = pkItemId;
-        this.displayName = displayName;
-        itemAsJson = new JSONObject();
-        fields = new JSONObject();
-    }
-
-    private MergedItem(@NonNull String currentRoomNumber, @NonNull String pkItemId) {
-        this.currentRoomNumber = currentRoomNumber;
+    // For not fully fledged item just for the code
+    private MergedItem(@NonNull String pkItemId) {
         this.pkItemId = pkItemId;
     }
-
-    public MergedItem(@NonNull String barcode) {
-        this.pkItemId = "-1";
-        this.displayName = "Item befindet sich nicht in der Datenbank!";
-        this.barcode = barcode;
-
-        itemAsJson = new JSONObject();
-        fields = new JSONObject();
-    }
-
 
     private void extractFromJson(@NonNull String pkItemId, @NonNull JSONObject payload) throws JSONException {
         payload = payload.getJSONObject(pkItemId);
         this.barcode = payload.getString("barcode");
         this.displayName = payload.getString("displayName");
+        this.timesFoundLast = payload.getInt("times_found_last");
         this.itemAsJson = payload;
         this.fields = payload.getJSONObject("fields");
     }
 
-
-    public static MergedItem createNewEmptyItem(String currentRoomString) {
-        return new MergedItem(currentRoomString, "-1", "Neues Item");
+    public static MergedItem createNewEmptyItem() {
+        MergedItem mergedItem = new MergedItem(NEW_ITEM_CODE);
+        mergedItem.displayName = "Neues Item";
+        mergedItem.fields = new JSONObject();
+        mergedItem.itemAsJson = new JSONObject();
+        return mergedItem;
     }
 
-    public static MergedItem createSearchedForItem(String currentRoomString, String barcode) {
-        MergedItem mergedItem = new MergedItem(currentRoomString, "-2");
+    public static MergedItem createNewEmptyItemWithBarcode(String barcode) {
+        MergedItem mergedItem = createNewEmptyItem();
+        mergedItem.barcode = barcode;
+        mergedItem.displayName = "Item befindet sich nicht in der Datenbank!";
+        return mergedItem;
+    }
+
+    //Temporary Item, will either be transformed to a EmptyItemWithBarcode or a normal Item
+    public static MergedItem createSearchedForItem(String barcode) {
+        MergedItem mergedItem = new MergedItem(SEARCHED_FOR_ITEM_CODE);
         mergedItem.barcode = barcode;
 
         return mergedItem;
@@ -81,21 +67,16 @@ public class MergedItem {
 
 
     public boolean isNewItem() {
-        return pkItemId.equals("-1");
-    }
+        return pkItemId.equals(NEW_ITEM_CODE);
+    }/**/
 
     public boolean isSearchedForItem() {
-        return pkItemId.equals("-2");
+        return pkItemId.equals(SEARCHED_FOR_ITEM_CODE);
     }
 
     @NonNull
     public String getPkItemId() {
         return pkItemId;
-    }
-
-    @NonNull
-    public String getCurrentRoomNumber() {
-        return currentRoomNumber;
     }
 
     @NonNull
@@ -118,6 +99,15 @@ public class MergedItem {
         return displayName;
     }
 
+
+    public int getTimesFoundLast() {
+        return timesFoundLast;
+    }
+
+
+    public int getTimesFoundCurrent() {
+        return timesFoundCurrent;
+    }
 
     /**
      * Compare the scannedBarcode
@@ -161,4 +151,7 @@ public class MergedItem {
     }
 
 
+    public void increaseTimesFoundCurrent() {
+        timesFoundCurrent++;
+    }
 }

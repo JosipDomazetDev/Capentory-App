@@ -38,7 +38,6 @@ public class BasicNetworkErrorHandler {
     }
 
 
-
     public void displayTextViewErrorMessage(Throwable error) {
         if (errorView == null || !(errorView instanceof TextView)) return;
 
@@ -57,23 +56,25 @@ public class BasicNetworkErrorHandler {
 
         String errorMsg = "";
         if (error instanceof JSONException) {
-            error.printStackTrace();
             errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
         } else if (error instanceof TimeoutError) {
             errorMsg = "Zeitüberschreitungsfehler ist aufgetreten!";
-            error.printStackTrace();
         } else if (error instanceof VolleyError) {
-            if (error instanceof ClientError /*&& ((ClientError) error).networkResponse.statusCode != 404*/) {
-                errorMsg = "Benutzername oder Passwort war falsch!";
-                error.printStackTrace();
+            if (error instanceof ClientError) {
+                int statusCode = ((ClientError) error).networkResponse.statusCode;
+
+                if (statusCode == 400) {
+                    errorMsg = "Benutzername oder Passwort war falsch!";
+                } else if (statusCode == 404)
+                    errorMsg = "Unerwarterter Scan!";
+
             } else if (error instanceof AuthFailureError) {
                 errorMsg = "Credentials sind ungültig oder Sie haben zu wenige Rechte. Bitte versuchen Sie sich nochmal anzumelden!";
-                error.printStackTrace();
             } else {
                 errorMsg = "Ein Verbindungsfehler ist aufgetreten!";
-                error.printStackTrace();
             }
         }
+        error.printStackTrace();
 
         String exceptionMsg = "";
         String fullExceptionMsg = error.getMessage();

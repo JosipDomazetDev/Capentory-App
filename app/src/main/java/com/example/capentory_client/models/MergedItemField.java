@@ -18,9 +18,9 @@ public class MergedItemField implements Comparable<MergedItemField> {
     public MergedItemField(@NonNull String key, JSONObject payload) throws JSONException {
         this.key = key;
         payload = payload.getJSONObject(key);
-        readOnly = payload.getBoolean("readOnly");
+        readOnly = payload.optBoolean("readOnly");
         type = payload.optString("type", "");
-        verboseName = payload.getString("verboseFieldName");
+        verboseName = payload.optString("verboseFieldName");
         choices = payload.optJSONArray("choices");
     }
 

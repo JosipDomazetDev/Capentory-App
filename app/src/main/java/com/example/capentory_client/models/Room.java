@@ -11,7 +11,7 @@ import org.json.JSONObject;
 /**
  * Represents an Room from ralph, only the displayNumber is directly stored to allow later changes to the server
  */
-public class Room implements GenericDropDownAdapter.DropDownEntry {
+public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Room> {
     @NonNull
     private String displayNumber, roomNumber;
 
@@ -33,11 +33,13 @@ public class Room implements GenericDropDownAdapter.DropDownEntry {
 
     @NonNull
     public String getDisplayedNumber() {
+        if (displayNumber.equals("null")) return "N/A";
+
         return displayNumber;
     }
 
     public String getDisplayedRoomDescription() {
-        if (displayDescriptions == null) return "N/A";
+        if (displayDescriptions == null || displayDescriptions.equals("null")) return "N/A";
         return displayDescriptions;
     }
 
@@ -49,5 +51,29 @@ public class Room implements GenericDropDownAdapter.DropDownEntry {
     @Override
     public String displayDescription() {
         return getDisplayedRoomDescription();
+    }
+
+
+    @Override
+    public int compareTo(Room that) {
+        if (this.displayNumber.compareTo(that.displayNumber) < 0) {
+            return -1;
+        } else if (this.displayNumber.compareTo(that.displayNumber) > 0) {
+            return 1;
+        }
+
+        if (this.roomNumber.compareTo(that.roomNumber) < 0) {
+            return -1;
+        } else if (this.roomNumber.compareTo(that.roomNumber) > 0) {
+            return 1;
+        }
+        if (displayDescriptions != null && that.displayDescriptions != null) {
+            if (this.displayDescriptions.compareTo(that.displayDescriptions) < 0) {
+                return -1;
+            } else if (this.displayDescriptions.compareTo(that.displayDescriptions) > 0) {
+                return 1;
+            }
+        }
+        return 0;
     }
 }

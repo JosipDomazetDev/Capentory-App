@@ -63,47 +63,49 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final Button chooseRoomButton = view.findViewById(R.id.choose_room_button_fragment_room);
-        final Button endInventoryButton = view.findViewById(R.id.end_inventory_button_fragment_room);
+        try {
+            final Button chooseRoomButton = view.findViewById(R.id.choose_room_button_fragment_room);
+            final Button endInventoryButton = view.findViewById(R.id.end_inventory_button_fragment_room);
 
-        roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
-        finishedText = view.findViewById(R.id.no_rooms_fragment_rooms);
-        ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText(
-                String.format(getString(R.string.started_inventory_fragment_rooms), MainActivity.getStocktaking().getName()));
+            roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
+            finishedText = view.findViewById(R.id.no_rooms_fragment_rooms);
+            ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText(
+                    String.format(getString(R.string.started_inventory_fragment_rooms), MainActivity.getStocktaking().getName()));
 
-        initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomViewModel.class),
-                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom)),
-                view,
-                R.id.progress_bar_fragment_actualrooms,
-                view.findViewById(R.id.cardview_rooms_dropdown_fragment_rooms),
-                R.id.swipe_refresh
-        );
-
-
-        final RoomxItemSharedViewModel roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
-        chooseRoomButton.setOnClickListener(v -> {
-            Room selectedRoom = (Room) roomDropDown.getSelectedItem();
-            if (selectedRoom == null) return;
-            roomxItemSharedViewModel.setCurrentRoom(selectedRoom);
-            Navigation.findNavController(view).navigate(R.id.action_roomFragment_to_itemsFragment);
-        });
-
-        roomxItemSharedViewModel.getCurrentRoomValidated().observe(getViewLifecycleOwner(), b -> {
-            if (b) {
-                networkViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
-                roomxItemSharedViewModel.setCurrentRoomValidated(false);
-            }
-        });
+            initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomViewModel.class),
+                    new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom)),
+                    view,
+                    R.id.progress_bar_fragment_actualrooms,
+                    view.findViewById(R.id.cardview_rooms_dropdown_fragment_rooms),
+                    R.id.swipe_refresh
+            );
 
 
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                handleFinishInventory();
-            }
-        });
+            final RoomxItemSharedViewModel roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
+            chooseRoomButton.setOnClickListener(v -> {
+                Room selectedRoom = (Room) roomDropDown.getSelectedItem();
+                if (selectedRoom == null) return;
+                roomxItemSharedViewModel.setCurrentRoom(selectedRoom);
+                Navigation.findNavController(view).navigate(R.id.action_roomFragment_to_itemsFragment);
+            });
 
-        endInventoryButton.setOnClickListener(v -> handleFinishInventory());
+            roomxItemSharedViewModel.getCurrentRoomValidated().observe(getViewLifecycleOwner(), b -> {
+                if (b) {
+                    networkViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
+                    roomxItemSharedViewModel.setCurrentRoomValidated(false);
+                }
+            });
+
+
+            requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    handleFinishInventory();
+                }
+            });
+
+            endInventoryButton.setOnClickListener(v -> handleFinishInventory());
+        }catch (Exception e){   ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText("Gestartete Inventur ist schon fertig!");}
 
     }
 
@@ -127,13 +129,18 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     @Override
     protected void handleSuccess(StatusAwareData<List<Room>> statusAwareData) {
         super.handleSuccess(statusAwareData);
-        if (networkViewModel.noRoomsLeft()) {
+        try {
+            if (networkViewModel.noRoomsLeft()) {
+                roomDropDown.setVisibility(View.GONE);
+                finishedText.setVisibility(View.VISIBLE);
+            } else {
+                GenericDropDownAdapter<Room> adapter =
+                        new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<Room>) statusAwareData.getData());
+                roomDropDown.setAdapter(adapter);
+            }
+        } catch (Exception e) {
             roomDropDown.setVisibility(View.GONE);
             finishedText.setVisibility(View.VISIBLE);
-        } else {
-            GenericDropDownAdapter<Room> adapter =
-                    new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<Room>) statusAwareData.getData());
-            roomDropDown.setAdapter(adapter);
         }
         //roomDropDown.notify();
     }

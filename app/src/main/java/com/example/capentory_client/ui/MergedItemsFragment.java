@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capentory_client.R;
-import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
@@ -161,17 +160,19 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         });
 
         addItem.setOnClickListener(v -> {
-            itemxDetailSharedViewModel.setCurrentItem(MergedItem.createNewEmptyItem(currentRoomString));
+            itemxDetailSharedViewModel.setCurrentItem(MergedItem.createNewEmptyItem());
             NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
         });
 
         itemxDetailSharedViewModel.getValidationEntryForCurrentItem().observe(getViewLifecycleOwner(), validationEntry -> {
             if (validationEntry != null) {
                 itemxDetailSharedViewModel.setValidationEntryForCurrentItem(null);
-                if (!validationEntry.isMissingItem())
+                if (validationEntry.isCanceledItem()){
+                    networkViewModel.removeItemDirectly(itemxDetailSharedViewModel.getCurrentItem().getValue());
+                }else {
                     networkViewModel.addValidationEntry(validationEntry);
-
-                networkViewModel.removeItem(itemxDetailSharedViewModel.getCurrentItem().getValue());
+                    networkViewModel.removeItemByFoundIncrease(itemxDetailSharedViewModel.getCurrentItem().getValue());
+                }
             }
         });
 
@@ -290,6 +291,10 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         List<MergedItem> items = statusAwareData.getData();
         if (items == null) return;
 
+        if (networkViewModel.alreadyValidated(barcode)) {
+
+        }
+
         for (MergedItem item : items) {
             if (item.equalsBarcode(barcode)) {
                 itemxDetailSharedViewModel.setCurrentItem(item);
@@ -298,7 +303,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
             }
         }
 
-        itemxDetailSharedViewModel.setCurrentItem(MergedItem.createSearchedForItem(currentRoomString, barcode));
+        itemxDetailSharedViewModel.setCurrentItem(MergedItem.createSearchedForItem(barcode));
         NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
 
         //ToastUtility.displayCenteredToastMessage(getContext(), "Scanergebnis ist nicht in der Liste!\n" + barcode, Toast.LENGTH_LONG);
