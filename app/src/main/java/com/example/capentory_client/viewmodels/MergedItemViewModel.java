@@ -28,7 +28,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
     }
 
 
-    public void removeItemByFoundIncrease(MergedItem mergedItem) {
+    public void removeItemByFoundCounterIncrease(MergedItem mergedItem) {
         List<MergedItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
 
@@ -36,9 +36,11 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
         startedRemoving = true;
 
         if (mergedItem.getTimesFoundCurrent() >= mergedItem.getTimesFoundLast()) {
+            // We are not adding a NewItem to alreadyValidatedItems because we dont want subitems for any kind of NewItem
+            if (!mergedItem.isNewItem()) alreadyValidatedItems.add(mergedItem);
+
             if (currentItems.remove(mergedItem)) {
                 statusAwareLiveData.postSuccess(currentItems);
-                alreadyValidatedItems.add(mergedItem);
             }
         }
     }
@@ -95,12 +97,8 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
         }
     }
 
-    public boolean alreadyValidated(String barcode) {
-        MergedItem alreadyValidatedItem = getMergedItemFromBarcode(barcode);
-        return alreadyValidatedItem != null;
-    }
 
-    private MergedItem getMergedItemFromBarcode(String barcode) {
+    public MergedItem getMergedItemFromBarcode(String barcode) {
         for (MergedItem alreadyValidatedItem : alreadyValidatedItems) {
             if (alreadyValidatedItem.equalsBarcode(barcode))
                 return alreadyValidatedItem;

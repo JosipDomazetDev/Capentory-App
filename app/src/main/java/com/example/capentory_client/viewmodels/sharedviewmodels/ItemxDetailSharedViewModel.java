@@ -1,5 +1,6 @@
 package com.example.capentory_client.viewmodels.sharedviewmodels;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 

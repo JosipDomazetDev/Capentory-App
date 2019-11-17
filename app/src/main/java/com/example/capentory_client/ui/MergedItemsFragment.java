@@ -165,13 +165,16 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         });
 
         itemxDetailSharedViewModel.getValidationEntryForCurrentItem().observe(getViewLifecycleOwner(), validationEntry -> {
+            // If it's null this means that user aborted the DetailItemScreen altogether and doesn't want to create a ValidationEntry
             if (validationEntry != null) {
                 itemxDetailSharedViewModel.setValidationEntryForCurrentItem(null);
-                if (validationEntry.isCanceledItem()){
+                // This means he pressed the Red Button and wants to remove the Item from the List and mark it as invalid
+                if (validationEntry.isCanceledItem()) {
                     networkViewModel.removeItemDirectly(itemxDetailSharedViewModel.getCurrentItem().getValue());
-                }else {
+                } else {
+                    // This means he pressed the Green Button and wants to add a ValidationEntry
                     networkViewModel.addValidationEntry(validationEntry);
-                    networkViewModel.removeItemByFoundIncrease(itemxDetailSharedViewModel.getCurrentItem().getValue());
+                    networkViewModel.removeItemByFoundCounterIncrease(itemxDetailSharedViewModel.getCurrentItem().getValue());
                 }
             }
         });
@@ -291,10 +294,22 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         List<MergedItem> items = statusAwareData.getData();
         if (items == null) return;
 
-        if (networkViewModel.alreadyValidated(barcode)) {
-
+        // Item already scanned, create subItem (if user wants to)
+        MergedItem mergedItemFromBarcode = networkViewModel.getMergedItemFromBarcode(barcode);
+        if (mergedItemFromBarcode != null) {
+            new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                    .setTitle("Doppelter Eintrag")
+                    .setMessage("Sie haben diesen Gegenstand bereits validiert, wollen Sie ein Subitem anlegen?")
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        itemxDetailSharedViewModel.setCurrentItem(mergedItemFromBarcode);
+                        NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
+            return;
         }
 
+        // Item scanned first time and it's in the list
         for (MergedItem item : items) {
             if (item.equalsBarcode(barcode)) {
                 itemxDetailSharedViewModel.setCurrentItem(item);
@@ -303,10 +318,10 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
             }
         }
 
+        // Scanned item is not in the list ==> query the barcode
         itemxDetailSharedViewModel.setCurrentItem(MergedItem.createSearchedForItem(barcode));
         NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
 
-        //ToastUtility.displayCenteredToastMessage(getContext(), "Scanergebnis ist nicht in der Liste!\n" + barcode, Toast.LENGTH_LONG);
     }
 
     @Override

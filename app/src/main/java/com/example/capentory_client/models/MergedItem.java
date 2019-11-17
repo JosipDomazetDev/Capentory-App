@@ -19,7 +19,10 @@ public class MergedItem {
     private JSONObject itemAsJson, fields;
     @Nullable
     private String barcode, displayName;
-    private int timesFoundLast, timesFoundCurrent = 0;
+    private int timesFoundLast = 0, timesFoundCurrent = 0;
+
+    @Nullable
+    private Room room;
 
 
     // Standard
@@ -37,7 +40,7 @@ public class MergedItem {
         payload = payload.getJSONObject(pkItemId);
         this.barcode = payload.getString("barcode");
         this.displayName = payload.getString("displayName");
-        this.timesFoundLast = payload.getInt("times_found_last");
+        this.timesFoundLast = 4;
         this.itemAsJson = payload;
         this.fields = payload.getJSONObject("fields");
     }
@@ -104,6 +107,10 @@ public class MergedItem {
         return timesFoundLast;
     }
 
+    public boolean isParentItem() {
+        return timesFoundLast > 1;
+    }
+
 
     public int getTimesFoundCurrent() {
         return timesFoundCurrent;
@@ -153,5 +160,14 @@ public class MergedItem {
 
     public void increaseTimesFoundCurrent() {
         timesFoundCurrent++;
+    }
+
+    @Nullable
+    public Room getRoom() {
+        return room;
+    }
+
+    public int getRemainingTimes() {
+        return getTimesFoundLast() - getTimesFoundCurrent();
     }
 }

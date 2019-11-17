@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
@@ -80,6 +81,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         LinearLayout linearLayout = view.findViewById(R.id.content_fragment_item_detail);
         basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dummy));
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
+
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(DetailItemViewModel.class),
                 basicNetworkErrorHandler,
@@ -294,8 +296,24 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     private void handleCancel() {
-        itemxDetailSharedViewModel.setValidationEntryForCurrentItem(ValidationEntry.createCanceledEntry());
-        NavHostFragment.findNavController(this).popBackStack();
+        MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue());
+        if (mergedItem.isParentItem() && mergedItem.getRemainingTimes() > 0) {
+            new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                    .setTitle("Multigegenstand")
+                    .setMessage("Dieser Gegenstand besteht aus mehreren Gegenständen. Wollen Sie die restlichen " + mergedItem.getRemainingTimes() + " alle als fehlend markieren?")
+                    .setPositiveButton("Markieren", (dialog, which) -> {
+                        itemxDetailSharedViewModel.setValidationEntryForCurrentItem(ValidationEntry.createCanceledEntry());
+                        NavHostFragment.findNavController(DetailedItemFragment.this).popBackStack();
+                    })
+                    .setNegativeButton("Nur zurückkehren", (dialog, which) -> {
+                        itemxDetailSharedViewModel.setValidationEntryForCurrentItem(null);
+                        NavHostFragment.findNavController(DetailedItemFragment.this).popBackStack();
+                    })
+                    .show();
+        } else {
+            itemxDetailSharedViewModel.setValidationEntryForCurrentItem(ValidationEntry.createCanceledEntry());
+            NavHostFragment.findNavController(this).popBackStack();
+        }
     }
 
     @NonNull

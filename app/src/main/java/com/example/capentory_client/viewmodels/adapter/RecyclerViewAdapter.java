@@ -48,7 +48,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.anlage_textview.setText(mergedItem.getCheckedDisplayBarcode());
         holder.anlage_bez_textview.setText(mergedItem.getCheckedDisplayName());
 
-        if (mergedItem.getTimesFoundCurrent() > 1) {
+        if (mergedItem.getTimesFoundLast() > 1) {
             holder.counter_textview.setText(String.format("Gefunden: %1$s", (mergedItem.getTimesFoundCurrent() + "/" + mergedItem.getTimesFoundLast())));
             holder.optional_counter_container.setVisibility(View.VISIBLE);
         } else holder.optional_counter_container.setVisibility(View.GONE);
