@@ -244,14 +244,15 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
             //    Log.v(LOG_TAG, key);
             //}
 
+            assert action != null;
             if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
                 //  Received a barcode scan
                 try {
                     String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
                     launchItemDetailFragmentFromBarcode(barcode);
-                    //Log.e("xxxxx", String.valueOf(initiatingIntent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_label_type))));
                 } catch (Exception e) {
                     //  Catch if the UI does not exist when we receive the broadcast
+                    basicNetworkErrorHandler.displayTextViewMessage("Bitte warten Sie bis der Scan bereit ist!");
                 }
             }
         }

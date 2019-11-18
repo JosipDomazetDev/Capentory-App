@@ -30,7 +30,6 @@ public class LoginRepository extends NetworkRepository<String> {
         if (args.length != 2) {
             throw new IllegalArgumentException("Passwort und Benutzer sind zu spezifizieren");
         }
-
         mainContentRepoData = new StatusAwareLiveData<>();
 
         Map<String, String> postParam = new HashMap<>();

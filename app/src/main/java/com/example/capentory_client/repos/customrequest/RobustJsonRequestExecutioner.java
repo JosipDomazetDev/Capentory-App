@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.TimeoutError;
 
 import org.json.JSONArray;
@@ -11,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RobustJsonRequestExecutioner {
+    public static final int DEFAULT_TIMEOUT_MS = 10000;
     private CustomRequest robustJsonObjectRequest;
 
     private static final int MAX_RETRIES = 8;
@@ -19,10 +21,15 @@ public class RobustJsonRequestExecutioner {
 
 
     public RobustJsonRequestExecutioner(Context context, int method, String url, @Nullable String requestBody, NetworkSuccessHandler successHandler, NetworkErrorHandler errorHandler) {
-        this.robustJsonObjectRequest = new CustomRequest(context, method, url,
+        CustomRequest request = new CustomRequest(context, method, url,
                 requestBody,
                 response -> handleSuccessfulResponse(response, successHandler, errorHandler),
                 error -> handleRetry(error, errorHandler));
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                DEFAULT_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        this.robustJsonObjectRequest = request;
         this.context = context;
     }
 

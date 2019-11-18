@@ -60,7 +60,6 @@ public class CustomRequest extends JsonRequest<String> {
 
     @Override
     public Map<String, String> getHeaders() {
-
         if (sendToken) {
             HashMap<String, String> headers = new HashMap<>();
             headers.put("Content-Type", "application/json");

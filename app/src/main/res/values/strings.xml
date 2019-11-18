@@ -124,4 +124,8 @@
     <string name="text_kown_but_different_room_item_fragment_detailitem">Dieser Gegenstand ist ursprünglich aus dem Raum \"%1$s\"!</string>
     <string name="started_inventory_fragment_rooms">Gestartete Inventur: %1$s</string>
     <string name="recycler_view_counter_text_mergeditems">Gefunden: %1$s</string>
+    <string name="room_popup">Raum: %1$s</string>
+    <string name="barcode_popup">Barcode: %1$s</string>
+    <string name="displayname_popup">Anzeigename: %1$s</string>
+    <string name="displaydescription_popup">Anzeigebeschreibung: %1$s</string>
 </resources>

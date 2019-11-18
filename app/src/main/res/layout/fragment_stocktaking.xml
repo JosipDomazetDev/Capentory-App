@@ -105,7 +105,7 @@
                     <Spinner
                         android:id="@+id/db_dropdown_stocktaking_fragment_stocktaking"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:backgroundTint="#2196F3" />
                 </androidx.cardview.widget.CardView>
 
