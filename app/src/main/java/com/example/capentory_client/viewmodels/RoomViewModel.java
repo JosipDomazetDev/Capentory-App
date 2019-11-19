@@ -46,17 +46,20 @@ public class RoomViewModel extends NetworkViewModel<List<Room>, RoomsRepository>
 
     @Override
     public void fetchData(String... args) {
-  /*      if (statusAwareLiveData != null || amountOfValidatedRooms > 0) {
+        if (statusAwareLiveData != null || amountOfValidatedRooms > 0) {
             return;
-        }*/
+        }
 
         statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
     @Override
     public void reloadData(String... args) {
-        if (!noRoomsLeft())
-            statusAwareLiveData = networkRepository.fetchMainData(args);
+        statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
+    public void finishRoom() {
+        amountOfValidatedRooms++;
+        reloadData();
+    }
 }

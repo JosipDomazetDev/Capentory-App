@@ -3,8 +3,10 @@ package com.example.capentory_client.repos;
 import android.content.Context;
 
 import com.android.volley.Request;
+import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.SerializerEntry;
 import com.example.capentory_client.models.Stocktaking;
+import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONArray;
@@ -23,8 +25,10 @@ import javax.inject.Singleton;
 @Singleton
 public class StocktakingRepository extends NetworkRepository<List<SerializerEntry>> {
     private final String GET_STOCKTAKINGS_REQUEST_KEY = "request_get_stocktakings";
+    private final String GET_SEARCHED_FOR_ITEM_REQUEST_KEY = "request_get_specific_item";
     // This one musn't be reset
     private StatusAwareLiveData<List<Stocktaking>> activeStocktakingsLiveData = new StatusAwareLiveData<>();
+    private StatusAwareLiveData<MergedItem> specificallySearchedForItem;
 
 
     @Inject
@@ -89,4 +93,25 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
     }
 
 
+    public StatusAwareLiveData<MergedItem> fetchSpecificallySearchedForItem(String barcode) {
+        specificallySearchedForItem = new StatusAwareLiveData<>();
+
+        addRequest(GET_SEARCHED_FOR_ITEM_REQUEST_KEY, Request.Method.GET,
+                getUrl(context, true, MainActivity.getSerializer().getItemUrl(), barcode),
+                stringPayload -> {
+                    try {
+                        JSONObject payload = new JSONObject(stringPayload);
+                        if (payload.length() == 0) {
+                            specificallySearchedForItem.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode));
+                        } else {
+                            specificallySearchedForItem.postSuccess(new MergedItem(payload.keys().next(), payload));
+                        }
+                    } catch (JSONException error) {
+                        specificallySearchedForItem.postError(error);
+                    }
+                }, specificallySearchedForItem);
+        launchRequestFromKey(GET_SEARCHED_FOR_ITEM_REQUEST_KEY, specificallySearchedForItem);
+
+        return specificallySearchedForItem;
+    }
 }

@@ -91,7 +91,8 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
 
             roomxItemSharedViewModel.getCurrentRoomValidated().observe(getViewLifecycleOwner(), b -> {
                 if (b) {
-                    networkViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
+                    //networkViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
+                    networkViewModel.finishRoom();
                     roomxItemSharedViewModel.setCurrentRoomValidated(false);
                 }
             });
@@ -105,7 +106,9 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
             });
 
             endInventoryButton.setOnClickListener(v -> handleFinishInventory());
-        }catch (Exception e){   ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText("Gestartete Inventur ist schon fertig!");}
+        } catch (Exception e) {
+            ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText("Gestartete Inventur ist schon fertig!");
+        }
 
     }
 

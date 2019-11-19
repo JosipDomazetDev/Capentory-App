@@ -2,6 +2,7 @@ package com.example.capentory_client.viewmodels;
 
 import androidx.lifecycle.LiveData;
 
+import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.SerializerEntry;
 import com.example.capentory_client.models.Stocktaking;
 import com.example.capentory_client.repos.StocktakingRepository;
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 
 public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>, StocktakingRepository> {
     private StatusAwareLiveData<List<Stocktaking>> stocktakingsLiveData;
+    private StatusAwareLiveData<MergedItem> specificallySearchedForItem;
 
     @Inject
     public StocktakingViewModel(StocktakingRepository jsonRepository) {
@@ -22,6 +24,10 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
 
     @Override
     public void fetchData(String... args) {
+        if (statusAwareLiveData != null) {
+            return;
+        }
+
         statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
@@ -32,6 +38,10 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
     }
 
     public void fetchStocktakings() {
+        if (statusAwareLiveData != null) {
+            return;
+        }
+
         stocktakingsLiveData = networkRepository.fetchStocktakings();
     }
 
@@ -39,5 +49,13 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
         return stocktakingsLiveData;
     }
 
+
+    public void fetchSpecificallySearchedForItem(String barcode) {
+        specificallySearchedForItem  = networkRepository.fetchSpecificallySearchedForItem(barcode);
+    }
+
+    public LiveData<StatusAwareData<MergedItem>> getSpecificallySearchedForItem() {
+        return specificallySearchedForItem;
+    }
 
 }

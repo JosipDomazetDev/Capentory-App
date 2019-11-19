@@ -124,8 +124,11 @@
     <string name="text_kown_but_different_room_item_fragment_detailitem">Dieser Gegenstand ist ursprünglich aus dem Raum \"%1$s\"!</string>
     <string name="started_inventory_fragment_rooms">Gestartete Inventur: %1$s</string>
     <string name="recycler_view_counter_text_mergeditems">Gefunden: %1$s</string>
-    <string name="room_popup">Raum: %1$s</string>
-    <string name="barcode_popup">Barcode: %1$s</string>
-    <string name="displayname_popup">Anzeigename: %1$s</string>
-    <string name="displaydescription_popup">Anzeigebeschreibung: %1$s</string>
+    <string name="room_popup"><![CDATA[<b>Raum:</b> %1$s]]></string>
+    <string name="barcode_popup"><![CDATA[<b>Barcode:</b> %1$s]]></string>
+    <string name="displayname_popup"><![CDATA[<b>Anzeigename:</b> %1$s]]></string>
+    <string name="displaydescription_popup"><![CDATA[<b>Anzeigebeschreibung:</b> %1$s]]></string>
+    <string name="not_found_titel_popup">Unbekanntes Item!</string>
+    <string name="found_titel_popup">Wir haben das Item in der Datenbank gefunden!</string>
+    <string name="status_popup">In unserem System ist kein Barcode mit dem Wert \"%1$s\" vorhanden. Falls Sie der Meinung sind, dass dies unerwünscht ist, so wenden Sie sich bitte den Inventurverantwortlichten!</string>
 </resources>

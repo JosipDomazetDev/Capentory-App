@@ -73,6 +73,33 @@
             </androidx.cardview.widget.CardView>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/end_inventory_button_fragment_room"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:letterSpacing="0"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="Ich bin fertig"
+                android:textAllCaps="false"
+                android:textColor="#F44336"
+                android:textSize="15sp"
+                android:textStyle="normal"
+                app:cornerRadius="6dp"
+                app:layout_constraintBottom_toTopOf="@+id/choose_room_button_fragment_room"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardview_rooms_dropdown_fragment_rooms"
+                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintWidth_max="400dp"
+                app:strokeColor="#F44336"
+                app:strokeWidth="2dp" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/choose_room_button_fragment_room"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
@@ -94,33 +121,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintWidth_max="400dp"
                 app:strokeWidth="2dp" />
-
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/end_inventory_button_fragment_room"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="Ich bin fertig"
-                android:textAllCaps="false"
-                android:textColor="#F44336"
-                android:textSize="15sp"
-                android:textStyle="normal"
-                app:cornerRadius="6dp"
-                app:layout_constraintBottom_toTopOf="@+id/choose_room_button_fragment_room"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardview_rooms_dropdown_fragment_rooms"
-                app:layout_constraintVertical_bias="1.0"
-                app:layout_constraintWidth_max="400dp"
-                app:strokeColor="#F44336"
-                app:strokeWidth="1dp" />
 
 
             <TextView

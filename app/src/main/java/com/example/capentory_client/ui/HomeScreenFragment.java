@@ -62,24 +62,6 @@ public class HomeScreenFragment extends NetworkFragment<MergedItem, HomeScreenRe
     @Inject
     ViewModelProviderFactory providerFactory;
 
-    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            assert action != null;
-            if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
-                //  Received a barcode scan
-                try {
-                    String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
-                    fetchManually(barcode);
-                } catch (Exception e) {
-                    //  Catch if the UI does not exist when we receive the broadcast
-                    basicNetworkErrorHandler.displayTextViewMessage("Bitte warten Sie bis der Scan bereit ist!");
-                }
-            }
-        }
-    };
-
 
     public HomeScreenFragment() {
         // Required empty public constructor
@@ -116,54 +98,12 @@ public class HomeScreenFragment extends NetworkFragment<MergedItem, HomeScreenRe
             } else Navigation.findNavController(v).navigate(R.id.loginFragment);
         });
 
-        view.findViewById(R.id.scanitem_fragment_homescreen).setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), ScanBarcodeActivity.class);
-            startActivityForResult(intent, 0);
-        });
+
+
 
 
     }
 
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 0) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                if (data != null) {
-                    String barcode = data.getStringExtra("barcode");
-                    fetchManually(barcode);
-                } else {
-                    Toast.makeText(getContext(), "Scan ist fehlgeschlagen!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    protected void handleSuccess(StatusAwareData<MergedItem> statusAwareData) {
-        super.handleSuccess(statusAwareData);
-        showPopup(statusAwareData.getData(), new Dialog(Objects.requireNonNull(getContext())));
-    }
-
-    public void showPopup(MergedItem mergedItem, Dialog dialog) {
-        TextView room = dialog.findViewById(R.id.room_popup);
-        TextView barcode = dialog.findViewById(R.id.barcode_popup);
-        TextView displayname = dialog.findViewById(R.id.displayname_popup);
-        TextView displaydesc = dialog.findViewById(R.id.displaydescription_popup);
-
-        room.setText(String.format(getString(R.string.room_popup), mergedItem.getDescriptionaryRoom()));
-        barcode.setText(String.format(getString(R.string.barcode_popup), mergedItem.getBarcode()));
-        displayname.setText(String.format(getString(R.string.displayname_popup), mergedItem.getDisplayName()));
-        displaydesc.setText(String.format(getString(R.string.displaydescription_popup), mergedItem.getDisplayDescription()));
-
-        dialog.findViewById(R.id.exit_popup).setOnClickListener(v -> dialog.dismiss());
-        dialog.findViewById(R.id.ok_popup).setOnClickListener(v -> dialog.dismiss());
-
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.show();
-    }
 
 
     private void initTTS(View view) {
@@ -204,20 +144,6 @@ public class HomeScreenFragment extends NetworkFragment<MergedItem, HomeScreenRe
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        filter.addAction(getResources().getString(R.string.activity_intent_filter_action));
-        Objects.requireNonNull(getContext()).registerReceiver(myBroadcastReceiver, filter);
-    }
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Objects.requireNonNull(getContext()).unregisterReceiver(myBroadcastReceiver);
-    }
 
 }

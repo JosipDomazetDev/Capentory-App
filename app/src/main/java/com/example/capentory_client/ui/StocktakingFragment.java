@@ -1,11 +1,16 @@
 package com.example.capentory_client.ui;
 
 
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -18,24 +23,31 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.os.Message;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.PopUtility;
 import com.example.capentory_client.androidutility.ToastUtility;
+import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.SerializerEntry;
 import com.example.capentory_client.models.Stocktaking;
 import com.example.capentory_client.repos.StocktakingRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.example.capentory_client.viewmodels.StocktakingViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
+import com.google.android.gms.common.api.CommonStatusCodes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +63,26 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     private static final String CHANNEL_ID = "inventory_channel_01";
     static final int NOTIFICATION_INV_STARTED_ID = 10;
     private Spinner stocktakingDropDown;
+    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            assert action != null;
+            if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
+                //  Received a barcode scan
+                try {
+                    String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
+                    setSerializer();
+                    networkViewModel.fetchSpecificallySearchedForItem(barcode);
+                    observeSpecificLiveData(networkViewModel.getSpecificallySearchedForItem(), liveData ->
+                            showPopup(liveData.getData(), new Dialog(Objects.requireNonNull(getContext()))));
+                } catch (Exception e) {
+                    //  Catch if the UI does not exist when we receive the broadcast
+                    basicNetworkErrorHandler.displayTextViewMessage("Bitte warten Sie bis der Scan bereit ist!");
+                }
+            }
+        }
+    };
 
 
     public StocktakingFragment() {
@@ -75,9 +107,8 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         serializerDropDown = view.findViewById(R.id.db_dropdown_serializer_fragment_stocktaking);
         stocktakingDropDown = view.findViewById(R.id.db_dropdown_stocktaking_fragment_stocktaking);
         Log.e("eee33434333333eee", "eee");
+        Log.e("hhdehhbbeee334ee", "eee");
         Log.e("hhjhjjhhhbbeee334ee", "eee");
-        Log.e("eee33333eee", "eee");
-        Log.e("eeee44434e", "eee");
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(StocktakingViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),
@@ -105,26 +136,94 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         });
 
         btnStocktaking.setOnClickListener(v -> tryToStartInventory(view));
+
+
+        view.findViewById(R.id.button_specific_search_fragment_stocktaking).setOnClickListener(v -> {
+            setSerializer();
+            Intent intent = new Intent(getContext(), ScanBarcodeActivity.class);
+            startActivityForResult(intent, 0);
+        });
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 0) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    String barcode = data.getStringExtra("barcode");
+                    networkViewModel.fetchSpecificallySearchedForItem(barcode);
+                    observeSpecificLiveData(networkViewModel.getSpecificallySearchedForItem(), liveData ->
+                            showPopup(liveData.getData(), new Dialog(Objects.requireNonNull(getContext()))));
+                } else {
+                    Toast.makeText(getContext(), "Scan ist fehlgeschlagen!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+
+    public void showPopup(MergedItem mergedItem, Dialog dialog) {
+        hideProgressBarAndShowContent();
+        dialog.setContentView(R.layout.itempopup);
+
+        dialog.setCancelable(true);
+        dialog.setCancelMessage(new Message());
+        dialog.findViewById(R.id.ok_popup).setOnClickListener(v -> dialog.dismiss());
+        TextView titel = dialog.findViewById(R.id.titel_popup);
+
+        if (mergedItem.isNewItem()) {
+            titel.setText(getString(R.string.not_found_titel_popup));
+            dialog.findViewById(R.id.content_popup).setVisibility(View.GONE);
+            TextView status = dialog.findViewById(R.id.status_popup);
+            status.setText(String.format(getString(R.string.status_popup), mergedItem.getBarcode()));
+
+        } else {
+            titel.setText(getString(R.string.found_titel_popup));
+
+            TextView room = dialog.findViewById(R.id.room_popup);
+            TextView barcode = dialog.findViewById(R.id.barcode_popup);
+            TextView displayname = dialog.findViewById(R.id.displayname_popup);
+            TextView displaydesc = dialog.findViewById(R.id.displaydescription_popup);
+
+            room.setText(PopUtility.getHTMLFromString(R.string.room_popup, mergedItem.getDescriptionaryRoom(), getContext()));
+            barcode.setText(PopUtility.getHTMLFromString(R.string.barcode_popup, mergedItem.getBarcode(), getContext()));
+            displayname.setText(PopUtility.getHTMLFromString(R.string.displayname_popup, mergedItem.getDisplayName(), getContext()));
+            displaydesc.setText(PopUtility.getHTMLFromString(R.string.displaydescription_popup, mergedItem.getDisplayDescription(), getContext()));
+        }
+
+        dialog.show();
     }
 
     private void tryToStartInventory(@NonNull View view) {
-        SerializerEntry selectedSerializer = (SerializerEntry) serializerDropDown.getSelectedItem();
-        if (selectedSerializer == null) {
-            ToastUtility.displayCenteredToastMessage(getContext(), "Server unterstützt keine Inventuren!", Toast.LENGTH_LONG);
-            return;
-        }
+        if (!setSerializer()) return;
+        if (!setStocktaking()) return;
+
+        createStartNotification();
+        NavHostFragment.findNavController(this).popBackStack();
+        Navigation.findNavController(view).navigate(R.id.roomFragment);
+    }
+
+    private boolean setStocktaking() {
         Stocktaking selectedStocktaking = (Stocktaking) stocktakingDropDown.getSelectedItem();
         if (selectedStocktaking == null) {
             ToastUtility.displayCenteredToastMessage(getContext(), "Sie müssen erst eine Inventur am Server anlegen!", Toast.LENGTH_LONG);
-            return;
+            return false;
         }
-
-        createStartNotification();
-
         MainActivity.setStocktaking(selectedStocktaking);
+        return true;
+    }
+
+    private boolean setSerializer() {
+        SerializerEntry selectedSerializer = (SerializerEntry) serializerDropDown.getSelectedItem();
+        if (selectedSerializer == null) {
+            ToastUtility.displayCenteredToastMessage(getContext(), "Server unterstützt keine Inventuren!", Toast.LENGTH_LONG);
+            return false;
+        }
         MainActivity.setSerializer(selectedSerializer);
-        NavHostFragment.findNavController(this).popBackStack();
-        Navigation.findNavController(view).navigate(R.id.roomFragment);
+        return true;
     }
 
     @Override
@@ -176,5 +275,21 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         notificationManager.notify(NOTIFICATION_INV_STARTED_ID, builder.build());
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        filter.addAction(getResources().getString(R.string.activity_intent_filter_action));
+        Objects.requireNonNull(getContext()).registerReceiver(myBroadcastReceiver, filter);
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Objects.requireNonNull(getContext()).unregisterReceiver(myBroadcastReceiver);
+    }
 
 }

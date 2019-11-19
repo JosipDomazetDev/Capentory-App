@@ -23,6 +23,7 @@ public class GenericDropDownAdapter<T extends GenericDropDownAdapter.DropDownEnt
         String displayDescription();
     }
 
+
     public GenericDropDownAdapter(Context context, ArrayList<T> entries) {
         super(context, 0, entries);
     }
@@ -59,4 +60,6 @@ public class GenericDropDownAdapter<T extends GenericDropDownAdapter.DropDownEnt
         }
         return convertView;
     }
+
+
 }
