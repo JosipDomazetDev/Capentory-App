@@ -26,6 +26,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.os.Message;
 import android.text.Html;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,7 +107,8 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         final Button btnStocktaking = view.findViewById(R.id.button_fragment_stocktaking);
         serializerDropDown = view.findViewById(R.id.db_dropdown_serializer_fragment_stocktaking);
         stocktakingDropDown = view.findViewById(R.id.db_dropdown_stocktaking_fragment_stocktaking);
-        Log.e("eee33434333333eee", "eee");
+        Log.e("eee3343eeeeee4333333eee", "eee");
+        Log.e("eee33434rrrrrr333333eee", "eee");
         Log.e("hhdehhbbeee334ee", "eee");
         Log.e("hhjhjjhhhbbeee334ee", "eee");
 
@@ -146,6 +148,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     }
 
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 0) {
@@ -165,12 +168,13 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     }
 
 
+
+
     public void showPopup(MergedItem mergedItem, Dialog dialog) {
         hideProgressBarAndShowContent();
         dialog.setContentView(R.layout.itempopup);
 
         dialog.setCancelable(true);
-        dialog.setCancelMessage(new Message());
         dialog.findViewById(R.id.ok_popup).setOnClickListener(v -> dialog.dismiss());
         TextView titel = dialog.findViewById(R.id.titel_popup);
 
@@ -178,8 +182,8 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
             titel.setText(getString(R.string.not_found_titel_popup));
             dialog.findViewById(R.id.content_popup).setVisibility(View.GONE);
             TextView status = dialog.findViewById(R.id.status_popup);
+            status.setVisibility(View.VISIBLE);
             status.setText(String.format(getString(R.string.status_popup), mergedItem.getBarcode()));
-
         } else {
             titel.setText(getString(R.string.found_titel_popup));
 

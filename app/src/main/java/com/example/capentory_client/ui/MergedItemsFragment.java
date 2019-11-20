@@ -4,13 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +31,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
@@ -60,6 +64,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
     private RecyclerViewAdapter adapter;
     private TextView noItemTextView;
     private String currentRoomString;
+    private boolean isKeyboardShowing = false;
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -138,9 +143,13 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
 
 
         finishRoom.setOnClickListener(v -> {
+
             String title;
             String message;
-            if (networkViewModel.getAmountOfItemsLeft() == 1) {
+            if (MainActivity.getStocktaking().isEndingStocktaking()) {
+                title = "Alles im Raum erledigt?";
+                message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?";
+            } else if (networkViewModel.getAmountOfItemsLeft() == 1) {
                 title = "Fehlt ein Gegenstand?";
                 message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden? Ein Gegenstand wird als fehlend markiert!";
             } else if (networkViewModel.getAmountOfItemsLeft() > 1) {
@@ -191,6 +200,34 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
                         .show();
             }
         });
+
+
+        // https://stackoverflow.com/questions/4745988/how-do-i-detect-if-software-keyboard-is-visible-on-android-device
+        View root = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
+        root.getViewTreeObserver().addOnGlobalLayoutListener(
+                () -> {
+
+                    Rect r = new Rect();
+                    root.getWindowVisibleDisplayFrame(r);
+                    int screenHeight = root.getRootView().getHeight();
+
+                    // r.bottom is the position above soft keypad or device button.
+                    // if keypad is shown, the r.bottom is smaller than that before.
+                    int keypadHeight = screenHeight - r.bottom;
+
+
+                    if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                        // keyboard is opened
+                        if (!isKeyboardShowing) {
+                            isKeyboardShowing = true;
+                        }
+                    } else {
+                        // keyboard is closed
+                        if (isKeyboardShowing) {
+                            isKeyboardShowing = false;
+                        }
+                    }
+                });
     }
 
     @Override
@@ -235,6 +272,10 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
     private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            // User has the option to disable this behaviour in case the keyboard detection bugs
+            if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), "switch_enforece_zebra", true))
+                return;
+
             String action = intent.getAction();
 
             //Bundle b = intent.getExtras();

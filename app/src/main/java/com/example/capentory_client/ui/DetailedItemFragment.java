@@ -8,6 +8,7 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -97,7 +98,6 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                         }
                     }
                 });
-        fetchSearchedForItem(view);
 
 
         ImageButton validateButton = view.findViewById(R.id.validate_btn_fragment_itemdetail);
@@ -107,12 +107,14 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         cancelButton.setOnClickListener(v -> handleCancel());
     }
 
-    private void fetchSearchedForItem(@NonNull View view) {
+    private boolean fetchSearchedForItem(@NonNull View view) {
         MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem().getValue();
         if (mergedItem != null && mergedItem.isSearchedForItem()) {
             networkViewModel.fetchSearchedForItem(mergedItem.getBarcode());
             observeSpecificLiveData(networkViewModel.getSearchedForItem(), liveData -> handleSearchedForItemResponse(view, liveData));
+            return true;
         }
+        return false;
     }
 
     private void handleSearchedForItemResponse(@NonNull View view, StatusAwareData<MergedItem> liveData) {
@@ -127,7 +129,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
             textView.setText(String.format(getString(R.string.text_kown_but_different_room_item_fragment_detailitem), mergedItem.getDescriptionaryRoom()));
 
         textView.setVisibility(View.VISIBLE);
-        handleSuccess(networkViewModel.getData().getValue());
+        try {
+            displayForm(view);
+            hideProgressBarAndShowContent();
+        } catch (JSONException e) {
+            basicNetworkErrorHandler.displayTextViewErrorMessage(e);
+        }
     }
 
 
@@ -135,7 +142,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     protected void handleSuccess(StatusAwareData<Map<String, MergedItemField>> statusAwareData) {
         super.handleSuccess(statusAwareData);
         try {
-            displayForm(view);
+            if (!fetchSearchedForItem(view))
+                displayForm(view);
         } catch (JSONException e) {
             basicNetworkErrorHandler.displayTextViewErrorMessage(e);
         }
@@ -321,6 +329,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     private ValidationEntry getValidationEntryFromFormData(MergedItem currentItem) {
         // Prepare the ValidationEntry for the currentItem
         ValidationEntry validationEntry = new ValidationEntry(currentItem);
+        validationEntry.setMarkForLater(((CheckBox) view.findViewById(R.id.mark_for_later_checkbox_fragment_itemdetail)).isChecked());
 
         // fieldName, MergedItemField
         Map<String, MergedItemField> mapFieldNameToField = Objects.requireNonNull(networkViewModel.getData().getValue()).getData();

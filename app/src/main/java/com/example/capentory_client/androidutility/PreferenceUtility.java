@@ -2,6 +2,7 @@ package com.example.capentory_client.androidutility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import java.util.Objects;
 
@@ -14,6 +15,14 @@ public final class PreferenceUtility {
     // Private constructor to prevent instantiation
     private PreferenceUtility() {
         throw new UnsupportedOperationException();
+    }
+
+    public static boolean getBoolean(Context context, String key, boolean defValue) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, defValue);
+    }
+
+    public static boolean getBoolean(Context context, String key) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, false);
     }
 
     public static String getToken(Context context) {

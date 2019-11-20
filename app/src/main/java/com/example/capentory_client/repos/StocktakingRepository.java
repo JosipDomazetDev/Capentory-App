@@ -28,7 +28,6 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
     private final String GET_SEARCHED_FOR_ITEM_REQUEST_KEY = "request_get_specific_item";
     // This one musn't be reset
     private StatusAwareLiveData<List<Stocktaking>> activeStocktakingsLiveData = new StatusAwareLiveData<>();
-    private StatusAwareLiveData<MergedItem> specificallySearchedForItem;
 
 
     @Inject
@@ -94,7 +93,7 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
 
 
     public StatusAwareLiveData<MergedItem> fetchSpecificallySearchedForItem(String barcode) {
-        specificallySearchedForItem = new StatusAwareLiveData<>();
+       StatusAwareLiveData<MergedItem> specificallySearchedForItem = new StatusAwareLiveData<>();
 
         addRequest(GET_SEARCHED_FOR_ITEM_REQUEST_KEY, Request.Method.GET,
                 getUrl(context, true, MainActivity.getSerializer().getItemUrl(), barcode),

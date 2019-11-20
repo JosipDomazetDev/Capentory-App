@@ -38,7 +38,7 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
     }
 
     public void fetchStocktakings() {
-        if (statusAwareLiveData != null) {
+        if (getStocktakings() != null) {
             return;
         }
 
@@ -51,7 +51,7 @@ public class StocktakingViewModel extends NetworkViewModel<List<SerializerEntry>
 
 
     public void fetchSpecificallySearchedForItem(String barcode) {
-        specificallySearchedForItem  = networkRepository.fetchSpecificallySearchedForItem(barcode);
+        specificallySearchedForItem = networkRepository.fetchSpecificallySearchedForItem(barcode);
     }
 
     public LiveData<StatusAwareData<MergedItem>> getSpecificallySearchedForItem() {

@@ -70,6 +70,8 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
 
 
     public <T> void observeSpecificLiveData(LiveData<StatusAwareData<T>> data, LiveDataSuccessHandler<T> liveDataSuccessHandler) {
+        if (data == null) return;
+
         data.observe(getViewLifecycleOwner(), statusAwareData -> {
             switch (statusAwareData.getStatus()) {
                 case SUCCESS:

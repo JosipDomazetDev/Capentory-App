@@ -46,9 +46,9 @@
                     android:id="@+id/otherroom_textview_fragment_itemdetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
                     android:text="Dieser Gegenstand ist aus einem anderen Raum!"
                     android:textAlignment="center"
                     android:textColor="#4CAF50"
@@ -87,6 +87,7 @@
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/otherroom_textview_fragment_itemdetail">
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
@@ -102,8 +103,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="16dp"
-                        android:textAlignment="center"
-                        />
+                        android:textAlignment="center" />
 
 
                     <TextView
@@ -112,8 +112,15 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="16dp"
-                        android:layout_marginBottom="20dp" />
+                        android:layout_marginBottom="20dp"
+                       />
 
+
+                    <CheckBox
+                        android:id="@+id/mark_for_later_checkbox_fragment_itemdetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Erst später entscheiden" />
 
                     <View
                         android:layout_width="match_parent"
@@ -139,6 +146,7 @@
                         android:layout_marginEnd="4dp"
                         android:layout_marginBottom="20dp"
                         android:background="#D8D8D8" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/button_constraintLayout"
                         android:layout_width="wrap_content"
@@ -151,11 +159,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/rounded_edges_green"
+                            android:contentDescription="check button"
                             android:padding="25dp"
                             android:src="@drawable/ic_check_white_36dp"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:contentDescription="check button" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <ImageButton
                             android:id="@+id/cancel_btn_fragment_itemdetail"
@@ -163,13 +171,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="40dp"
                             android:background="@drawable/rounded_edges_red"
+                            android:contentDescription="cancel button"
                             android:padding="25dp"
                             android:src="@drawable/ic_close_white_36dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/validate_btn_fragment_itemdetail"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:contentDescription="cancel button" />
+                            app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,8 @@ import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 /**
  * Represents an Room from ralph, only the displayNumber is directly stored to allow later changes to the server
  */
@@ -16,13 +18,14 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
     private String displayNumber, roomNumber;
 
     @Nullable
-    private String displayDescriptions;
+    private String displayDescriptions, barcode;
 
     public Room(@NonNull String key, JSONObject payload) throws JSONException {
         this.roomNumber = key;
         payload = payload.getJSONObject(key);
         this.displayNumber = payload.getString("displayName");
         this.displayDescriptions = payload.getString("displayDescription");
+        this.barcode = payload.optString("barcode");
     }
 
 
@@ -75,5 +78,16 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
             }
         }
         return 0;
+    }
+
+
+    @Nullable
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public boolean equalsBarcode(String scannedBarcode) {
+        if (getBarcode() == null) return false;
+        return getBarcode().equals(scannedBarcode);
     }
 }

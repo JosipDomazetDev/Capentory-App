@@ -125,6 +125,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mergedItems.clear();
+            if (results.values == null) return;
             mergedItems.addAll((Collection<? extends MergedItem>) results.values);
             notifyDataSetChanged();
         }

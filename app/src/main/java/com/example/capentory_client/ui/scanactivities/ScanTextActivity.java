@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
@@ -29,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.ui.scanactivities.modifiedgoogleapi.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
@@ -66,7 +68,11 @@ public class ScanTextActivity extends AppCompatActivity {
         textFilterMode = getTextFilterMode();
         btnUnlock = findViewById(R.id.unlock_button_activity_scan_text);
         startCameraSource();
-
+        Handler h = new Handler();
+        h.postDelayed(() -> {
+            if (PreferenceUtility.getBoolean(ScanTextActivity.this, "switch_lightning"))
+                findViewById(R.id.btn_flash_activity_scan_text).callOnClick();
+        }, 100);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

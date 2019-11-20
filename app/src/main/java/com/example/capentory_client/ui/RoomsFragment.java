@@ -1,5 +1,9 @@
 package com.example.capentory_client.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,11 +28,13 @@ import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.Room;
 import com.example.capentory_client.repos.RoomsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.example.capentory_client.viewmodels.RoomViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
+import com.google.android.gms.common.api.CommonStatusCodes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +50,25 @@ import javax.inject.Inject;
  */
 public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, RoomViewModel> {
     private Spinner roomDropDown;
+    private RoomxItemSharedViewModel roomxItemSharedViewModel;
     private TextView finishedText;
+    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            assert action != null;
+            if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
+                //  Received a barcode scan
+                try {
+                    String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
+                    navigateByBarcode(barcode);
+                } catch (Exception e) {
+                    //  Catch if the UI does not exist when we receive the broadcast
+                    basicNetworkErrorHandler.displayTextViewMessage("Bitte warten Sie bis der Scan bereit ist!");
+                }
+            }
+        }
+    };
 
 
     public RoomsFragment() {
@@ -81,7 +105,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
             );
 
 
-            final RoomxItemSharedViewModel roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
+            roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
             chooseRoomButton.setOnClickListener(v -> {
                 Room selectedRoom = (Room) roomDropDown.getSelectedItem();
                 if (selectedRoom == null) return;
@@ -106,19 +130,57 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
             });
 
             endInventoryButton.setOnClickListener(v -> handleFinishInventory());
+
+            view.findViewById(R.id.scan_room_floatingbtn_fragment_room).setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), ScanBarcodeActivity.class);
+                startActivityForResult(intent, 0);
+            });
         } catch (Exception e) {
             ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText("Gestartete Inventur ist schon fertig!");
         }
 
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 0) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    String barcode = data.getStringExtra("barcode");
+                    navigateByBarcode(barcode);
+                } else {
+                    Toast.makeText(getContext(), "Scan ist fehlgeschlagen!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    public void navigateByBarcode(String barcode) {
+        StatusAwareData<List<Room>> roomsLiveData = networkViewModel.getData().getValue();
+        if (roomsLiveData == null || roomsLiveData.getData() == null) return;
+        for (Room room : roomsLiveData.getData()) {
+            if (room.equalsBarcode(barcode)) {
+                roomxItemSharedViewModel.setCurrentRoom(room);
+                NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment);
+                return;
+            }
+        }
+        ToastUtility.displayCenteredToastMessage(getContext(), "Dieser Barcode gehört zu keinem aktiven Raum!", Toast.LENGTH_LONG);
+    }
+
     private void handleFinishInventory() {
-        new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                .setTitle("Inventurvorgang")
-                .setMessage("Wollen Sie die aktuelle Inventur abschließen? Anzahl der validierten Räume: " + networkViewModel.getAmountOfValidatedRooms())
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> finishInventory())
-                .setNegativeButton(android.R.string.no, null)
-                .show();
+        if (MainActivity.getStocktaking().isEndingStocktaking()) {
+            finishInventory();
+        } else
+            new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                    .setTitle("Inventurvorgang")
+                    .setMessage("Wollen Sie die aktuelle Inventur abschließen? Anzahl der validierten Räume: " + networkViewModel.getAmountOfValidatedRooms())
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> finishInventory())
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
     }
 
     private void finishInventory() {
@@ -147,5 +209,23 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
         }
         //roomDropDown.notify();
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        filter.addAction(getResources().getString(R.string.activity_intent_filter_action));
+        Objects.requireNonNull(getContext()).registerReceiver(myBroadcastReceiver, filter);
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Objects.requireNonNull(getContext()).unregisterReceiver(myBroadcastReceiver);
+    }
+
 
 }

@@ -14,10 +14,12 @@ import java.util.List;
 public class ValidationEntry {
     private static final String CANCEL_CODE = "-205";
     private static final String PK_JSON_KEY = "itemID";
+    private static final String MARK_FOR_LATER_VALIDATION_JSON_KEY = "mark_for_later_validation";
     private static final String BARCODE_JSON_KEY = "barcode";
     private MergedItem mergedItem;
     private String pkItem;
     private String barcode;
+    private boolean markForLater = false;
     private List<Field> fieldChanges = new ArrayList<>();
 
     private ValidationEntry(String pkItem) {
@@ -63,6 +65,10 @@ public class ValidationEntry {
     private static JSONObject getValidationEntryAsJson(ValidationEntry validationEntry) throws JSONException {
         JSONObject validationEntryAsJson = new JSONObject();
         validationEntryAsJson.put(PK_JSON_KEY, validationEntry.pkItem);
+        // If the user wants the admin to check further
+        if (validationEntry.markForLater)
+            validationEntryAsJson.put(MARK_FOR_LATER_VALIDATION_JSON_KEY, true);
+
         if (validationEntry.mergedItem.isNewItem()) {
             // New Items require a barcode
             validationEntryAsJson.put(BARCODE_JSON_KEY, validationEntry.barcode);
@@ -92,6 +98,10 @@ public class ValidationEntry {
             fieldChanges.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
         }
 
+    }
+
+    public void setMarkForLater(boolean b) {
+        markForLater = b;
     }
 
 

@@ -21,12 +21,14 @@ public class Stocktaking implements GenericDropDownAdapter.DropDownEntry {
     @Nullable
     private String comment, date;
 
+    boolean neverEndStocktaking = false;
 
     public Stocktaking(JSONObject payload) throws JSONException {
         this.stocktakingId = payload.getInt("stocktake_id");
         this.name = payload.getString("name");
         this.comment = payload.getString("comment");
         this.date = getGermanDate(payload.getString("date_started"));
+        this.neverEndStocktaking = payload.getBoolean("neverending_stocktaking");
     }
 
     private static String getGermanDate(String fetchedDate) {
@@ -72,4 +74,10 @@ public class Stocktaking implements GenericDropDownAdapter.DropDownEntry {
     public String displayDescription() {
         return getDate();
     }
+
+    public boolean isEndingStocktaking() {
+        return !neverEndStocktaking;
+    }
 }
+
+

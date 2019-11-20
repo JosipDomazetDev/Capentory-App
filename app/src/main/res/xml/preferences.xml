@@ -1,35 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Serverkonnektivität herstellen">
 
-    <EditTextPreference
-        android:inputType="textUri"
-        android:key="server_ip"
-        android:summary="IP-Adresse oder Hostname konfigurieren"
-        android:title="Serveradresse" />
-    <EditTextPreference
-        android:defaultValue="80"
-        android:inputType="number"
-        android:key="server_port"
-        android:summary="Portnummer konfigurieren (Default:80)"
-        android:title="Serverport" />
+        <EditTextPreference
+            android:inputType="textUri"
+            android:key="server_ip"
+            android:summary="IP-Adresse oder Hostname konfigurieren"
+            android:title="Serveradresse" />
+        <EditTextPreference
+            android:defaultValue="80"
+            android:inputType="number"
+            android:key="server_port"
+            android:summary="Portnummer konfigurieren (Default:80)"
+            android:title="Serverport" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Scaneinstellungen">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="switch_lightning"
+            android:title="Blitz automatisch bei Scan starten" />
 
 
-    <ListPreference
-        android:defaultValue="0"
-        android:dialogTitle="Texterkennungsmodus auswählen"
-        android:entries="@array/text_scan_modes"
-        android:entryValues="@array/text_scan_modes_values"
-        android:key="text_filter_mode"
-        android:summary="Den Filter der Texterkennung konfigurieren"
-        android:title="Texterkennungsmodus" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="switch_enforece_zebra"
+            android:title="Spezifische Funktion des Zebrascans priorisieren (Tastatureingabe wird z.B. vernachlässigt)" />
 
-    <MultiSelectListPreference
-        android:defaultValue="@array/barcode_formats_default_value"
-        android:dialogTitle="Barcodeformate auswählen"
-        android:entries="@array/barcode_formats"
-        android:entryValues="@array/barcode_formats_values"
-        android:key="barcode_formats_key"
-        android:summary="Unterstützte Barcodeformate auswählen"
-        android:title="Barcodeformate" />
+        <ListPreference
+            android:defaultValue="0"
+            android:dialogTitle="Texterkennungsmodus auswählen"
+            android:entries="@array/text_scan_modes"
+            android:entryValues="@array/text_scan_modes_values"
+            android:key="text_filter_mode"
+            android:summary="Den Filter der Texterkennung konfigurieren"
+            android:title="Texterkennungsmodus" />
 
+        <MultiSelectListPreference
+            android:defaultValue="@array/barcode_formats_default_value"
+            android:dialogTitle="Barcodeformate auswählen"
+            android:entries="@array/barcode_formats"
+            android:entryValues="@array/barcode_formats_values"
+            android:key="barcode_formats_key"
+            android:summary="Unterstützte Barcodeformate auswählen"
+            android:title="Barcodeformate" />
+    </PreferenceCategory>
 </PreferenceScreen>

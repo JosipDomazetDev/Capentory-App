@@ -31,6 +31,23 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dropdown_text_fragment_actualroom" />
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/scan_room_floatingbtn_fragment_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="bottom|end"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#2196F3"
+                app:borderWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.976"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/scan_icon_ios_white" />
 
             <TextView
                 android:id="@+id/no_rooms_fragment_rooms"
@@ -127,6 +144,7 @@
                 android:id="@+id/dropdown_text_fragment_actualroom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
                 android:padding="14dp"
                 android:text="Begeben Sie sich zu dem gewünschten Raum und wählen Sie ihn in der Liste aus. Falls Sie der Meinung sind, dass die Inventur fertig ist, so drücken Sie den roten Button."
                 app:layout_constraintEnd_toEndOf="parent"
@@ -134,20 +152,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/started_stocktaking_text_fragment_actualroom" />
 
+
             <TextView
                 android:id="@+id/started_stocktaking_text_fragment_actualroom"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginEnd="8dp"
                 android:text="@string/started_inventory_fragment_rooms"
-                android:textAlignment="center"
                 android:textColor="#2196F3"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintEnd_toStartOf="@+id/scan_room_floatingbtn_fragment_room"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

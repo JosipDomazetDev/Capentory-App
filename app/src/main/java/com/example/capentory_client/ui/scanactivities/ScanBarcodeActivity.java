@@ -12,6 +12,7 @@ import android.hardware.Camera;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
@@ -26,6 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.ui.scanactivities.modifiedgoogleapi.CameraSource;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -44,7 +46,7 @@ public class ScanBarcodeActivity extends Activity {
     private boolean useFlash = false;
     private CameraSource cameraSource;
     private MediaPlayer mediaPlayer;
-    private boolean lockedOnFirst=false;
+    private boolean lockedOnFirst = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +58,14 @@ public class ScanBarcodeActivity extends Activity {
         mediaPlayer = MediaPlayer.create(this, R.raw.beep);
         cameraPreview = findViewById(R.id.camera_preview);
         createCameraSource();
+
+        Handler h = new Handler();
+        h.postDelayed(() -> {
+            if (PreferenceUtility.getBoolean(ScanBarcodeActivity.this, "switch_lightning"))
+                findViewById(R.id.btn_flash_activity_scan_barcode).callOnClick();
+        }, 100);
+
+
     }
 
 
@@ -194,7 +204,6 @@ public class ScanBarcodeActivity extends Activity {
 
     private int getSelectedFormats() {
         if (utilityModeActivated) return 0;
-
         SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int supportedBarcodeFormats = 0;
 
