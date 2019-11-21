@@ -8,6 +8,7 @@ import com.example.capentory_client.models.MergedItemField;
 import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,11 +73,11 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
                 getUrl(context, true, MainActivity.getSerializer().getItemUrl(), barcode),
                 stringPayload -> {
                     try {
-                        JSONObject payload = new JSONObject(stringPayload);
-                        if (payload.length() == 0) {
+                        JSONArray payload = new JSONObject(stringPayload).getJSONArray("items");
+                        if (payload.length() < 1)
                             searchedForItem.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode));
-                        } else {
-                            searchedForItem.postSuccess(new MergedItem(payload.keys().next(), payload));
+                        else {
+                            searchedForItem.postSuccess(new MergedItem(payload.getJSONObject(0)));
                         }
                     } catch (JSONException error) {
                         searchedForItem.postError(error);

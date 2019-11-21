@@ -37,17 +37,7 @@ public class HomeScreenRepository extends NetworkRepository<MergedItem> {
 
     @Override
     protected void handleMainSuccessfulResponse(String stringPayload) {
-        JSONObject payload;
-        try {
-            payload = new JSONObject(stringPayload);
-            if (payload.length() == 0) {
-                mainContentRepoData.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode));
-            } else {
-                mainContentRepoData.postSuccess(new MergedItem(payload.keys().next(), payload));
-            }
-        } catch (JSONException e) {
-            mainContentRepoData.postError(e);
-        }
+        return;
     }
 
 

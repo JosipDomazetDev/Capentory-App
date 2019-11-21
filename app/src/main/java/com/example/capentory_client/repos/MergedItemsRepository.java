@@ -2,12 +2,14 @@ package com.example.capentory_client.repos;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,7 +43,7 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
         this.currentRoomString = args[0];
         Map<String, String> paras = new HashMap<>();
         paras.put("stocktaking_id", String.valueOf(MainActivity.getStocktaking().getStocktakingId()));
-        addMainRequest(Request.Method.GET, getUrl(context, true, new String[]{MainActivity.getSerializer().getRoomUrl(), currentRoomString}, paras));
+        addMainRequest(Request.Method.GET, getUrl(context, true, new String[]{MainActivity.getSerializer().getRoomUrl(), currentRoomString + "/"}, paras));
         launchMainRequest();
 
         return mainContentRepoData;
@@ -52,13 +54,10 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
     protected void handleMainSuccessfulResponse(String stringPayload) {
         try {
             List<MergedItem> mergedItems = new ArrayList<>();
-            JSONObject payload = new JSONObject(stringPayload);
+            JSONArray payload = new JSONObject(stringPayload).getJSONArray("items");
 
-            payload = payload.getJSONObject("items");
-            Iterator<String> itemKeys = payload.keys();
-
-            while (itemKeys.hasNext()) {
-                mergedItems.add(new MergedItem(itemKeys.next(), payload));
+            for (int i = 0; i < payload.length(); i++) {
+                mergedItems.add(new MergedItem(payload.getJSONObject(i)));
             }
 
             mainContentRepoData.postSuccess(mergedItems);

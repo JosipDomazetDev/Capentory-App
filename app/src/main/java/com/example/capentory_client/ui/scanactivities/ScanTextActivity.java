@@ -68,11 +68,6 @@ public class ScanTextActivity extends AppCompatActivity {
         textFilterMode = getTextFilterMode();
         btnUnlock = findViewById(R.id.unlock_button_activity_scan_text);
         startCameraSource();
-        Handler h = new Handler();
-        h.postDelayed(() -> {
-            if (PreferenceUtility.getBoolean(ScanTextActivity.this, "switch_lightning"))
-                findViewById(R.id.btn_flash_activity_scan_text).callOnClick();
-        }, 100);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -110,10 +105,27 @@ public class ScanTextActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
             }
         } else {
-            cameraSource = new CameraSource.Builder(this, textRecognizer)
-                    .setFacing(CameraSource.CAMERA_FACING_BACK)
-                    .setRequestedPreviewSize(1600, 1024)
-                    .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+
+            if (PreferenceUtility.getBoolean(ScanTextActivity.this, "switch_lightning", true)) {
+                cameraSource = new CameraSource.Builder(this, textRecognizer)
+                        .setFacing(CameraSource.CAMERA_FACING_BACK)
+                        .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
+                        .setRequestedPreviewSize(1600, 1024)
+                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+
+                ((ImageButton) findViewById(R.id.btn_flash_activity_scan_text)).setImageResource(R.drawable.ic_flash_off_white_24dp);
+                useFlash = true;
+            } else {
+
+                cameraSource = new CameraSource.Builder(this, textRecognizer)
+                        .setFacing(CameraSource.CAMERA_FACING_BACK)
+                        .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
+                        .setRequestedPreviewSize(1600, 1024)
+                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+
+                ((ImageButton) findViewById(R.id.btn_flash_activity_scan_text)).setImageResource(R.drawable.ic_flash_on_white_24dp);
+                useFlash = false;
+            }
 
 
             cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {

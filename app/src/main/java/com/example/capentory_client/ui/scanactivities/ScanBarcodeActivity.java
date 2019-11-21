@@ -58,14 +58,6 @@ public class ScanBarcodeActivity extends Activity {
         mediaPlayer = MediaPlayer.create(this, R.raw.beep);
         cameraPreview = findViewById(R.id.camera_preview);
         createCameraSource();
-
-        Handler h = new Handler();
-        h.postDelayed(() -> {
-            if (PreferenceUtility.getBoolean(ScanBarcodeActivity.this, "switch_lightning"))
-                findViewById(R.id.btn_flash_activity_scan_barcode).callOnClick();
-        }, 100);
-
-
     }
 
 
@@ -77,10 +69,26 @@ public class ScanBarcodeActivity extends Activity {
                 .setRequestedPreviewSize(1600, 1024)
                 .setAutoFocusEnabled(true).build();*/
 
-        cameraSource = new CameraSource.Builder(this, barcodeDetector)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(1600, 1024)
-                .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+
+        if (PreferenceUtility.getBoolean(ScanBarcodeActivity.this, "switch_lightning", true)) {
+            cameraSource = new CameraSource.Builder(this, barcodeDetector)
+                    .setFacing(CameraSource.CAMERA_FACING_BACK)
+                    .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
+                    .setRequestedPreviewSize(1600, 1024)
+                    .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+
+            ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_off_white_24dp);
+            useFlash = true;
+        } else {
+            cameraSource = new CameraSource.Builder(this, barcodeDetector)
+                    .setFacing(CameraSource.CAMERA_FACING_BACK)
+                    .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
+                    .setRequestedPreviewSize(1600, 1024)
+                    .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+
+            ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_on_white_24dp);
+            useFlash = false;
+        }
 
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
 

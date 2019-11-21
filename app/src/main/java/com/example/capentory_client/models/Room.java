@@ -8,30 +8,27 @@ import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Objects;
-
 /**
  * Represents an Room from ralph, only the displayNumber is directly stored to allow later changes to the server
  */
 public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Room> {
     @NonNull
-    private String displayNumber, roomNumber;
+    private String displayNumber, roomId;
 
     @Nullable
     private String displayDescriptions, barcode;
 
-    public Room(@NonNull String key, JSONObject payload) throws JSONException {
-        this.roomNumber = key;
-        payload = payload.getJSONObject(key);
+    public Room(JSONObject payload) throws JSONException {
+        this.roomId = payload.getString("roomID");
         this.displayNumber = payload.getString("displayName");
         this.displayDescriptions = payload.getString("displayDescription");
-        this.barcode = payload.optString("barcode");
+        this.barcode = payload.getString("barcode");
     }
 
 
     @NonNull
-    public String getRoomNumber() {
-        return roomNumber;
+    public String getRoomId() {
+        return roomId;
     }
 
     @NonNull
@@ -65,9 +62,9 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
             return 1;
         }
 
-        if (this.roomNumber.compareTo(that.roomNumber) < 0) {
+        if (this.roomId.compareTo(that.roomId) < 0) {
             return -1;
-        } else if (this.roomNumber.compareTo(that.roomNumber) > 0) {
+        } else if (this.roomId.compareTo(that.roomId) > 0) {
             return 1;
         }
         if (displayDescriptions != null && that.displayDescriptions != null) {

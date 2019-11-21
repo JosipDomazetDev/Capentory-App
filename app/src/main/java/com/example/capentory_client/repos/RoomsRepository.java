@@ -10,9 +10,12 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.capentory_client.models.Room;
 import com.example.capentory_client.models.Stocktaking;
 import com.example.capentory_client.ui.MainActivity;
+import com.example.capentory_client.ui.errorhandling.CustomException;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
+import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +31,6 @@ import javax.inject.Singleton;
 
 @Singleton
 public class RoomsRepository extends NetworkRepository<List<Room>> {
-    private final String FINISH_REQUEST_KEY = "request_finish";
 
     @Inject
     public RoomsRepository(Context context) {
@@ -53,18 +55,23 @@ public class RoomsRepository extends NetworkRepository<List<Room>> {
     @Override
     protected void handleMainSuccessfulResponse(String stringPayload) {
         try {
-            JSONObject payload = new JSONObject(stringPayload);
-            List<Room> rooms = new ArrayList<>();
-            Iterator<String> roomKeys = payload.keys();
 
-            while (roomKeys.hasNext()) {
-                rooms.add(new Room(roomKeys.next(), payload));
+            JSONArray payload = new JSONObject(stringPayload).getJSONArray("rooms");
+            List<Room> rooms = new ArrayList<>();
+
+            for (int i = 0; i < payload.length(); i++) {
+                rooms.add(new Room(payload.getJSONObject(i)));
             }
 
             Collections.sort(rooms);
             mainContentRepoData.postSuccess(rooms);
         } catch (JSONException error) {
-            mainContentRepoData.postError(error);
+            try {
+                String errors = new JSONObject(stringPayload).getString("errors");
+                mainContentRepoData.postError(new CustomException(errors));
+            } catch (JSONException e) {
+                mainContentRepoData.postError(error);
+            }
         }
     }
 

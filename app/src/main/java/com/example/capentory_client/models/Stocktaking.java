@@ -8,7 +8,6 @@ import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -72,11 +71,14 @@ public class Stocktaking implements GenericDropDownAdapter.DropDownEntry {
 
     @Override
     public String displayDescription() {
-        return getDate();
+        if (isNeverEndingStocktkaking())
+            return "Laufende Inventur/" + getDate();
+
+        return "Gestartet/" + getDate();
     }
 
-    public boolean isEndingStocktaking() {
-        return !neverEndStocktaking;
+    public boolean isNeverEndingStocktkaking() {
+        return neverEndStocktaking;
     }
 }
 

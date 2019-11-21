@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.example.capentory_client.repos.customrequest.NetworkErrorHandler;
 import com.example.capentory_client.repos.customrequest.NetworkSuccessHandler;
@@ -102,7 +103,7 @@ public abstract class NetworkRepository<L> {
      * @param path    specifies paths
      * @return the Url
      */
-    protected static String getUrl(Context context, boolean firstPathIsCombinedPath,String[] path, Map<String, String> queryParams) {
+    protected static String getUrl(Context context, boolean firstPathIsCombinedPath, String[] path, Map<String, String> queryParams) {
         Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
                 .encodedAuthority(getSocket(context));
 
@@ -119,6 +120,7 @@ public abstract class NetworkRepository<L> {
             urlBuilder.appendQueryParameter(keyValueEntry.getKey(), keyValueEntry.getValue());
         }
 
+        Log.e("XXXXX", urlBuilder.appendQueryParameter("format", "json").build().toString());
         return urlBuilder.appendQueryParameter("format", "json").build().toString();
     }
 

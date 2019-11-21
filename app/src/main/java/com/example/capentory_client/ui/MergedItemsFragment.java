@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -121,7 +119,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
 
 
         roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
-        currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomNumber();
+        currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomId();
         String displayRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getDisplayedNumber();
         roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(displayRoomString));
 
@@ -146,7 +144,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
 
             String title;
             String message;
-            if (MainActivity.getStocktaking().isEndingStocktaking()) {
+            if (MainActivity.getStocktaking().isNeverEndingStocktkaking()) {
                 title = "Alles im Raum erledigt?";
                 message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?";
             } else if (networkViewModel.getAmountOfItemsLeft() == 1) {

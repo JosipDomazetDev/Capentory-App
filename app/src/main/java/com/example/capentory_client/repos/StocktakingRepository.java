@@ -93,17 +93,17 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
 
 
     public StatusAwareLiveData<MergedItem> fetchSpecificallySearchedForItem(String barcode) {
-       StatusAwareLiveData<MergedItem> specificallySearchedForItem = new StatusAwareLiveData<>();
+        StatusAwareLiveData<MergedItem> specificallySearchedForItem = new StatusAwareLiveData<>();
 
         addRequest(GET_SEARCHED_FOR_ITEM_REQUEST_KEY, Request.Method.GET,
                 getUrl(context, true, MainActivity.getSerializer().getItemUrl(), barcode),
                 stringPayload -> {
                     try {
-                        JSONObject payload = new JSONObject(stringPayload);
-                        if (payload.length() == 0) {
+                        JSONArray payload = new JSONObject(stringPayload).getJSONArray("items");
+                        if (payload.length() < 1)
                             specificallySearchedForItem.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode));
-                        } else {
-                            specificallySearchedForItem.postSuccess(new MergedItem(payload.keys().next(), payload));
+                        else {
+                            specificallySearchedForItem.postSuccess(new MergedItem(payload.getJSONObject(0)));
                         }
                     } catch (JSONException error) {
                         specificallySearchedForItem.postError(error);

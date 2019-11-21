@@ -172,7 +172,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     }
 
     private void handleFinishInventory() {
-        if (MainActivity.getStocktaking().isEndingStocktaking()) {
+        if (MainActivity.getStocktaking().isNeverEndingStocktkaking()) {
             finishInventory();
         } else
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))

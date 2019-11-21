@@ -55,7 +55,9 @@ public class BasicNetworkErrorHandler {
         error.printStackTrace();
 
         String errorMsg = "";
-        if (error instanceof JSONException) {
+        if (error instanceof CustomException) {
+            errorMsg = error.getMessage();
+        } else if (error instanceof JSONException) {
             errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
         } else if (error instanceof TimeoutError) {
             errorMsg = "Zeitüberschreitungsfehler ist aufgetreten!";

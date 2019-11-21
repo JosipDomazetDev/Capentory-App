@@ -23,9 +23,8 @@ public class MergedItem {
 
 
     // Standard
-    public MergedItem(@NonNull String pkItemId, @NonNull JSONObject payload) throws JSONException {
-        this.pkItemId = pkItemId;
-        extractFromJson(pkItemId, payload);
+    public MergedItem(@NonNull JSONObject payload) throws JSONException {
+        extractFromJson(payload);
     }
 
     // For not fully fledged item just for the code
@@ -33,13 +32,13 @@ public class MergedItem {
         this.pkItemId = pkItemId;
     }
 
-    private void extractFromJson(@NonNull String pkItemId, @NonNull JSONObject payload) throws JSONException {
-        payload = payload.getJSONObject(pkItemId);
+    private void extractFromJson(@NonNull JSONObject payload) throws JSONException {
+        this.pkItemId = payload.getString("itemID");
         this.barcode = payload.getString("barcode");
         this.displayName = payload.getString("displayName");
         this.displayDescription = payload.getString("displayDescription");
         this.timesFoundLast = payload.optInt("times_found_last", 0);
-        this.descriptionaryRoom = payload.optString("room");
+        this.descriptionaryRoom = payload.getString("room");
         this.itemAsJson = payload;
         this.fields = payload.getJSONObject("fields");
     }
