@@ -13,20 +13,31 @@ import androidx.annotation.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class KeyValueDropDownAdapter extends ArrayAdapter<KeyValueDropDownAdapter.DropDownEntry> {
 
     private final DropDownEntry[] items;
+    public static int NULL_KEY_VALUE = -1;
 
     public KeyValueDropDownAdapter(Context context, int textViewResourceId,
                                    DropDownEntry[] dropDownEntries) {
         super(context, textViewResourceId, dropDownEntries);
         items = dropDownEntries;
+        Arrays.sort(items);
     }
 
     public int getItemIndexFromKey(int key) {
-        if (key == -1) return 0;
+        // The Last Entry in the list is the null representation
+        if (key == NULL_KEY_VALUE) {
+            for (int i = 0; i < items.length; i++) {
+                if (items[i].isNullRepresentationEntry()) {
+                    return i;
+                }
+            }
+            return 0;
+        }
 
         for (int i = 0; i < items.length; i++) {
             if (key == (items[i].getKey())) {
@@ -50,14 +61,27 @@ public class KeyValueDropDownAdapter extends ArrayAdapter<KeyValueDropDownAdapte
         return textView;
     }
 
-    public static class DropDownEntry {
+
+    public static class DropDownEntry implements Comparable<DropDownEntry> {
         int key;
         String description;
+        boolean nullRepresentationEntry = false;
 
         public DropDownEntry(JSONObject jsonObject) throws JSONException {
             Iterator<String> keys = jsonObject.keys();
             this.key = jsonObject.getInt(keys.next());
             this.description = jsonObject.getString(keys.next());
+        }
+
+        // For manual Null entry
+        public DropDownEntry(int key, String description) {
+            this.key = key;
+            this.description = description;
+            nullRepresentationEntry = true;
+        }
+
+        public boolean isNullRepresentationEntry() {
+            return nullRepresentationEntry;
         }
 
         public int getKey() {
@@ -72,6 +96,24 @@ public class KeyValueDropDownAdapter extends ArrayAdapter<KeyValueDropDownAdapte
         @Override
         public String toString() {
             return getDescription();
+        }
+
+
+        @Override
+        public int compareTo(DropDownEntry that) {
+            if (this.description.toLowerCase().compareTo(that.description.toLowerCase()) < 0) {
+                return -1;
+            } else if (this.description.toLowerCase().compareTo(that.description.toLowerCase()) > 0) {
+                return 1;
+            }
+
+            if (this.key < that.key) {
+                return -1;
+            } else if (this.key > that.key) {
+                return 1;
+            }
+
+            return Boolean.compare(nullRepresentationEntry, that.nullRepresentationEntry);
         }
     }
 }

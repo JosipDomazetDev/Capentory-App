@@ -273,7 +273,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                     KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, choices);
                     spinner.setAdapter(adapter);
-                    spinner.setSelection(adapter.getItemIndexFromKey(fieldsWithValuesFromItem.optInt(currentField.getKey(), -1)));
+                    int i = fieldsWithValuesFromItem.optInt(currentField.getKey(), KeyValueDropDownAdapter.NULL_KEY_VALUE);
+                    spinner.setSelection(adapter.getItemIndexFromKey(i));
                     linearLayout.addView(textView);
                     linearLayout.addView(spinner);
 
@@ -286,12 +287,14 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     }
 
 
-    private KeyValueDropDownAdapter.DropDownEntry[] getChoicesFromField(JSONArray choices) throws
-            JSONException {
-        KeyValueDropDownAdapter.DropDownEntry[] ret = new KeyValueDropDownAdapter.DropDownEntry[choices.length()];
-        for (int i = 0; i < ret.length; i++) {
+    private KeyValueDropDownAdapter.DropDownEntry[] getChoicesFromField(JSONArray choices) throws JSONException {
+        int maxKey = 1;
+        KeyValueDropDownAdapter.DropDownEntry[] ret = new KeyValueDropDownAdapter.DropDownEntry[choices.length() + 1];
+        for (int i = 0; i < ret.length - 1; i++) {
             ret[i] = new KeyValueDropDownAdapter.DropDownEntry(choices.getJSONObject(i));
+            maxKey = Math.max(maxKey, ret[i].getKey());
         }
+        ret[ret.length - 1] = new KeyValueDropDownAdapter.DropDownEntry(maxKey, "Kein Wert");
         return ret;
     }
 
@@ -336,22 +339,18 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         assert mapFieldNameToField != null;
 
         for (String fieldName : mapFieldNameToField.keySet()) {
-            Object valueFromForm = getValueFromForm(mapFieldNameToField.get(fieldName));
-            if (valueFromForm == null) continue;
+            MergedItemField field = mapFieldNameToField.get(fieldName);
+            if (field == null || field.isReadOnly()) continue;
 
-            try {
-                validationEntry.addChangedFieldFromFormValue(fieldName, valueFromForm);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
+            Object valueFromForm = getValueFromGUIField(field);
+            validationEntry.addChangedFieldFromFormValue(fieldName, valueFromForm);
         }
         return validationEntry;
     }
 
 
     @SuppressWarnings("unchecked")
-    public <T> T getValueFromForm(MergedItemField fieldForItem) {
+    public <T> T getValueFromGUIField(MergedItemField fieldForItem) {
 
         View generatedView = mergedItemFieldViewMap.get(fieldForItem.getKey());
 
@@ -381,7 +380,9 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
             case "choice":
-                int key = ((KeyValueDropDownAdapter.DropDownEntry) ((Spinner) generatedView).getSelectedItem()).getKey();
+                KeyValueDropDownAdapter.DropDownEntry selectedItem = (KeyValueDropDownAdapter.DropDownEntry) ((Spinner) generatedView).getSelectedItem();
+                if (selectedItem.isNullRepresentationEntry()) return null;
+                int key = selectedItem.getKey();
                 return (T) Integer.valueOf(key);
             default:
                 return null;

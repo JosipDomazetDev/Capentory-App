@@ -75,6 +75,8 @@ public class ValidationEntry {
         }
 
         for (Field fieldChange : validationEntry.fieldChanges) {
+            if (fieldChange.fieldValue == null)
+                fieldChange.fieldValue = JSONObject.NULL;
             validationEntryAsJson.put(fieldChange.fieldName, fieldChange.fieldValue);
         }
 
@@ -89,13 +91,17 @@ public class ValidationEntry {
         return pkItem.equals(CANCEL_CODE);
     }
 
-    public void addChangedFieldFromFormValue(String fieldName, Object valueFromForm) throws JSONException {
-        if (mergedItem.isNewItem()) {
-            // this means a new Item should be created, therefore take all values
-            fieldChanges.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
-        } else if (!mergedItem.getFieldsWithValues().get(fieldName).equals(valueFromForm)) {
-            // for existing items compare if something changed
-            fieldChanges.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
+    public void addChangedFieldFromFormValue(String fieldName, Object valueFromForm) {
+        try {
+            if (mergedItem.isNewItem()) {
+                // this means a new Item should be created, therefore take all values
+                fieldChanges.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
+            } else if (!mergedItem.getFieldsWithValues().get(fieldName).equals(valueFromForm)) {
+                // for existing items compare if something changed
+                fieldChanges.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
     }
