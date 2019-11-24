@@ -2,10 +2,11 @@ package com.example.capentory_client.repos;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.models.RecyclerviewItem;
+import com.example.capentory_client.models.Room;
 import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
@@ -15,7 +16,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
+public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewItem>> {
     private String currentRoomString;
     private final String VALIDATION_REQUEST_KEY = "request_validation";
 
@@ -36,7 +36,7 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
 
 
     @Override
-    public StatusAwareLiveData<List<MergedItem>> fetchMainData(String... args) {
+    public StatusAwareLiveData<List<RecyclerviewItem>> fetchMainData(String... args) {
         if (args.length != 1)
             throw new IllegalArgumentException("MergedItemRepository only needs the currentRoom as argument!");
 
@@ -53,16 +53,43 @@ public class MergedItemsRepository extends NetworkRepository<List<MergedItem>> {
     @Override
     protected void handleMainSuccessfulResponse(String stringPayload) {
         try {
-            List<MergedItem> mergedItems = new ArrayList<>();
-            JSONArray payload = new JSONObject(stringPayload).getJSONArray("items");
+            List<RecyclerviewItem> recyclerviewItems = new ArrayList<>();
+            JSONObject payloadAsJson = new JSONObject(stringPayload);
+            JSONArray directItems = payloadAsJson.getJSONArray("items");
+            Room superRoom = new Room(payloadAsJson, 0);
+            recyclerviewItems.add(superRoom);
 
-            for (int i = 0; i < payload.length(); i++) {
-                mergedItems.add(new MergedItem(payload.getJSONObject(i)));
+
+            for (int i = 0; i < directItems.length(); i++) {
+                MergedItem mergedItem = new MergedItem(directItems.getJSONObject(i));
+                recyclerviewItems.add(mergedItem);
+                superRoom.addItemToRoom(mergedItem);
             }
 
-            mainContentRepoData.postSuccess(mergedItems);
+            addSubItems(recyclerviewItems, payloadAsJson, superRoom, 0);
+            mainContentRepoData.postSuccess(recyclerviewItems);
         } catch (JSONException error) {
             mainContentRepoData.postError(error);
+        }
+    }
+
+    private void addSubItems(List<RecyclerviewItem> recyclerviewItems, JSONObject payloadAsJson, Room superRoom, int depth) throws JSONException {
+        JSONArray subRooms = payloadAsJson.getJSONArray("subrooms");
+        depth++;
+
+        for (int i = 0; i < subRooms.length(); i++) {
+            Room subRoom = new Room(subRooms.getJSONObject(i), depth);
+            recyclerviewItems.add(subRoom);
+            superRoom.addSubRoomToSuperRoom(subRoom);
+
+
+            JSONArray subItems = subRooms.getJSONObject(i).getJSONArray("items");
+            for (int j = 0; j < subItems.length(); j++) {
+                MergedItem mergedItem = new MergedItem(subItems.getJSONObject(i), subRoom);
+                recyclerviewItems.add(mergedItem);
+                subRoom.addItemToRoom(mergedItem);
+            }
+            addSubItems(recyclerviewItems, subRooms.getJSONObject(i), subRoom, depth);
         }
     }
 

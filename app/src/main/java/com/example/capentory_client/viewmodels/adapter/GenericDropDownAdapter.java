@@ -42,7 +42,7 @@ public class GenericDropDownAdapter<T extends GenericDropDownAdapter.DropDownEnt
     private View initView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.room_dropdown_row, parent, false
+                    R.layout.dropdown_room_row, parent, false
             );
         }
 

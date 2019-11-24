@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
  */
-public class MergedItem {
+public class MergedItem implements RecyclerviewItem {
     private static final String NEW_ITEM_CODE = "-1", SEARCHED_FOR_ITEM_CODE = "-2";
     @NonNull
     private String pkItemId;
@@ -20,6 +20,8 @@ public class MergedItem {
     @Nullable
     private String barcode, displayName, displayDescription, descriptionaryRoom;
     private int timesFoundLast = 0, timesFoundCurrent = 0;
+    private Room subroom;
+
 
 
     // Standard
@@ -30,6 +32,11 @@ public class MergedItem {
     // For not fully fledged item just for the code
     private MergedItem(@NonNull String pkItemId) {
         this.pkItemId = pkItemId;
+    }
+
+    public MergedItem(JSONObject payload, Room subroom) throws JSONException {
+        extractFromJson(payload);
+        this.subroom = subroom;
     }
 
     private void extractFromJson(@NonNull JSONObject payload) throws JSONException {
@@ -129,10 +136,9 @@ public class MergedItem {
         if (barcode == null) return false;
 
         // 12340000 = 12340000
-        boolean normalCond = Objects.equals(getBarcode(), scannedBarcode);
-        if (normalCond) return true;
+        return Objects.equals(getBarcode(), scannedBarcode);
 
-        if (barcode.length() == scannedBarcode.length()) {
+       /* if (barcode.length() == scannedBarcode.length()) {
             // 1234 = 1234 (scannedBarcode maybe doesn't include zeros => only compare to anlage)
             return Objects.equals(barcode, scannedBarcode);
 
@@ -142,12 +148,27 @@ public class MergedItem {
         }
 
         // If the scannedBarcode however is shorther than even anlage every hope is lost
-        return false;
+        return false;*/
     }
 
+    @Override
     public boolean applySearchBarFilter(@NonNull String filter) {
         filter = filter.toLowerCase().trim();
         return getCheckedDisplayBarcode().toLowerCase().trim().contains(filter) || getCheckedDisplayName().toLowerCase().trim().contains(filter);
+    }
+
+    @Override
+    public boolean isTopLevelRoom() {
+        return false;
+    }
+
+    @Override
+    public boolean isExpanded() {
+        return false;
+    }
+
+    @Override
+    public void setExpanded(boolean b) {
     }
 
     public String getCheckedDisplayName() {

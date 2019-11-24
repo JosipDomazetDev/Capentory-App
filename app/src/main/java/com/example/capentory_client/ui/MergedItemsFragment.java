@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.models.RecyclerviewItem;
 import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
@@ -55,7 +56,7 @@ import javax.inject.Inject;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, MergedItemsRepository, MergedItemViewModel> implements RecyclerViewAdapter.ItemClickListener {
+public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>, MergedItemsRepository, MergedItemViewModel> implements RecyclerViewAdapter.ItemClickListener {
     private RecyclerView recyclerView;
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
@@ -229,7 +230,7 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
     }
 
     @Override
-    protected void handleSuccess(StatusAwareData<List<MergedItem>> statusAwareData) {
+    protected void handleSuccess(StatusAwareData<List<RecyclerviewItem>> statusAwareData) {
         super.handleSuccess(statusAwareData);
         displayRecyclerView(adapter, statusAwareData, noItemTextView);
     }
@@ -242,15 +243,16 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
 
             if (liveData.getData()) {
                 roomxItemSharedViewModel.setCurrentRoomValidated(true);
+                roomxItemSharedViewModel.setCurrentRoom(networkViewModel.getSuperRoom());
                 NavHostFragment.findNavController(this).popBackStack();
             }
         });
     }
 
 
-    private void displayRecyclerView(RecyclerViewAdapter adapter, StatusAwareData<List<MergedItem>> statusAwareMergedItem, TextView textView) {
+    private void displayRecyclerView(RecyclerViewAdapter adapter, StatusAwareData<List<RecyclerviewItem>> statusAwareMergedItem, TextView textView) {
         if (adapter == null) return;
-        List<MergedItem> mergedItems = statusAwareMergedItem.getData();
+        List<RecyclerviewItem> mergedItems = statusAwareMergedItem.getData();
         if (mergedItems == null) return;
 
         if (mergedItems.isEmpty()) {
@@ -308,8 +310,13 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
 
     @Override
     public void onItemClick(int position, View v) {
-        itemxDetailSharedViewModel.setCurrentItem(adapter.getItem(position));
-        Navigation.findNavController(v).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+        if (adapter.getItem(position) instanceof MergedItem) {
+            itemxDetailSharedViewModel.setCurrentItem((MergedItem) adapter.getItem(position));
+            Navigation.findNavController(v).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+        } else {
+            //Expand Collapse?
+            adapter.handleCollapseAndExpand(position, v);
+        }
     }
 
     @Override
@@ -329,9 +336,9 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
     }
 
     private void launchItemDetailFragmentFromBarcode(String barcode) {
-        StatusAwareData<List<MergedItem>> statusAwareData = networkViewModel.getData().getValue();
+        StatusAwareData<List<RecyclerviewItem>> statusAwareData = networkViewModel.getData().getValue();
         if (statusAwareData == null) return;
-        List<MergedItem> items = statusAwareData.getData();
+        List<RecyclerviewItem> items = statusAwareData.getData();
         if (items == null) return;
 
         // Item already scanned, create subItem (if user wants to)
@@ -350,11 +357,14 @@ public class MergedItemsFragment extends NetworkFragment<List<MergedItem>, Merge
         }
 
         // Item scanned first time and it's in the list
-        for (MergedItem item : items) {
-            if (item.equalsBarcode(barcode)) {
-                itemxDetailSharedViewModel.setCurrentItem(item);
-                NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
-                return;
+        for (RecyclerviewItem recyclerviewItem : items) {
+            if(recyclerviewItem instanceof  MergedItem) {
+                MergedItem mergedItem = (MergedItem) recyclerviewItem;
+                if (mergedItem.equalsBarcode(barcode)) {
+                    itemxDetailSharedViewModel.setCurrentItem(mergedItem);
+                    NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+                    return;
+                }
             }
         }
 

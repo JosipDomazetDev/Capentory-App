@@ -3,6 +3,8 @@ package com.example.capentory_client.viewmodels;
 import androidx.lifecycle.LiveData;
 
 import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.models.RecyclerviewItem;
+import com.example.capentory_client.models.Room;
 import com.example.capentory_client.models.ValidationEntry;
 import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
@@ -16,7 +18,7 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, MergedItemsRepository> {
+public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>, MergedItemsRepository> {
     private List<ValidationEntry> validationEntries = new ArrayList<>();
     private List<MergedItem> alreadyValidatedItems = new ArrayList<>();
     private StatusAwareLiveData<Boolean> validateSuccessful;
@@ -29,7 +31,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
 
 
     public void removeItemByFoundCounterIncrease(MergedItem mergedItem) {
-        List<MergedItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
+        List<RecyclerviewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
 
         mergedItem.increaseTimesFoundCurrent();
@@ -52,13 +54,17 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
         }
 
         statusAwareLiveData = networkRepository.fetchMainData(args);
+
     }
 
 
     @Override
     public void reloadData(String... args) {
-        if (!startedRemoving)
+        if (!startedRemoving) {
             statusAwareLiveData = networkRepository.fetchMainData(args);
+            validationEntries.clear();
+            alreadyValidatedItems.clear();
+        }
     }
 
     public void addValidationEntry(ValidationEntry validationEntry) {
@@ -79,16 +85,19 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
 
 
     public int getAmountOfItemsLeft() {
-        List<MergedItem> mergedItems = Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData());
+        List<RecyclerviewItem> recyclerviewItems = Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData());
         int c = 0;
-        for (MergedItem mergedItem : mergedItems) {
-            c += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
+        for (RecyclerviewItem recyclerviewItem : recyclerviewItems) {
+            if (recyclerviewItem instanceof MergedItem) {
+                MergedItem mergedItem = (MergedItem) recyclerviewItem;
+                c += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
+            }
         }
         return c;
     }
 
     public void removeItemDirectly(MergedItem mergedItem) {
-        List<MergedItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
+        List<RecyclerviewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
 
         if (currentItems.remove(mergedItem)) {
@@ -102,6 +111,20 @@ public class MergedItemViewModel extends NetworkViewModel<List<MergedItem>, Merg
         for (MergedItem alreadyValidatedItem : alreadyValidatedItems) {
             if (alreadyValidatedItem.equalsBarcode(barcode))
                 return alreadyValidatedItem;
+        }
+        return null;
+    }
+
+    public Room getSuperRoom() {
+        if (statusAwareLiveData.getValue() == null) return null;
+        List<RecyclerviewItem> items = statusAwareLiveData.getValue().getData();
+        assert items != null;
+        for (RecyclerviewItem item : items) {
+            if (item instanceof Room) {
+                Room room = (Room) item;
+                if (room.isTopLevelRoom())
+                    return room;
+            }
         }
         return null;
     }
