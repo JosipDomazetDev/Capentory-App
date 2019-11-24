@@ -30,7 +30,10 @@
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -72,8 +75,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
                 android:text="Aktueller Raum:"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,29 +85,54 @@
                 android:id="@+id/room_number_fragment_mergeditems"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
                 android:maxWidth="150dp"
                 android:text="056"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/add_item_floatingbtn"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/room_number_label_fragment_mergeditems"
                 app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/progress_textview_fragment_mergeditems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Forschritt:"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/room_number_label_fragment_mergeditems" />
+
+            <TextView
+                android:id="@+id/progress_textview_value_mergeditems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:maxWidth="150dp"
+                android:text="34/123"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/progress_textview_fragment_mergeditems"
+                app:layout_constraintTop_toBottomOf="@+id/room_number_fragment_mergeditems" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
+            android:id="@+id/no_items_fragment_mergeditems"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/no_items_fragment_mergeditems"
             android:layout_marginTop="70dp"
             android:padding="20dp"
+            android:text="In diesem Raum befinden sich keine Gegenstände!"
             android:textAlignment="center"
+            android:textColor="#000000"
             android:textSize="17sp"
             android:visibility="gone"
-            android:text="In diesem Raum befinden sich keine Gegenstände!"
-            android:textColor="#000000"
             app:layout_constraintEnd_toStartOf="@+id/recyclerv_view"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/recyclerv_view"
@@ -114,8 +143,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="0dp"
-            android:visibility="gone"
             android:padding="5dp"
+            android:visibility="gone"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

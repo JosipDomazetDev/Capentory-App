@@ -85,7 +85,7 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewIt
 
             JSONArray subItems = subRooms.getJSONObject(i).getJSONArray("items");
             for (int j = 0; j < subItems.length(); j++) {
-                MergedItem mergedItem = new MergedItem(subItems.getJSONObject(i), subRoom);
+                MergedItem mergedItem = new MergedItem(subItems.getJSONObject(j), subRoom);
                 recyclerviewItems.add(mergedItem);
                 subRoom.addItemToRoom(mergedItem);
             }

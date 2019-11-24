@@ -16,10 +16,12 @@ public class ValidationEntry {
     private static final String PK_JSON_KEY = "itemID";
     private static final String MARK_FOR_LATER_VALIDATION_JSON_KEY = "mark_for_later_validation";
     private static final String BARCODE_JSON_KEY = "barcode";
+    private static final String SUBROOM_JSON_KEY = "room";
     private MergedItem mergedItem;
     private String pkItem;
     private String barcode;
     private boolean markForLater = false;
+    private Room newSubroom = null;
     private List<Field> fieldChanges = new ArrayList<>();
 
     private ValidationEntry(String pkItem) {
@@ -74,6 +76,12 @@ public class ValidationEntry {
             validationEntryAsJson.put(BARCODE_JSON_KEY, validationEntry.barcode);
         }
 
+        // If subrooms are involved the subRoom of the item might have been changed
+        if (validationEntry.newSubroom != null) {
+            validationEntryAsJson.put(SUBROOM_JSON_KEY, validationEntry.newSubroom.getRoomId());
+        }
+
+
         for (Field fieldChange : validationEntry.fieldChanges) {
             if (fieldChange.fieldValue == null)
                 fieldChange.fieldValue = JSONObject.NULL;
@@ -106,8 +114,14 @@ public class ValidationEntry {
 
     }
 
-    public void setMarkForLater(boolean b) {
+    public void setStaticMarkForLater(boolean b) {
         markForLater = b;
+    }
+
+    public void setStaticRoomChange(Room selectedRoom, Room currentRoom) {
+        if (!selectedRoom.equals(currentRoom)) {
+            newSubroom = selectedRoom;
+        }
     }
 
 

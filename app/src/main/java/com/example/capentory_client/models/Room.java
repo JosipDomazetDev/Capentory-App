@@ -149,4 +149,6 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
     public void setExpanded(boolean b) {
         isExpanded = b;
     }
+
+
 }

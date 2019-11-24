@@ -115,7 +115,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
 
             roomxItemSharedViewModel.getCurrentRoomValidated().observe(getViewLifecycleOwner(), b -> {
                 if (b) {
-                    //networkViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRoom().getValue());
+                    //networkViewModel.removeRoom(roomxItemSharedViewModel.getCurrentRooms().getValue());
                     networkViewModel.finishRoom();
                     roomxItemSharedViewModel.setCurrentRoomValidated(false);
                 }

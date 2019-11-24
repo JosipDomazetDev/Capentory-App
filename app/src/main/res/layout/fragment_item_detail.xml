@@ -112,8 +112,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="16dp"
-                        android:layout_marginBottom="20dp"
-                       />
+                        android:layout_marginBottom="20dp" />
 
 
                     <CheckBox
@@ -121,6 +120,33 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Erst später entscheiden" />
+
+                    <TextView
+                        android:id="@+id/subroom_dropdown_text_fragment_itemdetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/subroom_dropdown_text_fragment_itemdetail"
+                        android:textColor="#b3b3b3"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:elevation="2dp"
+                        android:shape="ring"
+                        android:thicknessRatio="2"
+                        app:cardCornerRadius="10dp">
+                        <Spinner
+                            android:id="@+id/subroom_dropdown_fragment_itemdetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#2196F3"
+                            android:visibility="gone" />
+                    </androidx.cardview.widget.CardView>
 
                     <View
                         android:layout_width="match_parent"

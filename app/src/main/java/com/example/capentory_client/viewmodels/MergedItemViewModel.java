@@ -1,6 +1,7 @@
 package com.example.capentory_client.viewmodels;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.RecyclerviewItem;
@@ -12,6 +13,7 @@ import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 import org.json.JSONException;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,28 +24,47 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
     private List<ValidationEntry> validationEntries = new ArrayList<>();
     private List<MergedItem> alreadyValidatedItems = new ArrayList<>();
     private StatusAwareLiveData<Boolean> validateSuccessful;
+    private MutableLiveData<String> progressMessage = new MutableLiveData<>();
     private boolean startedRemoving;
+    private int totalItemsCount = 0;
+    private int validatedCount = 0;
 
     @Inject
     public MergedItemViewModel(MergedItemsRepository mergedItemsRepository) {
         super(mergedItemsRepository);
     }
 
-
     public void removeItemByFoundCounterIncrease(MergedItem mergedItem) {
         List<RecyclerviewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
 
         mergedItem.increaseTimesFoundCurrent();
+        validatedCount++;
         startedRemoving = true;
 
         if (mergedItem.getTimesFoundCurrent() >= mergedItem.getTimesFoundLast()) {
             // We are not adding a NewItem to alreadyValidatedItems because we dont want subitems for any kind of NewItem
-            if (!mergedItem.isNewItem()) alreadyValidatedItems.add(mergedItem);
+            if (!mergedItem.isNewItem()) {
+                alreadyValidatedItems.add(mergedItem);
+                totalItemsCount++;
+            }
 
             if (currentItems.remove(mergedItem)) {
                 statusAwareLiveData.postSuccess(currentItems);
+                mergedItem.setExpanded(false);
             }
+        }
+    }
+
+    public void removeCanceledItemDirectly(MergedItem mergedItem) {
+        List<RecyclerviewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
+        if (currentItems == null) return;
+
+        if (currentItems.remove(mergedItem)) {
+            validatedCount++;
+            statusAwareLiveData.postSuccess(currentItems);
+            startedRemoving = true;
+            mergedItem.setExpanded(false);
         }
     }
 
@@ -54,8 +75,22 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         }
 
         statusAwareLiveData = networkRepository.fetchMainData(args);
-
+        totalItemsCount = getAmountOfItemsLeft();
     }
+
+
+    /*public int getAmountOfTotalItems() {
+        List<RecyclerviewItem> recyclerviewItems = Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData());
+        int c = 0;
+        for (RecyclerviewItem recyclerviewItem : recyclerviewItems) {
+            if (recyclerviewItem instanceof MergedItem) {
+                MergedItem mergedItem = (MergedItem) recyclerviewItem;
+                // If user created more subitems the total number of items should be higher ;)
+                c += Math.max(mergedItem.getTimesFoundLast(), mergedItem.getTimesFoundCurrent());
+            }
+        }
+        return c;
+    }*/
 
 
     @Override
@@ -96,17 +131,6 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         return c;
     }
 
-    public void removeItemDirectly(MergedItem mergedItem) {
-        List<RecyclerviewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
-        if (currentItems == null) return;
-
-        if (currentItems.remove(mergedItem)) {
-            statusAwareLiveData.postSuccess(currentItems);
-            startedRemoving = true;
-        }
-    }
-
-
     public MergedItem getMergedItemFromBarcode(String barcode) {
         for (MergedItem alreadyValidatedItem : alreadyValidatedItems) {
             if (alreadyValidatedItem.equalsBarcode(barcode))
@@ -115,17 +139,29 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         return null;
     }
 
-    public Room getSuperRoom() {
+    public List<Room> getRooms() {
         if (statusAwareLiveData.getValue() == null) return null;
         List<RecyclerviewItem> items = statusAwareLiveData.getValue().getData();
         assert items != null;
+
+        List<Room> rooms = new ArrayList<>();
         for (RecyclerviewItem item : items) {
             if (item instanceof Room) {
-                Room room = (Room) item;
-                if (room.isTopLevelRoom())
-                    return room;
+                rooms.add((Room) item);
             }
         }
-        return null;
+        return rooms;
+    }
+
+    public LiveData<String> getProgressMessage() {
+        return progressMessage;
+    }
+
+    public int getTotalItemsCount() {
+        return totalItemsCount;
+    }
+
+    public int getValidatedCount() {
+        return validatedCount;
     }
 }

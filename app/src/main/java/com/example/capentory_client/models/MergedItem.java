@@ -21,8 +21,13 @@ public class MergedItem implements RecyclerviewItem {
     private String barcode, displayName, displayDescription, descriptionaryRoom;
     private int timesFoundLast = 0, timesFoundCurrent = 0;
     private Room subroom;
+    // For Items this control whether a item is already validated and  therefore whether a item should be included into the expand/collapse behaviour
+    private boolean isExpanded = true;
 
 
+    public Room getSubroom() {
+        return subroom;
+    }
 
     // Standard
     public MergedItem(@NonNull JSONObject payload) throws JSONException {
@@ -162,15 +167,6 @@ public class MergedItem implements RecyclerviewItem {
         return false;
     }
 
-    @Override
-    public boolean isExpanded() {
-        return false;
-    }
-
-    @Override
-    public void setExpanded(boolean b) {
-    }
-
     public String getCheckedDisplayName() {
         if (displayName == null) return "N/A";
         return displayName;
@@ -193,5 +189,16 @@ public class MergedItem implements RecyclerviewItem {
 
     public int getRemainingTimes() {
         return getTimesFoundLast() - getTimesFoundCurrent();
+    }
+
+
+    @Override
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    @Override
+    public void setExpanded(boolean b) {
+        isExpanded = b;
     }
 }

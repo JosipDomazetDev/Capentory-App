@@ -23,7 +23,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +33,7 @@ import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.RecyclerviewItem;
 import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.example.capentory_client.ui.errorhandling.CustomException;
 import com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.example.capentory_client.viewmodels.MergedItemViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
@@ -113,6 +113,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn);
         final FloatingActionButton addItem = view.findViewById(R.id.add_item_floatingbtn);
         final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_mergeditems);
+        final TextView currentProgressTextView = view.findViewById(R.id.progress_textview_value_mergeditems);
         noItemTextView = view.findViewById(R.id.no_items_fragment_mergeditems);
         recyclerView = view.findViewById(R.id.recyclerv_view);
         adapter = getRecyclerViewAdapter();
@@ -122,8 +123,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
         currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomId();
         String displayRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getDisplayedNumber();
-        roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(displayRoomString));
-
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(MergedItemViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.room_number_label_fragment_mergeditems)),
@@ -133,6 +132,12 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                 R.id.swipe_refresh_fragment_mergeditems,
                 currentRoomString
         );
+
+
+        roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(displayRoomString));
+        String displayedProgress = networkViewModel.getValidatedCount() + "/" + networkViewModel.getTotalItemsCount();
+        currentProgressTextView.setText(displayedProgress);
+
 
 
         view.findViewById(R.id.scan_item_floatingbtn).setOnClickListener(v -> {
@@ -167,18 +172,15 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                     .show();
         });
 
-        addItem.setOnClickListener(v -> {
-            itemxDetailSharedViewModel.setCurrentItem(MergedItem.createNewEmptyItem());
-            NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
-        });
+        addItem.setOnClickListener(v -> moveToItemDetail(MergedItem.createNewEmptyItem()));
 
         itemxDetailSharedViewModel.getValidationEntryForCurrentItem().observe(getViewLifecycleOwner(), validationEntry -> {
             // If it's null this means that user aborted the DetailItemScreen altogether and doesn't want to create a ValidationEntry
             if (validationEntry != null) {
                 itemxDetailSharedViewModel.setValidationEntryForCurrentItem(null);
-                // This means he pressed the Red Button and wants to remove the Item from the List and mark it as invalid
+                // This means he pressed the Red Button and wants to remove the Item from the List and mark it as missing
                 if (validationEntry.isCanceledItem()) {
-                    networkViewModel.removeItemDirectly(itemxDetailSharedViewModel.getCurrentItem().getValue());
+                    networkViewModel.removeCanceledItemDirectly(itemxDetailSharedViewModel.getCurrentItem().getValue());
                 } else {
                     // This means he pressed the Green Button and wants to add a ValidationEntry
                     networkViewModel.addValidationEntry(validationEntry);
@@ -243,7 +245,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
             if (liveData.getData()) {
                 roomxItemSharedViewModel.setCurrentRoomValidated(true);
-                roomxItemSharedViewModel.setCurrentRoom(networkViewModel.getSuperRoom());
+                //roomxItemSharedViewModel.setCurrentRooms(networkViewModel.getSuperRoom());
                 NavHostFragment.findNavController(this).popBackStack();
             }
         });
@@ -311,12 +313,22 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     @Override
     public void onItemClick(int position, View v) {
         if (adapter.getItem(position) instanceof MergedItem) {
-            itemxDetailSharedViewModel.setCurrentItem((MergedItem) adapter.getItem(position));
-            Navigation.findNavController(v).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+            moveToItemDetail((MergedItem) adapter.getItem(position));
         } else {
             //Expand Collapse?
-            adapter.handleCollapseAndExpand(position, v);
+            try {
+                adapter.handleCollapseAndExpand(position);
+            } catch (Exception e) {
+                basicNetworkErrorHandler.displayTextViewErrorMessage(
+                        new CustomException("Sie müssen den Raum nochmals auswählen! Bitte nicht so wild mit der Sortierung umgehen!"));
+            }
         }
+    }
+
+    private void moveToItemDetail(MergedItem currentItem) {
+        itemxDetailSharedViewModel.setCurrentItem(currentItem);
+        itemxDetailSharedViewModel.setCurrentRooms(networkViewModel.getRooms());
+        NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
     }
 
     @Override
@@ -348,8 +360,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                     .setTitle("Doppelter Eintrag")
                     .setMessage("Sie haben diesen Gegenstand bereits validiert, wollen Sie ein Subitem anlegen?")
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        itemxDetailSharedViewModel.setCurrentItem(mergedItemFromBarcode);
-                        NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+                        moveToItemDetail(mergedItemFromBarcode);
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
@@ -358,20 +369,17 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
         // Item scanned first time and it's in the list
         for (RecyclerviewItem recyclerviewItem : items) {
-            if(recyclerviewItem instanceof  MergedItem) {
+            if (recyclerviewItem instanceof MergedItem) {
                 MergedItem mergedItem = (MergedItem) recyclerviewItem;
                 if (mergedItem.equalsBarcode(barcode)) {
-                    itemxDetailSharedViewModel.setCurrentItem(mergedItem);
-                    NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+                    moveToItemDetail(mergedItem);
                     return;
                 }
             }
         }
 
         // Scanned item is not in the list ==> query the barcode
-        itemxDetailSharedViewModel.setCurrentItem(MergedItem.createSearchedForItem(barcode));
-        NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
-
+        moveToItemDetail(MergedItem.createSearchedForItem(barcode));
     }
 
     @Override

@@ -52,11 +52,13 @@ public class BasicNetworkErrorHandler {
 
     private String getCentralizedErrorMessage(Throwable error) {
         if (error == null) return null;
+        int characterLimit = 130;
         error.printStackTrace();
 
         String errorMsg = "";
         if (error instanceof CustomException) {
             errorMsg = error.getMessage();
+            characterLimit = errorMsg.length();
         } else if (error instanceof JSONException) {
             errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
         } else if (error instanceof TimeoutError) {
@@ -81,7 +83,7 @@ public class BasicNetworkErrorHandler {
         String exceptionMsg = "";
         String fullExceptionMsg = error.getMessage();
         if (fullExceptionMsg != null)
-            exceptionMsg = "\n" + fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), 100)) + "....";
+            exceptionMsg = "\n" + fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), characterLimit)) + "....";
 
         return errorMsg + exceptionMsg;
     }

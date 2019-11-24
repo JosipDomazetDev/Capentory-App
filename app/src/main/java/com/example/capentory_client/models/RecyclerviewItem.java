@@ -3,11 +3,13 @@ package com.example.capentory_client.models;
 import androidx.annotation.NonNull;
 
 public interface RecyclerviewItem {
-   boolean applySearchBarFilter(@NonNull String filter);
+    boolean applySearchBarFilter(@NonNull String filter);
 
-   boolean isTopLevelRoom();
+    boolean isTopLevelRoom();
 
-   boolean isExpanded();
+    boolean isExpanded();
 
-   void setExpanded(boolean b);
+    void setExpanded(boolean b);
+
+
 }

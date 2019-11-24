@@ -27,11 +27,13 @@ import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.MergedItemField;
+import com.example.capentory_client.models.Room;
 import com.example.capentory_client.models.ValidationEntry;
 import com.example.capentory_client.repos.DetailItemRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.DetailItemViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
+import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import com.example.capentory_client.viewmodels.adapter.KeyValueDropDownAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
@@ -42,7 +44,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -158,15 +162,11 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         JSONObject fieldsWithValues = mergedItem.getFieldsWithValues();
 
-        ((TextView) view.findViewById(R.id.barcode_fragment_itemdetail))
-                .setText(Html.fromHtml(
-                        String.format(getString(R.string.barcode_detailitem_fragment), mergedItem.getCheckedDisplayBarcode())));
-        ((TextView) view.findViewById(R.id.bezeichnung_fragment_itemdetail))
-                .setText(Html.fromHtml(
-                        String.format(getString(R.string.bez_detailitem_fragment), mergedItem.getCheckedDisplayName())));
+        displayStaticViews(view, mergedItem);
 
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
         linearLayout.removeAllViews();
+
         Map<String, MergedItemField> mapFieldNameToField = mapStatusAwareData.getData();
         assert mapFieldNameToField != null;
 
@@ -178,8 +178,30 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
     }
 
+    private void displayStaticViews(View view, MergedItem mergedItem) {
+        ((TextView) view.findViewById(R.id.barcode_fragment_itemdetail))
+                .setText(Html.fromHtml(
+                        String.format(getString(R.string.barcode_detailitem_fragment), mergedItem.getCheckedDisplayBarcode())));
+        ((TextView) view.findViewById(R.id.bezeichnung_fragment_itemdetail))
+                .setText(Html.fromHtml(
+                        String.format(getString(R.string.bez_detailitem_fragment), mergedItem.getCheckedDisplayName())));
+
+
+        List<Room> currentRooms = itemxDetailSharedViewModel.getCurrentRooms().getValue();
+        if (itemxDetailSharedViewModel.areSubRoomsInvolved()) {
+            GenericDropDownAdapter<Room> adapter =
+                    new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<Room>) currentRooms);
+
+            Spinner subRoomDropDown = view.findViewById(R.id.subroom_dropdown_fragment_itemdetail);
+            subRoomDropDown.setAdapter(adapter);
+            subRoomDropDown.setSelection(adapter.getPosition(mergedItem.getSubroom()));
+            subRoomDropDown.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.subroom_dropdown_text_fragment_itemdetail).setVisibility(View.VISIBLE);
+        }
+    }
+
     @SuppressLint("SetTextI18n")
-    private void displayViewForType(JSONObject fieldsWithValuesFromItem, MergedItemField currentField, View view, LinearLayout linearLayout) throws JSONException {
+    private void displayViewForType(JSONObject fieldsWithValuesFromItem, MergedItemField currentField, View view, LinearLayout linearLayout) {
         if (currentField.isReadOnly()) {
             TextView textView = new TextView(Objects.requireNonNull(getContext()));
             textView.setText(currentField.getVerboseName() + ": " + fieldsWithValuesFromItem.opt(currentField.getKey()));
@@ -332,7 +354,15 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     private ValidationEntry getValidationEntryFromFormData(MergedItem currentItem) {
         // Prepare the ValidationEntry for the currentItem
         ValidationEntry validationEntry = new ValidationEntry(currentItem);
-        validationEntry.setMarkForLater(((CheckBox) view.findViewById(R.id.mark_for_later_checkbox_fragment_itemdetail)).isChecked());
+        // Set static mark for later value
+        validationEntry.setStaticMarkForLater(((CheckBox) view.findViewById(R.id.mark_for_later_checkbox_fragment_itemdetail)).isChecked());
+
+        // Subrooms also have a static field to change them
+        if (itemxDetailSharedViewModel.areSubRoomsInvolved()) {
+            Spinner subRoomDropDown = view.findViewById(R.id.subroom_dropdown_fragment_itemdetail);
+            Room selectedRoom = (Room) subRoomDropDown.getSelectedItem();
+            validationEntry.setStaticRoomChange(selectedRoom, currentItem.getSubroom());
+        }
 
         // fieldName, MergedItemField
         Map<String, MergedItemField> mapFieldNameToField = Objects.requireNonNull(networkViewModel.getData().getValue()).getData();
