@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -49,6 +50,16 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewIt
         return mainContentRepoData;
     }
 
+    public int getAmountOfItemsLeft( List<RecyclerviewItem> recyclerviewItems) {
+        int c = 0;
+        for (RecyclerviewItem recyclerviewItem : recyclerviewItems) {
+            if (recyclerviewItem instanceof MergedItem) {
+                MergedItem mergedItem = (MergedItem) recyclerviewItem;
+                c += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
+            }
+        }
+        return c;
+    }
 
     @Override
     protected void handleMainSuccessfulResponse(String stringPayload) {

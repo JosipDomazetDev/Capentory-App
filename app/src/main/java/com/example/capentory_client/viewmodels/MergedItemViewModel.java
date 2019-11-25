@@ -1,5 +1,7 @@
 package com.example.capentory_client.viewmodels;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -26,7 +28,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
     private StatusAwareLiveData<Boolean> validateSuccessful;
     private MutableLiveData<String> progressMessage = new MutableLiveData<>();
     private boolean startedRemoving;
-    private int totalItemsCount = 0;
+    private int totalItemsCount = -1;
     private int validatedCount = 0;
 
     @Inject
@@ -43,11 +45,8 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         startedRemoving = true;
 
         if (mergedItem.getTimesFoundCurrent() >= mergedItem.getTimesFoundLast()) {
-            // We are not adding a NewItem to alreadyValidatedItems because we dont want subitems for any kind of NewItem
-            if (!mergedItem.isNewItem()) {
-                alreadyValidatedItems.add(mergedItem);
-                totalItemsCount++;
-            }
+            alreadyValidatedItems.add(mergedItem);
+            totalItemsCount++;
 
             if (currentItems.remove(mergedItem)) {
                 statusAwareLiveData.postSuccess(currentItems);
@@ -75,7 +74,6 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         }
 
         statusAwareLiveData = networkRepository.fetchMainData(args);
-        totalItemsCount = getAmountOfItemsLeft();
     }
 
 
@@ -120,6 +118,8 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
 
 
     public int getAmountOfItemsLeft() {
+        totalItemsCount = getAmountOfItemsLeft();
+
         List<RecyclerviewItem> recyclerviewItems = Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData());
         int c = 0;
         for (RecyclerviewItem recyclerviewItem : recyclerviewItems) {
@@ -154,14 +154,8 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
     }
 
     public LiveData<String> getProgressMessage() {
+        progressMessage.postValue(validatedCount + "/" + totalItemsCount);
         return progressMessage;
     }
 
-    public int getTotalItemsCount() {
-        return totalItemsCount;
-    }
-
-    public int getValidatedCount() {
-        return validatedCount;
-    }
 }

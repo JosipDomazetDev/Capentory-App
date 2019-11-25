@@ -107,7 +107,9 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         final Button btnStocktaking = view.findViewById(R.id.button_fragment_stocktaking);
         serializerDropDown = view.findViewById(R.id.db_dropdown_serializer_fragment_stocktaking);
         stocktakingDropDown = view.findViewById(R.id.db_dropdown_stocktaking_fragment_stocktaking);
-        Log.e("hhjheeeeeeeee", "eeeeeee");
+        Log.e("hhjheeeeeeeeeeeee", "eeeeeefefefeeeeeeeeee");
+        Log.e("hhjheeeeeeeee", "eeeeeefefefeeeeeeeeee");
+        Log.e("hhjheeeeeeeee", "eeeeeefefefeeeeeeeeee");
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(StocktakingViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),

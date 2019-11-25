@@ -62,6 +62,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
     private RecyclerViewAdapter adapter;
     private TextView noItemTextView;
+    private TextView currentProgressTextView;
     private String currentRoomString;
     private boolean isKeyboardShowing = false;
 
@@ -113,7 +114,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn);
         final FloatingActionButton addItem = view.findViewById(R.id.add_item_floatingbtn);
         final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_mergeditems);
-        final TextView currentProgressTextView = view.findViewById(R.id.progress_textview_value_mergeditems);
+        currentProgressTextView = view.findViewById(R.id.progress_textview_value_mergeditems);
         noItemTextView = view.findViewById(R.id.no_items_fragment_mergeditems);
         recyclerView = view.findViewById(R.id.recyclerv_view);
         adapter = getRecyclerViewAdapter();
@@ -135,9 +136,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
 
         roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(displayRoomString));
-        String displayedProgress = networkViewModel.getValidatedCount() + "/" + networkViewModel.getTotalItemsCount();
-        currentProgressTextView.setText(displayedProgress);
-
 
 
         view.findViewById(R.id.scan_item_floatingbtn).setOnClickListener(v -> {
@@ -235,6 +233,8 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     protected void handleSuccess(StatusAwareData<List<RecyclerviewItem>> statusAwareData) {
         super.handleSuccess(statusAwareData);
         displayRecyclerView(adapter, statusAwareData, noItemTextView);
+        /*networkViewModel.getProgressMessage().observe(getViewLifecycleOwner(),
+                currentProgressTextView::setText);*/
     }
 
     private void handleFinishRoom() {
