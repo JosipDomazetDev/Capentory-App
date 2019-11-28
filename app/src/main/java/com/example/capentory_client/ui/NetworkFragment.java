@@ -28,7 +28,6 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     public void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
         initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
-        Log.e("CALLED", "FETCH");
 
         networkViewModel.fetchData(args);
         observeMainLiveData(networkViewModel);

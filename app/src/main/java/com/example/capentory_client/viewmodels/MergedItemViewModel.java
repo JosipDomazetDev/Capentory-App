@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>, MergedItemsRepository> {
     private List<ValidationEntry> validationEntries = new ArrayList<>();
@@ -28,8 +29,8 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
     private StatusAwareLiveData<Boolean> validateSuccessful;
     private MutableLiveData<String> progressMessage = new MutableLiveData<>();
     private boolean startedRemoving;
-    private int totalItemsCount = -1;
     private int validatedCount = 0;
+    private int totalItemsCount = 0;
 
     @Inject
     public MergedItemViewModel(MergedItemsRepository mergedItemsRepository) {
@@ -41,12 +42,15 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         if (currentItems == null) return;
 
         mergedItem.increaseTimesFoundCurrent();
+        if (mergedItem.isNewItem()) {
+            totalItemsCount++;
+        }
         validatedCount++;
+        updateProgressMessage();
         startedRemoving = true;
 
         if (mergedItem.getTimesFoundCurrent() >= mergedItem.getTimesFoundLast()) {
             alreadyValidatedItems.add(mergedItem);
-            totalItemsCount++;
 
             if (currentItems.remove(mergedItem)) {
                 statusAwareLiveData.postSuccess(currentItems);
@@ -60,6 +64,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         if (currentItems == null) return;
 
         if (currentItems.remove(mergedItem)) {
+            // New item cannot be removed, therefore we can increase the validated count without further checks
             validatedCount++;
             statusAwareLiveData.postSuccess(currentItems);
             startedRemoving = true;
@@ -97,6 +102,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
             statusAwareLiveData = networkRepository.fetchMainData(args);
             validationEntries.clear();
             alreadyValidatedItems.clear();
+            validatedCount = 0;
         }
     }
 
@@ -118,8 +124,6 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
 
 
     public int getAmountOfItemsLeft() {
-        totalItemsCount = getAmountOfItemsLeft();
-
         List<RecyclerviewItem> recyclerviewItems = Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData());
         int c = 0;
         for (RecyclerviewItem recyclerviewItem : recyclerviewItems) {
@@ -154,8 +158,17 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
     }
 
     public LiveData<String> getProgressMessage() {
-        progressMessage.postValue(validatedCount + "/" + totalItemsCount);
+        //progressMessage = new MutableLiveData<>();
+        if (this.totalItemsCount == 0) {
+            this.totalItemsCount = networkRepository.getTotalItemsCount();
+        }
+
+        updateProgressMessage();
         return progressMessage;
+    }
+
+    public void updateProgressMessage() {
+        progressMessage.postValue(validatedCount + "/" + totalItemsCount);
     }
 
 }

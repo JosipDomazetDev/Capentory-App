@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewItem>> {
     private String currentRoomString;
     private final String VALIDATION_REQUEST_KEY = "request_validation";
+    private int totalItemsCount = 0;
 
     // StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
 
@@ -44,13 +45,15 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewIt
         this.currentRoomString = args[0];
         Map<String, String> paras = new HashMap<>();
         paras.put("stocktaking_id", String.valueOf(MainActivity.getStocktaking().getStocktakingId()));
+        totalItemsCount = 0;
+
         addMainRequest(Request.Method.GET, getUrl(context, true, new String[]{MainActivity.getSerializer().getRoomUrl(), currentRoomString + "/"}, paras));
         launchMainRequest();
 
         return mainContentRepoData;
     }
 
-    public int getAmountOfItemsLeft( List<RecyclerviewItem> recyclerviewItems) {
+    public int getAmountOfItemsLeft(List<RecyclerviewItem> recyclerviewItems) {
         int c = 0;
         for (RecyclerviewItem recyclerviewItem : recyclerviewItems) {
             if (recyclerviewItem instanceof MergedItem) {
@@ -73,6 +76,7 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewIt
 
             for (int i = 0; i < directItems.length(); i++) {
                 MergedItem mergedItem = new MergedItem(directItems.getJSONObject(i));
+                totalItemsCount += mergedItem.getTimesFoundLast();
                 recyclerviewItems.add(mergedItem);
                 superRoom.addItemToRoom(mergedItem);
             }
@@ -82,6 +86,10 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewIt
         } catch (JSONException error) {
             mainContentRepoData.postError(error);
         }
+    }
+
+    public int getTotalItemsCount() {
+        return totalItemsCount;
     }
 
     private void addSubItems(List<RecyclerviewItem> recyclerviewItems, JSONObject payloadAsJson, Room superRoom, int depth) throws JSONException {
@@ -97,6 +105,7 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewIt
             JSONArray subItems = subRooms.getJSONObject(i).getJSONArray("items");
             for (int j = 0; j < subItems.length(); j++) {
                 MergedItem mergedItem = new MergedItem(subItems.getJSONObject(j), subRoom);
+                totalItemsCount += mergedItem.getTimesFoundLast();
                 recyclerviewItems.add(mergedItem);
                 subRoom.addItemToRoom(mergedItem);
             }

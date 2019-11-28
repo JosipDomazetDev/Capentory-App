@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -80,7 +81,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_mergeditems, container, false);
     }
 
@@ -115,6 +116,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         final FloatingActionButton addItem = view.findViewById(R.id.add_item_floatingbtn);
         final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_mergeditems);
         currentProgressTextView = view.findViewById(R.id.progress_textview_value_mergeditems);
+        currentProgressTextView.setVisibility(View.GONE);
         noItemTextView = view.findViewById(R.id.no_items_fragment_mergeditems);
         recyclerView = view.findViewById(R.id.recyclerv_view);
         adapter = getRecyclerViewAdapter();
@@ -233,8 +235,14 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     protected void handleSuccess(StatusAwareData<List<RecyclerviewItem>> statusAwareData) {
         super.handleSuccess(statusAwareData);
         displayRecyclerView(adapter, statusAwareData, noItemTextView);
-        /*networkViewModel.getProgressMessage().observe(getViewLifecycleOwner(),
-                currentProgressTextView::setText);*/
+        networkViewModel.getProgressMessage().observe(getViewLifecycleOwner(), text -> {
+            try {
+                currentProgressTextView.setText(text);
+                currentProgressTextView.setVisibility(View.VISIBLE);
+            } catch (Exception ignore) {
+            }
+        });
+
     }
 
     private void handleFinishRoom() {
@@ -257,7 +265,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         List<RecyclerviewItem> mergedItems = statusAwareMergedItem.getData();
         if (mergedItems == null) return;
 
-        if (mergedItems.isEmpty()) {
+        if (networkViewModel.getAmountOfItemsLeft() < 1) {
             textView.setVisibility(View.VISIBLE);
             textView.setText("In diesem Raum befinden sich keine Items!");
         }
@@ -315,7 +323,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         if (adapter.getItem(position) instanceof MergedItem) {
             moveToItemDetail((MergedItem) adapter.getItem(position));
         } else {
-            //Expand Collapse?
             try {
                 adapter.handleCollapseAndExpand(position);
             } catch (Exception e) {

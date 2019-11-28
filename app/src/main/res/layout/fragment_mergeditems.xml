@@ -113,6 +113,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:maxWidth="150dp"
+                android:visibility="gone"
                 android:text="34/123"
                 android:textSize="14sp"
                 android:textStyle="bold"

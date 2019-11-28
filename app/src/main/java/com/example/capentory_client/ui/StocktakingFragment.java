@@ -108,8 +108,9 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         serializerDropDown = view.findViewById(R.id.db_dropdown_serializer_fragment_stocktaking);
         stocktakingDropDown = view.findViewById(R.id.db_dropdown_stocktaking_fragment_stocktaking);
         Log.e("hhjheeeeeeeeeeeee", "eeeeeefefefeeeeeeeeee");
-        Log.e("hhjheeeeeeeee", "eeeeeefefefeeeeeeeeee");
-        Log.e("hhjheeeeeeeee", "eeeeeefefefeeeeeeeeee");
+        Log.e("hhjheee2222eeeeee", "eeeeeeeeeeefefefeeeeeeeeee");
+        Log.e("hhjheee2222eeeeeeee", "eeeeeeeeeeefefefeeeeeeeeee");
+        Log.e("hhjheee2222eeddeeeeee", "eeeeeeeeeeefefefeeeeeeeeee");
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(StocktakingViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),
@@ -139,7 +140,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         btnStocktaking.setOnClickListener(v -> tryToStartInventory(view));
 
 
-        view.findViewById(R.id.button_specific_search_fragment_stocktaking).setOnClickListener(v -> {
+        view.findViewById(R.id.button_specific_search_fragment_stocktaking). setOnClickListener(v -> {
             setSerializer();
             Intent intent = new Intent(getContext(), ScanBarcodeActivity.class);
             startActivityForResult(intent, 0);
