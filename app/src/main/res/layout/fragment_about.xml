@@ -22,7 +22,7 @@
             android:fontFamily="sans-serif"
             android:paddingTop="5dp"
             android:paddingBottom="20dp"
-            android:text="Eine Diplomarbeit der"
+            android:text="@string/da_fragment_about"
             android:textColor="#000000"
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +46,7 @@
                 android:id="@+id/rennweg_logo"
                 android:layout_width="187dp"
                 android:layout_height="187dp"
-                android:contentDescription="Schullogo"
+                android:contentDescription="@string/imgdesc_logo_fragment_about"
                 android:padding="20dp"
                 app:srcCompat="@drawable/htl_rennweg_logo" />
         </androidx.cardview.widget.CardView>
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:padding="20dp"
-            android:text="Unser besonderer Dank gilt unserem Sponsor Zebra!"
+            android:text="@string/sponsor_fragment_about"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -92,7 +92,7 @@
                 android:id="@+id/zebra_logo"
                 android:layout_width="187dp"
                 android:layout_height="187dp"
-                android:contentDescription="Zebralogo"
+                android:contentDescription="@string/img_desc_zebra_fragment_about"
                 android:padding="20dp"
                 app:srcCompat="@drawable/zebra_logo" />
         </androidx.cardview.widget.CardView>

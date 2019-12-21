@@ -32,6 +32,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:textColor="#FFF"
-        android:text="Das Inventurerfassungstool"
+        android:text="@string/desc_nav_header_main"
         android:textSize="15sp" />
 </LinearLayout>

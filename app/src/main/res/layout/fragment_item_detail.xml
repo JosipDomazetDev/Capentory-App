@@ -49,7 +49,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="10dp"
-                    android:text="Dieser Gegenstand ist aus einem anderen Raum!"
+                    android:text="@string/other_room_fragment_item_detail"
                     android:textAlignment="center"
                     android:textColor="#4CAF50"
                     android:textSize="16sp"
@@ -65,7 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Bitte validieren Sie das Item tatsächlich!"
+                    android:text="@string/please_validate_fragment_item_detail"
                     android:textAlignment="center"
                     android:textColor="#292929"
                     android:textSize="16sp"
@@ -119,7 +119,7 @@
                         android:id="@+id/mark_for_later_checkbox_fragment_itemdetail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Erst später entscheiden" />
+                        android:text="@string/decide_later_fragment_item_detail" />
 
                     <TextView
                         android:id="@+id/subroom_dropdown_text_fragment_itemdetail"
@@ -185,7 +185,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/rounded_edges_green"
-                            android:contentDescription="check button"
+                            android:contentDescription="@string/check_desc_fragment_item_detail"
                             android:padding="25dp"
                             android:src="@drawable/ic_check_white_36dp"
                             app:layout_constraintStart_toStartOf="parent"
@@ -197,7 +197,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="40dp"
                             android:background="@drawable/rounded_edges_red"
-                            android:contentDescription="cancel button"
+                            android:contentDescription="@string/cancel_desc_fragment_item_detail"
                             android:padding="25dp"
                             android:src="@drawable/ic_close_white_36dp"
                             app:layout_constraintEnd_toEndOf="parent"

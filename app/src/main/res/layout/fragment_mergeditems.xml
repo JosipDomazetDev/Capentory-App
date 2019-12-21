@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:text="Aktueller Raum:"
+                android:text="@string/current_room_fragment_mergeditems"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Forschritt:"
+                android:text="@string/progress_fragment_mergeditems"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/room_number_label_fragment_mergeditems" />
@@ -129,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="70dp"
             android:padding="20dp"
-            android:text="In diesem Raum befinden sich keine Gegenstände!"
+            android:text="@string/no_items_left_fragment_mergeditems"
             android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="17sp"

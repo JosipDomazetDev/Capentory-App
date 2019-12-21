@@ -50,7 +50,7 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (PreferenceUtility.isLoggedIn(getContext())) {
-            return inflater.inflate(R.layout.fragment_login_logged_in, container, false);
+            return inflater.inflate(R.layout.fragment_logout, container, false);
 
         }
         return inflater.inflate(R.layout.fragment_login, container, false);

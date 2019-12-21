@@ -22,7 +22,7 @@
             android:layout_marginBottom="36dp"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
-            android:text="Inventur beginnen"
+            android:text="@string/begin_inventur_fragment_home_screen"
             android:textAllCaps="false"
             android:textColor="#FFF"
             android:textSize="15sp"
@@ -128,7 +128,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="16dp"
                         android:fontFamily="sans-serif"
-                        android:text="Schnell"
+                        android:text="@string/fast_fragment_home_screen"
                         android:textAlignment="center"
                         android:textSize="18sp" />
 
@@ -138,7 +138,7 @@
                         android:layout_height="50dp"
                         android:layout_below="@id/speed"
                         android:layout_centerHorizontal="true"
-                        android:contentDescription="Schnell Icon"
+                        android:contentDescription="@string/fast_desc_fragment_home_screen"
                         app:srcCompat="@drawable/speed_icon" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
@@ -167,7 +167,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="16dp"
                         android:fontFamily="sans-serif"
-                        android:text="Einfach"
+                        android:text="@string/easy_fragment_home_screen"
                         android:textAlignment="center"
                         android:textSize="18sp" />
 
@@ -177,7 +177,7 @@
                         android:layout_height="50dp"
                         android:layout_below="@id/easy"
                         android:layout_centerHorizontal="true"
-                        android:contentDescription="Einfach Icon"
+                        android:contentDescription="@string/easy_desc_fragment_home_screen"
                         app:srcCompat="@drawable/easy_icon" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
@@ -206,7 +206,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="16dp"
                         android:fontFamily="sans-serif"
-                        android:text="Verlässlich"
+                        android:text="@string/reliable_fragment_home_screen"
                         android:textAlignment="center"
                         android:textSize="18sp" />
 
@@ -216,7 +216,7 @@
                         android:layout_height="50dp"
                         android:layout_below="@id/reliable"
                         android:layout_centerHorizontal="true"
-                        android:contentDescription="Verlässlich Icon"
+                        android:contentDescription="@string/reliable_desc_fragment_home_screen"
                         app:srcCompat="@drawable/reliable_icon" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
@@ -239,23 +239,23 @@
                     android:padding="10dp">
 
                     <TextView
-                        android:id="@+id/statisfying"
+                        android:id="@+id/satisfying"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="16dp"
                         android:fontFamily="sans-serif"
-                        android:text="Überzeugend"
+                        android:text="@string/satisfying_fragment_home_screen"
                         android:textAlignment="center"
                         android:textSize="18sp" />
 
                     <ImageView
-                        android:id="@+id/statisfying_icon"
+                        android:id="@+id/satisfying_icon"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_below="@id/statisfying"
+                        android:layout_below="@id/satisfying"
                         android:layout_centerHorizontal="true"
-                        android:contentDescription="Überzeugend Icon"
+                        android:contentDescription="@string/satisfying_desc_fragment_home_screen"
                         app:srcCompat="@drawable/statisfying_icon" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>

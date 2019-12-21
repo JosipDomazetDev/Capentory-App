@@ -316,7 +316,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
             ret[i] = new KeyValueDropDownAdapter.DropDownEntry(choices.getJSONObject(i));
             maxKey = Math.max(maxKey, ret[i].getKey());
         }
-        ret[ret.length - 1] = new KeyValueDropDownAdapter.DropDownEntry(maxKey, "--- Kein Wert ---");
+        ret[ret.length - 1] = new KeyValueDropDownAdapter.DropDownEntry(maxKey +1, "--- Kein Wert ---");
         return ret;
     }
 
