@@ -1,7 +1,11 @@
 package com.example.capentory_client.models;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.capentory_client.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,18 +59,18 @@ public class MergedItem implements RecyclerviewItem {
         this.fields = payload.getJSONObject("fields");
     }
 
-    public static MergedItem createNewEmptyItem() {
+    public static MergedItem createNewEmptyItem(Context context) {
         MergedItem mergedItem = new MergedItem(NEW_ITEM_CODE);
-        mergedItem.displayName = "Neues Item";
+        mergedItem.displayName = context.getString(R.string.new_item_merged_item);
         mergedItem.fields = new JSONObject();
         mergedItem.itemAsJson = new JSONObject();
         return mergedItem;
     }
 
-    public static MergedItem createNewEmptyItemWithBarcode(String barcode) {
-        MergedItem mergedItem = createNewEmptyItem();
+    public static MergedItem createNewEmptyItemWithBarcode(String barcode, Context context) {
+        MergedItem mergedItem = createNewEmptyItem(context);
         mergedItem.barcode = barcode;
-        mergedItem.displayName = "Item befindet sich nicht in der Datenbank!";
+        mergedItem.displayName = context.getString(R.string.item_not_in_db_merged_item);
         return mergedItem;
     }
 

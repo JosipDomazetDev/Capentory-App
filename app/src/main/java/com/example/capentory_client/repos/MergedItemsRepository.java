@@ -44,10 +44,10 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewIt
 
         this.currentRoomString = args[0];
         Map<String, String> paras = new HashMap<>();
-        paras.put("stocktaking_id", String.valueOf(MainActivity.getStocktaking().getStocktakingId()));
+        paras.put("stocktaking_id", String.valueOf(MainActivity.getStocktaking(context).getStocktakingId()));
         totalItemsCount = 0;
 
-        addMainRequest(Request.Method.GET, getUrl(context, true, new String[]{MainActivity.getSerializer().getRoomUrl(), currentRoomString + "/"}, paras));
+        addMainRequest(Request.Method.GET, getUrl(context, true, new String[]{MainActivity.getSerializer(context).getRoomUrl(), currentRoomString + "/"}, paras));
         launchMainRequest();
 
         return mainContentRepoData;
@@ -117,7 +117,7 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewIt
     public StatusAwareLiveData<Boolean> sendValidationEntriesToServer(JSONObject validationEntriesAsJson) {
         StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
 
-        addRequestWithContent(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, MainActivity.getSerializer().getRoomUrl(), currentRoomString + "/"), validationEntriesAsJson,
+        addRequestWithContent(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, MainActivity.getSerializer(context).getRoomUrl(), currentRoomString + "/"), validationEntriesAsJson,
                 payload -> validateSuccessful.postSuccess(true), validateSuccessful);
         launchRequestFromKey(VALIDATION_REQUEST_KEY, validateSuccessful);
 

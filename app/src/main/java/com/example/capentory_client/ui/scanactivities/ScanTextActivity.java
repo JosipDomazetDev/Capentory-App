@@ -44,7 +44,6 @@ import java.util.Map;
 public class ScanTextActivity extends AppCompatActivity {
     private static final Integer CERTAINTY_THRESHOLD_SCAN_AMOUNT = 3;
     private static final Integer MIN_LENGTH_OF_BARCODE = 8;
-    private String TAG = "OPT";
     private SurfaceView cameraPreview;
     private TextView textPreview;
     private CameraSource cameraSource;
@@ -357,7 +356,7 @@ public class ScanTextActivity extends AppCompatActivity {
             ClipData clip = ClipData.newPlainText("text", msg);
             clipboard.setPrimaryClip(clip);
 
-            Toast toast = Toast.makeText(getBaseContext(), "Kopiert! \n" + msg, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getBaseContext(), getString(R.string.copied_scantext_activity, msg), Toast.LENGTH_LONG);
             TextView v = toast.getView().findViewById(android.R.id.message);
             if (v != null) v.setGravity(Gravity.CENTER);
 

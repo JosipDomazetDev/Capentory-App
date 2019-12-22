@@ -1,5 +1,6 @@
 package com.example.capentory_client.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,9 +34,10 @@ public class MainActivity extends DaggerAppCompatActivity {
     private static Stocktaking stocktaking;
     private static SerializerEntry serializer;
 
-    public static Stocktaking getStocktaking() {
+    // We are not allowed to store a static context
+    public static Stocktaking getStocktaking(Context context) {
         if (stocktaking == null)
-            throw new IllegalArgumentException("Sie müssen eine Inventur anlegen!");
+            throw new IllegalArgumentException(context.getString(R.string.error_stocktaking));
         return stocktaking;
     }
 
@@ -47,9 +49,10 @@ public class MainActivity extends DaggerAppCompatActivity {
         serializer = selectedSerializer;
     }
 
-    public static SerializerEntry getSerializer() {
+    // We are not allowed to store a static context
+    public static SerializerEntry getSerializer(Context context) {
         if (serializer == null)
-            throw new IllegalArgumentException("Sie müssen eine Inventur anlegen und eine Datenbank auswählen!");
+            throw new IllegalArgumentException(context.getString(R.string.error_serializer));
         return serializer;
     }
 

@@ -57,7 +57,7 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
 
     }
 
-    public void clearLocally() {
+    private void clearLocally() {
         Cryptography cryptography = new Cryptography(getContext());
         try {
             cryptography.removeKeys();
@@ -71,7 +71,7 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
             e.printStackTrace();
         }
 
-        ToastUtility.displayCenteredToastMessage(getContext(), "Abmeldung erfolgreich!", Toast.LENGTH_LONG);
+        ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.logout_successful_fragment_login), Toast.LENGTH_LONG);
         PreferenceUtility.logout(getContext());
         DisplayUtility.displayLoggedOutMenu(getActivity());
         DisplayUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
@@ -79,7 +79,7 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
     }
 
 
-    public void clearOnServer() {
+    private void clearOnServer() {
         // already logged out when this happens????
 
         if (PreferenceUtility.isLoggedIn(getContext()))
@@ -123,7 +123,7 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
         super.handleSuccess(statusAwareData);
 
         PreferenceUtility.login(getContext(), statusAwareData.getData());
-        ToastUtility.displayCenteredToastMessage(getContext(), "Token erfolgreich generiert!", Toast.LENGTH_LONG);
+        ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.login_successful_fragment_login), Toast.LENGTH_LONG);
         DisplayUtility.displayLoggedInMenu(getActivity());
         DisplayUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
         NavHostFragment.findNavController(this).popBackStack();

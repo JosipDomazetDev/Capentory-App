@@ -112,7 +112,8 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
 
     public void sendValidationEntriesToServer() {
         try {
-            validateSuccessful = networkRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries));
+            // TODO: DO NOT USE DAGGER
+            validateSuccessful = networkRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries, null));
         } catch (JSONException e) {
             statusAwareLiveData.postError(e);
         }

@@ -101,7 +101,7 @@
                 android:letterSpacing="0"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:text="@string/done_fragment_rooms"
+                android:text="@string/done_btn_fragment_rooms"
                 android:textAllCaps="false"
                 android:textColor="#F44336"
                 android:textSize="15sp"

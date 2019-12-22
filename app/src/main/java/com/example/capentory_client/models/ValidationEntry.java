@@ -1,5 +1,6 @@
 package com.example.capentory_client.models;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.example.capentory_client.ui.MainActivity;
@@ -35,7 +36,7 @@ public class ValidationEntry {
     }
 
 
-    public static JSONObject getValidationEntriesAsJson(List<ValidationEntry> validationEntries) throws JSONException {
+    public static JSONObject getValidationEntriesAsJson(List<ValidationEntry> validationEntries, Context context) throws JSONException {
        /* POST (for each room):
         POST (for each room):
             {
@@ -53,7 +54,7 @@ public class ValidationEntry {
         JSONObject ret = new JSONObject();
         JSONArray validationEntriesAsJson = new JSONArray();
 
-        ret.put("stocktaking", MainActivity.getStocktaking().getStocktakingId());
+        ret.put("stocktaking", MainActivity.getStocktaking(context).getStocktakingId());
         for (ValidationEntry validationEntry : validationEntries) {
             validationEntriesAsJson.put(getValidationEntryAsJson(validationEntry));
         }

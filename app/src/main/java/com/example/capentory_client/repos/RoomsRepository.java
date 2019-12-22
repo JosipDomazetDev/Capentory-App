@@ -43,10 +43,10 @@ public class RoomsRepository extends NetworkRepository<List<Room>> {
         // Fetch only once for entire application, the rooms wont change
         /*  if (actualRoomsLiveData.getValue() == null || actualRoomsLiveData.getValue().fetchMainData() == null) {*/
         Map<String, String> paras = new HashMap<>();
-        paras.put("stocktaking_id", String.valueOf(MainActivity.getStocktaking().getStocktakingId()));
+        paras.put("stocktaking_id", String.valueOf(MainActivity.getStocktaking(context).getStocktakingId()));
 
         addMainRequest(Request.Method.GET, getUrl(context, true,
-                new String[]{MainActivity.getSerializer().getRoomUrl()}, paras));
+                new String[]{MainActivity.getSerializer(context).getRoomUrl()}, paras));
         launchMainRequest();
         return mainContentRepoData;
     }

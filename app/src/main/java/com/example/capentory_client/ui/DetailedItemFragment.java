@@ -61,7 +61,6 @@ import javax.inject.Inject;
  */
 public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItemField>, DetailItemRepository, DetailItemViewModel> {
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
-    private BasicNetworkErrorHandler basicNetworkErrorHandler;
     private View view;
     // "comment" ==> to generated View for the Field
     private Map<String, View> mergedItemFieldViewMap = new HashMap<>();
@@ -130,31 +129,23 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         if (mergedItem.isNewItem())
             textView.setText(getString(R.string.text_unkown_item_fragment_detailitem));
         else
-            textView.setText(String.format(getString(R.string.text_kown_but_different_room_item_fragment_detailitem), mergedItem.getDescriptionaryRoom()));
+            textView.setText(getString(R.string.text_kown_but_different_room_item_fragment_detailitem, mergedItem.getDescriptionaryRoom()));
 
         textView.setVisibility(View.VISIBLE);
-        try {
-            displayForm(view);
-            hideProgressBarAndShowContent();
-        } catch (JSONException e) {
-            basicNetworkErrorHandler.displayTextViewErrorMessage(e);
-        }
+        displayForm(view);
+        hideProgressBarAndShowContent();
     }
 
 
     @Override
     protected void handleSuccess(StatusAwareData<Map<String, MergedItemField>> statusAwareData) {
         super.handleSuccess(statusAwareData);
-        try {
-            if (!fetchSearchedForItem(view))
-                displayForm(view);
-        } catch (JSONException e) {
-            basicNetworkErrorHandler.displayTextViewErrorMessage(e);
-        }
+        if (!fetchSearchedForItem(view))
+            displayForm(view);
     }
 
 
-    private void displayForm(View view) throws JSONException {
+    private void displayForm(View view) {
         MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue());
         StatusAwareData<Map<String, MergedItemField>> mapStatusAwareData = Objects.requireNonNull(networkViewModel.getData().getValue());
         if (mergedItem.isSearchedForItem() || mapStatusAwareData.getData() == null) return;
@@ -181,10 +172,10 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     private void displayStaticViews(View view, MergedItem mergedItem) {
         ((TextView) view.findViewById(R.id.barcode_fragment_itemdetail))
                 .setText(Html.fromHtml(
-                        String.format(getString(R.string.barcode_detailitem_fragment), mergedItem.getCheckedDisplayBarcode())));
+                        getString(R.string.barcode_detailitem_fragment, mergedItem.getCheckedDisplayBarcode())));
         ((TextView) view.findViewById(R.id.bezeichnung_fragment_itemdetail))
                 .setText(Html.fromHtml(
-                        String.format(getString(R.string.bez_detailitem_fragment), mergedItem.getCheckedDisplayName())));
+                        getString(R.string.bez_detailitem_fragment, mergedItem.getCheckedDisplayName())));
 
 
         List<Room> currentRooms = itemxDetailSharedViewModel.getCurrentRooms().getValue();
@@ -289,7 +280,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     try {
                         choices = getChoicesFromField(Objects.requireNonNull(currentField.getChoices()));
                     } catch (JSONException | NullPointerException e) {
-                        ToastUtility.displayCenteredToastMessage(getContext(), "Falsches Server-Format! Dropdowns können nicht angezeigt werden!", Toast.LENGTH_SHORT);
+                        ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.dropdown_error_fragment_item_detail), Toast.LENGTH_SHORT);
                         break;
                     }
 
@@ -316,7 +307,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
             ret[i] = new KeyValueDropDownAdapter.DropDownEntry(choices.getJSONObject(i));
             maxKey = Math.max(maxKey, ret[i].getKey());
         }
-        ret[ret.length - 1] = new KeyValueDropDownAdapter.DropDownEntry(maxKey +1, "--- Kein Wert ---");
+        ret[ret.length - 1] = new KeyValueDropDownAdapter.DropDownEntry(maxKey + 1, getString(R.string.null_dropdown_value_fragment_item_detail));
         return ret;
     }
 
@@ -333,13 +324,13 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue());
         if (mergedItem.isParentItem() && mergedItem.getRemainingTimes() > 0) {
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                    .setTitle("Multigegenstand")
-                    .setMessage("Dieser Gegenstand besteht aus mehreren Gegenständen. Wollen Sie die restlichen " + mergedItem.getRemainingTimes() + " alle als fehlend markieren?")
-                    .setPositiveButton("Markieren", (dialog, which) -> {
+                    .setTitle(getString(R.string.title_handle_cancel_fragment_item_detail))
+                    .setMessage(getString(R.string.msg_handle_cancel_fragment_item_detail, mergedItem.getRemainingTimes()))
+                    .setPositiveButton(getString(R.string.positive_handle_cancel_fragment_item_detail), (dialog, which) -> {
                         itemxDetailSharedViewModel.setValidationEntryForCurrentItem(ValidationEntry.createCanceledEntry());
                         NavHostFragment.findNavController(DetailedItemFragment.this).popBackStack();
                     })
-                    .setNegativeButton("Nur zurückkehren", (dialog, which) -> {
+                    .setNegativeButton(getString(R.string.negative_handle_cancel_fragment_item_detail), (dialog, which) -> {
                         itemxDetailSharedViewModel.setValidationEntryForCurrentItem(null);
                         NavHostFragment.findNavController(DetailedItemFragment.this).popBackStack();
                     })

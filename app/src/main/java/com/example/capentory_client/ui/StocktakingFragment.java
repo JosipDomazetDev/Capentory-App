@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -23,10 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
-import android.os.Message;
-import android.text.Html;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +75,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
                             showPopup(liveData.getData(), new Dialog(Objects.requireNonNull(getContext()))));
                 } catch (Exception e) {
                     //  Catch if the UI does not exist when we receive the broadcast
-                    basicNetworkErrorHandler.displayTextViewMessage("Bitte warten Sie bis der Scan bereit ist!");
+                    basicNetworkErrorHandler.displayTextViewMessage(getString(R.string.wait_till_scan_ready_error));
                 }
             }
         }
@@ -127,7 +123,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
 
             // Stocktaking was created, now we can start with the inventory process itself!
             if (liveData.getData().isEmpty())
-                ToastUtility.displayCenteredToastMessage(getContext(), "Sie müssen erst eine Inventur am Server anlegen!", Toast.LENGTH_LONG);
+                ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.error_missing_inventory_fragment_stocktaking), Toast.LENGTH_LONG);
 
 
             GenericDropDownAdapter<Stocktaking> adapter =
@@ -140,13 +136,12 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         btnStocktaking.setOnClickListener(v -> tryToStartInventory(view));
 
 
-        view.findViewById(R.id.button_specific_search_fragment_stocktaking). setOnClickListener(v -> {
+        view.findViewById(R.id.button_specific_search_fragment_stocktaking).setOnClickListener(v -> {
             setSerializer();
             Intent intent = new Intent(getContext(), ScanBarcodeActivity.class);
             startActivityForResult(intent, 0);
         });
     }
-
 
 
     @Override
@@ -159,15 +154,13 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
                     observeSpecificLiveData(networkViewModel.getSpecificallySearchedForItem(), liveData ->
                             showPopup(liveData.getData(), new Dialog(Objects.requireNonNull(getContext()))));
                 } else {
-                    Toast.makeText(getContext(), "Scan ist fehlgeschlagen!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.scan_failed_scan_fragments), Toast.LENGTH_SHORT).show();
                 }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-
 
 
     public void showPopup(MergedItem mergedItem, Dialog dialog) {
@@ -213,7 +206,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     private boolean setStocktaking() {
         Stocktaking selectedStocktaking = (Stocktaking) stocktakingDropDown.getSelectedItem();
         if (selectedStocktaking == null) {
-            ToastUtility.displayCenteredToastMessage(getContext(), "Sie müssen erst eine Inventur am Server anlegen!", Toast.LENGTH_LONG);
+            ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.error_missing_inventory_fragment_stocktaking), Toast.LENGTH_LONG);
             return false;
         }
         MainActivity.setStocktaking(selectedStocktaking);
@@ -223,7 +216,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     private boolean setSerializer() {
         SerializerEntry selectedSerializer = (SerializerEntry) serializerDropDown.getSelectedItem();
         if (selectedSerializer == null) {
-            ToastUtility.displayCenteredToastMessage(getContext(), "Server unterstützt keine Inventuren!", Toast.LENGTH_LONG);
+            ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.error_missing_serializer_fragment_stocktaking), Toast.LENGTH_LONG);
             return false;
         }
         MainActivity.setSerializer(selectedSerializer);
@@ -235,7 +228,8 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         super.handleSuccess(statusAwareData);
         if (statusAwareData.getData() == null) return;
         if (statusAwareData.getData().isEmpty())
-            ToastUtility.displayCenteredToastMessage(getContext(), "Dieser Server unterstützt keine Inventuren!", Toast.LENGTH_LONG);
+            ToastUtility.displayCenteredToastMessage(getContext(),
+                    getString(R.string.error_missing_serializer_fragment_stocktaking), Toast.LENGTH_LONG);
 
         GenericDropDownAdapter<SerializerEntry> adapter = new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<SerializerEntry>) statusAwareData.getData());
         serializerDropDown.setAdapter(adapter);
@@ -262,8 +256,8 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     public void createStartNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(Objects.requireNonNull(getContext()), CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_info_outline_white_24dp)
-                .setContentTitle("Inventur-Status")
-                .setContentText("Inventur läuft! Klicken um zurückzugelangen.")
+                .setContentTitle(getString(R.string.title_notification_fragment_stocktaking))
+                .setContentText(getString(R.string.msg_notification_fragment_stocktaking))
                 .setColor(Color.parseColor("#2196F3"))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 

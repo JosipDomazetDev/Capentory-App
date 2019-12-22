@@ -64,7 +64,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
                     navigateByBarcode(barcode);
                 } catch (Exception e) {
                     //  Catch if the UI does not exist when we receive the broadcast
-                    basicNetworkErrorHandler.displayTextViewMessage("Bitte warten Sie bis der Scan bereit ist!");
+                    basicNetworkErrorHandler.displayTextViewMessage(getString(R.string.wait_till_scan_ready_error));
                 }
             }
         }
@@ -94,7 +94,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
             roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
             finishedText = view.findViewById(R.id.no_rooms_fragment_rooms);
             ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText(
-                    String.format(getString(R.string.started_inventory_fragment_rooms), MainActivity.getStocktaking().getName()));
+                    getString(R.string.started_inventory_fragment_rooms, MainActivity.getStocktaking(getContext()).getName()));
 
             initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomViewModel.class),
                     new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom)),
@@ -136,7 +136,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
                 startActivityForResult(intent, 0);
             });
         } catch (Exception e) {
-            ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText("Gestartete Inventur ist schon fertig!");
+            ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText(getString(R.string.inventory_finished_fragment_rooms));
         }
 
     }
@@ -150,7 +150,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
                     String barcode = data.getStringExtra("barcode");
                     navigateByBarcode(barcode);
                 } else {
-                    Toast.makeText(getContext(), "Scan ist fehlgeschlagen!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.scan_failed_scan_fragments), Toast.LENGTH_SHORT).show();
                 }
             }
         } else {
@@ -158,7 +158,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
         }
     }
 
-    public void navigateByBarcode(String barcode) {
+    private void navigateByBarcode(String barcode) {
         StatusAwareData<List<Room>> roomsLiveData = networkViewModel.getData().getValue();
         if (roomsLiveData == null || roomsLiveData.getData() == null) return;
         for (Room room : roomsLiveData.getData()) {
@@ -168,16 +168,16 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
                 return;
             }
         }
-        ToastUtility.displayCenteredToastMessage(getContext(), "Dieser Barcode gehört zu keinem aktiven Raum!", Toast.LENGTH_LONG);
+        ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.no_room_for_barcode_fragment_rooms), Toast.LENGTH_LONG);
     }
 
     private void handleFinishInventory() {
-        if (MainActivity.getStocktaking().isNeverEndingStocktkaking()) {
+        if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktkaking()) {
             finishInventory();
         } else
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                    .setTitle("Inventurvorgang")
-                    .setMessage("Wollen Sie die aktuelle Inventur abschließen? Anzahl der validierten Räume: " + networkViewModel.getAmountOfValidatedRooms())
+                    .setTitle(getString(R.string.title_handle_finish_fragment_rooms))
+                    .setMessage(getString(R.string.message_handle_finish_fragment_rooms, networkViewModel.getAmountOfValidatedRooms()))
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> finishInventory())
                     .setNegativeButton(android.R.string.no, null)
                     .show();
@@ -186,7 +186,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     private void finishInventory() {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(Objects.requireNonNull(getContext()));
         notificationManager.cancel(StocktakingFragment.NOTIFICATION_INV_STARTED_ID);
-        ToastUtility.displayCenteredToastMessage(getContext(), "Fertig!", Toast.LENGTH_LONG);
+        ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.done_fragment_rooms), Toast.LENGTH_LONG);
         MainActivity.clearInventory();
         NavHostFragment.findNavController(this).popBackStack();
     }

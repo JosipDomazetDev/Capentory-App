@@ -70,7 +70,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             vhItem.anlage_bez_textview.setText(item.getCheckedDisplayName());
 
             if (item.getTimesFoundLast() > 1) {
-                vhItem.counter_textview.setText(String.format("Gefunden: %1$s", (item.getTimesFoundCurrent() + "/" + item.getTimesFoundLast())));
+                vhItem.counter_textview.setText(vhItem.counter_textview.getContext().getString(R.string.found_times_recyclerview_adapter
+                        , item.getTimesFoundCurrent(), item.getTimesFoundLast()));
                 vhItem.optional_counter_container.setVisibility(View.VISIBLE);
             } else vhItem.optional_counter_container.setVisibility(View.GONE);
         } else if (holder instanceof VHHeader) {

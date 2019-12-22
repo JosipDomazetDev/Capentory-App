@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.PreferenceUtility;
+import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.RecyclerviewItem;
 import com.example.capentory_client.repos.MergedItemsRepository;
@@ -150,18 +150,18 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
             String title;
             String message;
-            if (MainActivity.getStocktaking().isNeverEndingStocktkaking()) {
-                title = "Alles im Raum erledigt?";
-                message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?";
+            if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktkaking()) {
+                title = getString(R.string.title_never_ending_finishroom_fragment_mergeditems);
+                message = getString(R.string.msg_never_ending_finishroom_fragment_mergeditems);
             } else if (networkViewModel.getAmountOfItemsLeft() == 1) {
-                title = "Fehlt ein Gegenstand?";
-                message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden? Ein Gegenstand wird als fehlend markiert!";
+                title = getString(R.string.title_one_left_finishroom_fragment_mergeditems);
+                message = getString(R.string.msg_one_left_finishroom_fragment_mergeditems);
             } else if (networkViewModel.getAmountOfItemsLeft() > 1) {
-                title = "Fehlen " + networkViewModel.getAmountOfItemsLeft() + " Gegenstände?";
-                message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden? " + networkViewModel.getAmountOfItemsLeft() + " Gegenstände werden als fehlend markiert!";
+                title = String.format(getString(R.string.title_X_left_finishroom_fragment_mergeditems), networkViewModel.getAmountOfItemsLeft());
+                message = getString(R.string.msg_X_left_finishroom_fragment_mergeditems, networkViewModel.getAmountOfItemsLeft());
             } else {
-                title = "Alle Items im Raum gescannt?";
-                message = "Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?";
+                title = getString(R.string.title_0_left_finishroom_fragment_mergeditems);
+                message = getString(R.string.msg_0_left_finishroom_fragment_mergeditems);
             }
 
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))
@@ -194,8 +194,8 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
             @Override
             public void handleOnBackPressed() {
                 new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                        .setTitle("Raumeinträge")
-                        .setMessage("Wollen Sie die Änderungen für diesen Raum wirklich verwerfen und zum vorherigen Bildschirm zurückkehren?")
+                        .setTitle(getString(R.string.title_onback_fragment_mergeditems))
+                        .setMessage(getString(R.string.msg_onback_fragment_mergeditems))
                         .setPositiveButton(android.R.string.yes, (dialog, which) -> NavHostFragment.findNavController(MergedItemsFragment.this).popBackStack())
                         .setNegativeButton(android.R.string.no, null)
                         .show();
@@ -267,7 +267,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
         if (networkViewModel.getAmountOfItemsLeft() < 1) {
             textView.setVisibility(View.VISIBLE);
-            textView.setText("In diesem Raum befinden sich keine Items!");
+            textView.setText(getString(R.string.no_items_left_fragment_mergeditems));
         }
         adapter.fill(mergedItems);
     }
@@ -303,7 +303,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                     launchItemDetailFragmentFromBarcode(barcode);
                 } catch (Exception e) {
                     //  Catch if the UI does not exist when we receive the broadcast
-                    basicNetworkErrorHandler.displayTextViewMessage("Bitte warten Sie bis der Scan bereit ist!");
+                    basicNetworkErrorHandler.displayTextViewMessage(getString(R.string.wait_till_scan_ready_error));
                 }
             }
         }
@@ -327,7 +327,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                 adapter.handleCollapseAndExpand(position);
             } catch (Exception e) {
                 basicNetworkErrorHandler.displayTextViewErrorMessage(
-                        new CustomException("Sie müssen den Raum nochmals auswählen! Bitte nicht so wild mit der Sortierung umgehen!"));
+                        new CustomException(getString(R.string.expand_failure_fragment_mergeditems)));
             }
         }
     }
@@ -346,7 +346,8 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                     String barcode = data.getStringExtra("barcode");
                     launchItemDetailFragmentFromBarcode(barcode);
                 } else {
-                    Toast.makeText(getContext(), "Scan ist fehlgeschlagen!", Toast.LENGTH_SHORT).show();
+                    ToastUtility.displayCenteredToastMessage(getContext(),
+                            getString(R.string.expand_failure_fragment_mergeditems), Toast.LENGTH_SHORT);
                 }
             }
         } else {
@@ -364,8 +365,8 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         MergedItem mergedItemFromBarcode = networkViewModel.getMergedItemFromBarcode(barcode);
         if (mergedItemFromBarcode != null) {
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                    .setTitle("Doppelter Eintrag")
-                    .setMessage("Sie haben diesen Gegenstand bereits validiert, wollen Sie ein Subitem anlegen?")
+                    .setTitle(getString(R.string.title_duplicate_fragment_mergeditems))
+                    .setMessage(getString(R.string.msg_duplicate_fragment_mergeditems))
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                         moveToItemDetail(mergedItemFromBarcode);
                     })

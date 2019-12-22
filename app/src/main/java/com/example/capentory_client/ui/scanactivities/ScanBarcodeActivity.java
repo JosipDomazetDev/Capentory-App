@@ -161,7 +161,8 @@ public class ScanBarcodeActivity extends Activity {
             ClipData clip = ClipData.newPlainText("barcode", barcode);
             clipboard.setPrimaryClip(clip);
 
-            String msg = "Kopiert: " + barcode + " \n" + "Format: " + format;
+            String msg = getString(R.string.copy_message_scanbarcode_activity, barcode, format);
+
             ToastUtility.displayCenteredToastMessage(getBaseContext(), msg, Toast.LENGTH_LONG);
         });
     }

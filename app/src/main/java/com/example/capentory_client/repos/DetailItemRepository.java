@@ -39,7 +39,7 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
     public StatusAwareLiveData<Map<String, MergedItemField>> fetchMainData(String... args) {
         // Fetch only once for entire application, the form wont change
         if (mainContentRepoData.getValue() == null || mainContentRepoData.getValue().getData() == null) {
-            addMainRequest(Request.Method.OPTIONS, getUrl(context, true, MainActivity.getSerializer().getItemUrl()));
+            addMainRequest(Request.Method.OPTIONS, getUrl(context, true, MainActivity.getSerializer(context).getItemUrl()));
             launchMainRequest();
         }
 
@@ -70,12 +70,12 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
         searchedForItem = new StatusAwareLiveData<>();
 
         addRequest(SEARCHED_ITEM_REQUEST_KEY, Request.Method.GET,
-                getUrl(context, true, MainActivity.getSerializer().getItemUrl(), barcode),
+                getUrl(context, true, MainActivity.getSerializer(context).getItemUrl(), barcode),
                 stringPayload -> {
                     try {
                         JSONArray payload = new JSONObject(stringPayload).getJSONArray("items");
                         if (payload.length() < 1)
-                            searchedForItem.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode));
+                            searchedForItem.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode, context));
                         else {
                             searchedForItem.postSuccess(new MergedItem(payload.getJSONObject(0)));
                         }

@@ -39,6 +39,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 import androidx.annotation.StringDef;
 
+import com.example.capentory_client.R;
 import com.example.capentory_client.androidutility.ToastUtility;
 import com.google.android.gms.common.images.Size;
 import com.google.android.gms.vision.Detector;
@@ -593,7 +594,7 @@ public class CameraSource {
                     }
                 }
             } catch (Exception e) {
-                ToastUtility.displayCenteredToastMessage(mContext, "Blitz nicht unterstützt!", Toast.LENGTH_SHORT);
+                ToastUtility.displayCenteredToastMessage(mContext, mContext.getString(R.string.no_lightning_camera_source), Toast.LENGTH_SHORT);
             }
             return false;
         }

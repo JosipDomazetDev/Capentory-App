@@ -1,8 +1,11 @@
 package com.example.capentory_client.models;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.capentory_client.R;
 import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 
 import org.json.JSONException;
@@ -18,16 +21,22 @@ public class Stocktaking implements GenericDropDownAdapter.DropDownEntry {
     @NonNull
     private String name;
     @Nullable
-    private String comment, date;
+    private String comment, date, displayDescription;
 
     boolean neverEndStocktaking = false;
 
-    public Stocktaking(JSONObject payload) throws JSONException {
+    public Stocktaking(JSONObject payload, Context context) throws JSONException {
         this.stocktakingId = payload.getInt("stocktake_id");
         this.name = payload.getString("name");
         this.comment = payload.getString("comment");
         this.date = getGermanDate(payload.getString("date_started"));
         this.neverEndStocktaking = payload.getBoolean("neverending_stocktaking");
+
+
+        if (neverEndStocktaking)
+            displayDescription = context.getString(R.string.neverending_inventory_stocktaking, getDate());
+
+        displayDescription = context.getString(R.string.normal_inventory_stocktaking, getDate());
     }
 
     private static String getGermanDate(String fetchedDate) {

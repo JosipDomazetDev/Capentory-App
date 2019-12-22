@@ -8,6 +8,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.ClientError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.example.capentory_client.R;
 
 import org.json.JSONException;
 
@@ -60,22 +61,22 @@ public class BasicNetworkErrorHandler {
             errorMsg = error.getMessage();
             characterLimit = errorMsg.length();
         } else if (error instanceof JSONException) {
-            errorMsg = "Server verwendet ein nicht unterstütztes JSON-Format!";
+            errorMsg = context.getString(R.string.json_error);
         } else if (error instanceof TimeoutError) {
-            errorMsg = "Zeitüberschreitungsfehler ist aufgetreten!";
+            errorMsg = context.getString(R.string.timeout_error);
         } else if (error instanceof VolleyError) {
             if (error instanceof ClientError) {
                 int statusCode = ((ClientError) error).networkResponse.statusCode;
 
                 if (statusCode == 400) {
-                    errorMsg = "Benutzername oder Passwort war falsch!";
+                    errorMsg = context.getString(R.string.wrong_username_error);
                 } else if (statusCode == 404)
-                    errorMsg = "Unerwarterter Scan!";
+                    errorMsg = context.getString(R.string.invalid_scan_error);
 
             } else if (error instanceof AuthFailureError) {
-                errorMsg = "Credentials sind ungültig oder Sie haben zu wenige Rechte. Bitte versuchen Sie sich nochmal anzumelden!";
+                errorMsg = context.getString(R.string.authfailure_error);
             } else {
-                errorMsg = "Ein Verbindungsfehler ist aufgetreten!";
+                errorMsg = context.getString(R.string.connection_error);
             }
         }
         error.printStackTrace();

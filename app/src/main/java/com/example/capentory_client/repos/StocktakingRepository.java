@@ -77,7 +77,7 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
                         List<Stocktaking> activeStocktakings = new ArrayList<>();
 
                         for (int i = 0; i < payload.length(); i++) {
-                            activeStocktakings.add(new Stocktaking(payload.getJSONObject(i)));
+                            activeStocktakings.add(new Stocktaking(payload.getJSONObject(i),context));
                         }
 
                         activeStocktakingsLiveData.postSuccess(activeStocktakings);
@@ -96,12 +96,12 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
         StatusAwareLiveData<MergedItem> specificallySearchedForItem = new StatusAwareLiveData<>();
 
         addRequest(GET_SEARCHED_FOR_ITEM_REQUEST_KEY, Request.Method.GET,
-                getUrl(context, true, MainActivity.getSerializer().getItemUrl(), barcode),
+                getUrl(context, true, MainActivity.getSerializer(context).getItemUrl(), barcode),
                 stringPayload -> {
                     try {
                         JSONArray payload = new JSONObject(stringPayload).getJSONArray("items");
                         if (payload.length() < 1)
-                            specificallySearchedForItem.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode));
+                            specificallySearchedForItem.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode, context));
                         else {
                             specificallySearchedForItem.postSuccess(new MergedItem(payload.getJSONObject(0)));
                         }
