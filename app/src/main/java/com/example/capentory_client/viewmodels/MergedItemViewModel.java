@@ -2,6 +2,7 @@ package com.example.capentory_client.viewmodels;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -144,10 +145,11 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         return null;
     }
 
+    @Nullable
     public List<Room> getRooms() {
         if (statusAwareLiveData.getValue() == null) return null;
         List<RecyclerviewItem> items = statusAwareLiveData.getValue().getData();
-        assert items != null;
+        if (items == null) return null;
 
         List<Room> rooms = new ArrayList<>();
         for (RecyclerviewItem item : items) {

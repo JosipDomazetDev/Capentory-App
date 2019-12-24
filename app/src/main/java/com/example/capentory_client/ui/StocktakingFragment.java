@@ -176,7 +176,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
             dialog.findViewById(R.id.content_popup).setVisibility(View.GONE);
             TextView status = dialog.findViewById(R.id.status_popup);
             status.setVisibility(View.VISIBLE);
-            status.setText(String.format(getString(R.string.status_popup), mergedItem.getBarcode()));
+            status.setText(getString(R.string.status_popup, mergedItem.getBarcode()));
         } else {
             titel.setText(getString(R.string.found_titel_popup));
 

@@ -32,6 +32,7 @@ import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.RecyclerviewItem;
+import com.example.capentory_client.models.Room;
 import com.example.capentory_client.repos.MergedItemsRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.ui.errorhandling.CustomException;
@@ -118,6 +119,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         currentProgressTextView = view.findViewById(R.id.progress_textview_value_mergeditems);
         currentProgressTextView.setVisibility(View.GONE);
         noItemTextView = view.findViewById(R.id.no_items_fragment_mergeditems);
+        setAdditionalViewsToHide(noItemTextView);
         recyclerView = view.findViewById(R.id.recyclerv_view);
         adapter = getRecyclerViewAdapter();
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
@@ -157,7 +159,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                 title = getString(R.string.title_one_left_finishroom_fragment_mergeditems);
                 message = getString(R.string.msg_one_left_finishroom_fragment_mergeditems);
             } else if (networkViewModel.getAmountOfItemsLeft() > 1) {
-                title = String.format(getString(R.string.title_X_left_finishroom_fragment_mergeditems), networkViewModel.getAmountOfItemsLeft());
+                title = getString(R.string.title_X_left_finishroom_fragment_mergeditems, networkViewModel.getAmountOfItemsLeft());
                 message = getString(R.string.msg_X_left_finishroom_fragment_mergeditems, networkViewModel.getAmountOfItemsLeft());
             } else {
                 title = getString(R.string.title_0_left_finishroom_fragment_mergeditems);
@@ -172,7 +174,9 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                     .show();
         });
 
-        addItem.setOnClickListener(v -> moveToItemDetail(MergedItem.createNewEmptyItem()));
+        addItem.setOnClickListener(v -> {
+            moveToItemDetail(MergedItem.createNewEmptyItem(v.getContext()));
+        });
 
         itemxDetailSharedViewModel.getValidationEntryForCurrentItem().observe(getViewLifecycleOwner(), validationEntry -> {
             // If it's null this means that user aborted the DetailItemScreen altogether and doesn't want to create a ValidationEntry
@@ -268,6 +272,8 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         if (networkViewModel.getAmountOfItemsLeft() < 1) {
             textView.setVisibility(View.VISIBLE);
             textView.setText(getString(R.string.no_items_left_fragment_mergeditems));
+        } else {
+            textView.setVisibility(View.GONE);
         }
         adapter.fill(mergedItems);
     }
@@ -283,7 +289,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         @Override
         public void onReceive(Context context, Intent intent) {
             // User has the option to disable this behaviour in case the keyboard detection bugs
-            if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), "switch_enforece_zebra", true))
+            if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), "switch_enforce_zebra", true))
                 return;
 
             String action = intent.getAction();
@@ -334,7 +340,12 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
     private void moveToItemDetail(MergedItem currentItem) {
         itemxDetailSharedViewModel.setCurrentItem(currentItem);
-        itemxDetailSharedViewModel.setCurrentRooms(networkViewModel.getRooms());
+        List<Room> rooms = networkViewModel.getRooms();
+        if (rooms == null) {
+            basicNetworkErrorHandler.displayTextViewMessage(getString(R.string.mergeditem_fragment));
+            return;
+        }
+        itemxDetailSharedViewModel.setCurrentRooms(rooms);
         NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
     }
 

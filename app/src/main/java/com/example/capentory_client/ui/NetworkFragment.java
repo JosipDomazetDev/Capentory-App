@@ -1,6 +1,5 @@
 package com.example.capentory_client.ui;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -24,14 +23,13 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     private View content;
     protected BasicNetworkErrorHandler basicNetworkErrorHandler;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private View[] additionalViewsToHide;
 
     public void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
         initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
-
         networkViewModel.fetchData(args);
         observeMainLiveData(networkViewModel);
-
 
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
@@ -135,12 +133,21 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     protected void displayProgressbarAndHideContent() {
         progressBar.setVisibility(View.VISIBLE);
         content.setVisibility(View.GONE);
+
+        if (additionalViewsToHide == null) return;
+        for (View view : additionalViewsToHide) {
+            view.setVisibility(View.GONE);
+        }
     }
 
 
     protected void hideProgressBarAndShowContent() {
         progressBar.setVisibility(View.GONE);
         content.setVisibility(View.VISIBLE);
+        // additionalViewsToHide will not be automatically displayed
+        // The reason being that content and additionalViewsToHide may not be supposed to be shown at the same time
+        // e.g. The view "No Items left" should always be hidden at the start of screen and only be displayed when the fetched items are validated
+        // However should not be automatically displayed along with the fetched content
     }
 
     protected void hideProgressBarAndHideContent() {
@@ -149,5 +156,9 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
 
     interface LiveDataSuccessHandler<P> {
         void handleSuccess(StatusAwareData<P> liveData);
+    }
+
+    public void setAdditionalViewsToHide(View... additionalViewsToHide) {
+        this.additionalViewsToHide = additionalViewsToHide;
     }
 }

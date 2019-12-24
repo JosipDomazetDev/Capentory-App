@@ -20,6 +20,6 @@ public final class PopUtility {
 
     private static String extractFromId(int id, @Nullable String text, Context context) {
         if (text == null || text.isEmpty()) text = "N/A";
-        return String.format(context.getString(id), text);
+        return context.getString(id, text);
     }
 }

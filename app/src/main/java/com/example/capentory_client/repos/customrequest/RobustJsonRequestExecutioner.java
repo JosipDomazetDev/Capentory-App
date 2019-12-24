@@ -12,7 +12,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RobustJsonRequestExecutioner {
-    public static final int DEFAULT_TIMEOUT_MS = 10000;
+    // five minute timeout just in case we have a really really bad connection e.g. a really deep basement
+    private static final int DEFAULT_TIMEOUT_MS = 60000 * 5;
     private CustomRequest robustJsonObjectRequest;
 
     private static final int MAX_RETRIES = 8;

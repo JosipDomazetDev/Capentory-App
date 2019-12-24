@@ -80,10 +80,7 @@ public class Stocktaking implements GenericDropDownAdapter.DropDownEntry {
 
     @Override
     public String displayDescription() {
-        if (isNeverEndingStocktkaking())
-            return "Laufende Inventur/" + getDate();
-
-        return "Gestartet/" + getDate();
+        return displayDescription;
     }
 
     public boolean isNeverEndingStocktkaking() {

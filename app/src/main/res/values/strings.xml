@@ -1,224 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Capentory</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="label_about_us_nav_drawer">About Us</string>
+    <string name="subroom_dropdown_text_fragment_itemdetail">Change subroom</string>
+    <string name="timeout_error">Timeout occurued</string>
+    <string name="img_desc_zebra_fragment_about">Zebra logo</string>
+    <string name="logout_text_fragment_logout">Do you want to log out?</string>
+    <string name="msg_one_left_finishroom_fragment_mergeditems">Do you want to finish this room and notify the server? One item will be marked as missing!</string>
+    <string name="msg_X_left_finishroom_fragment_mergeditems">" Do you want to finish this room and notify the server? %1$d items will be marked as missing!"</string>
+    <string name="msg_0_left_finishroom_fragment_mergeditems">Do you want to finish this room and notify the server?</string>
+    <string name="msg_never_ending_finishroom_fragment_mergeditems">Do you want to finish this room and notify the server?</string>
+    <string name="msg_onback_fragment_mergeditems">Do you really want to discard the current changes for this room and return to the previous screen?</string>
+    <string name="message_handle_finish_fragment_rooms">Do you want to end the current inventory? Amount of validated rooms: %1$d</string>
+    <string name="found_titel_popup">We found the item in the Database!</string>
+    <string name="desc_fragment_stocktaking">Choose the database-view and inventory that you want to use! You can also use the button with the question mark to get some more information about an item (independent of any inventory).</string>
+    <string name="reliable_desc_fragment_home_screen">reliable icon</string>
+    <string name="reliable_fragment_home_screen">Reliable</string>
+    <string name="msg_barcode_formats_key_preferences">Choose supported barcode formats</string>
+    <string name="sponsor_fragment_about">Special thanks goes to our sponsor Zebra!</string>
+    <string name="invalid_scan_error">Unexpected Scan!</string>
+    <string name="not_found_titel_popup">Unknown Item!</string>
+    <string name="satisfying_desc_fragment_home_screen">satisfying icon</string>
+    <string name="satisfying_fragment_home_screen">Satisfying</string>
+    <string name="login_successful_fragment_login">Token generated successfully!</string>
+    <string name="title_text_filter_mode_preferences">Text recognition mode</string>
+    <string name="dialog_title_text_filter_mode_preferences">Choose Text recognition mode</string>
+    <string name="title_switch_enforce_zebra_preferences">Prioritize PopUp-Functionality of the Zebra-Scan (Keyboard input via Zebra-Scan might be negelected)</string>
+    <string name="error_missing_inventory_fragment_stocktaking">You must first create an inventory on the server!</string>
+    <string name="error_serializer">You must fcreate an inventory on the server and choose a database-view!</string>
+    <string name="error_stocktaking">You must first create an inventory!</string>
+    <string name="expand_failure_fragment_mergeditems">Please be more gentle with the subrooms! Unfortunately you must redo this room, please return to the previous screen!</string>
+    <string name="msg_duplicate_fragment_mergeditems">You already validated this item, do you want to create a subitem?</string>
+    <string name="logout_text_desc_fragment_logout">"You can either logout locally (by deleting your password token on this device only) or also delete it on the server. For the second option network connectivity is required. "</string>
+    <string name="no_rooms_left_fragment_rooms">You have successfully finished the inventory for all rooms! You can go ahead and close the inventory on the server (or notify your admin to do so for you).</string>
     <string name="action_settings">Settings</string>
-
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_tools">Tools</string>
-    <string name="menu_share">Share</string>
-    <string name="menu_send">Send</string>
-    <string name="channel_name">Capentory</string>
-    <string name="channel_description">Inventurinformationen</string>
-    <string name="activity_intent_filter_action">com.capentory.ACTION</string>
-    <string name="datawedge_intent_key_source">com.symbol.datawedge.source</string>
-    <string name="datawedge_intent_key_label_type">com.symbol.datawedge.label_type</string>
-    <string name="datawedge_intent_key_data">com.symbol.datawedge.data_string</string>
-    <string name="title_activity_inventory">InventoryActivity</string>
-    <string name="large_text">
-        "Material is the metaphor.\n\n"
-
-        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
-        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
-        "technologically advanced and open to imagination and magic.\n"
-        "Surfaces and edges of the material provide visual cues that are grounded in reality. The "
-        "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
-        "flexibility of the material creates new affordances that supercede those in the physical "
-        "world, without breaking the rules of physics.\n"
-        "The fundamentals of light, surface, and movement are key to conveying how objects move, "
-        "interact, and exist in space and in relation to each other. Realistic lighting shows "
-        "seams, divides space, and indicates moving parts.\n\n"
-
-        "Bold, graphic, intentional.\n\n"
-
-        "The foundational elements of print based design typography, grids, space, scale, color, "
-        "and use of imagery guide visual treatments. These elements do far more than please the "
-        "eye. They create hierarchy, meaning, and focus. Deliberate color choices, edge to edge "
-        "imagery, large scale typography, and intentional white space create a bold and graphic "
-        "interface that immerse the user in the experience.\n"
-        "An emphasis on user actions makes core functionality immediately apparent and provides "
-        "waypoints for the user.\n\n"
-
-        "Motion provides meaning.\n\n"
-
-        "Motion respects and reinforces the user as the prime mover. Primary user actions are "
-        "inflection points that initiate motion, transforming the whole design.\n"
-        "All action takes place in a single environment. Objects are presented to the user without "
-        "breaking the continuity of experience even as they transform and reorganize.\n"
-        "Motion is meaningful and appropriate, serving to focus attention and maintain continuity. "
-        "Feedback is subtle yet clear. Transitions are efﬁcient yet coherent.\n\n"
-
-        "3D world.\n\n"
-
-        "The material environment is a 3D space, which means all objects have x, y, and z "
-        "dimensions. The z-axis is perpendicularly aligned to the plane of the display, with the "
-        "positive z-axis extending towards the viewer. Every sheet of material occupies a single "
-        "position along the z-axis and has a standard 1dp thickness.\n"
-        "On the web, the z-axis is used for layering and not for perspective. The 3D world is "
-        "emulated by manipulating the y-axis.\n\n"
-
-        "Light and shadow.\n\n"
-
-        "Within the material environment, virtual lights illuminate the scene. Key lights create "
-        "directional shadows, while ambient light creates soft shadows from all angles.\n"
-        "Shadows in the material environment are cast by these two light sources. In Android "
-        "development, shadows occur when light sources are blocked by sheets of material at "
-        "various positions along the z-axis. On the web, shadows are depicted by manipulating the "
-        "y-axis only. The following example shows the card with a height of 6dp.\n\n"
-
-        "Resting elevation.\n\n"
-
-        "All material objects, regardless of size, have a resting elevation, or default elevation "
-        "that does not change. If an object changes elevation, it should return to its resting "
-        "elevation as soon as possible.\n\n"
-
-        "Component elevations.\n\n"
-
-        "The resting elevation for a component type is consistent across apps (e.g., FAB elevation "
-        "does not vary from 6dp in one app to 16dp in another app).\n"
-        "Components may have different resting elevations across platforms, depending on the depth "
-        "of the environment (e.g., TV has a greater depth than mobile or desktop).\n\n"
-
-        "Responsive elevation and dynamic elevation offsets.\n\n"
-
-        "Some component types have responsive elevation, meaning they change elevation in response "
-        "to user input (e.g., normal, focused, and pressed) or system events. These elevation "
-        "changes are consistently implemented using dynamic elevation offsets.\n"
-        "Dynamic elevation offsets are the goal elevation that a component moves towards, relative "
-        "to the component’s resting state. They ensure that elevation changes are consistent "
-        "across actions and component types. For example, all components that lift on press have "
-        "the same elevation change relative to their resting elevation.\n"
-        "Once the input event is completed or cancelled, the component will return to its resting "
-        "elevation.\n\n"
-
-        "Avoiding elevation interference.\n\n"
-
-        "Components with responsive elevations may encounter other components as they move between "
-        "their resting elevations and dynamic elevation offsets. Because material cannot pass "
-        "through other material, components avoid interfering with one another any number of ways, "
-        "whether on a per component basis or using the entire app layout.\n"
-        "On a component level, components can move or be removed before they cause interference. "
-        "For example, a floating action button (FAB) can disappear or move off screen before a "
-        "user picks up a card, or it can move if a snackbar appears.\n"
-        "On the layout level, design your app layout to minimize opportunities for interference. "
-        "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
-        "when a user tries to pick up one of cards.\n\n"
-    </string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="homescreen_intro">Diese Applikation wurde im Rahmen der Diplomarbeit Capentory an der HTL Rennweg entwickelt.
-    Wir konnten den Inventurvorgang an unserer Schule erheblich vereinfachen und vor allem effizienter gestalten.</string>
-    <string name="project_title">Capentory</string>
-    <string name="about_us">Über uns</string>
-    <string name="icons_legal_notice">Icons powered by  <a href="https://icons8.de/">icons8</a>. Die Verwendung ist durch  <a href="https://icons8.com/license">Verlinkung zulässig.</a></string>
+    <string name="json_error">Server is using unsupported JSON-format!</string>
+    <string name="error_missing_serializer_fragment_stocktaking">This server doesn\'t support inventories! Contact an admin.</string>
+    <string name="title_server_ip_preferences">Server Address</string>
+    <string name="imgdesc_logo_fragment_about">htl rennweg logo</string>
+    <string name="fast_desc_fragment_home_screen">fast icon</string>
+    <string name="fast_fragment_home_screen">Fast</string>
+    <string name="scan_failed_scan_fragments">Scan failed!</string>
+    <string name="title_onback_fragment_mergeditems">Room entries</string>
+    <string name="confirm_room_fragment_rooms">Confirm room selection</string>
+    <string name="placeholder_activity_scan_text">Placeholder</string>
+    <string name="password_fragment_login">Password</string>
+    <string name="button_itempopup">OK</string>
+    <string name="authfailure_error">Your credentials are either invalid or don\'t give you enough permission. Please try to login again! Alternatively, try another account.</string>
     <string name="barcode_detailitem_fragment"><![CDATA[<b>Barcode:</b> %1$s]]></string>
-    <string name="bez_detailitem_fragment"><![CDATA[<b>Bezeichnung:</b> %1$s]]></string>
-    <string name="text_unkown_item_fragment_detailitem">Es handelt sich um einen unbekannten Gegenstand!</string>
-    <string name="text_kown_but_different_room_item_fragment_detailitem">Dieser Gegenstand ist ursprünglich aus dem Raum \"%1$s\"!</string>
-    <string name="started_inventory_fragment_rooms">Gestartete Inventur: %1$s</string>
-    <string name="recycler_view_counter_text_mergeditems">Gefunden: %1$s</string>
-    <string name="room_popup"><![CDATA[<b>Raum:</b> %1$s]]></string>
     <string name="barcode_popup"><![CDATA[<b>Barcode:</b> %1$s]]></string>
-    <string name="displayname_popup"><![CDATA[<b>Anzeigename:</b> %1$s]]></string>
-    <string name="displaydescription_popup"><![CDATA[<b>Anzeigebeschreibung:</b> %1$s]]></string>
-    <string name="not_found_titel_popup">Unbekanntes Item!</string>
-    <string name="found_titel_popup">Wir haben das Item in der Datenbank gefunden!</string>
-    <string name="status_popup">In unserem System ist kein Barcode mit dem Wert \"%1$s\" vorhanden.\nFalls Sie der Meinung sind, dass dies unerwünscht ist, so wenden Sie sich bitte den Inventurverantwortlichten!</string>
-    <string name="recycler_view_adapter_subroom_text">%1$s</string>
-    <string name="subroom_dropdown_text_fragment_itemdetail">Subroom-Zugehörigkeit ändern</string>
-    <string name="unlock_activity_scan_text">Auswahl entsperren</string>
-    <string name="placeholder_activity_scan_text">Platzhalter</string>
-    <string name="copy_activity_scan_text">Kopieren</string>
-    <string name="da_fragment_about">Eine Diplomarbeit der</string>
-    <string name="imgdesc_logo_fragment_about">Schullogo</string>
-    <string name="sponsor_fragment_about">Unser besonderer Dank gilt unserem Sponsor Zebra!</string>
-    <string name="img_desc_zebra_fragment_about">Zebralogo</string>
-    <string name="begin_inventur_fragment_home_screen">Inventur beginnen</string>
-    <string name="fast_fragment_home_screen">Schnell</string>
-    <string name="fast_desc_fragment_home_screen">Schnell Icon</string>
-    <string name="easy_fragment_home_screen">Einfach</string>
-    <string name="easy_desc_fragment_home_screen">Einfach Icon</string>
-    <string name="reliable_fragment_home_screen">Verlässlich</string>
-    <string name="reliable_desc_fragment_home_screen">Verlässlich Icon</string>
-    <string name="satisfying_fragment_home_screen">Überzeugend</string>
-    <string name="satisfying_desc_fragment_home_screen">Überzeugend Icon</string>
-    <string name="other_room_fragment_item_detail">Dieser Gegenstand ist aus einem anderen Raum!</string>
-    <string name="please_validate_fragment_item_detail">Bitte validieren Sie das Item tatsächlich!</string>
-    <string name="decide_later_fragment_item_detail">Erst später entscheiden</string>
-    <string name="check_desc_fragment_item_detail">check button</string>
+    <string name="begin_inventur_fragment_home_screen">Choose inventory</string>
+    <string name="bez_detailitem_fragment"><![CDATA[<b>Name:</b> %1$s]]></string>
     <string name="cancel_desc_fragment_item_detail">cancel button</string>
-    <string name="login_text_fragment_login">Loggen Sie sich ein!</string>
-    <string name="username_fragment_login">Benutzername</string>
-    <string name="password_fragment_login">Passwort</string>
-    <string name="login_button_fragment_login">Anmelden</string>
-    <string name="logout_text_fragment_logout">Wollen Sie sich ausloggen?</string>
-    <string name="logout_text_desc_fragment_logout">Sie haben die Möglichkeit ihr Token nur auf diesem Gerät zu löschen oder es zusätzlich auch auf dem Server zu löschen. Die zweite Option benötigt eine Netzwerkverbindung.</string>
-    <string name="local_logout_fragment_logout">Lokal Abmelden</string>
-    <string name="server_logout_fragment_logout">Auch am Server abmelden</string>
-    <string name="current_room_fragment_mergeditems">Aktueller Raum:</string>
-    <string name="progress_fragment_mergeditems">Forschritt:</string>
-    <string name="no_items_left_fragment_mergeditems">In diesem Raum befinden sich keine Gegenstände mehr!</string>
-    <string name="no_rooms_left_fragment_rooms">Sie haben alle Räume erfolgreich invetarisiert! Sie können die Inventur nun am Server beenden.</string>
-    <string name="done_btn_fragment_rooms">Ich bin fertig</string>
-    <string name="confirm_room_fragment_rooms">Raumauswahl bestätigen</string>
-    <string name="desc_fragment_rooms">Begeben Sie sich zu dem gewünschten Raum und wählen Sie ihn in der Liste aus. Falls Sie der Meinung sind, dass die Inventur fertig ist, so drücken Sie den roten Button.</string>
-    <string name="desc_fragment_stocktaking">Wählen Sie aus gegen welche Datenbank Sie inventarisieren wollen (wahrscheinlich gegen die HTL-Datenbank)! Sie können auch zu Informationszwecken mit dem Fragezeichenbutton ein Ihnen unbekanntes Item scannen.</string>
-    <string name="perform_inventory_fragment_stocktaking">Inventur durchführen</string>
-    <string name="button_itempopup">Ok</string>
-    <string name="desc_nav_header_main">Das Inventurerfassungstool</string>
-    <string name="json_error">Server verwendet ein nicht unterstütztes JSON-Format!</string>
-    <string name="timeout_error">Zeitüberschreitungsfehler ist aufgetreten!</string>
-    <string name="wrong_username_error">Benutzername oder Passwort war falsch!</string>
-    <string name="invalid_scan_error">Unerwarterter Scan!</string>
-    <string name="authfailure_error">Credentials sind ungültig oder Sie haben zu wenige Rechte. Bitte versuchen Sie sich nochmal anzumelden!</string>
-    <string name="connection_error">Ein Verbindungsfehler ist aufgetreten!</string>
-    <string name="copy_message_scanbarcode_activity">Kopiert: %1$s  Format: %2$s</string>
-    <string name="wait_till_scan_ready_error">Bitte warten Sie bis der Scan bereit ist!</string>
-    <string name="inventory_finished_fragment_rooms">Gestartete Inventur ist schon fertig!</string>
-    <string name="scan_failed_scan_fragments">Scan ist fehlgeschlagen!</string>
-    <string name="no_room_for_barcode_fragment_rooms">Dieser Barcode gehört zu keinem aktiven Raum!</string>
-    <string name="title_handle_finish_fragment_rooms">Inventurvorgang</string>
-    <string name="message_handle_finish_fragment_rooms">Wollen Sie die aktuelle Inventur abschließen? Anzahl der validierten Räume: %1$d</string>
-    <string name="done_fragment_rooms">Fertig!</string>
-    <string name="dropdown_error_fragment_item_detail">Falsches Server-Format! Dropdowns können nicht angezeigt werden!</string>
-    <string name="title_handle_cancel_fragment_item_detail">Multigegenstand</string>
-    <string name="msg_handle_cancel_fragment_item_detail">Dieser Gegenstand besteht aus mehreren Gegenständen. Wollen Sie die restlichen %1$d alle als fehlend markieren?</string>
-    <string name="positive_handle_cancel_fragment_item_detail">Markieren</string>
-    <string name="negative_handle_cancel_fragment_item_detail">Nur zurückkehren</string>
-    <string name="null_dropdown_value_fragment_item_detail">--- Kein Wert ---</string>
-    <string name="logout_successful_fragment_login">Abmeldung erfolgreich!</string>
-    <string name="login_successful_fragment_login">Token erfolgreich generiert!</string>
-    <string name="error_stocktaking">Sie müssen eine Inventur anlegen!</string>
-    <string name="error_serializer">Sie müssen eine Inventur anlegen und eine Datenbank auswählen!</string>
-    <string name="title_never_ending_finishroom_fragment_mergeditems">Alles im Raum erledigt?</string>
-    <string name="msg_never_ending_finishroom_fragment_mergeditems">Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?</string>
-    <string name="title_one_left_finishroom_fragment_mergeditems">Fehlt ein Gegenstand?</string>
-    <string name="msg_one_left_finishroom_fragment_mergeditems">Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden? Ein Gegenstand wird als fehlend markiert!</string>
-    <string name="title_X_left_finishroom_fragment_mergeditems">Fehlen %1$d Gegenstände?</string>
-    <string name="msg_X_left_finishroom_fragment_mergeditems">Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden? %1$d Gegenstände werden als fehlend markiert!</string>
-    <string name="title_0_left_finishroom_fragment_mergeditems">Gibt es vielleicht noch unbekannte Gegenstände?</string>
-    <string name="msg_0_left_finishroom_fragment_mergeditems">Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?</string>
-    <string name="title_onback_fragment_mergeditems">Raumeinträge</string>
-    <string name="msg_onback_fragment_mergeditems">Wollen Sie die Änderungen für diesen Raum wirklich verwerfen und zum vorherigen Bildschirm zurückkehren?</string>
-    <string name="expand_failure_fragment_mergeditems">Sie müssen den Raum nochmals auswählen! Bitte nicht so wild mit der Sortierung umgehen!</string>
-    <string name="title_duplicate_fragment_mergeditems">Doppelter Eintrag</string>
-    <string name="msg_duplicate_fragment_mergeditems">Sie haben diesen Gegenstand bereits validiert, wollen Sie ein Subitem anlegen?</string>
-    <string name="error_missing_inventory_fragment_stocktaking">Sie müssen erst eine Inventur am Server anlegen!</string>
-    <string name="error_missing_serializer_fragment_stocktaking">Server unterstützt keine Inventuren!</string>
-    <string name="title_notification_fragment_stocktaking">Inventur-Status</string>
-    <string name="msg_notification_fragment_stocktaking">Inventur läuft! Klicken um zurückzugelangen.</string>
-    <string name="no_lightning_camera_source">Blitz nicht unterstützt!</string>
-    <string name="copied_scantext_activity">Kopiert! %1$s</string>
-    <string name="found_times_recyclerview_adapter">Gefunden: %1$d/%2$d</string>
-    <string name="new_item_merged_item">Neues Item</string>
-    <string name="item_not_in_db_merged_item">Item befindet sich nicht in der Datenbank!</string>
-    <string name="neverending_inventory_stocktaking">Laufende Inventur/%1$s</string>
-    <string name="normal_inventory_stocktaking">Gestartet/%1$s</string>
+    <string name="channel_description">Capentory - Notification Channel</string>
+    <string name="check_desc_fragment_item_detail">check button</string>
+    <string name="connection_error">A connection error occurred!</string>
+    <string name="copied_scantext_activity">Copied! %1$s</string>
+    <string name="copy_activity_scan_text">Copy</string>
+    <string name="copy_message_scanbarcode_activity">Copied: %1$s  Format: %2$s</string>
+    <string name="current_room_fragment_mergeditems">Current Room:</string>
+    <string name="da_fragment_about">A diploma thesis of</string>
+    <string name="decide_later_fragment_item_detail">Decide later</string>
+    <string name="desc_fragment_rooms">"Please select a room from the list and enter the room. If you are of the opinion that you already completed your tasks press the red button. "</string>
+    <string name="desc_nav_header_main">An easy inventory solution</string>
+    <string name="dialog_title_barcode_formats_key_preferences">Choose barcode formats</string>
+    <string name="displaydescription_popup"><![CDATA[<b>Description:</b> %1$s]]></string>
+    <string name="displayname_popup"><![CDATA[<b>Display Name:</b> %1$s]]></string>
+    <string name="done_btn_fragment_rooms">I am finished</string>
+    <string name="done_fragment_rooms">Done!</string>
+    <string name="dropdown_error_fragment_item_detail">Wrong server-format! Cannot display dropdowns.</string>
+    <string name="easy_desc_fragment_home_screen">easy icon</string>
+    <string name="easy_fragment_home_screen">Easy</string>
+    <string name="found_times_recyclerview_adapter">Found: %1$d/%2$d</string>
+    <string name="homescreen_intro">"This app has been developed in the course of our diploma thesis for our engineering school – HTL Rennweg – that is located in Vienna, Austria. We succeeded in simplifying the inventory process of our school and made it tremendously more efficient.  "</string>
+    <string name="icons_legal_notice">Icons powered by  <a href="https://icons8.de/">icons8</a>. Usage <a href="https://icons8.com/license">is permitted via linking.</a></string>
+    <string name="inventory_finished_fragment_rooms">Started Inventory is already finished!</string>
+    <string name="item_not_in_db_merged_item">Item is not in our database!</string>
+    <string name="local_logout_fragment_logout">Log out locally</string>
+    <string name="login_button_fragment_login">Log in</string>
+    <string name="login_text_fragment_login">Please log in!</string>
+    <string name="logout_successful_fragment_login">Log out was successful!</string>
+    <string name="msg_handle_cancel_fragment_item_detail">This item consists out of multiple physical items. Do you want to mark the remaining %1$d items as missing?</string>
+    <string name="msg_notification_fragment_stocktaking">Inventory is still active! Click to get back.</string>
+    <string name="msg_server_ip_preferences">Configure IP-Address or Hostname</string>
+    <string name="msg_text_filter_mode_preferences">Configure the filter of the text recognition</string>
+    <string name="negative_handle_cancel_fragment_item_detail">Return</string>
+    <string name="neverending_inventory_stocktaking">Endless-Inventory/%1$s</string>
+    <string name="new_item_merged_item">New Item</string>
+    <string name="no_items_left_fragment_mergeditems">There aren\'t any items left in this room!</string>
+    <string name="no_lightning_camera_source">Flash is not supported!</string>
+    <string name="no_room_for_barcode_fragment_rooms">This barcode doesn\'t belong to a room!</string>
+    <string name="normal_inventory_stocktaking">Started/%1$s</string>
+    <string name="null_dropdown_value_fragment_item_detail">--- No value ---</string>
+    <string name="other_room_fragment_item_detail">This item is from another room!</string>
+    <string name="perform_inventory_fragment_stocktaking">Perform inventory</string>
+    <string name="please_validate_fragment_item_detail">Please validate the item!</string>
+    <string name="positive_handle_cancel_fragment_item_detail">Mark</string>
+    <string name="progress_fragment_mergeditems">Progress:</string>
+    <string name="recycler_view_adapter_subroom_text">%1$s</string>
+    <string name="recycler_view_counter_text_mergeditems">Found: %1$s</string>
+    <string name="room_popup"><![CDATA[<b>Room:</b> %1$s]]></string>
+    <string name="server_logout_fragment_logout">Logout on Server aswell</string>
+    <string name="started_inventory_fragment_rooms">Current Inventory: %1$s</string>
+    <string name="status_popup">The barcode \"%1$s is unknown to our system. If you think that this is a mistake, please contact a person in charge!</string>
+    <string name="text_kown_but_different_room_item_fragment_detailitem">This item is originally from the room \"%1$s\"!</string>
+    <string name="text_unkown_item_fragment_detailitem">This item is unknown!</string>
+    <string name="title_0_left_finishroom_fragment_mergeditems">Are there any unknown items that you might not have scanned?</string>
+    <string name="title_X_left_finishroom_fragment_mergeditems">Are %1$d items missing?</string>
+    <string name="title_barcode_formats_key_preferences">Barcode formats</string>
+    <string name="title_duplicate_fragment_mergeditems">Duplicate Entry</string>
+    <string name="title_handle_cancel_fragment_item_detail">Multiitem</string>
+    <string name="title_handle_finish_fragment_rooms">Inventory process</string>
+    <string name="title_never_ending_finishroom_fragment_mergeditems">Done with this room?</string>
+    <string name="title_notification_fragment_stocktaking">Iventory-Status</string>
+    <string name="title_one_left_finishroom_fragment_mergeditems">Is one item missing?</string>
+    <string name="title_switch_lightning_preferences">Enforce the flash while using the camera scan</string>
+    <string name="unlock_activity_scan_text">Unlock</string>
+    <string name="username_fragment_login">Username</string>
+    <string name="wait_till_scan_ready_error">Please wait until the scanner is ready!</string>
+    <string name="wrong_username_error">Username or Password was wrong!</string>
+    <string name="label_aboutFragment_nav">About us</string>
+    <string name="label_homeScreenFragment_nav">Home</string>
+    <string name="label_itemDetailFragment_nav">Item validation</string>
+    <string name="label_itemsFragment_nav">Items</string>
+    <string name="label_loginFragment_nav">Login</string>
+    <string name="label_roomFragment_nav">Select Room</string>
+    <string name="label_scanBarcodeActivity_nav">Scan Barcode</string>
+    <string name="label_scanTextActivity_nav">Scan Text</string>
+    <string name="label_settingsFragment_nav">Settings</string>
+    <string name="label_stocktakingFragment_nav">Choose Inventory</string>
+    <string name="label_textscan_nav_drawer">Text scan</string>
+    <string name="label_logout_nav_drawer">Log out</string>
+    <string name="label_camerascan_nav_drawer">Camera scan</string>
+    <string name="h3_nav_drawer">Additional Information</string>
+    <string name="h2_nav_drawer">You are logged in</string>
+    <string name="h1_nav_drawer">Utility Functions</string>
+    <string name="label_login_nav_drawer">Log in</string>
+    <string name="mergeditem_fragment">Please wait until the data has been loaded!</string>
+    <string name="scan_title_preferences">Scanner settings</string>
+    <string name="server_title_preferences">Server settings</string>
+    <string name="app_name" translatable="false">Capentory</string>
+    <string name="channel_name" translatable="false">Capentory</string>
+    <string name="activity_intent_filter_action" translatable="false">com.capentory.ACTION</string>
+    <string name="datawedge_intent_key_source" translatable="false">com.symbol.datawedge.source</string>
+    <string name="datawedge_intent_key_label_type" translatable="false">com.symbol.datawedge.label_type</string>
+    <string name="datawedge_intent_key_data" translatable="false">com.symbol.datawedge.data_string</string>
+    <string name="project_title" translatable="false">Capentory</string>
 </resources>

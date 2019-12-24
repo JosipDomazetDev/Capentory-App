@@ -81,9 +81,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             vhHeader.subRoom_textview.setTextSize(
                     SUB_HEADER_FONT_SIZES[Math.min(room.getDepth() - 1, SUB_HEADER_FONT_SIZES.length - 1)]);
 
-            vhHeader.subRoom_textview.setText(String.format(
-                    vhHeader.subRoom_textview.getContext().getString(R.string.recycler_view_adapter_subroom_text),
-                    room.getDisplayedRoomDescription()));
+            vhHeader.subRoom_textview.setText(
+                    vhHeader.subRoom_textview.getContext().getString(R.string.recycler_view_adapter_subroom_text,
+                            room.getDisplayedRoomDescription()));
 
         }
     }
@@ -152,6 +152,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemsToInserts = (getItemsToRemove(subRoom, itemsToInserts, ++depth));
         }
 
+        // Mark the room as collapsed
         room.setExpanded(false);
         return itemsToInserts;
     }
@@ -175,6 +176,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemsToInserts = (getItemsToAdd(subRoom, itemsToInserts, ++depth));
         }
 
+        // Mark the room as expanded
         room.setExpanded(true);
         return itemsToInserts;
     }

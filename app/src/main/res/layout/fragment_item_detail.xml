@@ -75,24 +75,58 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/button_constraintLayout_fragment_itemdetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/otherroom_textview_fragment_itemdetail">
+
+                    <ImageButton
+                        android:id="@+id/validate_btn_fragment_itemdetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_edges_green"
+                        android:contentDescription="@string/check_desc_fragment_item_detail"
+                        android:padding="25dp"
+                        android:src="@drawable/ic_check_white_36dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageButton
+                        android:id="@+id/cancel_btn_fragment_itemdetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="40dp"
+                        android:background="@drawable/rounded_edges_red"
+                        android:contentDescription="@string/cancel_desc_fragment_item_detail"
+                        android:padding="25dp"
+                        android:src="@drawable/ic_close_white_36dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/validate_btn_fragment_itemdetail"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:id="@+id/content_fragment_item_detail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="8dp"
                     android:orientation="vertical"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/otherroom_textview_fragment_itemdetail">
+                    app:layout_constraintTop_toBottomOf="@+id/button_constraintLayout_fragment_itemdetail">
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginStart="4dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="4dp"
                         android:layout_marginBottom="20dp"
                         android:background="#D8D8D8" />
@@ -140,6 +174,7 @@
                         android:shape="ring"
                         android:thicknessRatio="2"
                         app:cardCornerRadius="10dp">
+
                         <Spinner
                             android:id="@+id/subroom_dropdown_fragment_itemdetail"
                             android:layout_width="match_parent"
@@ -173,37 +208,6 @@
                         android:layout_marginBottom="20dp"
                         android:background="#D8D8D8" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/button_constraintLayout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="8dp">
-
-                        <ImageButton
-                            android:id="@+id/validate_btn_fragment_itemdetail"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_edges_green"
-                            android:contentDescription="@string/check_desc_fragment_item_detail"
-                            android:padding="25dp"
-                            android:src="@drawable/ic_check_white_36dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <ImageButton
-                            android:id="@+id/cancel_btn_fragment_itemdetail"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="40dp"
-                            android:background="@drawable/rounded_edges_red"
-                            android:contentDescription="@string/cancel_desc_fragment_item_detail"
-                            android:padding="25dp"
-                            android:src="@drawable/ic_close_white_36dp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/validate_btn_fragment_itemdetail"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </LinearLayout>
 
