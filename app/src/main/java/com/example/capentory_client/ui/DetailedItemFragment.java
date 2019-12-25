@@ -260,13 +260,13 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                 break;
 */
                 case "boolean":
-                    Switch switch_ = new Switch(getContext());
-                    switch_.setChecked(fieldsWithValuesFromItem.optBoolean(currentField.getKey()));
+                    CheckBox checkbox = new CheckBox(getContext());
+                    checkbox.setChecked(fieldsWithValuesFromItem.optBoolean(currentField.getKey()));
 
-                    switch_.setText(currentField.getVerboseName());
-                    switch_.setPadding(0, 0, 0, 40);
-                    linearLayout.addView(switch_);
-                    mergedItemFieldViewMap.put(currentField.getKey(), switch_);
+                    checkbox.setText(currentField.getVerboseName());
+                    checkbox.setPadding(0, 20, 0, 20);
+                    linearLayout.addView(checkbox);
+                    mergedItemFieldViewMap.put(currentField.getKey(), checkbox);
                     break;
 
                 case "choice":
@@ -385,20 +385,17 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
             case "datetime":
                 return (T) ((TextInputEditText) generatedView).getText().toString();
 
-
             case "string":
                 String s = ((TextInputEditText) generatedView).getText().toString();
                 if (s.equals("null")) return null;
                 return (T) s;
 
-
             case "field":
                 return (T) ((TextInputEditText) generatedView).getText().toString();
 
             case "boolean":
-                boolean checked = ((Switch) generatedView).isChecked();
+                boolean checked = ((CheckBox) generatedView).isChecked();
                 return (T) Boolean.valueOf(checked);
-
 
             case "choice":
                 KeyValueDropDownAdapter.DropDownEntry selectedItem = (KeyValueDropDownAdapter.DropDownEntry) ((Spinner) generatedView).getSelectedItem();

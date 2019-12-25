@@ -52,16 +52,22 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
         try {
             JSONObject payload = new JSONObject(stringPayload);
             Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
-            payload = payload.getJSONObject("displayFields");
-            Iterator<String> iterator = payload.keys();
 
-            while (iterator.hasNext()) {
-                String key = iterator.next();
-                mergedItemFieldsSet.put(key, new MergedItemField(key, payload));
-            }
+            readFields( payload.getJSONObject("displayFields"), mergedItemFieldsSet);
+            readFields( payload.getJSONObject("extraFields"), mergedItemFieldsSet);
+
             mainContentRepoData.postSuccess(sortByValue(mergedItemFieldsSet));
         } catch (JSONException error) {
             mainContentRepoData.postError(error);
+        }
+    }
+
+    private void readFields(JSONObject payload, Map<String, MergedItemField> mergedItemFieldsSet) throws JSONException {
+        Iterator<String> iterator = payload.keys();
+
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            mergedItemFieldsSet.put(key, new MergedItemField(key, payload));
         }
     }
 

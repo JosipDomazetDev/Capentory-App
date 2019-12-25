@@ -14,7 +14,7 @@ public final class PopUtility {
     }
 
 
-    public static Spanned getHTMLFromString(int id, String string, Context context) {
+    public static Spanned getHTMLFromStringRessources(int id, String string, Context context) {
         return Html.fromHtml(extractFromId(id, string, context));
     }
 

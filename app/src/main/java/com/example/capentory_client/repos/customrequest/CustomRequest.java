@@ -1,6 +1,7 @@
 package com.example.capentory_client.repos.customrequest;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -27,6 +28,7 @@ public class CustomRequest extends JsonRequest<String> {
 
     public CustomRequest(Context context, int method, String url, @Nullable String requestBody, Response.Listener<String> listener, @Nullable Response.ErrorListener errorListener) {
         super(method, url, requestBody, listener, errorListener);
+        Log.e("REQ", url);
         this.context = context;
     }
 

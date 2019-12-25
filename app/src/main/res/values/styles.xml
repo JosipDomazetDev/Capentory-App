@@ -27,6 +27,9 @@
     <style name="GlobalTextViewStyle" parent="android:Widget.TextView">
         <item name="android:textColor">#333</item>
         <item name="android:textSize">15sp</item>
+        <!-- Watch out when making everything selectable, some views like
+         DropDowns might loose their on click functionality because the select function of the TextView will be given priority by android
+        <item name="android:textIsSelectable">true</item>-->
     </style>
 
     <style name="Base.Widget.MaterialComponents.TextInputLayout.TextInputLayout"  parent="@android:style/TextAppearance">

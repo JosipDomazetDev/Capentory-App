@@ -57,7 +57,7 @@
     <string name="copied_scantext_activity">Copied! %1$s</string>
     <string name="copy_activity_scan_text">Copy</string>
     <string name="copy_message_scanbarcode_activity">Copied: %1$s  Format: %2$s</string>
-    <string name="current_room_fragment_mergeditems">Current Room:</string>
+    <string name="current_room_fragment_mergeditems">Current Room: <![CDATA[<b>%1$s</b>]]></string>
     <string name="da_fragment_about">A diploma thesis of</string>
     <string name="decide_later_fragment_item_detail">Decide later</string>
     <string name="desc_fragment_rooms">"Please select a room from the list and enter the room. If you are of the opinion that you already completed your tasks press the red button. "</string>
@@ -95,11 +95,11 @@
     <string name="perform_inventory_fragment_stocktaking">Perform inventory</string>
     <string name="please_validate_fragment_item_detail">Please validate the item!</string>
     <string name="positive_handle_cancel_fragment_item_detail">Mark</string>
-    <string name="progress_fragment_mergeditems">Progress:</string>
+    <string name="progress_fragment_mergeditems">Progress: <![CDATA[<b>%1$s</b>]]></string>
     <string name="recycler_view_adapter_subroom_text">%1$s</string>
     <string name="recycler_view_counter_text_mergeditems">Found: %1$s</string>
     <string name="room_popup"><![CDATA[<b>Room:</b> %1$s]]></string>
-    <string name="server_logout_fragment_logout">Logout on Server aswell</string>
+    <string name="server_logout_fragment_logout">Logout on Server as well</string>
     <string name="started_inventory_fragment_rooms">Current Inventory: %1$s</string>
     <string name="status_popup">The barcode \"%1$s is unknown to our system. If you think that this is a mistake, please contact a person in charge!</string>
     <string name="text_kown_but_different_room_item_fragment_detailitem">This item is originally from the room \"%1$s\"!</string>
@@ -145,4 +145,7 @@
     <string name="datawedge_intent_key_label_type" translatable="false">com.symbol.datawedge.label_type</string>
     <string name="datawedge_intent_key_data" translatable="false">com.symbol.datawedge.data_string</string>
     <string name="project_title" translatable="false">Capentory</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

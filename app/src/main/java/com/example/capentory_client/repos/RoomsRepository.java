@@ -13,7 +13,6 @@ import com.example.capentory_client.ui.MainActivity;
 import com.example.capentory_client.ui.errorhandling.CustomException;
 import com.example.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;

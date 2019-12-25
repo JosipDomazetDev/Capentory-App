@@ -104,6 +104,11 @@
             app:popUpToInclusive="true"
             app:destination="@id/roomFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/attachmentsFragment"
+        android:name="com.example.capentory_client.ui.AttachmentsFragment"
+        android:label="fragment_attachments"
+        tools:layout="@layout/fragment_attachments" />
 
 
 </navigation>

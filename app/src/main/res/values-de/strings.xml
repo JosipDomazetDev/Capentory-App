@@ -45,8 +45,8 @@
     <string name="logout_text_desc_fragment_logout">Sie haben die Möglichkeit ihr Token nur auf diesem Gerät zu löschen oder es zusätzlich auch auf dem Server zu löschen. Die zweite Option benötigt eine Netzwerkverbindung.</string>
     <string name="local_logout_fragment_logout">Lokal Abmelden</string>
     <string name="server_logout_fragment_logout">Auch am Server abmelden</string>
-    <string name="current_room_fragment_mergeditems">Aktueller Raum:</string>
-    <string name="progress_fragment_mergeditems">Forschritt:</string>
+    <string name="current_room_fragment_mergeditems">Aktueller Raum: <![CDATA[<b>%1$s</b>]]></string>
+    <string name="progress_fragment_mergeditems">Fortschritt:  <![CDATA[<b>%1$s</b>]]></string>
     <string name="no_items_left_fragment_mergeditems">In diesem Raum befinden sich keine Gegenstände mehr!</string>
     <string name="no_rooms_left_fragment_rooms">Sie haben alle Räume erfolgreich abgearbeitet! Sie können die Inventur nun am Server beenden.</string>
     <string name="done_btn_fragment_rooms">Ich bin fertig</string>

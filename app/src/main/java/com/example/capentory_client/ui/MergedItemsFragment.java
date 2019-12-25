@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.PopUtility;
 import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.MergedItem;
@@ -117,20 +118,19 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         final FloatingActionButton addItem = view.findViewById(R.id.add_item_floatingbtn);
         final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_mergeditems);
         currentProgressTextView = view.findViewById(R.id.progress_textview_value_mergeditems);
-        currentProgressTextView.setVisibility(View.GONE);
+        setAdditionalViewsToHide(currentProgressTextView);
         noItemTextView = view.findViewById(R.id.no_items_fragment_mergeditems);
         setAdditionalViewsToHide(noItemTextView);
         recyclerView = view.findViewById(R.id.recyclerv_view);
         adapter = getRecyclerViewAdapter();
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
 
-
         roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
         currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomId();
         String displayRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getDisplayedNumber();
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(MergedItemViewModel.class),
-                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.room_number_label_fragment_mergeditems)),
+                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.room_number_fragment_mergeditems)),
                 view,
                 R.id.progress_bar_fragment_mergeditems,
                 recyclerView,
@@ -139,7 +139,9 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         );
 
 
-        roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(displayRoomString));
+        roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(
+                // Set the current room view
+                PopUtility.getHTMLFromStringRessources(R.string.current_room_fragment_mergeditems, displayRoomString, getContext())));
 
 
         view.findViewById(R.id.scan_item_floatingbtn).setOnClickListener(v -> {
@@ -239,12 +241,10 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     protected void handleSuccess(StatusAwareData<List<RecyclerviewItem>> statusAwareData) {
         super.handleSuccess(statusAwareData);
         displayRecyclerView(adapter, statusAwareData, noItemTextView);
-        networkViewModel.getProgressMessage().observe(getViewLifecycleOwner(), text -> {
-            try {
-                currentProgressTextView.setText(text);
-                currentProgressTextView.setVisibility(View.VISIBLE);
-            } catch (Exception ignore) {
-            }
+        networkViewModel.getProgressMessage().observe(getViewLifecycleOwner(), progressAsText -> {
+            // Set progress text view
+            currentProgressTextView.setText(PopUtility.getHTMLFromStringRessources(R.string.progress_fragment_mergeditems, progressAsText, getContext()));
+            currentProgressTextView.setVisibility(View.VISIBLE);
         });
 
     }
@@ -260,7 +260,15 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                 //roomxItemSharedViewModel.setCurrentRooms(networkViewModel.getSuperRoom());
                 NavHostFragment.findNavController(this).popBackStack();
             }
+        }, error -> {
+            basicNetworkErrorHandler.displayTextViewErrorMessage(error);
+            hideProgressBarAndShowContent();
         });
+    }
+
+    protected void handleError(Throwable error) {
+        basicNetworkErrorHandler.displayTextViewErrorMessage(error);
+        hideProgressBarAndShowContent();
     }
 
 

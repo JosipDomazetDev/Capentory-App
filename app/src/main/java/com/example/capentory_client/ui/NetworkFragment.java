@@ -18,14 +18,14 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
         void handleRefresh();
     }
 
-    protected V networkViewModel;
-    protected ProgressBar progressBar;
+    V networkViewModel;
+    ProgressBar progressBar;
     private View content;
-    protected BasicNetworkErrorHandler basicNetworkErrorHandler;
+    BasicNetworkErrorHandler basicNetworkErrorHandler;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View[] additionalViewsToHide;
 
-    public void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
+    void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
         initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
         networkViewModel.fetchData(args);
@@ -40,7 +40,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     }
 
 
-    public void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, RefreshHandler refreshHandler, String... args) {
+    void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, RefreshHandler refreshHandler, String... args) {
         initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
         networkViewModel.fetchData(args);
@@ -64,12 +64,18 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
      * @param view
      * @param progressBarID
      */
-    public void initWithoutFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID) {
+    void initWithoutFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID) {
         initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, -1);
     }
 
 
-    public <T> void observeSpecificLiveData(LiveData<StatusAwareData<T>> data, LiveDataSuccessHandler<T> liveDataSuccessHandler) {
+    <T> void observeSpecificLiveData(LiveData<StatusAwareData<T>> data, LiveDataSuccessHandler<T> liveDataSuccessHandler) {
+        observeSpecificLiveData(data, liveDataSuccessHandler, this::handleError);
+    }
+
+
+    // Custom error handling
+    <T> void observeSpecificLiveData(LiveData<StatusAwareData<T>> data, LiveDataSuccessHandler<T> liveDataSuccessHandler, LiveDataErrorHandler liveDataErrorHandler) {
         if (data == null) return;
 
         data.observe(getViewLifecycleOwner(), statusAwareData -> {
@@ -78,7 +84,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
                     liveDataSuccessHandler.handleSuccess(statusAwareData);
                     break;
                 case ERROR:
-                    handleError(statusAwareData.getError());
+                    liveDataErrorHandler.handleError(statusAwareData.getError());
                     break;
                 case FETCHING:
                     handleFetching();
@@ -88,7 +94,6 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
                 basicNetworkErrorHandler.reset();
 
         });
-
     }
 
     private void observeMainLiveData(V networkViewModel) {
@@ -157,6 +162,11 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     interface LiveDataSuccessHandler<P> {
         void handleSuccess(StatusAwareData<P> liveData);
     }
+
+    interface LiveDataErrorHandler {
+        void handleError(Throwable error);
+    }
+
 
     public void setAdditionalViewsToHide(View... additionalViewsToHide) {
         this.additionalViewsToHide = additionalViewsToHide;

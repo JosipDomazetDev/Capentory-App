@@ -103,10 +103,11 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         final Button btnStocktaking = view.findViewById(R.id.button_fragment_stocktaking);
         serializerDropDown = view.findViewById(R.id.db_dropdown_serializer_fragment_stocktaking);
         stocktakingDropDown = view.findViewById(R.id.db_dropdown_stocktaking_fragment_stocktaking);
-        Log.e("hhjheeeeeeeeeeeee", "eeeeeefefefeeeeeeeeee");
+        Log.e("hhjheeeeee", "eeeeeefefefeeeeeeeeee");
+        Log.e("hhjheeeeeeeee", "eeeeeefefefeeeeeeeeee");
+        Log.e("hhjheeeeeeeeeeeeeeee", "eeeeeefefefeeeeeeeeee");
+        Log.e("hhjheeeeeeeeeeeeeeee", "eeeeeefefefeeeeeeeeee");
         Log.e("hhjheee2222eeeeee", "eeeeeeeeeeefefefeeeeeeeeee");
-        Log.e("hhjheee2222eeeeeeee", "eeeeeeeeeeefefefeeeeeeeeee");
-        Log.e("hhjheee2222eeddeeeeee", "eeeeeeeeeeefefefeeeeeeeeee");
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(StocktakingViewModel.class),
                 new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),
@@ -185,10 +186,10 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
             TextView displayname = dialog.findViewById(R.id.displayname_popup);
             TextView displaydesc = dialog.findViewById(R.id.displaydescription_popup);
 
-            room.setText(PopUtility.getHTMLFromString(R.string.room_popup, mergedItem.getDescriptionaryRoom(), getContext()));
-            barcode.setText(PopUtility.getHTMLFromString(R.string.barcode_popup, mergedItem.getBarcode(), getContext()));
-            displayname.setText(PopUtility.getHTMLFromString(R.string.displayname_popup, mergedItem.getDisplayName(), getContext()));
-            displaydesc.setText(PopUtility.getHTMLFromString(R.string.displaydescription_popup, mergedItem.getDisplayDescription(), getContext()));
+            room.setText(PopUtility.getHTMLFromStringRessources(R.string.room_popup, mergedItem.getDescriptionaryRoom(), getContext()));
+            barcode.setText(PopUtility.getHTMLFromStringRessources(R.string.barcode_popup, mergedItem.getBarcode(), getContext()));
+            displayname.setText(PopUtility.getHTMLFromStringRessources(R.string.displayname_popup, mergedItem.getDisplayName(), getContext()));
+            displaydesc.setText(PopUtility.getHTMLFromStringRessources(R.string.displaydescription_popup, mergedItem.getDisplayDescription(), getContext()));
         }
 
         dialog.show();
