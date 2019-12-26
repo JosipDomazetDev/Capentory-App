@@ -145,7 +145,9 @@
     <string name="datawedge_intent_key_label_type" translatable="false">com.symbol.datawedge.label_type</string>
     <string name="datawedge_intent_key_data" translatable="false">com.symbol.datawedge.data_string</string>
     <string name="project_title" translatable="false">Capentory</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="item_fragment_attachments">Item</string>
+    <string name="attachments_fragment_attachments">Attachments</string>
+    <string name="url_fragment_attachment" translatable="false"><![CDATA[<a href="https://stackoverflow.com/questions/10857652/using-href-in-android-strings-xml-file">%2$s</a>]]></string>
+    <string name="no_attachments_fragment_attachments">This item doesn\'t have any attachments!</string>
+    <string name="empty_desc_fragment_attachment">No Description available</string>
 </resources>

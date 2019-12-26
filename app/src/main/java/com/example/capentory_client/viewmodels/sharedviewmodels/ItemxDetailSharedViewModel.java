@@ -29,8 +29,8 @@ public class ItemxDetailSharedViewModel extends ViewModel {
         currentItem.setValue(item);
     }
 
-    public LiveData<MergedItem> getCurrentItem() {
-        return currentItem;
+    public MergedItem getCurrentItem() {
+        return currentItem.getValue();
     }
 
     public void setValidationEntryForCurrentItem(ValidationEntry validationEntryForCurrentItem) {

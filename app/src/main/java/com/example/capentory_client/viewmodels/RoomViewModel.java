@@ -22,16 +22,6 @@ public class RoomViewModel extends NetworkViewModel<List<Room>, RoomsRepository>
     }
 
 
-    public void removeRoom(Room room) {
-        List<Room> currentRooms = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
-        if (currentRooms == null) return;
-
-        if (currentRooms.remove(room)) {
-            statusAwareLiveData.postSuccess(currentRooms);
-            amountOfValidatedRooms++;
-        }
-    }
-
     public boolean noRoomsLeft() {
         try {
             return Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData()).isEmpty();

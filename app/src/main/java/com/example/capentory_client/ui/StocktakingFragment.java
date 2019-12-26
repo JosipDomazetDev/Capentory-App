@@ -105,6 +105,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         stocktakingDropDown = view.findViewById(R.id.db_dropdown_stocktaking_fragment_stocktaking);
         Log.e("hhjheeeeee", "eeeeeefefefeeeeeeeeee");
         Log.e("hhjheeeeeeeee", "eeeeeefefefeeeeeeeeee");
+        Log.e("hhjheeeeeeeeeeee", "eeeeeefefefeeeeeeeeee");
         Log.e("hhjheeeeeeeeeeeeeeee", "eeeeeefefefeeeeeeeeee");
         Log.e("hhjheeeeeeeeeeeeeeee", "eeeeeefefefeeeeeeeeee");
         Log.e("hhjheee2222eeeeee", "eeeeeeeeeeefefefeeeeeeeeee");

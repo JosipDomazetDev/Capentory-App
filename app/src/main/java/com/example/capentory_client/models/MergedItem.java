@@ -7,10 +7,13 @@ import androidx.annotation.Nullable;
 
 import com.example.capentory_client.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
@@ -27,6 +30,8 @@ public class MergedItem implements RecyclerviewItem {
     private Room subroom;
     // For Items this control whether a item is already validated and  therefore whether a item should be included into the expand/collapse behaviour
     private boolean isExpanded = true;
+    // Optional attachments
+    private Set<Attachment> attachments = new HashSet<>();
 
 
     public Room getSubroom() {
@@ -57,6 +62,13 @@ public class MergedItem implements RecyclerviewItem {
         this.descriptionaryRoom = payload.getString("room");
         this.itemAsJson = payload;
         this.fields = payload.getJSONObject("fields");
+
+        JSONArray attachmentsAsJSON = this.fields.optJSONArray("attachments");
+        attachmentsAsJSON = new JSONArray("[ { \"url\": \"https://www.capentory.com/assets/res/SB_31_07_2019_Juli.pdf\", \"description\": \"Sick Planung\" }, { \"url\": \"https://i.pinimg.com/originals/0b/c7/36/0bc736dcbd06a36a24871c7640c1e87a.jpg\", \"description\": \"Косово је сривја\" }, { \"url\": \"https://www.capentory.com/assets/res/da_antrag_domazet.pdf\", \"description\": \"Sick Antrag\" }, { \"url\": \"https://pbs.twimg.com/media/DeYQUL6V4AEsUJ6.jpg\", \"description\": \"greek tears\" } ]");
+
+        for (int i = 0; i < attachmentsAsJSON.length(); i++) {
+            attachments.add(new Attachment(attachmentsAsJSON.getJSONObject(i)));
+        }
     }
 
     public static MergedItem createNewEmptyItem(Context context) {
@@ -133,6 +145,10 @@ public class MergedItem implements RecyclerviewItem {
     @Nullable
     public String getDisplayDescription() {
         return displayDescription;
+    }
+
+    public Set<Attachment> getAttachments() {
+        return attachments;
     }
 
     /**

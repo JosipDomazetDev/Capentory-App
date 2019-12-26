@@ -186,11 +186,11 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                 itemxDetailSharedViewModel.setValidationEntryForCurrentItem(null);
                 // This means he pressed the Red Button and wants to remove the Item from the List and mark it as missing
                 if (validationEntry.isCanceledItem()) {
-                    networkViewModel.removeCanceledItemDirectly(itemxDetailSharedViewModel.getCurrentItem().getValue());
+                    networkViewModel.removeCanceledItemDirectly(itemxDetailSharedViewModel.getCurrentItem());
                 } else {
                     // This means he pressed the Green Button and wants to add a ValidationEntry
                     networkViewModel.addValidationEntry(validationEntry);
-                    networkViewModel.removeItemByFoundCounterIncrease(itemxDetailSharedViewModel.getCurrentItem().getValue());
+                    networkViewModel.removeItemByFoundCounterIncrease(itemxDetailSharedViewModel.getCurrentItem());
                 }
             }
         });

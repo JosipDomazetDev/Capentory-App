@@ -4,12 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_refresh_fragment_attachments"
-    tools:context=".ui.AttachmentsFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.AttachmentsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+        android:id="@+id/constraintLayout2_fragment_attachments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.DetailedItemFragment">
@@ -23,15 +23,15 @@
             android:indeterminate="true"
             android:indeterminateBehavior="repeat"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/scrollView_fragment_item_detail"
-            app:layout_constraintEnd_toStartOf="@+id/scrollView_fragment_item_detail"
+            app:layout_constraintBottom_toTopOf="@+id/scrollView_fragment_attachments"
+            app:layout_constraintEnd_toStartOf="@+id/scrollView_fragment_attachments"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/scrollView_fragment_item_detail"
-            app:layout_constraintTop_toBottomOf="@+id/scrollView_fragment_item_detail" />
+            app:layout_constraintStart_toEndOf="@+id/scrollView_fragment_attachments"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView_fragment_attachments" />
 
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/scrollView_fragment_item_detail"
+            android:id="@+id/scrollView_fragment_attachments"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="12dp"
@@ -40,37 +40,53 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout_above_scrollview"
+                android:id="@+id/constraintLayout_above_scrollview_fragment_attachments"
                 android:layout_width="match_parent"
                 android:layout_height="300dp">
 
 
                 <TextView
+                    android:id="@+id/item_textview_fragment_attachments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/item_fragment_attachments"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
                     android:id="@+id/barcode_fragment_attachments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="4444"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="14dp"
+                    android:text="@string/barcode_detailitem_fragment"
                     android:textAlignment="center"
                     android:textIsSelectable="true"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4"
-                    tools:layout_editor_absoluteX="58dp" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/item_textview_fragment_attachments" />
 
 
                 <TextView
                     android:id="@+id/bezeichnung_fragment_attachments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="4433"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/bez_detailitem_fragment"
                     android:textIsSelectable="true"
-                    tools:layout_editor_absoluteX="179dp"
-                    tools:layout_editor_absoluteY="73dp" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/barcode_fragment_attachments" />
 
 
                 <View
+                    android:id="@+id/view"
                     android:layout_width="395dp"
                     android:layout_height="1dp"
                     android:layout_marginStart="4dp"
+                    android:layout_marginTop="25dp"
                     android:layout_marginEnd="4dp"
                     android:background="#D8D8D8"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -78,23 +94,39 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/bezeichnung_fragment_attachments" />
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:layout_editor_absoluteX="129dp"
-                    tools:layout_editor_absoluteY="145dp"
-                    tools:src="@tools:sample/avatars" />
-
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/attachment_textview_fragment_attachments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="TextView"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/attachments_fragment_attachments"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/view" />
+
+                <LinearLayout
+                    android:id="@+id/content_fragment_attachments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/attachment_textview_fragment_attachments">
+
+
+                    <TextView
+                        android:id="@+id/no_attachments_textview_fragment_attachments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/no_attachments_fragment_attachments"
+                        android:textColor="#F44336"
+                        android:visibility="gone" />
+                </LinearLayout>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

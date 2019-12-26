@@ -89,10 +89,10 @@
                         android:id="@+id/validate_btn_fragment_itemdetail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="40dp"
                         android:background="@drawable/rounded_edges_green"
                         android:contentDescription="@string/check_desc_fragment_item_detail"
                         android:padding="25dp"
-                        android:layout_marginStart="40dp"
                         android:src="@drawable/ic_check_white_36dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/cancel_btn_fragment_itemdetail"
@@ -135,20 +135,20 @@
                         android:id="@+id/barcode_fragment_itemdetail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textIsSelectable="true"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="16dp"
-                        android:textAlignment="center" />
+                        android:textAlignment="center"
+                        android:textIsSelectable="true" />
 
 
                     <TextView
                         android:id="@+id/bezeichnung_fragment_itemdetail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textIsSelectable="true"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="16dp"
-                        android:layout_marginBottom="20dp" />
+                        android:layout_marginBottom="20dp"
+                        android:textIsSelectable="true" />
 
 
                     <CheckBox
@@ -213,7 +213,23 @@
 
                 </LinearLayout>
 
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/attachment_btn_fragment_itemdetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="bottom|end"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#2196F3"
+            app:borderWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_attachment_white_24dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

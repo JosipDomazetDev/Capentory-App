@@ -33,7 +33,7 @@
     <string name="satisfying_fragment_home_screen">Überzeugend</string>
     <string name="satisfying_desc_fragment_home_screen">Überzeugend Icon</string>
     <string name="other_room_fragment_item_detail">Dieser Gegenstand ist aus einem anderen Raum!</string>
-    <string name="please_validate_fragment_item_detail">Bitte validieren Sie das Item tatsächlich!</string>
+    <string name="please_validate_fragment_item_detail">Bitte validieren Sie den Gegenstand tatsächlich!</string>
     <string name="decide_later_fragment_item_detail">Erst später entscheiden</string>
     <string name="check_desc_fragment_item_detail">check button</string>
     <string name="cancel_desc_fragment_item_detail">cancel button</string>
@@ -91,7 +91,7 @@
     <string name="msg_onback_fragment_mergeditems">Wollen Sie die Änderungen für diesen Raum wirklich verwerfen und zum vorherigen Bildschirm zurückkehren?</string>
     <string name="expand_failure_fragment_mergeditems">Sie müssen den Raum nochmals auswählen! Bitte nicht so wild mit der Sortierung umgehen!</string>
     <string name="title_duplicate_fragment_mergeditems">Doppelter Eintrag</string>
-    <string name="msg_duplicate_fragment_mergeditems">Sie haben diesen Gegenstand bereits validiert, wollen Sie ein Subitem anlegen?</string>
+    <string name="msg_duplicate_fragment_mergeditems">Sie haben diesen Gegenstand bereits validiert, wollen Sie ein Sub-Gegenstand anlegen?</string>
     <string name="error_missing_inventory_fragment_stocktaking">Sie müssen erst eine Inventur am Server anlegen!</string>
     <string name="error_missing_serializer_fragment_stocktaking">Server unterstützt keine Inventuren!</string>
     <string name="title_notification_fragment_stocktaking">Inventur-Status</string>
@@ -137,4 +137,8 @@
     <string name="mergeditem_fragment">Bitte warten Sie bis die Daten geladen wurden!</string>
     <string name="scan_title_preferences">Scaneinstellungen</string>
     <string name="server_title_preferences">Serverkonnektivität herstellen</string>
+    <string name="item_fragment_attachments">Gegenstand</string>
+    <string name="attachments_fragment_attachments">Anhänge</string>
+    <string name="no_attachments_fragment_attachments">Für diesen Gegenstand gibt es keine Anhänge!</string>
+    <string name="empty_desc_fragment_attachment">Keine Beschreibung vorhanden</string>
 </resources>

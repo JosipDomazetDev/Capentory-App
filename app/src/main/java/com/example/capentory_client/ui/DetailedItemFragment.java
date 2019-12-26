@@ -1,10 +1,17 @@
 package com.example.capentory_client.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +41,7 @@ import com.example.capentory_client.viewmodels.DetailItemViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import com.example.capentory_client.viewmodels.adapter.KeyValueDropDownAdapter;
+import com.example.capentory_client.viewmodels.sharedviewmodels.DetailXAttachmentViewModel;
 import com.example.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 import com.google.android.material.textfield.TextInputEditText;
@@ -61,6 +68,7 @@ import javax.inject.Inject;
  */
 public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItemField>, DetailItemRepository, DetailItemViewModel> {
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
+    private DetailXAttachmentViewModel detailXAttachmentViewModel;
     private View view;
     // "comment" ==> to generated View for the Field
     private Map<String, View> mergedItemFieldViewMap = new HashMap<>();
@@ -74,6 +82,32 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         return inflater.inflate(R.layout.fragment_item_detail, container, false);
     }
 
+    private SensorManager mSensorManager;
+    private float accel;
+    private float accelCurrent;
+    private float accelLast;
+
+    private final SensorEventListener mSensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+            accelLast = accelCurrent;
+            Log.e("x", x + "/" + y + "/" + z);
+            accelCurrent = (float) Math.sqrt((double) (y * y));
+            float delta = accelCurrent - accelLast;
+            accel = accel * 0.9f + delta;
+            if (accel > 10) {
+                Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
+                handleValidate();
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -81,10 +115,22 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mSensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
+        }
+        Objects.requireNonNull(mSensorManager).registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        accel = 10f;
+        accelCurrent = SensorManager.GRAVITY_EARTH;
+        accelLast = SensorManager.GRAVITY_EARTH;
+
         this.view = view;
         LinearLayout linearLayout = view.findViewById(R.id.content_fragment_item_detail);
         basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dummy));
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
+        detailXAttachmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(DetailXAttachmentViewModel.class);
 
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(DetailItemViewModel.class),
@@ -108,10 +154,17 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         ImageButton cancelButton = view.findViewById(R.id.cancel_btn_fragment_itemdetail);
         cancelButton.setOnClickListener(v -> handleCancel());
+
+        view.findViewById(R.id.attachment_btn_fragment_itemdetail).setOnClickListener(v -> handleAttachment());
+    }
+
+    private void handleAttachment() {
+        detailXAttachmentViewModel.setCurrentItem(itemxDetailSharedViewModel.getCurrentItem());
+        NavHostFragment.findNavController(this).navigate(R.id.next);
     }
 
     private boolean fetchSearchedForItem(@NonNull View view) {
-        MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem().getValue();
+        MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem();
         if (mergedItem != null && mergedItem.isSearchedForItem()) {
             networkViewModel.fetchSearchedForItem(mergedItem.getBarcode());
             observeSpecificLiveData(networkViewModel.getSearchedForItem(), liveData -> handleSearchedForItemResponse(view, liveData));
@@ -146,7 +199,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     private void displayForm(View view) {
-        MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue());
+        MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem());
         StatusAwareData<Map<String, MergedItemField>> mapStatusAwareData = Objects.requireNonNull(networkViewModel.getData().getValue());
         if (mergedItem.isSearchedForItem() || mapStatusAwareData.getData() == null) return;
 
@@ -313,7 +366,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     public void handleValidate() {
-        MergedItem currentItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue());
+        MergedItem currentItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem());
         ValidationEntry validationEntry = getValidationEntryFromFormData(currentItem);
         itemxDetailSharedViewModel.setValidationEntryForCurrentItem(validationEntry);
         NavHostFragment.findNavController(this).popBackStack();
@@ -321,7 +374,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     private void handleCancel() {
-        MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem().getValue());
+        MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem());
         if (mergedItem.isParentItem() && mergedItem.getRemainingTimes() > 0) {
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                     .setTitle(getString(R.string.title_handle_cancel_fragment_item_detail))
@@ -409,4 +462,16 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     }
 
 
+    @Override
+    public void onResume() {
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        mSensorManager.unregisterListener(mSensorListener);
+        super.onPause();
+    }
 }

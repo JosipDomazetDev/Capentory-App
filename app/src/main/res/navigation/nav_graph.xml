@@ -37,7 +37,11 @@
         android:id="@+id/itemDetailFragment"
         android:name="com.example.capentory_client.ui.DetailedItemFragment"
         android:label="@string/label_itemDetailFragment_nav"
-        tools:layout="@layout/fragment_item_detail" />
+        tools:layout="@layout/fragment_item_detail" >
+        <action
+            android:id="@+id/next"
+            app:destination="@id/attachmentsFragment" />
+    </fragment>
 
 
     <fragment
