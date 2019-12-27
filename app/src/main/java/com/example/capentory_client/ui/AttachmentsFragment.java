@@ -1,15 +1,24 @@
 package com.example.capentory_client.ui;
 
 
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import android.provider.MediaStore;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,24 +30,43 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.capentory_client.R;
+import com.example.capentory_client.androidutility.ToastUtility;
 import com.example.capentory_client.models.Attachment;
 import com.example.capentory_client.models.MergedItem;
+import com.example.capentory_client.repos.AttachmentsRepository;
+import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.example.capentory_client.viewmodels.AttachmentsViewModel;
+import com.example.capentory_client.viewmodels.LoginViewModel;
+import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.sharedviewmodels.DetailXAttachmentViewModel;
+import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
+import com.google.android.gms.common.api.CommonStatusCodes;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
+
+import javax.inject.Inject;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AttachmentsFragment extends Fragment {
+public class AttachmentsFragment extends NetworkFragment<Attachment, AttachmentsRepository, AttachmentsViewModel> {
+    private static final int REQUEST_PERMISSIONS = 100;
+    private static final int PICK_FILE_REQUEST = 1;
+    private View view;
 
 
     public AttachmentsFragment() {
         // Required empty public constructor
     }
 
+    private DetailXAttachmentViewModel detailXAttachmentViewModel;
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -50,8 +78,15 @@ public class AttachmentsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        DetailXAttachmentViewModel detailXAttachmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(DetailXAttachmentViewModel.class);
+        this.view = view;
+        detailXAttachmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(DetailXAttachmentViewModel.class);
         MergedItem currentItem = detailXAttachmentViewModel.getCurrentItem();
+
+
+        initWithoutFetch(ViewModelProviders.of(this, providerFactory).get(AttachmentsViewModel.class),
+                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.item_textview_fragment_attachments)),
+                view,
+                R.id.progress_bar_fragment_attachment);
 
 
         ((TextView) view.findViewById(R.id.barcode_fragment_attachments))
@@ -63,6 +98,17 @@ public class AttachmentsFragment extends Fragment {
 
 
         generateGUIforAttachments(currentItem, view);
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                detailXAttachmentViewModel.setExitedAttachmentScreen(true);
+                NavHostFragment.findNavController(AttachmentsFragment.this).popBackStack();
+            }
+        });
+
+
+        view.findViewById(R.id.add_attachment_fragment_attachments).setOnClickListener(v -> showFileChooser());
     }
 
     private void generateGUIforAttachments(MergedItem currentItem, View view) {
@@ -74,11 +120,16 @@ public class AttachmentsFragment extends Fragment {
 
         linearLayout.removeAllViews();
 
+        int c = 1;
         for (Attachment attachment : currentItem.getAttachments()) {
+            c = addHeader(linearLayout, c);
+
             if (attachment.isPicture()) {
+
                 TextView textView = new TextView(Objects.requireNonNull(getContext()));
                 textView.setText(attachment.getDesc());
                 textView.setPadding(10, 0, 0, 10);
+                textView.setTextColor(Color.parseColor("#838485"));
                 linearLayout.addView(textView);
 
 
@@ -112,11 +163,113 @@ public class AttachmentsFragment extends Fragment {
                 //                 textView.setText(Html.fromHtml(getString(R.string.icons_legal_notice)));
                 textView.setText(Html.fromHtml(getString(R.string.url_fragment_attachment, attachment.getUrl(), description)));
                 textView.setClickable(true);
-                Log.e("XXX",getString(R.string.url_fragment_attachment, attachment.getUrl(), description));
-                Log.e("XXX",getString(R.string.icons_legal_notice));
+                textView.setMovementMethod(LinkMovementMethod.getInstance());
                 textView.setPadding(10, 0, 0, 40);
                 linearLayout.addView(textView);
             }
+
+
         }
+    }
+
+    private int addHeader(LinearLayout linearLayout, int c) {
+        View hr = new View(getContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1
+        );
+        params.setMargins(4, 10, 4, 0);
+        hr.setLayoutParams(params);
+        hr.setBackgroundColor(Color.parseColor("#D8D8D8"));
+        linearLayout.addView(hr);
+
+        TextView header = new TextView(Objects.requireNonNull(getContext()));
+        header.setText(getString(R.string.attachment_count_fragment_attachments, c++));
+        header.setPadding(10, 50, 0, 10);
+        linearLayout.addView(header);
+        return c;
+    }
+
+
+    @Override
+    protected void handleSuccess(StatusAwareData<Attachment> statusAwareData) {
+        super.handleSuccess(statusAwareData);
+        detailXAttachmentViewModel.getCurrentItem().addAttachment(statusAwareData.getData());
+        generateGUIforAttachments(detailXAttachmentViewModel.getCurrentItem(), view);
+    }
+
+
+    private void showFileChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(
+                    Intent.createChooser(intent, "Select a File to Upload"),
+                    PICK_FILE_REQUEST);
+        } catch (android.content.ActivityNotFoundException ex) {
+          /*  Toast.makeText(this, "Please install a File Manager.",
+                    Toast.LENGTH_SHORT).show();*/
+        }
+    }
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case PICK_FILE_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    Uri uri = data.getData();
+                    if (uri == null) return;
+                    File file = new File(getPath(uri));
+
+
+                    Log.e("XXX", "File Uri: " + uri.toString());
+                    // Get the path
+                    String path = null;
+                    try {
+                        path = getPath(getContext(), uri);
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e("XXX", "File Path: " + path);
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    public String getPath(Uri uri)
+    {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = Objects.requireNonNull(getContext()).getContentResolver().query(uri, projection, null, null, null);
+        if (cursor == null) return null;
+        int column_index =             cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String s=cursor.getString(column_index);
+        cursor.close();
+        return s;
+    }
+
+    public static String getPath(Context context, Uri uri) throws URISyntaxException {
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = {"_data"};
+            Cursor cursor = null;
+
+            try {
+                cursor = context.getContentResolver().query(uri, projection, null, null, null);
+                int column_index = cursor.getColumnIndexOrThrow("_data");
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(column_index);
+                }
+            } catch (Exception e) {
+                // Eat it
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
     }
 }

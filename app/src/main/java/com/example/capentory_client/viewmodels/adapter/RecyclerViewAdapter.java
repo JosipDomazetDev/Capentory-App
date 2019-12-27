@@ -161,7 +161,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ArrayList<RecyclerviewItem> getItemsToAdd(Room room, ArrayList<RecyclerviewItem> itemsToInserts, int depth) {
 
         // Dont add a already expanded room
-        if (depth > 0 && !room.isExpanded()) {
+        if (depth > 0 /*&& !room.isExpanded()*/) {
             itemsToInserts.add(room);
         }
 

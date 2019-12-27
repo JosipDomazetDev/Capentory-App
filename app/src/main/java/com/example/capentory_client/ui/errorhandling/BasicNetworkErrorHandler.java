@@ -53,7 +53,7 @@ public class BasicNetworkErrorHandler {
 
     private String getCentralizedErrorMessage(Throwable error) {
         if (error == null) return null;
-        int characterLimit = 130;
+        int characterLimit = 200;
         error.printStackTrace();
 
         String errorMsg = "";

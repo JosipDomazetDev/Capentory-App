@@ -141,4 +141,5 @@
     <string name="attachments_fragment_attachments">Anhänge</string>
     <string name="no_attachments_fragment_attachments">Für diesen Gegenstand gibt es keine Anhänge!</string>
     <string name="empty_desc_fragment_attachment">Keine Beschreibung vorhanden</string>
+    <string name="attachment_count_fragment_attachments">Anhang #%1$d</string>
 </resources>

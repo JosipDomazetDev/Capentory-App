@@ -41,6 +41,9 @@
         <action
             android:id="@+id/next"
             app:destination="@id/attachmentsFragment" />
+        <action
+            android:id="@+id/action_itemDetailFragment_to_itemsFragment"
+            app:destination="@id/itemsFragment" />
     </fragment>
 
 
@@ -111,8 +114,12 @@
     <fragment
         android:id="@+id/attachmentsFragment"
         android:name="com.example.capentory_client.ui.AttachmentsFragment"
-        android:label="fragment_attachments"
-        tools:layout="@layout/fragment_attachments" />
+        android:label="@string/attachments_fragment_attachments"
+        tools:layout="@layout/fragment_attachments" >
+        <action
+            android:id="@+id/action_attachmentsFragment_to_itemDetailFragment"
+            app:destination="@id/itemDetailFragment" />
+    </fragment>
 
 
 </navigation>

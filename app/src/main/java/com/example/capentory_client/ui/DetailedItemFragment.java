@@ -7,11 +7,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,24 +81,56 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     }
 
     private SensorManager mSensorManager;
-    private float accel;
-    private float accelCurrent;
-    private float accelLast;
+    /*    private float accel;
+        private float accelCurrent;
+        private float accelLast;*/
+    private boolean called = false;
 
     private final SensorEventListener mSensorListener = new SensorEventListener() {
-        @Override
+        /* @Override
+         public void onSensorChanged(SensorEvent event) {
+             float x = event.values[0];
+             float y = event.values[1];
+             float z = event.values[2];
+             accelLast = accelCurrent;
+             //Log.e("x", x + "/" + y + "/" + z);
+             accelCurrent = (float) Math.sqrt((double) (x * x + y * y + z + z));
+             float delta = accelCurrent - accelLast;
+             accel = accel * 0.9f + delta;
+             Log.e("XXX", accel + "");
+             if (accel > 25 && !called) {
+                 called = true;
+                 Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
+                 handleValidate();
+             }
+         }*/
+        long lastUpdate = 0;
+        float last_x = 0;
+        float last_y = 0;
+        float last_z = 0;
+
         public void onSensorChanged(SensorEvent event) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-            accelLast = accelCurrent;
-            Log.e("x", x + "/" + y + "/" + z);
-            accelCurrent = (float) Math.sqrt((double) (y * y));
-            float delta = accelCurrent - accelLast;
-            accel = accel * 0.9f + delta;
-            if (accel > 10) {
-                Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
-                handleValidate();
+            long curTime = System.currentTimeMillis();
+            // only allow one update every 100ms.
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
+
+                float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+
+                if (speed > 4500 && !called) {
+                    //((TextView) (view.findViewById(R.id.bezeichnung_fragment_itemdetail))).setText( ""+speed);
+                    called = true;
+                    Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
+                    handleValidate();
+                }
+                last_x = x;
+                last_y = y;
+                last_z = z;
             }
         }
 
@@ -111,20 +141,20 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
     @Inject
     ViewModelProviderFactory providerFactory;
+    private boolean shouldStop = false;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mSensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
-        }
+        mSensorManager = (SensorManager) Objects.requireNonNull(getContext()).getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
+
         Objects.requireNonNull(mSensorManager).registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
                 SensorManager.SENSOR_DELAY_NORMAL);
-        accel = 10f;
+      /*  accel = 10f;
         accelCurrent = SensorManager.GRAVITY_EARTH;
-        accelLast = SensorManager.GRAVITY_EARTH;
+        accelLast = SensorManager.GRAVITY_EARTH;*/
 
         this.view = view;
         LinearLayout linearLayout = view.findViewById(R.id.content_fragment_item_detail);
@@ -132,6 +162,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
         detailXAttachmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(DetailXAttachmentViewModel.class);
 
+        detailXAttachmentViewModel.getExitedAttachmentScreen().observe(getViewLifecycleOwner(), aBoolean -> {
+            shouldStop = aBoolean;
+
+        });
+
+        /*if (shouldStop) return;*/
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(DetailItemViewModel.class),
                 basicNetworkErrorHandler,
@@ -369,6 +405,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         MergedItem currentItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem());
         ValidationEntry validationEntry = getValidationEntryFromFormData(currentItem);
         itemxDetailSharedViewModel.setValidationEntryForCurrentItem(validationEntry);
+        //NavHostFragment.findNavController(this).popBackStack();
         NavHostFragment.findNavController(this).popBackStack();
     }
 

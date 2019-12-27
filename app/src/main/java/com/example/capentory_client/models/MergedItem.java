@@ -64,7 +64,7 @@ public class MergedItem implements RecyclerviewItem {
         this.fields = payload.getJSONObject("fields");
 
         JSONArray attachmentsAsJSON = this.fields.optJSONArray("attachments");
-        attachmentsAsJSON = new JSONArray("[ { \"url\": \"https://www.capentory.com/assets/res/SB_31_07_2019_Juli.pdf\", \"description\": \"Sick Planung\" }, { \"url\": \"https://i.pinimg.com/originals/0b/c7/36/0bc736dcbd06a36a24871c7640c1e87a.jpg\", \"description\": \"Косово је сривја\" }, { \"url\": \"https://www.capentory.com/assets/res/da_antrag_domazet.pdf\", \"description\": \"Sick Antrag\" }, { \"url\": \"https://pbs.twimg.com/media/DeYQUL6V4AEsUJ6.jpg\", \"description\": \"greek tears\" } ]");
+        attachmentsAsJSON = new JSONArray("[{ \"url\": \"https://www.capentory.com/assets/res/SB_31_07_2019_Juli.pdf\", \"description\": \"Sick Planung\" }, { \"url\": \"https://prod-discovery.edx-cdn.org/media/course/image/93f11b63-0c29-4472-964e-c6db1cc574e8-61863a8d0d90.small.jpg\", \"description\": \"schön\" }, { \"url\": \"https://www.capentory.com/assets/res/da_antrag_domazet.pdf\", \"description\": \"Sick Antrag\" }, { \"url\": \"http://photographylike.16mb.com/wp-content/uploads/2018/08/iStock-545347988.jpg\", \"description\": \"greek tears\" } ]");
 
         for (int i = 0; i < attachmentsAsJSON.length(); i++) {
             attachments.add(new Attachment(attachmentsAsJSON.getJSONObject(i)));
@@ -220,5 +220,9 @@ public class MergedItem implements RecyclerviewItem {
     @Override
     public void setExpanded(boolean b) {
         isExpanded = b;
+    }
+
+    public void addAttachment(Attachment attachment) {
+        attachments.add(attachment);
     }
 }

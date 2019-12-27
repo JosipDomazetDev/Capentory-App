@@ -2,6 +2,7 @@ package com.example.capentory_client.dagger;
 
 import com.example.capentory_client.dagger.daggerviewmodels.ItemFragmentViewModelsModule;
 import com.example.capentory_client.dagger.daggerviewmodels.RoomFragmentViewModelsModule;
+import com.example.capentory_client.ui.AttachmentsFragment;
 import com.example.capentory_client.ui.HomeScreenFragment;
 import com.example.capentory_client.ui.RoomsFragment;
 import com.example.capentory_client.ui.DetailedItemFragment;
@@ -43,4 +44,8 @@ public abstract class ActivityBuildersModule {
     @ContributesAndroidInjector(
             modules = {ItemFragmentViewModelsModule.class})
     abstract HomeScreenFragment contributeHomescreenFragment();
+
+    @ContributesAndroidInjector(
+            modules = {ItemFragmentViewModelsModule.class})
+    abstract AttachmentsFragment contributeAttachementsFragment();
 }
