@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -31,9 +32,10 @@ public class MergedItem implements RecyclerviewItem {
     // For Items this control whether a item is already validated and  therefore whether a item should be included into the expand/collapse behaviour
     private boolean isExpanded = true;
     // Optional attachments
-    private Set<Attachment> attachments = new HashSet<>();
+    private ArrayList<Attachment> attachments = new ArrayList<>();
 
 
+    @Nullable
     public Room getSubroom() {
         return subroom;
     }
@@ -147,7 +149,7 @@ public class MergedItem implements RecyclerviewItem {
         return displayDescription;
     }
 
-    public Set<Attachment> getAttachments() {
+    public ArrayList<Attachment> getAttachments() {
         return attachments;
     }
 

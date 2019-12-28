@@ -26,7 +26,7 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
     private final List<Room> subRooms = new ArrayList<>();
     private int depth;
     private boolean isExpanded = true;
-
+    private boolean firstHeaderShouldNotBeRemoved =false;
 
     // only for subrooms
     public Room(JSONObject payload, int depth) throws JSONException {
@@ -151,4 +151,11 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
     }
 
 
+    public boolean isFirstHeaderShouldNotBeRemoved() {
+        return firstHeaderShouldNotBeRemoved;
+    }
+
+    public void setFirstHeaderShouldNotBeRemoved(boolean firstHeaderShouldNotBeRemoved) {
+        this.firstHeaderShouldNotBeRemoved = firstHeaderShouldNotBeRemoved;
+    }
 }

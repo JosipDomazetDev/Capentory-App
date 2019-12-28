@@ -35,8 +35,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void fill(List<RecyclerviewItem> items) {
         items = new ArrayList<>(items);
-        boolean isFirstHeader = true;
-        int lastDepth = Integer.MAX_VALUE;
 
         for (int i = 0; i < items.size(); i++) {
             // User already now top level room, no need to display him
@@ -44,37 +42,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 items.remove(i--);
 
             } else {
-                if (items.get(i) instanceof Room) {
+                // Remove everything that the user already collapsed before leaving the screen
+                if (!items.get(i).isExpanded()) {
+                    if (items.get(i) instanceof Room) {
+                        Room room = (Room) items.get(i);
 
-                    if (((Room) (items.get(i))).getDepth() < lastDepth) {
-                        isFirstHeader = true;
-                    }
-
-                    lastDepth = ((Room) (items.get(i))).getDepth();
-
-                }
-
-
-                if (/*items.get(i) instanceof MergedItem && */!items.get(i).isExpanded()) { // Do not display collapsed items
-                    if (items.get(i) instanceof MergedItem) {
-                        items.remove(i--);
-                    } else {
-                        // if the depth is suddenly lower it means that its again the first header
-
-
-                        if (isFirstHeader) {
-                            isFirstHeader = false;
-                        } else {
+                        // However, First Header should not be removed
+                        if (!room.isFirstHeaderShouldNotBeRemoved()) {
                             items.remove(i--);
-                            lastDepth = ((Room) (items.get(i))).getDepth();
                         }
+                    } else items.remove(i--);
 
-                        /*
-                         TODO: IF NOTHING HELPS JUST DONT RETAIN THE STATE
-
-                         items.get(i).setExpanded(true);*/
-
-                    }
                 }
             }
         }
@@ -174,8 +152,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ArrayList<RecyclerviewItem> getItemsToRemove(Room room, ArrayList<RecyclerviewItem> itemsToRemove, int depth) {
 
         if (depth > 0) {
-            // Always remove the header (but not the first one)
+            // Always remove the header
             itemsToRemove.add(room);
+            room.setFirstHeaderShouldNotBeRemoved(false);
+        } else {
+            //(but not the first one)
+            room.setFirstHeaderShouldNotBeRemoved(true);
         }
 
         for (MergedItem mergedItem : room.getMergedItems()) {

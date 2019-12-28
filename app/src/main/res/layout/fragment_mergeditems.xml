@@ -7,6 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,9 +33,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="5dp"
+            android:paddingTop="10dp"
             android:paddingEnd="5dp"
             android:paddingBottom="10dp"
-            android:paddingTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -82,19 +84,17 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-
             <TextView
                 android:id="@+id/progress_textview_value_mergeditems"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:visibility="gone"
                 android:text="@string/progress_fragment_mergeditems"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/room_number_fragment_mergeditems" />
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -126,10 +126,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
-
-
-        </androidx.recyclerview.widget.RecyclerView>
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/finish_room_floatingbtn"

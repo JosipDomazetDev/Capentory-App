@@ -25,6 +25,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.capentory_client.R;
@@ -36,6 +38,7 @@ import com.example.capentory_client.repos.NetworkRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.AttachmentsViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
+import com.example.capentory_client.viewmodels.adapter.AttachmentRecyclerViewAdapter;
 import com.example.capentory_client.viewmodels.sharedviewmodels.DetailXAttachmentViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
 
@@ -65,6 +68,9 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
     private static final int REQUEST_PERMISSIONS = 100;
     private static final int PICK_FILE_REQUEST = 1;
     private View view;
+    private RecyclerView recyclerView;
+    private AttachmentRecyclerViewAdapter adapter;
+    private TextView noAttachmentsTextView;
 
 
     public AttachmentsFragment() {
@@ -87,6 +93,11 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
         detailXAttachmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(DetailXAttachmentViewModel.class);
+        recyclerView = view.findViewById(R.id.recycler_view_fragment_attachments);
+        adapter = getRecyclerViewAdapter();
+        noAttachmentsTextView = view.findViewById(R.id.no_attachments_textview_fragment_attachments);
+
+
         MergedItem currentItem = detailXAttachmentViewModel.getCurrentItem();
 
 
@@ -104,7 +115,7 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
                         getString(R.string.bez_detailitem_fragment, currentItem.getCheckedDisplayName())));
 
 
-        generateGUIforAttachments(currentItem, view);
+        displayAttachments(currentItem);
 
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
@@ -118,13 +129,25 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
         view.findViewById(R.id.add_attachment_fragment_attachments).setOnClickListener(v -> showFileChooser());
     }
 
+    private void displayAttachments(MergedItem currentItem) {
+        recyclerView.setVisibility(View.VISIBLE);
+        if (currentItem.getAttachments().size() < 1) {
+            noAttachmentsTextView.setVisibility(View.VISIBLE);
+            noAttachmentsTextView.setText(getString(R.string.no_attachments_fragment_attachments));
+        } else {
+            noAttachmentsTextView.setVisibility(View.GONE);
+        }
+
+        adapter.setAttachments(currentItem.getAttachments());
+    }
+
     @Override
     protected void refresh() {
-        generateGUIforAttachments(detailXAttachmentViewModel.getCurrentItem(), view);
+        displayAttachments(detailXAttachmentViewModel.getCurrentItem());
     }
 
     private void generateGUIforAttachments(MergedItem currentItem, View view) {
-        LinearLayout linearLayout = view.findViewById(R.id.content_fragment_attachments);
+        LinearLayout linearLayout = null;
         if (currentItem.getAttachments().size() < 1) {
             view.findViewById(R.id.no_attachments_textview_fragment_attachments).setVisibility(View.VISIBLE);
             return;
@@ -164,9 +187,9 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
 
 
                 linearLayout.addView(imageView);
-
             } else {
                 TextView textView = new TextView(Objects.requireNonNull(getContext()));
+
 
                 //                 textView.setText(Html.fromHtml(getString(R.string.icons_legal_notice)));
                 textView.setText(Html.fromHtml(getString(R.string.url_fragment_attachment, attachment.getUrl(getContext()), attachment.getDisplayDescription(getContext()))));
@@ -180,6 +203,15 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
         }
 
 
+    }
+
+    @NonNull
+    private AttachmentRecyclerViewAdapter getRecyclerViewAdapter() {
+        final AttachmentRecyclerViewAdapter adapter = new AttachmentRecyclerViewAdapter();
+        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
+        return adapter;
     }
 
 
@@ -206,7 +238,7 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
     protected void handleSuccess(StatusAwareData<Attachment> statusAwareData) {
         super.handleSuccess(statusAwareData);
         detailXAttachmentViewModel.getCurrentItem().addAttachment(statusAwareData.getData());
-        generateGUIforAttachments(detailXAttachmentViewModel.getCurrentItem(), view);
+        displayAttachments(detailXAttachmentViewModel.getCurrentItem());
     }
 
 

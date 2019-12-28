@@ -354,7 +354,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
             return;
         }
         itemxDetailSharedViewModel.setCurrentRooms(rooms);
-        NavHostFragment.findNavController(this).navigate(R.id.action_itemsFragment_to_itemDetailFragment);
+        NavHostFragment.findNavController(this).navigate(R.id.itemDetailFragment);
     }
 
     @Override

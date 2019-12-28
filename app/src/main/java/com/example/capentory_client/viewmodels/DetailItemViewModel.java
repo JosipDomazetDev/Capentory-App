@@ -1,6 +1,7 @@
 package com.example.capentory_client.viewmodels;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.models.MergedItemField;
@@ -42,5 +43,13 @@ public class DetailItemViewModel extends NetworkViewModel<Map<String, MergedItem
 
     public LiveData<StatusAwareData<MergedItem>> getSearchedForItem() {
         return searchedForItem;
+    }
+
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        statusAwareLiveData = null;
+        searchedForItem =null;
     }
 }
