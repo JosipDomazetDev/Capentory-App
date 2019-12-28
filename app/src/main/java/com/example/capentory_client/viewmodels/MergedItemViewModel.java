@@ -55,7 +55,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
 
             if (currentItems.remove(mergedItem)) {
                 statusAwareLiveData.postSuccess(currentItems);
-                mergedItem.setExpanded(false);
+                mergedItem.getSubroom().getMergedItems().remove(mergedItem);
             }
         }
     }
@@ -69,7 +69,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
             validatedCount++;
             statusAwareLiveData.postSuccess(currentItems);
             startedRemoving = true;
-            mergedItem.setExpanded(false);
+            mergedItem.getSubroom().getMergedItems().remove(mergedItem);
         }
     }
 

@@ -33,11 +33,14 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
 
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
+                    refresh();
                     networkViewModel.reloadData(args);
                     swipeRefreshLayout.setRefreshing(false);
                 }
         );
     }
+
+    protected  void refresh(){};
 
 
     void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, RefreshHandler refreshHandler, String... args) {
@@ -49,6 +52,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
 
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
+                    refresh();
                     refreshHandler.handleRefresh();
                     swipeRefreshLayout.setRefreshing(false);
                 }

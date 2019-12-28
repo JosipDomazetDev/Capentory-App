@@ -112,7 +112,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         public void onSensorChanged(SensorEvent event) {
             long curTime = System.currentTimeMillis();
             // only allow one update every 100ms.
-            if ((curTime - lastUpdate) > 100) {
+            if ((curTime - lastUpdate) > 50) {
                 long diffTime = (curTime - lastUpdate);
                 lastUpdate = curTime;
 
@@ -122,7 +122,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
-                if (speed > 4500 && !called) {
+                if (speed > 6500 && !called) {
                     //((TextView) (view.findViewById(R.id.bezeichnung_fragment_itemdetail))).setText( ""+speed);
                     called = true;
                     Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
@@ -285,7 +285,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         if (currentField.isReadOnly()) {
             TextView textView = new TextView(Objects.requireNonNull(getContext()));
             textView.setText(currentField.getVerboseName() + ": " + fieldsWithValuesFromItem.opt(currentField.getKey()));
-            textView.setPadding(4, 0, 0, 40);
+            textView.setPadding(4, 20, 0, 20);
             linearLayout.addView(textView);
         } else
             switch (currentField.getType().toLowerCase()) {
@@ -370,12 +370,20 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                         choices = getChoicesFromField(Objects.requireNonNull(currentField.getChoices()));
                     } catch (JSONException | NullPointerException e) {
                         ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.dropdown_error_fragment_item_detail), Toast.LENGTH_SHORT);
+                        e.printStackTrace();
                         break;
                     }
 
                     KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, choices);
                     spinner.setAdapter(adapter);
-                    int i = fieldsWithValuesFromItem.optInt(currentField.getKey(), KeyValueDropDownAdapter.NULL_KEY_VALUE);
+                    int i;
+                    try {
+                        i = fieldsWithValuesFromItem.getInt(currentField.getKey());
+                    } catch (JSONException e) {
+                        ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.dropdown_error_fragment_item_detail), Toast.LENGTH_SHORT);
+                        e.printStackTrace();
+                        break;
+                    }
                     spinner.setSelection(adapter.getItemIndexFromKey(i));
                     linearLayout.addView(textView);
                     linearLayout.addView(spinner);
@@ -390,13 +398,10 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     private KeyValueDropDownAdapter.DropDownEntry[] getChoicesFromField(JSONArray choices) throws JSONException {
-        int maxKey = 1;
-        KeyValueDropDownAdapter.DropDownEntry[] ret = new KeyValueDropDownAdapter.DropDownEntry[choices.length() + 1];
-        for (int i = 0; i < ret.length - 1; i++) {
+        KeyValueDropDownAdapter.DropDownEntry[] ret = new KeyValueDropDownAdapter.DropDownEntry[choices.length()];
+        for (int i = 0; i < ret.length; i++) {
             ret[i] = new KeyValueDropDownAdapter.DropDownEntry(choices.getJSONObject(i));
-            maxKey = Math.max(maxKey, ret[i].getKey());
         }
-        ret[ret.length - 1] = new KeyValueDropDownAdapter.DropDownEntry(maxKey + 1, getString(R.string.null_dropdown_value_fragment_item_detail));
         return ret;
     }
 
@@ -489,9 +494,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
             case "choice":
                 KeyValueDropDownAdapter.DropDownEntry selectedItem = (KeyValueDropDownAdapter.DropDownEntry) ((Spinner) generatedView).getSelectedItem();
-                if (selectedItem.isNullRepresentationEntry()) return null;
-                int key = selectedItem.getKey();
-                return (T) Integer.valueOf(key);
+                Object key = selectedItem.getKey();
+                return (T) key;
             default:
                 return null;
         }

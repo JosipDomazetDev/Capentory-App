@@ -33,10 +33,10 @@ public class Stocktaking implements GenericDropDownAdapter.DropDownEntry {
         this.neverEndStocktaking = payload.getBoolean("neverending_stocktaking");
 
 
-        if (neverEndStocktaking)
+        if (neverEndStocktaking) {
             displayDescription = context.getString(R.string.neverending_inventory_stocktaking, getDate());
-
-        displayDescription = context.getString(R.string.normal_inventory_stocktaking, getDate());
+        } else
+            displayDescription = context.getString(R.string.normal_inventory_stocktaking, getDate());
     }
 
     private static String getGermanDate(String fetchedDate) {

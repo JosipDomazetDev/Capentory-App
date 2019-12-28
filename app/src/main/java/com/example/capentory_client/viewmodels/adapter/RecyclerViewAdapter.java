@@ -35,13 +35,50 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void fill(List<RecyclerviewItem> items) {
         items = new ArrayList<>(items);
+        boolean isFirstHeader = true;
+        int lastDepth = Integer.MAX_VALUE;
+
         for (int i = 0; i < items.size(); i++) {
             // User already now top level room, no need to display him
             if (items.get(i).isTopLevelRoom()) {
-                items.remove(i);
-                break;
+                items.remove(i--);
+
+            } else {
+                if (items.get(i) instanceof Room) {
+
+                    if (((Room) (items.get(i))).getDepth() < lastDepth) {
+                        isFirstHeader = true;
+                    }
+
+                    lastDepth = ((Room) (items.get(i))).getDepth();
+
+                }
+
+
+                if (/*items.get(i) instanceof MergedItem && */!items.get(i).isExpanded()) { // Do not display collapsed items
+                    if (items.get(i) instanceof MergedItem) {
+                        items.remove(i--);
+                    } else {
+                        // if the depth is suddenly lower it means that its again the first header
+
+
+                        if (isFirstHeader) {
+                            isFirstHeader = false;
+                        } else {
+                            items.remove(i--);
+                            lastDepth = ((Room) (items.get(i))).getDepth();
+                        }
+
+                        /*
+                         TODO: IF NOTHING HELPS JUST DONT RETAIN THE STATE
+
+                         items.get(i).setExpanded(true);*/
+
+                    }
+                }
             }
         }
+
         this.items = items;
         this.itemsFull = new ArrayList<>(items);
         notifyDataSetChanged();
@@ -134,27 +171,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    private ArrayList<RecyclerviewItem> getItemsToRemove(Room room, ArrayList<RecyclerviewItem> itemsToInserts, int depth) {
+    private ArrayList<RecyclerviewItem> getItemsToRemove(Room room, ArrayList<RecyclerviewItem> itemsToRemove, int depth) {
 
         if (depth > 0) {
-            // Always remove the header
-            itemsToInserts.add(room);
+            // Always remove the header (but not the first one)
+            itemsToRemove.add(room);
         }
 
         for (MergedItem mergedItem : room.getMergedItems()) {
-            if (mergedItem.isExpanded() && room.isExpanded()) {
-                // Remove the item if its room is expanded
-                itemsToInserts.add(mergedItem);
-            }
+            // Remove the item if its room is expanded
+            itemsToRemove.add(mergedItem);
+            mergedItem.setExpanded(false);
         }
 
         for (Room subRoom : room.getSubRooms()) {
-            itemsToInserts = (getItemsToRemove(subRoom, itemsToInserts, ++depth));
+            itemsToRemove = (getItemsToRemove(subRoom, itemsToRemove, ++depth));
         }
 
         // Mark the room as collapsed
         room.setExpanded(false);
-        return itemsToInserts;
+
+        return itemsToRemove;
     }
 
 
@@ -166,10 +203,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         for (MergedItem mergedItem : room.getMergedItems()) {
-            if (mergedItem.isExpanded() && !room.isExpanded()) {
-                // Add the item if its room is collapsed
-                itemsToInserts.add(mergedItem);
-            }
+            // Add the item if its room is collapsed
+            itemsToInserts.add(mergedItem);
+            mergedItem.setExpanded(true);
         }
 
         for (Room subRoom : room.getSubRooms()) {
@@ -178,6 +214,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         // Mark the room as expanded
         room.setExpanded(true);
+
         return itemsToInserts;
     }
 

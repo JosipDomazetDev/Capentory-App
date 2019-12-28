@@ -61,7 +61,7 @@
     <string name="wrong_username_error">Benutzername oder Passwort war falsch!</string>
     <string name="invalid_scan_error">Unerwarterter Scan!</string>
     <string name="authfailure_error">Credentials sind ungültig oder Sie haben zu wenige Rechte. Bitte versuchen Sie sich nochmal anzumelden!</string>
-    <string name="connection_error">Ein Verbindungsfehler ist aufgetreten!</string>
+    <string name="connection_error">Ein Verbindungsfehler ist aufgetreten! Zum Neuladen nach unten wischen!</string>
     <string name="copy_message_scanbarcode_activity">Kopiert: %1$s  Format: %2$s</string>
     <string name="wait_till_scan_ready_error">Bitte warten Sie bis der Scan bereit ist!</string>
     <string name="inventory_finished_fragment_rooms">Gestartete Inventur ist schon fertig!</string>

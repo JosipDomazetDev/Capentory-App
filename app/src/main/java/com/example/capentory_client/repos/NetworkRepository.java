@@ -103,24 +103,13 @@ public abstract class NetworkRepository<L> {
      * @param path    specifies paths
      * @return the Url
      */
-    protected static String getUrl(Context context, boolean firstPathIsCombinedPath, String[] path, Map<String, String> queryParams) {
-        Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
-                .encodedAuthority(getSocket(context));
-
-        if (firstPathIsCombinedPath) {
-            urlBuilder.encodedPath(path[0]);
-            for (int i = 1; i < path.length; i++) {
-                urlBuilder.appendPath(path[i]);
-            }
-        } else for (String s : path) {
-            urlBuilder.appendPath(s);
-        }
+    public static String getUrl(Context context, boolean firstPathIsCombinedPath, String[] path, Map<String, String> queryParams) {
+        Uri.Builder urlBuilder = getBuilder(context, firstPathIsCombinedPath, path);
 
         for (Map.Entry<String, String> keyValueEntry : queryParams.entrySet()) {
             urlBuilder.appendQueryParameter(keyValueEntry.getKey(), keyValueEntry.getValue());
         }
 
-        Log.e("XXXXX", urlBuilder.appendQueryParameter("format", "json").build().toString());
         return urlBuilder.appendQueryParameter("format", "json").build().toString();
     }
 
@@ -131,11 +120,24 @@ public abstract class NetworkRepository<L> {
      * @param path    specifies paths
      * @return the Url
      */
-    protected static String getUrl(Context context, boolean firstPathIsCombinedPath, String... path) {
+    public static String getUrl(Context context, boolean firstPathIsCombinedPath, String... path) {
+        return getBuilder(context, firstPathIsCombinedPath, path)
+                .appendQueryParameter("format", "json").build()
+                .toString();
+    }
+
+    public static String getNonJsonUrl(Context context, boolean firstPathIsCombinedPath, String... path) {
+        return getBuilder(context, firstPathIsCombinedPath, path).build()
+                .toString();
+    }
+
+
+    private static Uri.Builder getBuilder(Context context, boolean firstPathIsCombinedPath, String[] path) {
         Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
                 .encodedAuthority(getSocket(context));
 
         if (firstPathIsCombinedPath) {
+            // leaves out first "/"
             urlBuilder.encodedPath(path[0]);
             for (int i = 1; i < path.length; i++) {
                 urlBuilder.appendPath(path[i]);
@@ -143,9 +145,7 @@ public abstract class NetworkRepository<L> {
         } else for (String s : path) {
             urlBuilder.appendPath(s);
         }
-
-
-        return urlBuilder.appendQueryParameter("format", "json").build().toString();
+        return urlBuilder;
     }
 
     /**

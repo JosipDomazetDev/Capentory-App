@@ -53,7 +53,7 @@
     <string name="cancel_desc_fragment_item_detail">cancel button</string>
     <string name="channel_description">Capentory - Notification Channel</string>
     <string name="check_desc_fragment_item_detail">check button</string>
-    <string name="connection_error">A connection error occurred!</string>
+    <string name="connection_error">A connection error occurred! Swipe down to refresh!</string>
     <string name="copied_scantext_activity">Copied! %1$s</string>
     <string name="copy_activity_scan_text">Copy</string>
     <string name="copy_message_scanbarcode_activity">Copied: %1$s  Format: %2$s</string>

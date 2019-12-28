@@ -6,21 +6,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
-
 import android.provider.MediaStore;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,23 +19,39 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.fragment.NavHostFragment;
+
 import com.bumptech.glide.Glide;
 import com.example.capentory_client.R;
-import com.example.capentory_client.androidutility.ToastUtility;
+import com.example.capentory_client.androidutility.PreferenceUtility;
 import com.example.capentory_client.models.Attachment;
 import com.example.capentory_client.models.MergedItem;
 import com.example.capentory_client.repos.AttachmentsRepository;
+import com.example.capentory_client.repos.NetworkRepository;
 import com.example.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
 import com.example.capentory_client.viewmodels.AttachmentsViewModel;
-import com.example.capentory_client.viewmodels.LoginViewModel;
 import com.example.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.example.capentory_client.viewmodels.sharedviewmodels.DetailXAttachmentViewModel;
 import com.example.capentory_client.viewmodels.wrappers.StatusAwareData;
-import com.google.android.gms.common.api.CommonStatusCodes;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -111,6 +118,11 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
         view.findViewById(R.id.add_attachment_fragment_attachments).setOnClickListener(v -> showFileChooser());
     }
 
+    @Override
+    protected void refresh() {
+        generateGUIforAttachments(detailXAttachmentViewModel.getCurrentItem(), view);
+    }
+
     private void generateGUIforAttachments(MergedItem currentItem, View view) {
         LinearLayout linearLayout = view.findViewById(R.id.content_fragment_attachments);
         if (currentItem.getAttachments().size() < 1) {
@@ -124,44 +136,40 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
         for (Attachment attachment : currentItem.getAttachments()) {
             c = addHeader(linearLayout, c);
 
-            if (attachment.isPicture()) {
 
+            if (attachment.isPicture()) {
                 TextView textView = new TextView(Objects.requireNonNull(getContext()));
-                textView.setText(attachment.getDesc());
-                textView.setPadding(10, 0, 0, 10);
+                textView.setText(attachment.getDisplayDescription(getContext()));
+                textView.setPadding(10, 0, 0, 16);
                 textView.setTextColor(Color.parseColor("#838485"));
                 linearLayout.addView(textView);
 
 
                 ImageView imageView = new ImageView(getContext());
-                imageView.setPadding(8, 8, 8, 48);
-                imageView.setMaxWidth(500);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                params.gravity = Gravity.CENTER;
-                imageView.setLayoutParams(params);
+                imageView.setPadding(8, 16, 8, 28);
 
-                CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(Objects.requireNonNull(getContext()));
-                circularProgressDrawable.setStrokeWidth(5);
-                circularProgressDrawable.setCenterRadius(5);
-                circularProgressDrawable.start();
+                /*LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT );
+                params.gravity = Gravity.CENTER;
+                imageView.setLayoutParams(params);*/
+                imageView.setMaxHeight(500);
+
+                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
 
                 Glide.with(this)
-                        .load(attachment.getUrl())
-                        .centerCrop()
-                        //.placeholder(circularProgressDrawable)
+                        //.setDefaultRequestOptions(requestOptions)
+                        .load(attachment.getUrl(getContext()))
+                        .error(R.drawable.ic_signal_wifi_off_black_24dp)
                         .into(imageView);
+
 
                 linearLayout.addView(imageView);
 
             } else {
                 TextView textView = new TextView(Objects.requireNonNull(getContext()));
-                String description = attachment.getDesc();
-                if (description.isEmpty()) {
-                    description = getString(R.string.empty_desc_fragment_attachment);
-                }
 
                 //                 textView.setText(Html.fromHtml(getString(R.string.icons_legal_notice)));
-                textView.setText(Html.fromHtml(getString(R.string.url_fragment_attachment, attachment.getUrl(), description)));
+                textView.setText(Html.fromHtml(getString(R.string.url_fragment_attachment, attachment.getUrl(getContext()), attachment.getDisplayDescription(getContext()))));
                 textView.setClickable(true);
                 textView.setMovementMethod(LinkMovementMethod.getInstance());
                 textView.setPadding(10, 0, 0, 40);
@@ -170,7 +178,10 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
 
 
         }
+
+
     }
+
 
     private int addHeader(LinearLayout linearLayout, int c) {
         View hr = new View(getContext());
@@ -216,38 +227,101 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case PICK_FILE_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    Uri uri = data.getData();
-                    if (uri == null) return;
-                    File file = new File(getPath(uri));
+        if (requestCode == PICK_FILE_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Uri uri = data.getData();
+                if (uri == null) return;
+                /* File file = new File(getPath(uri));*/
 
-
-                    Log.e("XXX", "File Uri: " + uri.toString());
-                    // Get the path
-                    String path = null;
-                    try {
-                        path = getPath(getContext(), uri);
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
+           /*     @Override
+                public Map<String, String> getHeaders() {
+                    if (sendToken) {
+                        HashMap<String, String> headers = new HashMap<>();
+                        headers.put("Content-Type", "application/json");
+                        headers.put("Authorization", "Token "
+                                + PreferenceUtility.getToken(context));
+                        headers.put("Connection", "close");
+                        return headers;
                     }
-                    Log.e("XXX", "File Path: " + path);
+
+                    HashMap<String, String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }*/
+                try {
+
+                    URL serverUrl = null;
+                    serverUrl = new URL(NetworkRepository.getUrl(getContext(), false, MainActivity.getSerializer(getContext()).getAttachmentUrl()));
+                    HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
+
+                    connection.setRequestProperty("Authorization", "Token "
+                            + PreferenceUtility.getToken(getContext()));
+
+                    String boundary = UUID.randomUUID().toString();
+                    connection.setRequestMethod("POST");
+
+                    connection.setDoOutput(true);
+                    connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+                    DataOutputStream request = new DataOutputStream(connection.getOutputStream());
+
+                    request.writeBytes("--" + boundary + "\r\n");
+                    request.writeBytes("Content-Disposition: form-data; name=\"description\"\r\n\r\n");
+                    request.writeBytes("lol" + "\r\n");
+
+                    request.writeBytes("--" + boundary + "\r\n");
+                    request.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + new File(" " + uri).getName()
+                            + "\"\r\n\r\n");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        request.write(Files.readAllBytes(Paths.get(uri.getPath())));
+                    }
+                    request.writeBytes("\r\n");
+
+                    request.writeBytes("--" + boundary + "--\r\n");
+                    request.flush();
+                    int respCode = connection.getResponseCode();
+
+                    switch (respCode) {
+                        case 200:
+                            //all went ok - read response
+                            Log.e("XXX", connection.getResponseMessage());
+                            break;
+                        case 301:
+                        case 302:
+                        case 307:
+                            //handle redirect - for example, re-post to the new location
+                            break;
+                        //do something sensible
+                    }
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                break;
+
+
+              /*  Log.e("XXX", "File Uri: " + uri.toString());
+                // Get the path
+                String path = null;
+                try {
+                    path = getPath(getContext(), uri);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+                Log.e("XXX", "File Path: " + path);*/
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
 
-    public String getPath(Uri uri)
-    {
-        String[] projection = { MediaStore.Images.Media.DATA };
+    public String getPath(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = Objects.requireNonNull(getContext()).getContentResolver().query(uri, projection, null, null, null);
         if (cursor == null) return null;
-        int column_index =             cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
-        String s=cursor.getString(column_index);
+        String s = cursor.getString(column_index);
         cursor.close();
         return s;
     }
