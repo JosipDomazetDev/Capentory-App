@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.capentory_client">
+    package="com.capentory.capentory_client">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".ui.BaseApplication"
+        android:name="com.capentory.capentory_client.ui.BaseApplication"
         android:hardwareAccelerated="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,7 +24,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.capentory.capentory_client.ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -35,10 +35,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.scanactivities.ScanBarcodeActivity"
+            android:name="com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity"
             android:label="Scanner" />
         <activity
-            android:name=".ui.scanactivities.ScanTextActivity"
+            android:name="com.capentory.capentory_client.ui.scanactivities.ScanTextActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <meta-data

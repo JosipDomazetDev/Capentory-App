@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/itemsFragment"
-        android:name="com.example.capentory_client.ui.MergedItemsFragment"
+        android:name="com.capentory.capentory_client.ui.MergedItemsFragment"
         android:label="@string/label_itemsFragment_nav"
         tools:layout="@layout/fragment_mergeditems">
         <action
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/homeScreenFragment"
-        android:name="com.example.capentory_client.ui.HomeScreenFragment"
+        android:name="com.capentory.capentory_client.ui.HomeScreenFragment"
         android:label="@string/label_homeScreenFragment_nav"
         tools:layout="@layout/fragment_home_screen">
         <action
@@ -26,7 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/roomFragment"
-        android:name="com.example.capentory_client.ui.RoomsFragment"
+        android:name="com.capentory.capentory_client.ui.RoomsFragment"
         android:label="@string/label_roomFragment_nav"
         tools:layout="@layout/fragment_rooms">
         <action
@@ -35,7 +35,7 @@
     </fragment>
     <fragment
         android:id="@+id/itemDetailFragment"
-        android:name="com.example.capentory_client.ui.DetailedItemFragment"
+        android:name="com.capentory.capentory_client.ui.DetailedItemFragment"
         android:label="@string/label_itemDetailFragment_nav"
         tools:layout="@layout/fragment_item_detail" >
         <action
@@ -51,25 +51,25 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.capentory_client.ui.SettingsFragment"
+        android:name="com.capentory.capentory_client.ui.SettingsFragment"
         android:label="@string/label_settingsFragment_nav" />
 
 
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="com.example.capentory_client.ui.AboutFragment"
+        android:name="com.capentory.capentory_client.ui.AboutFragment"
         android:label="@string/label_aboutFragment_nav"
         tools:layout="@layout/fragment_about" />
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.capentory_client.ui.LoginFragment"
+        android:name="com.capentory.capentory_client.ui.LoginFragment"
         android:label="@string/label_loginFragment_nav"
         tools:layout="@layout/fragment_login" />
 
     <activity
         android:id="@+id/scanBarcodeActivity"
-        android:name="com.example.capentory_client.ui.scanactivities.ScanBarcodeActivity"
+        android:name="com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity"
         android:label="@string/label_scanBarcodeActivity_nav"
         tools:layout="@layout/activity_scan_barcode">
         <argument
@@ -80,7 +80,7 @@
 
     <activity
         android:id="@+id/scanTextActivity"
-        android:name="com.example.capentory_client.ui.scanactivities.ScanTextActivity"
+        android:name="com.capentory.capentory_client.ui.scanactivities.ScanTextActivity"
         android:label="@string/label_scanTextActivity_nav"
         tools:layout="@layout/activity_scan_text" />
 
@@ -105,7 +105,7 @@
     </action>
     <fragment
         android:id="@+id/stocktakingFragment"
-        android:name="com.example.capentory_client.ui.StocktakingFragment"
+        android:name="com.capentory.capentory_client.ui.StocktakingFragment"
         android:label="@string/label_stocktakingFragment_nav">
         <action
             android:id="@+id/ignore_action_stocktakingFragment_to_roomFragment"
@@ -115,7 +115,7 @@
     </fragment>
     <fragment
         android:id="@+id/attachmentsFragment"
-        android:name="com.example.capentory_client.ui.AttachmentsFragment"
+        android:name="com.capentory.capentory_client.ui.AttachmentsFragment"
         android:label="@string/attachments_fragment_attachments"
         tools:layout="@layout/fragment_attachments" >
         <action
