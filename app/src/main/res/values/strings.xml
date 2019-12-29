@@ -152,4 +152,5 @@
     <string name="empty_desc_fragment_attachment">No Description available</string>
     <string name="attachment_count_fragment_attachments">Attachment #%1$d</string>
     <string name="attachment">imageview_recyclerview_attachment_row</string>
+    <string name="file_manager_fragment_attachments">You must install a File Manager!</string>
 </resources>

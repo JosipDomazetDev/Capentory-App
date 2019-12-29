@@ -376,9 +376,9 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                     KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, choices);
                     spinner.setAdapter(adapter);
-                    int i;
+                    Object i;
                     try {
-                        i = fieldsWithValuesFromItem.getInt(currentField.getKey());
+                        i = fieldsWithValuesFromItem.get(currentField.getKey());
                     } catch (JSONException e) {
                         ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.dropdown_error_fragment_item_detail), Toast.LENGTH_SHORT);
                         e.printStackTrace();
@@ -411,7 +411,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         ValidationEntry validationEntry = getValidationEntryFromFormData(currentItem);
         itemxDetailSharedViewModel.setValidationEntryForCurrentItem(validationEntry);
         //NavHostFragment.findNavController(this).popBackStack();
-        NavHostFragment.findNavController(this).popBackStack();
+        navigateBack();
     }
 
 
@@ -423,17 +423,21 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     .setMessage(getString(R.string.msg_handle_cancel_fragment_item_detail, mergedItem.getRemainingTimes()))
                     .setPositiveButton(getString(R.string.positive_handle_cancel_fragment_item_detail), (dialog, which) -> {
                         itemxDetailSharedViewModel.setValidationEntryForCurrentItem(ValidationEntry.createCanceledEntry());
-                        NavHostFragment.findNavController(DetailedItemFragment.this).popBackStack();
+                        navigateBack();
                     })
                     .setNegativeButton(getString(R.string.negative_handle_cancel_fragment_item_detail), (dialog, which) -> {
                         itemxDetailSharedViewModel.setValidationEntryForCurrentItem(null);
-                        NavHostFragment.findNavController(DetailedItemFragment.this).popBackStack();
+                        navigateBack();
                     })
                     .show();
         } else {
             itemxDetailSharedViewModel.setValidationEntryForCurrentItem(ValidationEntry.createCanceledEntry());
-            NavHostFragment.findNavController(this).popBackStack();
+            navigateBack();
         }
+    }
+
+    private void navigateBack() {
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
     @NonNull

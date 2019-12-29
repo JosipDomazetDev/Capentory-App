@@ -43,6 +43,8 @@
             app:destination="@id/attachmentsFragment" />
         <action
             android:id="@+id/action_itemDetailFragment_to_itemsFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/itemDetailFragment"
             app:destination="@id/itemsFragment" />
     </fragment>
 

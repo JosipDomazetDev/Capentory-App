@@ -10,6 +10,8 @@ import com.example.capentory_client.ui.MainActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class Attachment implements Comparable<Attachment> {
     private String url;
     private String desc;
@@ -29,7 +31,6 @@ public class Attachment implements Comparable<Attachment> {
     }
 
     public String getUrl(Context context) {
-        Log.e("XXX", NetworkRepository.getUrl(context, false, url));
         return NetworkRepository.getNonJsonUrl(context, true, url);
     }
 
@@ -42,29 +43,50 @@ public class Attachment implements Comparable<Attachment> {
     }
 
 
-    @Override
-    public int compareTo(Attachment that) {
-        if (this.isPicture != that.isPicture) {
-            return Boolean.compare(this.isPicture, that.isPicture);
-        } else {
-            if (this.url.compareTo(that.url) < 0) {
-                return -1;
-            } else if (this.url.compareTo(that.url) > 0) {
-                return 1;
-            }
-
-            if (this.desc.compareTo(that.desc) < 0) {
-                return -1;
-            } else if (this.desc.compareTo(that.desc) > 0) {
-                return 1;
-            }
-        }
-        return 0;
-    }
-
     public String getDisplayDescription(Context context) {
         if (desc.isEmpty()) {
             return context.getString(R.string.empty_desc_fragment_attachment);
         } else return desc;
     }
+
+    @Override
+    public int compareTo(Attachment that) {
+        if (Boolean.compare(this.isPicture, that.isPicture) == 1) {
+            return -1;
+        } else if (Boolean.compare(this.isPicture, that.isPicture) == -1) {
+            return 1;
+        }
+
+        if (this.url.compareTo(that.url) < 0) {
+            return -1;
+        } else if (this.url.compareTo(that.url) > 0) {
+            return 1;
+        }
+
+        if (this.desc.compareTo(that.desc) < 0) {
+            return -1;
+        } else if (this.desc.compareTo(that.desc) > 0) {
+            return 1;
+        }
+
+        if (this.attachmentId < that.attachmentId) {
+            return -1;
+        } else if (this.attachmentId > that.attachmentId) {
+            return 1;
+        }
+        return 0;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Attachment that = (Attachment) o;
+        return isPicture == that.isPicture &&
+                attachmentId == that.attachmentId &&
+                url.equals(that.url) &&
+                desc.equals(that.desc);
+    }
+
 }

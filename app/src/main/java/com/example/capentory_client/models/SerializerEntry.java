@@ -10,7 +10,7 @@ import org.json.JSONObject;
 public class SerializerEntry implements GenericDropDownAdapter.DropDownEntry {
     @NonNull
     private String key, roomUrl, itemUrl, description;
-    private final String attachmentUrl="/api/addattachment";
+    public final static String attachmentUrl="/api/addattachment/";
 
     public SerializerEntry(@NonNull String key, JSONObject payload) throws JSONException {
         this.key = key;
@@ -28,11 +28,6 @@ public class SerializerEntry implements GenericDropDownAdapter.DropDownEntry {
     @NonNull
     public String getItemUrl() {
         return itemUrl;
-    }
-
-    @NonNull
-    public String getAttachmentUrl() {
-        return attachmentUrl;
     }
 
     @NonNull

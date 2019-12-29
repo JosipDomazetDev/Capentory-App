@@ -40,7 +40,10 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
         );
     }
 
-    protected  void refresh(){};
+    protected void refresh() {
+    }
+
+    ;
 
 
     void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, RefreshHandler refreshHandler, String... args) {
@@ -69,7 +72,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
      * @param progressBarID
      */
     void initWithoutFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID) {
-        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, -1);
+        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, null, -1);
     }
 
 
@@ -141,7 +144,8 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
 
     protected void displayProgressbarAndHideContent() {
         progressBar.setVisibility(View.VISIBLE);
-        content.setVisibility(View.GONE);
+        if (content != null)
+            content.setVisibility(View.GONE);
 
         if (additionalViewsToHide == null) return;
         for (View view : additionalViewsToHide) {
@@ -152,7 +156,9 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
 
     protected void hideProgressBarAndShowContent() {
         progressBar.setVisibility(View.GONE);
-        content.setVisibility(View.VISIBLE);
+
+        if (content != null)
+            content.setVisibility(View.VISIBLE);
         // additionalViewsToHide will not be automatically displayed
         // The reason being that content and additionalViewsToHide may not be supposed to be shown at the same time
         // e.g. The view "No Items left" should always be hidden at the start of screen and only be displayed when the fetched items are validated
