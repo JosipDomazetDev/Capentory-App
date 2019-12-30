@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
+import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.repos.customrequest.NetworkErrorHandler;
 import com.capentory.capentory_client.repos.customrequest.NetworkSuccessHandler;
 import com.capentory.capentory_client.repos.customrequest.RobustJsonRequestExecutioner;
@@ -156,8 +157,8 @@ public abstract class NetworkRepository<L> {
     private static String getSocket(Context context) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
-        String ip = sharedPreferences.getString("server_ip", "capentory.hostname");
-        String port = sharedPreferences.getString("server_port", "80");
+        String ip = sharedPreferences.getString("server_ip", context.getString(R.string.error_preference));
+        String port = sharedPreferences.getString("server_port", context.getString(R.string.error_preference));
         if (port != null && !port.isEmpty()) {
             return ip + ":" + port;
         }

@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,7 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -37,9 +38,9 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
 
         @Multipart
         @POST(SerializerEntry.attachmentUrl)
-        Call<ResponseBody> addFile(@Header("authorization") String aut,
-                                   @Part MultipartBody.Part file,
-                                   @Part("description") String description);
+        Call<String> addFile(@Header("authorization") String aut,
+                             @Part MultipartBody.Part file,
+                             @Part("description") String description);
     }
 
     @Inject
@@ -50,15 +51,19 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
 
     @Override
     public StatusAwareLiveData<Attachment> fetchMainData(String... args) {
-        if (args.length != 1)
-            throw new IllegalArgumentException("Only needs the filepath as argument!");
+        if (args.length != 2)
+            throw new IllegalArgumentException("Only needs the filepath and description as argument!");
 
+
+        // Unsubscribe from old observers with this hack...
+        mainContentRepoData = new StatusAwareLiveData<>();
         mainContentRepoData.postFetching();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(NetworkRepository.getNonJsonUrl(context, true, ""))
-                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(getNonJsonUrl(context, true, ""))
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
+
         AttachmentAPI apiService = retrofit.create(AttachmentAPI.class);
         File file = new File(args[0]);
 
@@ -67,28 +72,20 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
         MultipartBody.Part fileAsMultipart = MultipartBody.Part.createFormData("file", file.getName(), fileAsRequestBody);
 
 
-        Call<ResponseBody> call = apiService.addFile("Token "
-                        + PreferenceUtility.getToken(context),
+        Call<String> call = apiService.addFile(
+                "Token " + PreferenceUtility.getToken(context),
                 fileAsMultipart,
-                "lul");
+                args[1]);
 
 
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String message = response.message();
-               /* Log.e("PostSnapResponse", message);*/
-
-                message = "       {\n" +
-                        "                            \"url\": \"/attachment/1-506f7ffe-ad71-413b-a100-ca40dcf5e4cd.jpg\",\n" +
-                        "                            \"description\": \"\",\n" +
-                        "                            \"id\": 1\n" +
-                        "                        }";
-                handleMainSuccessfulResponse(message);
+            public void onResponse(Call<String> call, Response<String> response) {
+                handleMainSuccessfulResponse(response.body());
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 mainContentRepoData.postError(new Exception(t));
             }
         });
@@ -102,7 +99,7 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
     protected void handleMainSuccessfulResponse(String stringPayload) {
         // We are not using the Volley library so we need to directly call this method
         try {
-            mainContentRepoData.postSuccess(new Attachment(new JSONObject(stringPayload)));
+            mainContentRepoData.postSuccess(new Attachment(new JSONObject(stringPayload), true));
         } catch (JSONException e) {
             mainContentRepoData.postError(e);
         }

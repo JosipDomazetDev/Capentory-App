@@ -9,10 +9,10 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.Objects;
 
-public final class DisplayUtility {
+public final class UserUtility {
 
     // Private constructor to prevent instantiation
-    private DisplayUtility() {
+    private UserUtility() {
         throw new UnsupportedOperationException();
     }
 

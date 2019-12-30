@@ -61,8 +61,8 @@
     <string name="wrong_username_error">Benutzername oder Passwort war falsch!</string>
     <string name="invalid_scan_error">Unerwarterter Scan!</string>
     <string name="authfailure_error">Credentials sind ungültig oder Sie haben zu wenige Rechte. Bitte versuchen Sie sich nochmal anzumelden!</string>
-    <string name="connection_error">Ein Verbindungsfehler ist aufgetreten! Zum Neuladen nach unten wischen!</string>
-    <string name="copy_message_scanbarcode_activity">Kopiert: %1$s  Format: %2$s</string>
+    <string name="connection_error">Ein Verbindungsfehler ist aufgetreten! Überprüfen Sie Ihre Server-Einstellungen!</string>
+    <string name="copy_message_scanbarcode_activity">Kopiert: %1$s\nFormat: %2$s</string>
     <string name="wait_till_scan_ready_error">Bitte warten Sie bis der Scan bereit ist!</string>
     <string name="inventory_finished_fragment_rooms">Gestartete Inventur ist schon fertig!</string>
     <string name="scan_failed_scan_fragments">Scan ist fehlgeschlagen!</string>
@@ -142,4 +142,8 @@
     <string name="no_attachments_fragment_attachments">Für diesen Gegenstand gibt es keine Anhänge!</string>
     <string name="empty_desc_fragment_attachment">Keine Beschreibung vorhanden</string>
     <string name="attachment_count_fragment_attachments">Anhang #%1$d</string>
+    <string name="file_manager_fragment_attachments">Sie müssen einen Datei-Manager installieren!</string>
+    <string name="attachment" translatable="false">Anhang Bild</string>
+    <string name="error_preference">EINSTELLUNG ERFORDERLICH</string>
+    <string name="provide_desc_fragment_attachment">Beschriftung vergeben</string>
 </resources>

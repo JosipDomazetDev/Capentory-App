@@ -1,6 +1,7 @@
 package com.capentory.capentory_client.ui.scanactivities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -26,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
@@ -49,7 +51,6 @@ public class ScanTextActivity extends AppCompatActivity {
     private Button btnUnlock;
     private boolean useFlash = false;
 
-    private static final int requestPermissionID = 101;
     private int longestCode = 0;
     private int textFilterMode;
     private Map<String, Integer> map = new HashMap<>();
@@ -64,28 +65,26 @@ public class ScanTextActivity extends AppCompatActivity {
         textPreview = findViewById(R.id.text_preview_activity_scan_text);
         textFilterMode = getTextFilterMode();
         btnUnlock = findViewById(R.id.unlock_button_activity_scan_text);
-        startCameraSource();
+
+        PermissionHandler.requestCameraPermission(this);
+
+        if (PermissionHandler.checkPermission(this)) {
+            startCameraSource();
+        }else  cameraPreview.setVisibility(View.INVISIBLE);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode != requestPermissionID) {
+        if (requestCode != PermissionHandler.MY_PERMISSION_REQUEST_CAMERA) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;
         }
 
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            try {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA},
-                            ScanBarcodeActivity.MY_PERMISSION_REQUEST_CAMERA);
-                    return;
-                }
-                cameraSource.start(cameraPreview.getHolder());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (!PermissionHandler.checkPermission(this)) {
+            finish();
+        } else {
+            startCameraSource();
+            cameraPreview.setVisibility(View.VISIBLE);
         }
     }
 
@@ -129,17 +128,14 @@ public class ScanTextActivity extends AppCompatActivity {
                 @Override
                 public void surfaceCreated(SurfaceHolder holder) {
                     try {
-
-                        if (ActivityCompat.checkSelfPermission(getApplicationContext(),
-                                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(ScanTextActivity.this, new String[]{Manifest.permission.CAMERA}, requestPermissionID);
-                            return;
+                        if (PermissionHandler.checkPermission(ScanTextActivity.this)) {
+                            cameraSource.start(cameraPreview.getHolder());
                         }
-                        cameraSource.start(cameraPreview.getHolder());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+
 
                 @Override
                 public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -189,6 +185,7 @@ public class ScanTextActivity extends AppCompatActivity {
             });
         }
     }
+
 
     private String getMostFrequentCode() {
         String mostFrequentCode = "";
@@ -334,7 +331,7 @@ public class ScanTextActivity extends AppCompatActivity {
 
             case 2:
                 //Alphabetisch (Deutsch)
-                return "[ÄäÖöÜüßßA-Za-z ]";
+                return "[^ÄäÖöÜüßßA-Za-z ]";
             case 3:
                 //Nummern (z.B. Für Barcodes)
                 return "[^0-9]";

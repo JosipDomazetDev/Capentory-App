@@ -2,19 +2,23 @@ package com.capentory.capentory_client.ui;
 
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
@@ -44,7 +48,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AttachmentsFragment extends NetworkFragment<Attachment, AttachmentsRepository, AttachmentsViewModel> {
+public class AttachmentsFragment extends NetworkFragment<Attachment, AttachmentsRepository, AttachmentsViewModel> implements AttachmentRecyclerViewAdapter.DeleteClickListener {
     private static final int REQUEST_PERMISSIONS = 100;
     private static final int PICK_FILE_REQUEST = 1;
     private RecyclerView recyclerView;
@@ -128,7 +132,7 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
 
     @NonNull
     private AttachmentRecyclerViewAdapter getRecyclerViewAdapter() {
-        final AttachmentRecyclerViewAdapter adapter = new AttachmentRecyclerViewAdapter();
+        final AttachmentRecyclerViewAdapter adapter = new AttachmentRecyclerViewAdapter(this);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
@@ -144,7 +148,7 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
                 .getAttachments()
                 .contains(currentAttachment)) {
 
-            // This method gets called on configuraiton changes too, therefore only add the item once
+            // This method gets called on configuration changes too, therefore only add the item once
             detailXAttachmentViewModel.getCurrentItem().addAttachment(currentAttachment);
         }
 
@@ -173,11 +177,43 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
                 Uri uri = data.getData();
                 if (uri == null) return;
 
-                fetchManually(FileUtility.getPath(getContext(), uri));
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(getString(R.string.provide_desc_fragment_attachment));
+
+
+                View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.textfield_dialog, (ViewGroup) getView(), false);
+                final EditText editText = viewInflated.findViewById(R.id.input);
+                builder.setView(viewInflated);
+
+                builder.setPositiveButton(android.R.string.ok,
+                        (dialog, which) ->
+                        {
+                            dialog.dismiss();
+                            fetchManually(FileUtility.getPath(getContext(), uri),
+                                    editText.getText().toString());
+                        });
+
+                builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
+                builder.show();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
 
+    @Override
+    public void onDeleteItemClick(int position, View v) {
+        new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                .setTitle(getString(R.string.title_delete_fragment_attachments))
+                .setMessage(getString(R.string.msg_delete_fragment_attachments))
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> deleteAttachment(position))
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+    }
+
+    private void deleteAttachment(int position) {
+        detailXAttachmentViewModel.getCurrentItem().getAttachments().remove(position);
+        displayAttachments(detailXAttachmentViewModel.getCurrentItem());
+    }
 }

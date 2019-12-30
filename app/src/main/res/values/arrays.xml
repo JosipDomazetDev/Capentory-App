@@ -50,6 +50,8 @@
         <item>2048</item>
         <item>4096</item>
     </string-array>
-    <string-array name="barcode_formats_default_value">2</string-array>
+    <string-array name="barcode_formats_default_value">
+        <item>2 </item>
+    </string-array>
 
 </resources>

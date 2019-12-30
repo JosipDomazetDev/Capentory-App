@@ -16,7 +16,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.Cryptography;
-import com.capentory.capentory_client.androidutility.DisplayUtility;
+import com.capentory.capentory_client.androidutility.UserUtility;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.repos.LoginRepository;
@@ -73,8 +73,8 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
 
         ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.logout_successful_fragment_login), Toast.LENGTH_LONG);
         PreferenceUtility.logout(getContext());
-        DisplayUtility.displayLoggedOutMenu(getActivity());
-        DisplayUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
+        UserUtility.displayLoggedOutMenu(getActivity());
+        UserUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
         NavHostFragment.findNavController(this).popBackStack();
     }
 
@@ -124,8 +124,8 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
 
         PreferenceUtility.login(getContext(), statusAwareData.getData());
         ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.login_successful_fragment_login), Toast.LENGTH_LONG);
-        DisplayUtility.displayLoggedInMenu(getActivity());
-        DisplayUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
+        UserUtility.displayLoggedInMenu(getActivity());
+        UserUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
         NavHostFragment.findNavController(this).popBackStack();
     }
 

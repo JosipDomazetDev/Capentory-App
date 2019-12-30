@@ -18,9 +18,11 @@ public class ValidationEntry {
     private static final String MARK_FOR_LATER_VALIDATION_JSON_KEY = "mark_for_later_validation";
     private static final String BARCODE_JSON_KEY = "barcode";
     private static final String SUBROOM_JSON_KEY = "room";
+    private static final String ATTACHMENT_JSON_KEY = "attachments";
     private MergedItem mergedItem;
     private String pkItem;
     private String barcode;
+    private List<Attachment> attachments = new ArrayList<>();
     private boolean markForLater = false;
     private Room newSubroom = null;
     private List<Field> fieldChanges = new ArrayList<>();
@@ -33,6 +35,7 @@ public class ValidationEntry {
         this.mergedItem = mergedItem;
         pkItem = mergedItem.getPkItemId();
         barcode = mergedItem.getBarcode();
+        attachments = mergedItem.getAttachments();
     }
 
 
@@ -60,7 +63,7 @@ public class ValidationEntry {
         }
         ret.put("validations", validationEntriesAsJson);
 
-        Log.e("XXXX", validationEntriesAsJson.toString());
+        Log.e("XXXX", ret.toString());
 
         return ret;
     }
@@ -69,19 +72,24 @@ public class ValidationEntry {
         JSONObject validationEntryAsJson = new JSONObject();
         validationEntryAsJson.put(PK_JSON_KEY, validationEntry.pkItem);
         // If the user wants the admin to check further
-        if (validationEntry.markForLater)
+        if (validationEntry.markForLater) {
             validationEntryAsJson.put(MARK_FOR_LATER_VALIDATION_JSON_KEY, true);
+        }
 
         if (validationEntry.mergedItem.isNewItem()) {
             // New Items require a barcode
             validationEntryAsJson.put(BARCODE_JSON_KEY, validationEntry.barcode);
         }
 
+        if (validationEntry.attachments.size() > 0) {
+            // Always sent all attachments that the users wants to keep
+            validationEntryAsJson.put(ATTACHMENT_JSON_KEY, Attachment.getAttachmentsAsJSON(validationEntry.attachments));
+        }
+
         // If subrooms are involved the subRoom of the item might have been changed
         if (validationEntry.newSubroom != null) {
             validationEntryAsJson.put(SUBROOM_JSON_KEY, validationEntry.newSubroom.getRoomId());
         }
-
 
         for (Field fieldChange : validationEntry.fieldChanges) {
             if (fieldChange.fieldValue == null)

@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -54,9 +55,31 @@ public class ScanBarcodeActivity extends Activity {
         if (getIntent().getExtras() != null)
             utilityModeActivated = ScanBarcodeActivityArgs.fromBundle(getIntent().getExtras()).getUtilityModeActivated();
 
+        PermissionHandler.requestCameraPermission(this);
         mediaPlayer = MediaPlayer.create(this, R.raw.beep);
         cameraPreview = findViewById(R.id.camera_preview);
-        createCameraSource();
+
+        PermissionHandler.requestCameraPermission(this);
+
+        if (PermissionHandler.checkPermission(this)) {
+            createCameraSource();
+        }else  cameraPreview.setVisibility(View.INVISIBLE);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != PermissionHandler.MY_PERMISSION_REQUEST_CAMERA) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            return;
+        }
+
+        if (!PermissionHandler.checkPermission(this)) {
+            finish();
+        } else {
+            createCameraSource();
+            cameraPreview.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -91,27 +114,18 @@ public class ScanBarcodeActivity extends Activity {
 
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
 
-            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
                 try {
-
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{Manifest.permission.CAMERA}, MY_PERMISSION_REQUEST_CAMERA);
-                            finish();
-                        }
-                    } else if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.CAMERA},
-                                MY_PERMISSION_REQUEST_CAMERA);
-                        return;
+                    if (PermissionHandler.checkPermission(ScanBarcodeActivity.this)) {
+                        cameraSource.start(cameraPreview.getHolder());
                     }
-                    cameraSource.start(cameraPreview.getHolder());
                 } catch (
                         IOException e) {
                     e.printStackTrace();
                 }
             }
+
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {

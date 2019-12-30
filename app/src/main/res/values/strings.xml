@@ -53,10 +53,10 @@
     <string name="cancel_desc_fragment_item_detail">cancel button</string>
     <string name="channel_description">Capentory - Notification Channel</string>
     <string name="check_desc_fragment_item_detail">check button</string>
-    <string name="connection_error">A connection error occurred! Swipe down to refresh!</string>
+    <string name="connection_error">A connection error occurred! Check your local server settings!</string>
     <string name="copied_scantext_activity">Copied! %1$s</string>
     <string name="copy_activity_scan_text">Copy</string>
-    <string name="copy_message_scanbarcode_activity">Copied: %1$s  Format: %2$s</string>
+    <string name="copy_message_scanbarcode_activity">Copied: %1$s\nFormat: %2$s</string>
     <string name="current_room_fragment_mergeditems">Current Room: <![CDATA[<b>%1$s</b>]]></string>
     <string name="da_fragment_about">A diploma thesis of</string>
     <string name="decide_later_fragment_item_detail">Decide later</string>
@@ -151,6 +151,11 @@
     <string name="no_attachments_fragment_attachments">This item doesn\'t have any attachments!</string>
     <string name="empty_desc_fragment_attachment">No Description available</string>
     <string name="attachment_count_fragment_attachments">Attachment #%1$d</string>
-    <string name="attachment">imageview_recyclerview_attachment_row</string>
+    <string name="attachment">Attachment Image</string>
     <string name="file_manager_fragment_attachments">You must install a File Manager!</string>
+    <string name="error_preference">MISSING SETTING</string>
+    <string name="provide_desc_fragment_attachment">Provide a description</string>
+    <string name="remove_attachment_fragment_attachment">Remove Attachment</string>
+    <string name="title_delete_fragment_attachments">Delete Attachment</string>
+    <string name="msg_delete_fragment_attachments">Press Yes if you want do delete this attachment</string>
 </resources>

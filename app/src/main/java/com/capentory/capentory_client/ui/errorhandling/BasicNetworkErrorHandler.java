@@ -84,7 +84,7 @@ public class BasicNetworkErrorHandler {
         String exceptionMsg = "";
         String fullExceptionMsg = error.getMessage();
         if (fullExceptionMsg != null)
-            exceptionMsg = "\n" + fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), characterLimit)) + "....";
+            exceptionMsg = "\n\n" + fullExceptionMsg.substring(0, Math.min(fullExceptionMsg.length(), characterLimit)) + "....";
 
         return errorMsg + exceptionMsg;
     }

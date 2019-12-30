@@ -21,6 +21,18 @@
             android:layout_height="match_parent"
             tools:context=".ui.DetailedItemFragment">
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_attachment_fragment_attachments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="#2196F3"
+                android:textColor="@android:color/white"
+                app:backgroundTint="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_add_attachment_black_24dp" />
 
             <ProgressBar
                 android:id="@+id/progress_bar_fragment_attachment"
@@ -41,24 +53,9 @@
                 android:id="@+id/constraintLayout_above_scrollview_fragment_attachments"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingBottom="40dp"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="0dp">
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/add_attachment_fragment_attachments"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:backgroundTint="#2196F3"
-                    app:borderWidth="0dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:srcCompat="@drawable/ic_add_attachment_black_24dp" />
-
 
 
                 <TextView
@@ -139,14 +136,12 @@
                     android:id="@+id/recycler_view_fragment_attachments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:padding="5dp"
-                    android:visibility="gone"
+
+
                     app:layout_constrainedHeight="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/no_attachments_textview_fragment_attachments" />
+
+                    app:layout_constraintTop_toBottomOf="@+id/attachment_textview_fragment_attachments" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

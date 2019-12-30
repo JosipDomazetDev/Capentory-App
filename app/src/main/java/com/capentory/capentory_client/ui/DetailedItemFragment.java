@@ -296,7 +296,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                     TextInputEditText editNumber = new TextInputEditText(Objects.requireNonNull(getContext()));
                     editNumber.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER);
-                    editNumber.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
+                    if (!fieldsWithValuesFromItem.isNull(currentField.getKey()))
+                        editNumber.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
                     editNumber.setHint(currentField.getVerboseName());
                     textInputLayoutNumber.addView(editNumber);
 
@@ -311,7 +312,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                     TextInputEditText editDate = new TextInputEditText(Objects.requireNonNull(getContext()));
                     editDate.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_DATETIME);
-                    editDate.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
+                    if (!fieldsWithValuesFromItem.isNull(currentField.getKey()))
+                        editDate.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
                     editDate.setHint(currentField.getVerboseName());
                     textInputLayoutDate.addView(editDate);
 
@@ -325,7 +327,9 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     textInputLayout.setPadding(0, 0, 0, 40);
 
                     TextInputEditText editText = new TextInputEditText(Objects.requireNonNull(getContext()));
-                    editText.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
+
+                    if (!fieldsWithValuesFromItem.isNull(currentField.getKey()))
+                        editText.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
                     editText.setHint(currentField.getVerboseName());
                     textInputLayout.addView(editText);
                     linearLayout.addView(textInputLayout);
@@ -333,21 +337,6 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     mergedItemFieldViewMap.put(currentField.getKey(), editText);
                     break;
 
-            /*case "field":
-                TextInputLayout textInputLayoutField = new TextInputLayout(view.getContext());
-                textInputLayoutField.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                textInputLayoutField.setPadding(0, 0, 0, 40);
-
-                TextInputEditText editTextField = new TextInputEditText(Objects.requireNonNull(getContext()));
-                editTextField.setText(mergedItemJSONPayload.getString(currentField.getKey()));
-                editTextField.setHint(currentField.getVerboseName());
-                textInputLayoutField.addView(editTextField);
-
-
-                linearLayout.addView(textInputLayoutField);
-                mergedItemFieldViewMap.put(currentField, editTextField);
-                break;
-*/
                 case "boolean":
                     CheckBox checkbox = new CheckBox(getContext());
                     checkbox.setChecked(fieldsWithValuesFromItem.optBoolean(currentField.getKey()));

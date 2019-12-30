@@ -5,14 +5,18 @@ import android.content.Context;
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.repos.NetworkRepository;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class Attachment implements Comparable<Attachment> {
     private String url;
     private String desc;
     private boolean isPicture;
     private int attachmentId;
+    private boolean isNewAttachment;
 
     public Attachment(JSONObject payload) throws JSONException {
         this.url = payload.getString("url");
@@ -20,6 +24,19 @@ public class Attachment implements Comparable<Attachment> {
         this.attachmentId = payload.optInt("id");
 
         isPicture = url.matches("(?i)(.*\\.(?:png|jpg|jpeg|jfif|tiff|gif))");
+    }
+
+    public Attachment(JSONObject jsonObject, boolean isNewAttachment) throws JSONException {
+        this(jsonObject);
+        isNewAttachment = true;
+    }
+
+    public static JSONArray getAttachmentsAsJSON(List<Attachment> attachments) {
+        JSONArray ret = new JSONArray();
+        for (Attachment attachment : attachments) {
+            ret.put(attachment.getAttachmentId());
+        }
+        return ret;
     }
 
     public int getAttachmentId() {
@@ -85,4 +102,8 @@ public class Attachment implements Comparable<Attachment> {
                 desc.equals(that.desc);
     }
 
+
+    public boolean isNewAttachment() {
+        return isNewAttachment;
+    }
 }

@@ -14,7 +14,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.capentory.capentory_client.R;
-import com.capentory.capentory_client.androidutility.DisplayUtility;
+import com.capentory.capentory_client.androidutility.UserUtility;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.models.SerializerEntry;
 import com.capentory.capentory_client.models.Stocktaking;
@@ -71,9 +71,9 @@ public class MainActivity extends DaggerAppCompatActivity {
 
 
         if (PreferenceUtility.isLoggedIn(this)) {
-            DisplayUtility.displayLoggedInMenu(this);
+            UserUtility.displayLoggedInMenu(this);
         } else {
-            DisplayUtility.displayLoggedOutMenu(this);
+            UserUtility.displayLoggedOutMenu(this);
         }
 
     }

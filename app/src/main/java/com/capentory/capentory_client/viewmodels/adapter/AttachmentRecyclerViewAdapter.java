@@ -6,6 +6,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,13 +22,18 @@ import java.util.List;
 
 public class AttachmentRecyclerViewAdapter extends RecyclerView.Adapter<AttachmentRecyclerViewAdapter.ViewHolder> {
     private List<Attachment> attachments = new ArrayList<>();
+    private DeleteClickListener deleteClickListener;
+
+    public AttachmentRecyclerViewAdapter(DeleteClickListener deleteClickListener) {
+        this.deleteClickListener = deleteClickListener;
+    }
 
     @NonNull
     @Override
     public AttachmentRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recyclerview_attachment_row, parent, false);
-        return new ViewHolder(itemView);
+        return new ViewHolder(itemView, deleteClickListener);
     }
 
     @Override
@@ -59,6 +65,7 @@ public class AttachmentRecyclerViewAdapter extends RecyclerView.Adapter<Attachme
 
             holder.imageView.setVisibility(View.GONE);
         }
+
     }
 
     @Override
@@ -71,16 +78,32 @@ public class AttachmentRecyclerViewAdapter extends RecyclerView.Adapter<Attachme
         notifyDataSetChanged();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView header;
         private TextView desc;
         private ImageView imageView;
+        private ImageButton imageButton;
+        private DeleteClickListener deleteClickListener;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, DeleteClickListener deleteClickListener) {
             super(itemView);
             header = itemView.findViewById(R.id.header_recyclerview_attachment);
             desc = itemView.findViewById(R.id.desc_recyclerview_attachment);
             imageView = itemView.findViewById(R.id.imageView_recyclerview_attachment);
+            imageButton = itemView.findViewById(R.id.remove_attachment_fragment_attachment);
+
+            this.deleteClickListener = deleteClickListener;
+            imageButton.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            deleteClickListener.onDeleteItemClick(getAdapterPosition(), v);
         }
     }
+
+    public interface DeleteClickListener {
+        void onDeleteItemClick(int position, View v);
+    }
+
 }

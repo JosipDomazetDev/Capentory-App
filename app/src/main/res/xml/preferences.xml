@@ -5,6 +5,7 @@
         <EditTextPreference
             android:inputType="textUri"
             android:key="server_ip"
+            android:defaultValue=""
             android:summary="@string/msg_server_ip_preferences"
             android:title="@string/title_server_ip_preferences" />
         <EditTextPreference
@@ -28,7 +29,7 @@
             android:title="@string/title_switch_enforce_zebra_preferences" />
 
         <ListPreference
-            android:defaultValue="0"
+            android:defaultValue="3"
             android:dialogTitle="@string/dialog_title_text_filter_mode_preferences"
             android:entries="@array/text_scan_modes"
             android:entryValues="@array/text_scan_modes_values"
