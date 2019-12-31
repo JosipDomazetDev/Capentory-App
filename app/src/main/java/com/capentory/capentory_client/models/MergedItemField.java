@@ -10,18 +10,20 @@ public class MergedItemField implements Comparable<MergedItemField> {
 
     @NonNull
     private String key, type, verboseName;
-    private boolean required, readOnly;
+    private boolean required, readOnly, isExtraField;
 
     @NonNull
     private JSONArray choices;
 
-    public MergedItemField(@NonNull String key, JSONObject payload) throws JSONException {
+
+    public MergedItemField(@NonNull String key, JSONObject payload, boolean isExtraField) throws JSONException {
         this.key = key;
         payload = payload.getJSONObject(key);
         readOnly = payload.optBoolean("readOnly");
         type = payload.optString("type", "");
         verboseName = payload.optString("verboseFieldName");
         choices = payload.optJSONArray("choices");
+        this.isExtraField = isExtraField;
     }
 
 
@@ -48,6 +50,10 @@ public class MergedItemField implements Comparable<MergedItemField> {
         return readOnly;
     }
 
+    public boolean isExtraField() {
+        return isExtraField;
+    }
+
     @NonNull
     public JSONArray getChoices() {
         return choices;
@@ -55,6 +61,13 @@ public class MergedItemField implements Comparable<MergedItemField> {
 
     @Override
     public int compareTo(MergedItemField that) {
+
+        if (Boolean.compare(this.isExtraField, that.isExtraField) == -1) {
+            return -1;
+        } else if (Boolean.compare(this.isExtraField, that.isExtraField) == 1) {
+            return 1;
+        }
+
 
         if (Boolean.compare(this.readOnly, that.readOnly) == -1) {
             return -1;

@@ -1,5 +1,6 @@
 package com.capentory.capentory_client.ui;
 
+import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
@@ -51,9 +53,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -238,24 +242,117 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem());
         StatusAwareData<Map<String, MergedItemField>> mapStatusAwareData = Objects.requireNonNull(networkViewModel.getData().getValue());
         if (mergedItem.isSearchedForItem() || mapStatusAwareData.getData() == null) return;
-
-
         JSONObject fieldsWithValues = mergedItem.getFieldsWithValues();
 
         displayStaticViews(view, mergedItem);
-
-        LinearLayout linearLayout = view.findViewById(R.id.linearLayout_fragment_itemdetail);
-        linearLayout.removeAllViews();
+        LinearLayout content = view.findViewById(R.id.linearLayout_fragment_itemdetail);
+        content.removeAllViews();
 
         Map<String, MergedItemField> mapFieldNameToField = mapStatusAwareData.getData();
         assert mapFieldNameToField != null;
 
-        for (String fieldName : mapFieldNameToField.keySet()) {
-            displayViewForType(fieldsWithValues, Objects.requireNonNull(mapFieldNameToField.get(fieldName)), view, linearLayout
-            );
+        // Map is sorted by value, extra fields are at the end
+        // Add normal fields
+        addNormalFields(view, fieldsWithValues, content, mapFieldNameToField, mapFieldNameToField.keySet());
+        // Extra-Fields should be expandable; We need a button for that
+        ImageButton expandButton = addShowMoreButton(content);
+
+        // Extra-Fields get their own linearLayout in order to hide it easier
+        LinearLayout linearLayoutExtraFields = addSeparateLinearLayout(content);
+
+        // Add the extra fields
+        addExtraFields(view, fieldsWithValues, linearLayoutExtraFields, mapFieldNameToField,  mapFieldNameToField.keySet());
+
+        expandButton.setOnClickListener(v -> {
+            if (networkViewModel.getExFieldsCollapsedLiveData().getValue() == null) return;
+
+            if (networkViewModel.getExFieldsCollapsedLiveData().getValue()) {
+                networkViewModel.setExFieldsCollapsedLiveData(false);
+            } else {
+                networkViewModel.setExFieldsCollapsedLiveData(true);
+            }
+        });
+
+        NestedScrollView nestedScrollView = view.findViewById(R.id.scrollView_fragment_item_detail);
+        content.getLayoutTransition().setDuration(100);
+        networkViewModel.getExFieldsCollapsedLiveData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) {
+                linearLayoutExtraFields.setVisibility(View.GONE);
+                expandButton.setImageResource(R.drawable.ic_expand_more_black_48dp);
+            } else {
+                linearLayoutExtraFields.setVisibility(View.VISIBLE);
+                expandButton.setImageResource(R.drawable.ic_expand_less_black_48dp);
+                scrollAfterAnimate(view, content, nestedScrollView);
+            }
+        });
+    }
+
+    private void scrollAfterAnimate(View view, LinearLayout content, NestedScrollView nestedScrollView) {
+        int[] location = new int[2];
+        view.findViewById(R.id.scrollTo_fragment_itemdetail).getLocationOnScreen(location);
+        content.getLayoutTransition().addTransitionListener(new LayoutTransition.TransitionListener() {
+
+            @Override
+            public void endTransition(LayoutTransition arg0, ViewGroup arg1,
+                                      View arg2, int arg3) {
+                nestedScrollView.post(() -> nestedScrollView.smoothScrollTo(location[0], location[1]));
+            }
+
+            @Override
+            public void startTransition(LayoutTransition transition,
+                                        ViewGroup container, View view, int transitionType) {
+
+            }
+        });
+    }
+
+    @NonNull
+    private ImageButton addShowMoreButton(LinearLayout content) {
+        View hr = new View(getContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1
+        );
+        params.setMargins(4, 20, 4, 20);
+        hr.setLayoutParams(params);
+        hr.setBackgroundColor(Color.parseColor("#D8D8D8"));
+        content.addView(hr);
+
+        ImageButton expandButton = new ImageButton(getContext());
+        expandButton.setImageResource(R.drawable.ic_expand_more_black_48dp);
+        expandButton.setBackground(null);
+        content.addView(expandButton);
+        return expandButton;
+    }
+
+    @NonNull
+    private LinearLayout addSeparateLinearLayout(LinearLayout content) {
+        LinearLayout linearLayoutExtraFields = new LinearLayout(getContext());
+        linearLayoutExtraFields.setOrientation(LinearLayout.VERTICAL);
+        linearLayoutExtraFields.setVisibility(View.GONE);
+        content.addView(linearLayoutExtraFields);
+        return linearLayoutExtraFields;
+    }
+
+    private void addExtraFields(View view, JSONObject fieldsWithValues, LinearLayout linearLayoutExtraFields, Map<String, MergedItemField> mapFieldNameToField, Set<String> keys) {
+        for (String key : keys) {
+            MergedItemField field = mapFieldNameToField.get(key);
+
+            if (field == null) continue;
+            if (field.isExtraField()) {
+                addViewForType(fieldsWithValues, field, view, linearLayoutExtraFields);
+            }
         }
+    }
 
+    private void addNormalFields(View view, JSONObject fieldsWithValues, LinearLayout content, Map<String, MergedItemField> mapFieldNameToField, Set<String> keys) {
+        for (String key : keys) {
+            MergedItemField field = mapFieldNameToField.get(key);
 
+            if (field == null) continue;
+            if (field.isExtraField()) break;
+            addViewForType(fieldsWithValues, field, view, content);
+        }
     }
 
     private void displayStaticViews(View view, MergedItem mergedItem) {
@@ -281,7 +378,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     }
 
     @SuppressLint("SetTextI18n")
-    private void displayViewForType(JSONObject fieldsWithValuesFromItem, MergedItemField currentField, View view, LinearLayout linearLayout) {
+    private void addViewForType(JSONObject fieldsWithValuesFromItem, MergedItemField currentField, View view, LinearLayout linearLayout) {
         if (currentField.isReadOnly()) {
             TextView textView = new TextView(Objects.requireNonNull(getContext()));
             textView.setText(currentField.getVerboseName() + ": " + fieldsWithValuesFromItem.opt(currentField.getKey()));
@@ -305,7 +402,25 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     mergedItemFieldViewMap.put(currentField.getKey(), editNumber);
                     break;
 
-                case "datetime":
+
+                case "url":
+                    TextInputLayout textInputLayoutUrl = new TextInputLayout(view.getContext());
+                    textInputLayoutUrl.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    textInputLayoutUrl.setPadding(0, 0, 0, 40);
+
+                    TextInputEditText editUrl = new TextInputEditText(Objects.requireNonNull(getContext()));
+                    editUrl.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_WEB_EDIT_TEXT);
+                    if (!fieldsWithValuesFromItem.isNull(currentField.getKey()))
+                        editUrl.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
+                    editUrl.setHint(currentField.getVerboseName());
+                    textInputLayoutUrl.addView(editUrl);
+
+                    linearLayout.addView(textInputLayoutUrl);
+                    mergedItemFieldViewMap.put(currentField.getKey(), editUrl);
+                    break;
+
+
+                case "date":
                     TextInputLayout textInputLayoutDate = new TextInputLayout(view.getContext());
                     textInputLayoutDate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     textInputLayoutDate.setPadding(0, 0, 0, 40);

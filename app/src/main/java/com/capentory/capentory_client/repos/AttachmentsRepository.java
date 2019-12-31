@@ -3,9 +3,11 @@ package com.capentory.capentory_client.repos;
 
 import android.content.Context;
 
+import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.models.Attachment;
 import com.capentory.capentory_client.models.SerializerEntry;
+import com.capentory.capentory_client.ui.errorhandling.CustomException;
 import com.capentory.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONException;
@@ -59,25 +61,7 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
         mainContentRepoData = new StatusAwareLiveData<>();
         mainContentRepoData.postFetching();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(getNonJsonUrl(context, true, ""))
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .build();
-
-        AttachmentAPI apiService = retrofit.create(AttachmentAPI.class);
-        File file = new File(args[0]);
-
-
-        RequestBody fileAsRequestBody = RequestBody.create(MediaType.parse("*/*"), file);
-        MultipartBody.Part fileAsMultipart = MultipartBody.Part.createFormData("file", file.getName(), fileAsRequestBody);
-
-
-        Call<String> call = apiService.addFile(
-                "Token " + PreferenceUtility.getToken(context),
-                fileAsMultipart,
-                args[1]);
-
-
+        Call<String> call = prepareCall(args);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -94,12 +78,33 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
         return mainContentRepoData;
     }
 
+    private Call<String> prepareCall(String[] args) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(getNonJsonUrl(context, true, ""))
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build();
+
+        AttachmentAPI apiService = retrofit.create(AttachmentAPI.class);
+        File file = new File(args[0]);
+
+        RequestBody fileAsRequestBody = RequestBody.create(MediaType.parse("*/*"), file);
+        MultipartBody.Part fileAsMultipart = MultipartBody.Part.createFormData("file", file.getName(), fileAsRequestBody);
+
+        return apiService.addFile(
+                "Token " + PreferenceUtility.getToken(context),
+                fileAsMultipart,
+                args[1]);
+    }
+
 
     @Override
     protected void handleMainSuccessfulResponse(String stringPayload) {
         // We are not using the Volley library so we need to directly call this method
         try {
-            mainContentRepoData.postSuccess(new Attachment(new JSONObject(stringPayload), true));
+            if (stringPayload == null) {
+                mainContentRepoData.postError(new CustomException(context.getString(R.string.no_rights_fragment_attachments)));
+            } else
+                mainContentRepoData.postSuccess(new Attachment(new JSONObject(stringPayload), true));
         } catch (JSONException e) {
             mainContentRepoData.postError(e);
         }

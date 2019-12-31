@@ -1,6 +1,8 @@
 package com.capentory.capentory_client.viewmodels;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.MergedItemField;
@@ -14,6 +16,7 @@ import javax.inject.Inject;
 
 public class DetailItemViewModel extends NetworkViewModel<Map<String, MergedItemField>, DetailItemRepository> {
     private StatusAwareLiveData<MergedItem> searchedForItem;
+    private MutableLiveData<Boolean> exFieldsCollapsedLiveData = new MutableLiveData<>(true);
 
     @Inject
     public DetailItemViewModel(DetailItemRepository detailItemRepository) {
@@ -45,10 +48,19 @@ public class DetailItemViewModel extends NetworkViewModel<Map<String, MergedItem
     }
 
 
+    public void setExFieldsCollapsedLiveData(boolean exFieldsCollapsed){
+        exFieldsCollapsedLiveData.setValue(exFieldsCollapsed);
+    }
+
+    @NonNull
+    public LiveData<Boolean> getExFieldsCollapsedLiveData() {
+        return exFieldsCollapsedLiveData;
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
         statusAwareLiveData = null;
-        searchedForItem =null;
+        searchedForItem = null;
     }
 }

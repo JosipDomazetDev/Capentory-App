@@ -63,7 +63,8 @@ public class MergedItem implements RecyclerviewItem {
         this.itemAsJson = payload;
         this.fields = payload.getJSONObject("fields");
 
-        JSONArray attachmentsAsJSON = payload.getJSONArray("attachments");
+        // If user doesn't have rights no attachments are sent
+        JSONArray attachmentsAsJSON = payload.optJSONArray("attachments");
         if (attachmentsAsJSON == null) return;
 
         for (int i = 0; i < attachmentsAsJSON.length(); i++) {
