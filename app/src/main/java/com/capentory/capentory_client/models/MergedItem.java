@@ -22,7 +22,7 @@ public class MergedItem implements RecyclerviewItem {
     @NonNull
     private String pkItemId;
     @NonNull
-    private JSONObject itemAsJson, fields;
+    private JSONObject fields, customFields;
     @Nullable
     private String barcode, displayName, displayDescription, descriptionaryRoom;
     private int timesFoundLast = 0, timesFoundCurrent = 0;
@@ -36,6 +36,15 @@ public class MergedItem implements RecyclerviewItem {
     @Nullable
     public Room getSubroom() {
         return subroom;
+    }
+
+    public int getAmountOfTotalItemsForSubroom(int c) {
+        if (subroom == null) return 0;
+        for (MergedItem mergedItem : subroom.getMergedItems()) {
+            c += mergedItem.getAmountOfTotalItemsForSubroom(c);
+        }
+
+        return subroom.getMergedItems().size();
     }
 
     // Standard
@@ -60,8 +69,8 @@ public class MergedItem implements RecyclerviewItem {
         this.displayDescription = payload.getString("displayDescription");
         this.timesFoundLast = payload.optInt("times_found_last", 0);
         this.descriptionaryRoom = payload.getString("room");
-        this.itemAsJson = payload;
         this.fields = payload.getJSONObject("fields");
+        this.customFields = this.fields.getJSONObject("custom_fields");
 
         // If user doesn't have rights no attachments are sent
         JSONArray attachmentsAsJSON = payload.optJSONArray("attachments");
@@ -76,7 +85,6 @@ public class MergedItem implements RecyclerviewItem {
         MergedItem mergedItem = new MergedItem(NEW_ITEM_CODE);
         mergedItem.displayName = context.getString(R.string.new_item_merged_item);
         mergedItem.fields = new JSONObject();
-        mergedItem.itemAsJson = new JSONObject();
         return mergedItem;
     }
 
@@ -109,13 +117,14 @@ public class MergedItem implements RecyclerviewItem {
         return pkItemId;
     }
 
-    @NonNull
-    public JSONObject getItemAsJson() {
-        return itemAsJson;
+
+    @Nullable
+    public JSONObject getCustomFieldsWithValues() {
+        return customFields;
     }
 
     @NonNull
-    public JSONObject getFieldsWithValues() {
+    public JSONObject getNormalFieldsWithValues() {
         return fields;
     }
 
@@ -163,18 +172,6 @@ public class MergedItem implements RecyclerviewItem {
 
         // 12340000 = 12340000
         return Objects.equals(getBarcode(), scannedBarcode);
-
-       /* if (barcode.length() == scannedBarcode.length()) {
-            // 1234 = 1234 (scannedBarcode maybe doesn't include zeros => only compare to anlage)
-            return Objects.equals(barcode, scannedBarcode);
-
-        } else if (barcode.length() < scannedBarcode.length()) {
-            // 1234 = 1234|0000| (scannedBarcode includes zeros but local barcode doesn't (=> cut and compare to anlage))
-            return Objects.equals(barcode, scannedBarcode.substring(0, barcode.length()));
-        }
-
-        // If the scannedBarcode however is shorther than even anlage every hope is lost
-        return false;*/
     }
 
     @Override

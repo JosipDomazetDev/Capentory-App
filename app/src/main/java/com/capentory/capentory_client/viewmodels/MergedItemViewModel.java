@@ -23,11 +23,14 @@ import javax.inject.Inject;
 public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>, MergedItemsRepository> {
     private List<ValidationEntry> validationEntries = new ArrayList<>();
     private List<MergedItem> alreadyValidatedItems = new ArrayList<>();
+    private List<Room> subRoomListForItemDetails;
+
     private StatusAwareLiveData<Boolean> validateSuccessful;
     private MutableLiveData<String> progressMessage = new MutableLiveData<>();
     private boolean startedRemoving;
     private int validatedCount = 0;
     private int totalItemsCount = 0;
+
 
     @Inject
     public MergedItemViewModel(MergedItemsRepository mergedItemsRepository) {
@@ -68,6 +71,10 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
             statusAwareLiveData.postSuccess(currentItems);
             startedRemoving = true;
             if (mergedItem.getSubroom() != null) {
+                if (mergedItem.getAmountOfTotalItemsForSubroom(0) == 0) {
+                    currentItems.remove(mergedItem.getSubroom());
+                }
+
                 mergedItem.getSubroom().getMergedItems().remove(mergedItem);
             }
         }
@@ -83,26 +90,14 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
     }
 
 
-    /*public int getAmountOfTotalItems() {
-        List<RecyclerviewItem> recyclerviewItems = Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData());
-        int c = 0;
-        for (RecyclerviewItem recyclerviewItem : recyclerviewItems) {
-            if (recyclerviewItem instanceof MergedItem) {
-                MergedItem mergedItem = (MergedItem) recyclerviewItem;
-                // If user created more subitems the total number of items should be higher ;)
-                c += Math.max(mergedItem.getTimesFoundLast(), mergedItem.getTimesFoundCurrent());
-            }
-        }
-        return c;
-    }*/
-
-
     @Override
     public void reloadData(String... args) {
         if (!startedRemoving) {
             statusAwareLiveData = networkRepository.fetchMainData(args);
             validationEntries.clear();
             alreadyValidatedItems.clear();
+            if (subRoomListForItemDetails != null)
+                subRoomListForItemDetails.clear();
             validatedCount = 0;
         }
     }
@@ -147,6 +142,9 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
 
     @Nullable
     public List<Room> getRooms() {
+        if (subRoomListForItemDetails != null) return subRoomListForItemDetails;
+
+        // If subRooms are not known, add them once
         if (statusAwareLiveData.getValue() == null) return null;
         List<RecyclerviewItem> items = statusAwareLiveData.getValue().getData();
         if (items == null) return null;
@@ -157,6 +155,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
                 rooms.add((Room) item);
             }
         }
+        this.subRoomListForItemDetails = rooms;
         return rooms;
     }
 

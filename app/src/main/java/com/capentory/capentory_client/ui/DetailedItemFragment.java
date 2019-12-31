@@ -53,7 +53,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -242,14 +241,14 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem());
         StatusAwareData<Map<String, MergedItemField>> mapStatusAwareData = Objects.requireNonNull(networkViewModel.getData().getValue());
         if (mergedItem.isSearchedForItem() || mapStatusAwareData.getData() == null) return;
-        JSONObject fieldsWithValues = mergedItem.getFieldsWithValues();
+        JSONObject fieldsWithValues = mergedItem.getNormalFieldsWithValues();
+        JSONObject customFieldsWithValues = mergedItem.getCustomFieldsWithValues();
 
         displayStaticViews(view, mergedItem);
         LinearLayout content = view.findViewById(R.id.linearLayout_fragment_itemdetail);
         content.removeAllViews();
 
         Map<String, MergedItemField> mapFieldNameToField = mapStatusAwareData.getData();
-        assert mapFieldNameToField != null;
 
         // Map is sorted by value, extra fields are at the end
         // Add normal fields
@@ -261,7 +260,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         LinearLayout linearLayoutExtraFields = addSeparateLinearLayout(content);
 
         // Add the extra fields
-        addExtraFields(view, fieldsWithValues, linearLayoutExtraFields, mapFieldNameToField,  mapFieldNameToField.keySet());
+        addExtraFields(view, fieldsWithValues, customFieldsWithValues, linearLayoutExtraFields, mapFieldNameToField, mapFieldNameToField.keySet());
 
         expandButton.setOnClickListener(v -> {
             if (networkViewModel.getExFieldsCollapsedLiveData().getValue() == null) return;
@@ -334,12 +333,15 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         return linearLayoutExtraFields;
     }
 
-    private void addExtraFields(View view, JSONObject fieldsWithValues, LinearLayout linearLayoutExtraFields, Map<String, MergedItemField> mapFieldNameToField, Set<String> keys) {
+    private void addExtraFields(View view, JSONObject fieldsWithValues, JSONObject customFieldsWithValues, LinearLayout linearLayoutExtraFields, Map<String, MergedItemField> mapFieldNameToField, Set<String> keys) {
         for (String key : keys) {
             MergedItemField field = mapFieldNameToField.get(key);
 
             if (field == null) continue;
-            if (field.isExtraField()) {
+            // Custom-Fields are also Extra-Fields
+            if (field.isCustomField()) {
+                addViewForType(customFieldsWithValues, field, view, linearLayoutExtraFields);
+            } else if (field.isExtraField()) {
                 addViewForType(fieldsWithValues, field, view, linearLayoutExtraFields);
             }
         }
@@ -379,6 +381,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
     @SuppressLint("SetTextI18n")
     private void addViewForType(JSONObject fieldsWithValuesFromItem, MergedItemField currentField, View view, LinearLayout linearLayout) {
+        if (currentField.isCustomField()) {
+            // If the item doesn't contain this CustomField, it means that it doesn't have a CustomField that should be displayed
+            if (fieldsWithValuesFromItem.has(currentField.getKey()))
+                return;
+        }
+
         if (currentField.isReadOnly()) {
             TextView textView = new TextView(Objects.requireNonNull(getContext()));
             textView.setText(currentField.getVerboseName() + ": " + fieldsWithValuesFromItem.opt(currentField.getKey()));
@@ -567,7 +575,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
             if (field == null || field.isReadOnly()) continue;
 
             Object valueFromForm = getValueFromGUIField(field);
-            validationEntry.addChangedFieldFromFormValue(fieldName, valueFromForm);
+            validationEntry.addChangedFieldFromFormValue(field, valueFromForm);
         }
         return validationEntry;
     }

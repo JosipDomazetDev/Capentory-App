@@ -108,19 +108,26 @@ public class ValidationEntry {
         return pkItem.equals(CANCEL_CODE);
     }
 
-    public void addChangedFieldFromFormValue(String fieldName, Object valueFromForm) {
+    public void addChangedFieldFromFormValue(MergedItemField field, Object valueFromForm) {
         try {
             if (mergedItem.isNewItem()) {
                 // this means a new Item should be created, therefore take all values
-                fieldChanges.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
-            } else if (!mergedItem.getFieldsWithValues().get(fieldName).equals(valueFromForm)) {
-                // for existing items compare if something changed
-                fieldChanges.add(new ValidationEntry.Field<>(fieldName, valueFromForm));
-            }
+                fieldChanges.add(new ValidationEntry.Field<>(field.getKey(), valueFromForm));
+            } else if (field.isCustomField() && mergedItem.getCustomFieldsWithValues() != null) {
+                // Custom-Fields have another source
+                addOnChange(field, valueFromForm, mergedItem.getCustomFieldsWithValues());
+            } else addOnChange(field, valueFromForm, mergedItem.getNormalFieldsWithValues());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void addOnChange(MergedItemField field, Object valueFromForm, JSONObject fieldsWithValues) throws JSONException {
+        if (!fieldsWithValues.get(field.getKey()).equals(valueFromForm)) {
+            // for existing items compare if something changed
+            fieldChanges.add(new Field<>(field.getKey(), valueFromForm));
+        }
     }
 
     public void setStaticMarkForLater(boolean b) {

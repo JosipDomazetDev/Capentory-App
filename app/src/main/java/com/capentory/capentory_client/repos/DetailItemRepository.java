@@ -53,11 +53,11 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
             JSONObject payload = new JSONObject(stringPayload);
             Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
 
-            readFields(payload.getJSONObject("displayFields"), mergedItemFieldsSet, false);
-            readFields(payload.getJSONObject("extraFields"), mergedItemFieldsSet, true);
+            readFields(payload.getJSONObject("displayFields"), mergedItemFieldsSet, MergedItemField.NORMAL_FIELD_CODE);
+            readFields(payload.getJSONObject("extraFields"), mergedItemFieldsSet, MergedItemField.EXTRA_FIELD_CODE);
             readFields(payload.getJSONObject("extraFields")
                     .getJSONObject("custom_fields")
-                    .getJSONObject("fields"), mergedItemFieldsSet, true);
+                    .getJSONObject("fields"), mergedItemFieldsSet, MergedItemField.CUSTOM_FIELD_CODE);
 
             mainContentRepoData.postSuccess(sortByValue(mergedItemFieldsSet));
         } catch (JSONException error) {
@@ -65,13 +65,13 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
         }
     }
 
-    private void readFields(JSONObject payload, Map<String, MergedItemField> mergedItemFieldsSet, boolean isFromExtraField) throws JSONException {
+    private void readFields(JSONObject payload, Map<String, MergedItemField> mergedItemFieldsSet, int fieldClassifier) throws JSONException {
         Iterator<String> iterator = payload.keys();
 
         while (iterator.hasNext()) {
             String key = iterator.next();
             if (key.equals("custom_fields")) continue;
-            mergedItemFieldsSet.put(key, new MergedItemField(key, payload, isFromExtraField));
+            mergedItemFieldsSet.put(key, new MergedItemField(key, payload, fieldClassifier));
         }
     }
 

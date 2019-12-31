@@ -7,23 +7,28 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MergedItemField implements Comparable<MergedItemField> {
+    public static final int NORMAL_FIELD_CODE = 0;
+    public static final int EXTRA_FIELD_CODE = -1;
+    public static final int CUSTOM_FIELD_CODE = -2;
 
     @NonNull
     private String key, type, verboseName;
-    private boolean required, readOnly, isExtraField;
+    private boolean readOnly;
+    private int fieldClassifier = 0;
+
 
     @NonNull
     private JSONArray choices;
 
 
-    public MergedItemField(@NonNull String key, JSONObject payload, boolean isExtraField) throws JSONException {
+    public MergedItemField(@NonNull String key, JSONObject payload, int fieldClassifier) throws JSONException {
         this.key = key;
         payload = payload.getJSONObject(key);
         readOnly = payload.optBoolean("readOnly");
         type = payload.optString("type", "");
         verboseName = payload.optString("verboseFieldName");
         choices = payload.optJSONArray("choices");
-        this.isExtraField = isExtraField;
+        this.fieldClassifier = fieldClassifier;
     }
 
 
@@ -42,16 +47,17 @@ public class MergedItemField implements Comparable<MergedItemField> {
         return verboseName;
     }
 
-    public boolean isRequired() {
-        return required;
-    }
 
     public boolean isReadOnly() {
         return readOnly;
     }
 
     public boolean isExtraField() {
-        return isExtraField;
+        return fieldClassifier == EXTRA_FIELD_CODE || isCustomField();
+}
+
+    public boolean isCustomField() {
+        return fieldClassifier == CUSTOM_FIELD_CODE;
     }
 
     @NonNull
@@ -62,9 +68,9 @@ public class MergedItemField implements Comparable<MergedItemField> {
     @Override
     public int compareTo(MergedItemField that) {
 
-        if (Boolean.compare(this.isExtraField, that.isExtraField) == -1) {
+        if (Boolean.compare(this.isExtraField(), that.isExtraField()) == -1) {
             return -1;
-        } else if (Boolean.compare(this.isExtraField, that.isExtraField) == 1) {
+        } else if (Boolean.compare(this.isExtraField(), that.isExtraField()) == 1) {
             return 1;
         }
 
