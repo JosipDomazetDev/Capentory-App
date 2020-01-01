@@ -45,5 +45,25 @@
             android:key="barcode_formats_key"
             android:summary="@string/msg_barcode_formats_key_preferences"
             android:title="@string/title_barcode_formats_key_preferences" />
+
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/other_title_preferences">
+
+        <ListPreference
+            android:defaultValue="3"
+            android:dialogTitle="@string/dialog_title_shake_sensitivity_preferences"
+            android:entries="@array/sensitivity_modes"
+            android:entryValues="@array/sensitivity_modes_values"
+            android:key="shake_sensitivity"
+            android:summary="@string/msg_shake_sensitivity_preferences"
+            android:title="@string/title_shake_sensitivity_preferences" />
+
+
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="compress_image"
+            android:title="@string/title_switch_compress_image" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -26,6 +26,7 @@ public class KeyValueDropDownAdapter extends ArrayAdapter<KeyValueDropDownAdapte
     }
 
     public int getItemIndexFromKey(Object key) {
+        if (key == null) return 0;
 
         for (int i = 0; i < items.length; i++) {
             if (key.equals(items[i].getKey())) {
@@ -50,7 +51,7 @@ public class KeyValueDropDownAdapter extends ArrayAdapter<KeyValueDropDownAdapte
     }
 
 
-    public static class DropDownEntry{
+    public static class DropDownEntry {
         Object key;
         String description;
 

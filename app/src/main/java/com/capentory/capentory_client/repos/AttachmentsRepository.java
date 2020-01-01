@@ -2,6 +2,7 @@ package com.capentory.capentory_client.repos;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
@@ -14,15 +15,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -87,6 +87,9 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
         AttachmentAPI apiService = retrofit.create(AttachmentAPI.class);
         File file = new File(args[0]);
 
+        file = handleImageCompression(args, file);
+
+
         RequestBody fileAsRequestBody = RequestBody.create(MediaType.parse("*/*"), file);
         MultipartBody.Part fileAsMultipart = MultipartBody.Part.createFormData("file", file.getName(), fileAsRequestBody);
 
@@ -94,6 +97,24 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
                 "Token " + PreferenceUtility.getToken(context),
                 fileAsMultipart,
                 args[1]);
+    }
+
+    private File handleImageCompression(String[] args, File file) {
+        if (Attachment.isImage(args[0])) {
+            if (PreferenceUtility.getBoolean(context, "compress_image")) {
+                try {
+                    file = new Compressor(context)
+                            .setQuality(85)
+                            .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                            .compressToFile(file);
+
+                } catch (Exception e) {
+                    // Compression didn't work
+                    return new File(args[0]);
+                }
+            }
+        }
+        return file;
     }
 
 

@@ -3,12 +3,15 @@ package com.capentory.capentory_client.ui;
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -31,6 +34,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.ToastUtility;
+import com.capentory.capentory_client.androidutility.UserUtility;
+import com.capentory.capentory_client.androidutility.VibrateUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.MergedItemField;
 import com.capentory.capentory_client.models.Room;
@@ -111,10 +116,10 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         float last_x = 0;
         float last_y = 0;
         float last_z = 0;
+        int sensitivity = -2;
 
         public void onSensorChanged(SensorEvent event) {
             long curTime = System.currentTimeMillis();
-            // only allow one update every 100ms.
             if ((curTime - lastUpdate) > 50) {
                 long diffTime = (curTime - lastUpdate);
                 lastUpdate = curTime;
@@ -125,7 +130,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
-                if (speed > 6500 && !called) {
+                if (sensitivity == -2) {
+                    sensitivity = getSensitivity();
+                }
+                if (sensitivity == -1) return;
+
+                if (speed > sensitivity && !called) {
                     //((TextView) (view.findViewById(R.id.bezeichnung_fragment_itemdetail))).setText( ""+speed);
                     called = true;
                     Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
@@ -141,6 +151,19 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     };
+
+
+    private int getSensitivity() {
+        SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int sensitivity;
+        try {
+            sensitivity = Integer.parseInt(Objects.requireNonNull(preference.getString("shake_sensitivity", "-1")));
+        } catch (NullPointerException | NumberFormatException e) {
+            sensitivity = -1;
+        }
+        return sensitivity;
+    }
+
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -205,6 +228,9 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     private boolean fetchSearchedForItem(@NonNull View view) {
         MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem();
         if (mergedItem != null && mergedItem.isSearchedForItem()) {
+            // Item is not of the normal case, therefore vibrate
+            VibrateUtility.makeNormalVibrations(getContext());
+
             networkViewModel.fetchSearchedForItem(mergedItem.getBarcode());
             observeSpecificLiveData(networkViewModel.getSearchedForItem(), liveData -> handleSearchedForItemResponse(view, liveData));
             return true;
@@ -246,6 +272,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         displayStaticViews(view, mergedItem);
         LinearLayout content = view.findViewById(R.id.linearLayout_fragment_itemdetail);
+        // Animations only for the button click
+        content.setLayoutTransition(null);
         content.removeAllViews();
 
         Map<String, MergedItemField> mapFieldNameToField = mapStatusAwareData.getData();
@@ -273,6 +301,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         });
 
         NestedScrollView nestedScrollView = view.findViewById(R.id.scrollView_fragment_item_detail);
+        content.setLayoutTransition(new LayoutTransition());
         content.getLayoutTransition().setDuration(100);
         networkViewModel.getExFieldsCollapsedLiveData().observe(getViewLifecycleOwner(), aBoolean -> {
             if (aBoolean) {
@@ -348,6 +377,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     }
 
     private void addNormalFields(View view, JSONObject fieldsWithValues, LinearLayout content, Map<String, MergedItemField> mapFieldNameToField, Set<String> keys) {
+        content.setLayoutTransition(null);
         for (String key : keys) {
             MergedItemField field = mapFieldNameToField.get(key);
 
@@ -383,7 +413,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     private void addViewForType(JSONObject fieldsWithValuesFromItem, MergedItemField currentField, View view, LinearLayout linearLayout) {
         if (currentField.isCustomField()) {
             // If the item doesn't contain this CustomField, it means that it doesn't have a CustomField that should be displayed
-            if (fieldsWithValuesFromItem.has(currentField.getKey()))
+            if (!fieldsWithValuesFromItem.has(currentField.getKey()))
                 return;
         }
 
@@ -489,13 +519,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, choices);
                     spinner.setAdapter(adapter);
                     Object i;
-                    try {
-                        i = fieldsWithValuesFromItem.get(currentField.getKey());
-                    } catch (JSONException e) {
-                        ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.dropdown_error_fragment_item_detail), Toast.LENGTH_SHORT);
-                        e.printStackTrace();
-                        break;
-                    }
+                    i = fieldsWithValuesFromItem.opt(currentField.getKey());
                     spinner.setSelection(adapter.getItemIndexFromKey(i));
                     linearLayout.addView(textView);
                     linearLayout.addView(spinner);

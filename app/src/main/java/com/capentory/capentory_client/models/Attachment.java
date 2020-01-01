@@ -23,7 +23,7 @@ public class Attachment implements Comparable<Attachment> {
         this.desc = payload.optString("description");
         this.attachmentId = payload.optInt("id");
 
-        isPicture = url.matches("(?i)(.*\\.(?:png|jpg|jpeg|jfif|tiff|gif))");
+        isPicture = Attachment.isImage(url);
     }
 
     public Attachment(JSONObject jsonObject, boolean isNewAttachment) throws JSONException {
@@ -102,6 +102,9 @@ public class Attachment implements Comparable<Attachment> {
                 desc.equals(that.desc);
     }
 
+    public static boolean isImage(String url) {
+        return url.matches("(?i)(.*\\.(?:png|jpg|jpeg|jfif|tiff|gif))");
+    }
 
     public boolean isNewAttachment() {
         return isNewAttachment;

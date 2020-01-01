@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name="com.capentory.capentory_client.ui.BaseApplication"
         android:hardwareAccelerated="true"

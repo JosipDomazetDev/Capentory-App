@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ScanTextActivity extends AppCompatActivity {
     private static final Integer CERTAINTY_THRESHOLD_SCAN_AMOUNT = 3;
@@ -288,7 +289,7 @@ public class ScanTextActivity extends AppCompatActivity {
         SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int text_filter_mode;
         try {
-            text_filter_mode = Integer.parseInt(preference.getString("text_filter_mode", "-1"));
+            text_filter_mode = Integer.parseInt(Objects.requireNonNull(preference.getString("text_filter_mode", "-1")));
         } catch (NullPointerException | NumberFormatException e) {
             text_filter_mode = 0;
         }

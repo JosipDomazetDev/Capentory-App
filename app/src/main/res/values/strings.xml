@@ -157,6 +157,37 @@
     <string name="provide_desc_fragment_attachment">Provide a description</string>
     <string name="remove_attachment_fragment_attachment">Remove Attachment</string>
     <string name="title_delete_fragment_attachments">Delete Attachment</string>
-    <string name="msg_delete_fragment_attachments">Press Yes if you want do delete this attachment</string>
-    <string name="no_rights_fragment_attachments">No Rights for attachments!</string>
+    <string name="msg_delete_fragment_attachments">Do you want do delete this attachment?</string>
+    <string name="no_rights_fragment_attachments">You don\'t have  enough rights for attachments!</string>
+    <string name="error_vibrate">Device doesn\'t support vibration!</string>
+    <string name="title_shake_sensitivity_preferences">Shake sensitivity</string>
+    <string name="dialog_title_shake_sensitivity_preferences">Configure shake sensitivity</string>
+    <string name="msg_shake_sensitivity_preferences">Instead of pressing the green button, you can also shake your phone to validate an item. Configure the needed sensitivity!</string>
+    <string name="other_title_preferences">Other</string>
+    <string name="title_switch_compress_image">Compress images before sending them as attachment</string>
+    <string name="very_sensitive_preferences">Very Sensitive</string>
+    <string name="sensitive_preferences">Sensitive</string>
+    <string name="moderate_preferences">Moderate</string>
+    <string name="insensitive_preferences">Insensitive</string>
+    <string name="very_insensitive_preferences">Very Insensitive</string>
+    <string name="disable_shaking_preferences">Disable Shaking</string>
+    <string name="all_formats_preferences">All formats</string>
+    <string name="CODE_128_preferences" translatable="false">CODE_128</string>
+    <string name="CODE_93_preferences" translatable="false">CODE_93</string>
+    <string name="CODE_39_preferences" translatable="false">CODE_39</string>
+    <string name="CODABAR_preferences" translatable="false">CODABAR</string>
+    <string name="DATA_MATRIX_preferences" translatable="false">DATA_MATRIX</string>
+    <string name="EAN_13_preferences" translatable="false">EAN_13</string>
+    <string name="EAN_8_preferences" translatable="false">EAN_8</string>
+    <string name="ITF_preference" translatable="false">ITF</string>
+    <string name="QR_CODE_preference" translatable="false">QR_CODE</string>
+    <string name="UPC_A_preference" translatable="false">UPC_A</string>
+    <string name="UPC_E_preference" translatable="false">UPC_E</string>
+    <string name="PDF417_preference" translatable="false">PDF417</string>
+    <string name="AZTEC_preference" translatable="false">AZTEC</string>
+    <string name="ip_adress_preferences">IP-Addresses</string>
+    <string name="numbers_preferences">Numbers (optimized for barcodes)</string>
+    <string name="alphabetic_preferences">Alphabetic</string>
+    <string name="alphanumeric_preferences">Alphanumeric</string>
+    <string name="no_filter_preferences">Kein Filter</string>
 </resources>

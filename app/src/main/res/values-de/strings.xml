@@ -1,5 +1,5 @@
 <resources>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Einstellungen</string>
     <string name="channel_description">Capentory - Notification Channel</string>
     <string name="homescreen_intro">Diese Applikation wurde im Rahmen der Diplomarbeit Capentory an der HTL Rennweg entwickelt. Wir konnten den Inventurvorgang an unserer Schule erheblich vereinfachen und vor allem effizienter gestalten.</string>
     <string name="label_about_us_nav_drawer">Über uns</string>
@@ -146,4 +146,26 @@
     <string name="attachment" translatable="false">Anhang Bild</string>
     <string name="error_preference">EINSTELLUNG ERFORDERLICH</string>
     <string name="provide_desc_fragment_attachment">Beschriftung vergeben</string>
+    <string name="all_formats_preferences">Alle Formate</string>
+    <string name="alphabetic_preferences">Alphabetisch</string>
+    <string name="alphanumeric_preferences">Alphanumerisch</string>
+    <string name="dialog_title_shake_sensitivity_preferences">Sensibilität des Schüttelns einstellen</string>
+    <string name="disable_shaking_preferences">Schütteln deaktivieren</string>
+    <string name="error_vibrate">Gerät unterstützt keine Vibration!</string>
+    <string name="insensitive_preferences">Insensibel</string>
+    <string name="ip_adress_preferences">IP-Adressen</string>
+    <string name="moderate_preferences">Mittelmäßig</string>
+    <string name="msg_delete_fragment_attachments">Wollen Sie diesen Anhang entfernen?</string>
+    <string name="msg_shake_sensitivity_preferences">Anstatt den grünen Button zu benützen, können Sie alternativ auch Ihr Gerät schütteln, um einen Gegenstand zu validieren. Die Sensibilität des Schüttelns ist hier konfigurierbar!</string>
+    <string name="no_filter_preferences">No Filter</string>
+    <string name="no_rights_fragment_attachments">Sie haben zu wenige Rechte für die Anhang-Funktionalitäten!</string>
+    <string name="numbers_preferences">Nummern (optimiert für Barcodes)</string>
+    <string name="other_title_preferences">Sonstige</string>
+    <string name="remove_attachment_fragment_attachment">Anhang entfernen</string>
+    <string name="sensitive_preferences">Sensibel</string>
+    <string name="title_delete_fragment_attachments">Anhang löschen</string>
+    <string name="title_shake_sensitivity_preferences">Schüttel-Sensibilität</string>
+    <string name="title_switch_compress_image">Bilder komprimieren bevor sie als Anhang gesendet werden</string>
+    <string name="very_insensitive_preferences">Sehr Unsensibel</string>
+    <string name="very_sensitive_preferences">Sehr Sensibel</string>
 </resources>

@@ -85,6 +85,7 @@ public class MergedItem implements RecyclerviewItem {
         MergedItem mergedItem = new MergedItem(NEW_ITEM_CODE);
         mergedItem.displayName = context.getString(R.string.new_item_merged_item);
         mergedItem.fields = new JSONObject();
+        mergedItem.customFields = new JSONObject();
         return mergedItem;
     }
 

@@ -2,11 +2,11 @@
 <resources>
     <string-array name="empty_array" />
     <string-array name="text_scan_modes">
-        <item>Kein Filter</item>
-        <item>Alphanumerisch (Deutsch)</item>
-        <item>Alphabetisch (Deutsch)</item>
-        <item>Nummern (optimiert für Barcodes)</item>
-        <item>IP-Adressen</item>
+        <item>@string/no_filter_preferences</item>
+        <item>@string/alphanumeric_preferences</item>
+        <item>@string/alphabetic_preferences</item>
+        <item>@string/numbers_preferences</item>
+        <item>@string/ip_adress_preferences</item>
     </string-array>
 
     <string-array name="text_scan_modes_values">
@@ -18,20 +18,20 @@
     </string-array>
 
     <string-array name="barcode_formats">
-        <item>Alle Formate</item>
-        <item>CODE_128</item>
-        <item>CODE_39</item>
-        <item>CODE_93</item>
-        <item>CODABAR</item>
-        <item>DATA_MATRIX</item>
-        <item>EAN_13</item>
-        <item>EAN_8</item>
-        <item>ITF</item>
-        <item>QR_CODE</item>
-        <item>UPC_A</item>
-        <item>UPC_E</item>
-        <item>PDF417</item>
-        <item>AZTEC</item>
+        <item>@string/all_formats_preferences</item>
+        <item>@string/CODE_128_preferences</item>
+        <item>@string/CODE_39_preferences</item>
+        <item>@string/CODE_93_preferences</item>
+        <item>@string/CODABAR_preferences</item>
+        <item>@string/DATA_MATRIX_preferences</item>
+        <item>@string/EAN_13_preferences</item>
+        <item>@string/EAN_8_preferences</item>
+        <item>@string/ITF_preference</item>
+        <item>@string/QR_CODE_preference</item>
+        <item>@string/UPC_A_preference</item>
+        <item>@string/UPC_E_preference</item>
+        <item>@string/PDF417_preference</item>
+        <item>@string/AZTEC_preference</item>
     </string-array>
 
     <string-array name="barcode_formats_values">
@@ -53,5 +53,20 @@
     <string-array name="barcode_formats_default_value">
         <item>2 </item>
     </string-array>
-
+    <string-array name="sensitivity_modes" >
+        <item>@string/very_sensitive_preferences</item>
+        <item>@string/sensitive_preferences</item>
+        <item>@string/moderate_preferences</item>
+        <item>@string/insensitive_preferences</item>
+        <item>@string/very_insensitive_preferences</item>
+        <item>@string/disable_shaking_preferences</item>
+    </string-array>
+    <string-array name="sensitivity_modes_values" >
+        <item>7000</item>
+        <item>11000</item>
+        <item>16000</item>
+        <item>18000</item>
+        <item>26000</item>
+        <item>-1</item>
+    </string-array>
 </resources>

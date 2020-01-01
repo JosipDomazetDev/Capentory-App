@@ -206,7 +206,6 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
             roomDropDown.setVisibility(View.GONE);
             finishedText.setVisibility(View.VISIBLE);
         }
-        //roomDropDown.notify();
     }
 
 

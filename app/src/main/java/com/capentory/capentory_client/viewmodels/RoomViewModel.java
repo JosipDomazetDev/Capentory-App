@@ -19,7 +19,10 @@ public class RoomViewModel extends NetworkViewModel<List<Room>, RoomsRepository>
 
     public boolean noRoomsLeft() {
         try {
-            return Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData()).isEmpty();
+            if (statusAwareLiveData.getValue() == null) return true;
+            if (statusAwareLiveData.getValue().getData() == null) return true;
+
+            return statusAwareLiveData.getValue().getData().isEmpty();
         } catch (NullPointerException e) {
             return false;
         }
