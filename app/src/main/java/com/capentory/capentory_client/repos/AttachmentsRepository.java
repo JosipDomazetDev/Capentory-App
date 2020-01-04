@@ -104,7 +104,7 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
             if (PreferenceUtility.getBoolean(context, "compress_image")) {
                 try {
                     file = new Compressor(context)
-                            .setQuality(85)
+                            .setQuality(90)
                             .setCompressFormat(Bitmap.CompressFormat.WEBP)
                             .compressToFile(file);
 

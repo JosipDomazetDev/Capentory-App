@@ -14,6 +14,7 @@ import com.capentory.capentory_client.androidutility.PreferenceUtility;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class CustomRequest extends JsonRequest<String> {
@@ -63,6 +64,7 @@ public class CustomRequest extends JsonRequest<String> {
             headers.put("Authorization", "Token "
                     + PreferenceUtility.getToken(context));
             headers.put("Connection", "close");
+            headers.put("Accept-Language", Locale.getDefault().getLanguage());
             return headers;
         }
 

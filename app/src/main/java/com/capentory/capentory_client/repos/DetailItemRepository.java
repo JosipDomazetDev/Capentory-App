@@ -38,10 +38,8 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
     @Override
     public StatusAwareLiveData<Map<String, MergedItemField>> fetchMainData(String... args) {
         // Fetch only once for entire application, the form wont change
-        if (mainContentRepoData.getValue() == null || mainContentRepoData.getValue().getData() == null) {
             addMainRequest(Request.Method.OPTIONS, getUrl(context, true, MainActivity.getSerializer(context).getItemUrl()));
             launchMainRequest();
-        }
 
         return mainContentRepoData;
     }

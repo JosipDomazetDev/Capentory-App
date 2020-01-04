@@ -63,7 +63,7 @@ public class ScanBarcodeActivity extends Activity {
 
         if (PermissionHandler.checkPermission(this)) {
             createCameraSource();
-        }else  cameraPreview.setVisibility(View.INVISIBLE);
+        } else cameraPreview.setVisibility(View.INVISIBLE);
 
     }
 
@@ -262,7 +262,8 @@ public class ScanBarcodeActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        mediaPlayer.release();
+        if (mediaPlayer != null)
+            mediaPlayer.release();
         mediaPlayer = null;
     }
 }

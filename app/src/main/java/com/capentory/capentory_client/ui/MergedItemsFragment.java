@@ -151,6 +151,8 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
 
         finishRoom.setOnClickListener(v -> {
+            if (networkViewModel.getData() == null || networkViewModel.getData().getValue() == null)
+                return;
 
             String title;
             String message;
@@ -338,7 +340,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
             moveToItemDetail((MergedItem) adapter.getItem(position));
         } else {
             try {
-                adapter.handleCollapseAndExpand(position);
+                adapter.handleCollapseAndExpand(position, recyclerView.getChildViewHolder(v));
             } catch (Exception e) {
                 basicNetworkErrorHandler.displayTextViewErrorMessage(
                         new CustomException(getString(R.string.expand_failure_fragment_mergeditems)));

@@ -2,6 +2,7 @@ package com.capentory.capentory_client.repos;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.capentory.capentory_client.models.MergedItem;
@@ -117,7 +118,11 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerviewIt
         StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
 
         addRequestWithContent(VALIDATION_REQUEST_KEY, Request.Method.POST, getUrl(context, true, MainActivity.getSerializer(context).getRoomUrl(), currentRoomString + "/"), validationEntriesAsJson,
-                payload -> validateSuccessful.postSuccess(true), validateSuccessful);
+                payload -> {
+
+                    Log.e("XXX", payload);
+                    validateSuccessful.postSuccess(true);
+                }, validateSuccessful);
         launchRequestFromKey(VALIDATION_REQUEST_KEY, validateSuccessful);
 
         return validateSuccessful;

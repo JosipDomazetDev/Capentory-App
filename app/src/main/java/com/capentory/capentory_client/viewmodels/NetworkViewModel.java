@@ -26,4 +26,5 @@ public abstract class NetworkViewModel<P, R extends NetworkRepository<P>> extend
     public abstract void reloadData(String... args);
 
 
+
 }

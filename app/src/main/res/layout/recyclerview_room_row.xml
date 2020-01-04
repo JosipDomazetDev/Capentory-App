@@ -1,26 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/room_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
+    android:layout_height="wrap_content"
+    android:paddingStart="8dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="8dp">
 
     <View
         android:id="@+id/sep"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
         android:background="#D8D8D8" />
 
-    <TextView
-        android:id="@+id/subroom_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/sep"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:paddingTop="10dp"
+        android:paddingBottom="0dp"
         android:layout_centerVertical="true"
-        android:padding="10dp"
-        android:text="261.Kasten"
-        android:textColor="#000"
-        android:textSize="18sp" />
+        android:layout_below="@id/sep"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/subroom_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="261.Kasten"
+            android:textColor="#000"
+            android:textSize="18sp" />
+
+
+        <ImageView
+            android:id="@+id/collpase_room_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@null"
+            android:contentDescription="@string/remove_attachment_fragment_attachment"
+            android:paddingTop="8dp"
+            android:src="@drawable/ic_delete_black_24dp"
+            app:srcCompat="@drawable/ic_expand_more_black_24dp" />
+    </RelativeLayout>
 </RelativeLayout>

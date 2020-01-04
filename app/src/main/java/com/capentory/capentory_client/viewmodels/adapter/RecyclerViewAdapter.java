@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -68,7 +69,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == TYPE_HEADER) {
             View v = inflater.inflate(R.layout.recyclerview_room_row, parent, false);
-            return new VHHeader(v);
+            return new VHHeader(v, itemClickListener);
         } else {
             View v = inflater.inflate(R.layout.recyclerview_item_row, parent, false);
             return new VHItem(v, itemClickListener);
@@ -100,6 +101,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     vhHeader.subRoom_textview.getContext().getString(R.string.recycler_view_adapter_subroom_text,
                             room.getDisplayedRoomDescription()));
 
+            vhHeader.imageView.setBackground(null);
+            setExpandImageView(vhHeader, room);
+
+        }
+    }
+
+    private void setExpandImageView(VHHeader vhHeader, Room room) {
+        if (room.isExpanded()) {
+            vhHeader.imageView.setImageResource(R.drawable.ic_expand_less_black_24dp);
+        } else {
+            vhHeader.imageView.setImageResource(R.drawable.ic_expand_more_black_24dp);
         }
     }
 
@@ -124,9 +136,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return items.get(position);
     }
 
-    public void handleCollapseAndExpand(int position) {
+    public void handleCollapseAndExpand(int position, RecyclerView.ViewHolder v) {
 
         Room room = (Room) getItem(position);
+
         if (room.isExpanded()) {
             ArrayList<RecyclerviewItem> itemsToRemove = new ArrayList<>();
             itemsToRemove = getItemsToRemove(room, itemsToRemove, 0);
@@ -147,6 +160,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
+        setExpandImageView((VHHeader) v, room);
     }
 
     private ArrayList<RecyclerviewItem> getItemsToRemove(Room room, ArrayList<RecyclerviewItem> itemsToRemove, int depth) {
@@ -204,14 +218,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     class VHHeader extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView subRoom_textview;
         View room_container;
+        ImageView imageView;
+        ItemClickListener itemClickListener;
 
 
-        VHHeader(View itemView) {
+        VHHeader(View itemView, ItemClickListener itemClickListener) {
             super(itemView);
             this.subRoom_textview = itemView.findViewById(R.id.subroom_textview);
             this.room_container = itemView.findViewById(R.id.room_container);
             this.room_container.setClickable(true);
             this.room_container.setOnClickListener(this);
+            this.imageView = itemView.findViewById(R.id.collpase_room_image_view);
+
+            this.itemClickListener = itemClickListener;
+            itemView.setOnClickListener(this);
         }
 
         @Override

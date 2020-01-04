@@ -10,7 +10,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.InputType;
@@ -34,7 +33,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.ToastUtility;
-import com.capentory.capentory_client.androidutility.UserUtility;
 import com.capentory.capentory_client.androidutility.VibrateUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.MergedItemField;
@@ -543,6 +541,17 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     public void handleValidate() {
+        StatusAwareData<Map<String, MergedItemField>> value = networkViewModel.getData().getValue();
+        if (value == null) return;
+        if (value.getStatus() != StatusAwareData.State.SUCCESS) return;
+
+        if (networkViewModel.getSearchedForItem() != null) {
+            StatusAwareData<MergedItem> value1 = networkViewModel.getSearchedForItem().getValue();
+            if (value1 == null) return;
+            if (value1.getStatus() != StatusAwareData.State.SUCCESS) return;
+        }
+
+
         MergedItem currentItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem());
         ValidationEntry validationEntry = getValidationEntryFromFormData(currentItem);
         itemxDetailSharedViewModel.setValidationEntryForCurrentItem(validationEntry);

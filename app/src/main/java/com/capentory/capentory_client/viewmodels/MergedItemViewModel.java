@@ -3,6 +3,7 @@ package com.capentory.capentory_client.viewmodels;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.RecyclerviewItem;
@@ -26,6 +27,9 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
     private List<Room> subRoomListForItemDetails;
 
     private StatusAwareLiveData<Boolean> validateSuccessful;
+
+
+
     private MutableLiveData<String> progressMessage = new MutableLiveData<>();
     private boolean startedRemoving;
     private int validatedCount = 0;
