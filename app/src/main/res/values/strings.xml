@@ -29,7 +29,7 @@
     <string name="error_serializer">You must fcreate an inventory on the server and choose a database-view!</string>
     <string name="error_stocktaking">You must first create an inventory!</string>
     <string name="expand_failure_fragment_mergeditems">Please be more gentle with the subrooms! Unfortunately you must redo this room, please return to the previous screen!</string>
-    <string name="msg_duplicate_fragment_mergeditems">You already validated this item, do you want to create a subitem?</string>
+    <string name="msg_duplicate_fragment_mergeditems">You already validated this item, do you want to validate it one more time?</string>
     <string name="logout_text_desc_fragment_logout">"You can either logout locally (by deleting your password token on this device only) or also delete it on the server. For the second option network connectivity is required. "</string>
     <string name="no_rooms_left_fragment_rooms">You have successfully finished the inventory for all rooms! You can go ahead and close the inventory on the server (or notify your admin to do so for you).</string>
     <string name="action_settings">Settings</string>
@@ -190,4 +190,11 @@
     <string name="alphabetic_preferences">Alphabetic</string>
     <string name="alphanumeric_preferences">Alphanumeric</string>
     <string name="no_filter_preferences">Kein Filter</string>
+    <string name="dialog_title_compression_rate_preferences">Choose compression rate</string>
+    <string name="msg_compression_rate_preferences">Compress images before sending them</string>
+    <string name="title_compression_rate_preferences">Compression rates</string>
+    <string name="low_compression_preferences">Low Compression</string>
+    <string name="medium_compression_preferences">Medium Compression</string>
+    <string name="high_compression_preferences">High Compression</string>
+    <string name="disable_compression_preferences">Disable Compression</string>
 </resources>

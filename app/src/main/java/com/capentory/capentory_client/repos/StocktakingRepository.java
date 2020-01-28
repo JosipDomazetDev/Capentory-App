@@ -3,6 +3,9 @@ package com.capentory.capentory_client.repos;
 import android.content.Context;
 
 import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.SerializerEntry;
 import com.capentory.capentory_client.models.Stocktaking;
@@ -33,6 +36,21 @@ public class StocktakingRepository extends NetworkRepository<List<SerializerEntr
     @Inject
     public StocktakingRepository(Context context) {
         super(context);
+        Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Display the first 500 characters of the response string.
+            }
+        };
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "",
+                listener, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
+
+        stringRequest.cancel();
     }
 
     @Override

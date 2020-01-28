@@ -63,4 +63,6 @@ public class DetailItemViewModel extends NetworkViewModel<Map<String, MergedItem
         statusAwareLiveData = null;
         searchedForItem = null;
     }
+
+
 }

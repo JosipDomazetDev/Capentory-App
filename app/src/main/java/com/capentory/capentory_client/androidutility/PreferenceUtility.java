@@ -25,6 +25,10 @@ public final class PreferenceUtility {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, false);
     }
 
+    public static String getString(Context context, String key) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(key, "-1");
+    }
+
     public static String getToken(Context context) {
         Cryptography cryptography = new Cryptography(context);
         SharedPreferences preferences = Objects.requireNonNull(context).getSharedPreferences(PREF_KEY, MODE_PRIVATE);

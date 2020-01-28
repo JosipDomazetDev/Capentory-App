@@ -133,8 +133,14 @@ public abstract class NetworkRepository<L> {
 
 
     private static Uri.Builder getBuilder(Context context, boolean firstPathIsCombinedPath, String[] path) {
-        Uri.Builder urlBuilder = new Uri.Builder().scheme("http")
-                .encodedAuthority(getSocket(context));
+        Uri.Builder urlBuilder;
+        if (getPort(context).equals("443")) {
+            urlBuilder = new Uri.Builder().scheme("https")
+                    .encodedAuthority(getSocket(context));
+        } else {
+            urlBuilder = new Uri.Builder().scheme("http")
+                    .encodedAuthority(getSocket(context));
+        }
 
         if (firstPathIsCombinedPath) {
             // leaves out first "/"
@@ -155,10 +161,8 @@ public abstract class NetworkRepository<L> {
      * @return the socket as String in the form of IP:Port
      */
     private static String getSocket(Context context) {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-        String ip = sharedPreferences.getString("server_ip", context.getString(R.string.error_preference));
-        String port = sharedPreferences.getString("server_port", context.getString(R.string.error_preference));
+        String ip = getIp(context);
+        String port = getPort(context);
         if (port != null && !port.isEmpty()) {
             return ip + ":" + port;
         }
@@ -166,5 +170,20 @@ public abstract class NetworkRepository<L> {
         return ip;
     }
 
+    private static String getIp(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("server_ip", context.getString(R.string.error_preference));
+    }
 
+    private static String getPort(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("server_port", context.getString(R.string.error_preference));
+    }
+
+    public void clearRequests() {
+        for (RobustJsonRequestExecutioner requestExecutioner : requests.values()) {
+            requestExecutioner.clearRequest();
+        }
+        //NetworkSingleton.getInstance(context).getRequestQueue().cancelAll(request -> true);
+    }
 }

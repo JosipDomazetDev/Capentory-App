@@ -2,6 +2,7 @@ package com.capentory.capentory_client.repos;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.capentory.capentory_client.models.Room;
@@ -48,7 +49,6 @@ public class RoomsRepository extends NetworkRepository<List<Room>> {
     @Override
     protected void handleMainSuccessfulResponse(String stringPayload) {
         try {
-
             JSONArray payload = new JSONObject(stringPayload).getJSONArray("rooms");
             List<Room> rooms = new ArrayList<>();
 

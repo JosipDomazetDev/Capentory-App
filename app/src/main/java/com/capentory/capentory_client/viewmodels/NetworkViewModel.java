@@ -9,7 +9,7 @@ import com.capentory.capentory_client.viewmodels.wrappers.StatusAwareData;
 
 public abstract class NetworkViewModel<P, R extends NetworkRepository<P>> extends ViewModel {
     protected StatusAwareLiveData<P> statusAwareLiveData;
-    protected R networkRepository;
+    R networkRepository;
 
     public NetworkViewModel(R networkRepository) {
         this.networkRepository = networkRepository;
@@ -26,5 +26,9 @@ public abstract class NetworkViewModel<P, R extends NetworkRepository<P>> extend
     public abstract void reloadData(String... args);
 
 
-
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        networkRepository.clearRequests();
+    }
 }

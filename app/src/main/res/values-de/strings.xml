@@ -42,8 +42,8 @@
     <string name="password_fragment_login">Passwort</string>
     <string name="login_button_fragment_login">Anmelden</string>
     <string name="logout_text_fragment_logout">Wollen Sie sich ausloggen?</string>
-    <string name="logout_text_desc_fragment_logout">Sie haben die Möglichkeit ihr Token nur auf diesem Gerät zu löschen oder es zusätzlich auch auf dem Server zu löschen. Die zweite Option benötigt eine Netzwerkverbindung.</string>
-    <string name="local_logout_fragment_logout">Lokal Abmelden</string>
+    <string name="logout_text_desc_fragment_logout">Sie haben die Möglichkeit Ihr Token nur auf diesem Gerät zu löschen oder es zusätzlich auch auf dem Server zu löschen. Die zweite Option benötigt eine Netzwerkverbindung.</string>
+    <string name="local_logout_fragment_logout">Lokal abmelden</string>
     <string name="server_logout_fragment_logout">Auch am Server abmelden</string>
     <string name="current_room_fragment_mergeditems">Aktueller Raum: <![CDATA[<b>%1$s</b>]]></string>
     <string name="progress_fragment_mergeditems">Fortschritt:  <![CDATA[<b>%1$s</b>]]></string>
@@ -91,7 +91,7 @@
     <string name="msg_onback_fragment_mergeditems">Wollen Sie die Änderungen für diesen Raum wirklich verwerfen und zum vorherigen Bildschirm zurückkehren?</string>
     <string name="expand_failure_fragment_mergeditems">Sie müssen den Raum nochmals auswählen! Bitte nicht so wild mit der Sortierung umgehen!</string>
     <string name="title_duplicate_fragment_mergeditems">Doppelter Eintrag</string>
-    <string name="msg_duplicate_fragment_mergeditems">Sie haben diesen Gegenstand bereits validiert, wollen Sie ein Sub-Gegenstand anlegen?</string>
+    <string name="msg_duplicate_fragment_mergeditems">Sie haben diesen Gegenstand bereits validiert, wollen Sie ihn ein weiteres Mal validieren?</string>
     <string name="error_missing_inventory_fragment_stocktaking">Sie müssen erst eine Inventur am Server anlegen!</string>
     <string name="error_missing_serializer_fragment_stocktaking">Server unterstützt keine Inventuren!</string>
     <string name="title_notification_fragment_stocktaking">Inventur-Status</string>
@@ -127,7 +127,7 @@
     <string name="label_scanBarcodeActivity_nav">Scan Barcode</string>
     <string name="label_scanTextActivity_nav">Scan Text</string>
     <string name="label_stocktakingFragment_nav">Inventurauswahl</string>
-    <string name="h1_nav_drawer">Inventurfunktionen</string>
+    <string name="h1_nav_drawer">Nützliche Funktionen</string>
     <string name="h2_nav_drawer">Sie sind angemeldet</string>
     <string name="h3_nav_drawer">Zusätzliches</string>
     <string name="label_camerascan_nav_drawer">Kamerascan</string>
@@ -168,4 +168,11 @@
     <string name="title_switch_compress_image">Bilder komprimieren bevor sie als Anhang gesendet werden</string>
     <string name="very_insensitive_preferences">Sehr Unsensibel</string>
     <string name="very_sensitive_preferences">Sehr Sensibel</string>
+    <string name="dialog_title_compression_rate_preferences">Kompressionsrate auswählen</string>
+    <string name="disable_compression_preferences">Kompression deaktivieren</string>
+    <string name="high_compression_preferences">Starke Kompression</string>
+    <string name="low_compression_preferences">Schwache Kompression</string>
+    <string name="medium_compression_preferences">Mittelmäßige Kompression</string>
+    <string name="msg_compression_rate_preferences">Bilder werden vor dem Senden komprimiert.</string>
+    <string name="title_compression_rate_preferences">Kompressionsraten</string>
 </resources>

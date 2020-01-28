@@ -181,4 +181,9 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     public void setAdditionalViewsToHide(View... additionalViewsToHide) {
         this.additionalViewsToHide = additionalViewsToHide;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }

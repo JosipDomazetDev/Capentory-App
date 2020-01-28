@@ -95,8 +95,8 @@ public class ScanTextActivity extends AppCompatActivity {
         final TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
 
         if (!textRecognizer.isOperational()) {
-            IntentFilter lowstorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
-            boolean hasLowStorage = registerReceiver(null, lowstorageFilter) != null;
+            IntentFilter lowStorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
+            boolean hasLowStorage = registerReceiver(null, lowStorageFilter) != null;
 
             if (hasLowStorage) {
                 Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
@@ -107,7 +107,6 @@ public class ScanTextActivity extends AppCompatActivity {
                 cameraSource = new CameraSource.Builder(this, textRecognizer)
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
-                        .setRequestedPreviewSize(1600, 1024)
                         .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
 
                 ((ImageButton) findViewById(R.id.btn_flash_activity_scan_text)).setImageResource(R.drawable.ic_flash_off_white_24dp);
@@ -117,7 +116,6 @@ public class ScanTextActivity extends AppCompatActivity {
                 cameraSource = new CameraSource.Builder(this, textRecognizer)
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
-                        .setRequestedPreviewSize(1600, 1024)
                         .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
 
                 ((ImageButton) findViewById(R.id.btn_flash_activity_scan_text)).setImageResource(R.drawable.ic_flash_on_white_24dp);

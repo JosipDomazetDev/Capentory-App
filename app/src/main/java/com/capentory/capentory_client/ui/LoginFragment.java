@@ -2,6 +2,7 @@ package com.capentory.capentory_client.ui;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,12 +81,13 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
 
 
     private void clearOnServer() {
-        // already logged out when this happens????
-
-        if (PreferenceUtility.isLoggedIn(getContext()))
+        if (PreferenceUtility.isLoggedIn(getContext())) {
             networkViewModel.logout();
 
-        observeSpecificLiveData(networkViewModel.getLogoutSuccessful(), liveData -> clearLocally());
+            observeSpecificLiveData(networkViewModel.getLogoutSuccessful(), liveData -> {
+                clearLocally();
+            });
+        }
     }
 
 

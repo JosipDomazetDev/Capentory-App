@@ -2,7 +2,9 @@ package com.capentory.capentory_client.repos;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.preference.PreferenceManager;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
@@ -15,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -101,10 +104,13 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
 
     private File handleImageCompression(String[] args, File file) {
         if (Attachment.isImage(args[0])) {
-            if (PreferenceUtility.getBoolean(context, "compress_image")) {
+            int compressionRate = Integer.parseInt(PreferenceUtility.getString(context, "compress_rate"));
+
+            // -1 means user doesn't want to compress at all
+            if (compressionRate != -1) {
                 try {
                     file = new Compressor(context)
-                            .setQuality(90)
+                            .setQuality(compressionRate)
                             .setCompressFormat(Bitmap.CompressFormat.WEBP)
                             .compressToFile(file);
 

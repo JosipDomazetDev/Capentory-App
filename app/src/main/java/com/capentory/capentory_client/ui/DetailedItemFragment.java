@@ -3,16 +3,15 @@ package com.capentory.capentory_client.ui;
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.capentory.capentory_client.R;
+import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
+import com.capentory.capentory_client.androidutility.UserUtility;
 import com.capentory.capentory_client.androidutility.VibrateUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.MergedItemField;
@@ -115,33 +116,38 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         float last_y = 0;
         float last_z = 0;
         int sensitivity = -2;
+        float max = 0;
 
         public void onSensorChanged(SensorEvent event) {
-            long curTime = System.currentTimeMillis();
-            if ((curTime - lastUpdate) > 50) {
-                long diffTime = (curTime - lastUpdate);
-                lastUpdate = curTime;
+            // https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android
+            if (event.sensor.equals(mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER))) {
+                long curTime = System.currentTimeMillis();
+                if ((curTime - lastUpdate) > 100) {
+                    long diffTime = (curTime - lastUpdate);
+                    lastUpdate = curTime;
 
-                float x = event.values[0];
-                float y = event.values[1];
-                float z = event.values[2];
+                    if (sensitivity == -2) {
+                        sensitivity = getSensitivity();
+                    } else if (sensitivity == -1) return;
 
-                float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+                    float x = event.values[0];
+                    float y = event.values[1];
+                    float z = event.values[2];
 
-                if (sensitivity == -2) {
-                    sensitivity = getSensitivity();
+                    float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+
+                    Log.e("XXXX",sensitivity+"/"+ String.valueOf(speed));
+                    max =  Math.max(max, speed);
+                    if (speed > sensitivity && !called) {
+                        //((TextView) (view.findViewById(R.id.bezeichnung_fragment_itemdetail))).setText( ""+speed);
+                        called = true;
+                        Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
+                        handleValidate();
+                    }
+                    last_x = x;
+                    last_y = y;
+                    last_z = z;
                 }
-                if (sensitivity == -1) return;
-
-                if (speed > sensitivity && !called) {
-                    //((TextView) (view.findViewById(R.id.bezeichnung_fragment_itemdetail))).setText( ""+speed);
-                    called = true;
-                    Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
-                    handleValidate();
-                }
-                last_x = x;
-                last_y = y;
-                last_z = z;
             }
         }
 
@@ -152,14 +158,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     private int getSensitivity() {
-        SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int sensitivity;
-        try {
-            sensitivity = Integer.parseInt(Objects.requireNonNull(preference.getString("shake_sensitivity", "-1")));
-        } catch (NullPointerException | NumberFormatException e) {
-            sensitivity = -1;
-        }
-        return sensitivity;
+        return Integer.parseInt(PreferenceUtility.getString(getContext(), "shake_sensitivity"));
     }
 
 
@@ -174,8 +173,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         mSensorManager = (SensorManager) Objects.requireNonNull(getContext()).getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
 
-        Objects.requireNonNull(mSensorManager).registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
-                SensorManager.SENSOR_DELAY_NORMAL);
+        Objects.requireNonNull(mSensorManager).registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_GAME);
       /*  accel = 10f;
         accelCurrent = SensorManager.GRAVITY_EARTH;
         accelLast = SensorManager.GRAVITY_EARTH;*/
@@ -208,6 +207,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     }
                 });
 
+        Log.e("XXXXX", networkViewModel.toString());
 
         ImageButton validateButton = view.findViewById(R.id.validate_btn_fragment_itemdetail);
         validateButton.setOnClickListener(v -> handleValidate());
@@ -275,6 +275,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         content.removeAllViews();
 
         Map<String, MergedItemField> mapFieldNameToField = mapStatusAwareData.getData();
+
 
         // Map is sorted by value, extra fields are at the end
         // Add normal fields
@@ -582,6 +583,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     }
 
     private void navigateBack() {
+        UserUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
         NavHostFragment.findNavController(this).popBackStack();
     }
 

@@ -18,7 +18,7 @@ public class NetworkSingleton {
 
     public static synchronized NetworkSingleton getInstance(Context context) {
         if (instance == null) {
-            instance = new NetworkSingleton(context);
+            instance = new NetworkSingleton(context.getApplicationContext());
         }
         return instance;
     }

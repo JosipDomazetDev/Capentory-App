@@ -3,16 +3,16 @@
     <PreferenceCategory android:title="@string/server_title_preferences">
 
         <EditTextPreference
+            android:defaultValue="10.70.71.202"
             android:inputType="textUri"
             android:key="server_ip"
-            android:defaultValue=""
             android:summary="@string/msg_server_ip_preferences"
             android:title="@string/title_server_ip_preferences" />
         <EditTextPreference
-            android:defaultValue="80"
+            android:defaultValue="443"
             android:inputType="number"
             android:key="server_port"
-            android:summary="Portnummer konfigurieren (Default:80)"
+            android:summary="Portnummer konfigurieren (Default:443)"
             android:title="Serverport" />
     </PreferenceCategory>
 
@@ -49,9 +49,8 @@
 
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/other_title_preferences">
-
         <ListPreference
-            android:defaultValue="3"
+            android:defaultValue="1"
             android:dialogTitle="@string/dialog_title_shake_sensitivity_preferences"
             android:entries="@array/sensitivity_modes"
             android:entryValues="@array/sensitivity_modes_values"
@@ -60,10 +59,13 @@
             android:title="@string/title_shake_sensitivity_preferences" />
 
 
-
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="compress_image"
-            android:title="@string/title_switch_compress_image" />
+        <ListPreference
+            android:defaultValue="0"
+            android:dialogTitle="@string/dialog_title_compression_rate_preferences"
+            android:entries="@array/compress_rates"
+            android:entryValues="@array/compress_rates_values"
+            android:key="compress_rate"
+            android:summary="@string/msg_compression_rate_preferences"
+            android:title="@string/title_compression_rate_preferences" />
     </PreferenceCategory>
 </PreferenceScreen>

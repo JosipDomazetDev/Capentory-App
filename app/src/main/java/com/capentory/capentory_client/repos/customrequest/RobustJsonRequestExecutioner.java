@@ -5,15 +5,20 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RobustJsonRequestExecutioner {
-    // five minute timeout just in case we have a really really bad connection e.g. a really deep basement
-    private static final int DEFAULT_TIMEOUT_MS = 60000 * 5;
+    // eight minute timeout just in case we have a really really bad connection e.g. a really deep basement
+    private static final int DEFAULT_TIMEOUT_MS = 60000 * 8;
     private CustomRequest robustJsonObjectRequest;
 
     private static final int MAX_RETRIES = 8;
@@ -22,14 +27,15 @@ public class RobustJsonRequestExecutioner {
 
 
     public RobustJsonRequestExecutioner(Context context, int method, String url, @Nullable String requestBody, NetworkSuccessHandler successHandler, NetworkErrorHandler errorHandler) {
+        Response.Listener<String> successListener = response -> handleSuccessfulResponse(response, successHandler, errorHandler);
         CustomRequest request = new CustomRequest(context, method, url,
                 requestBody,
-                response -> handleSuccessfulResponse(response, successHandler, errorHandler),
+                successListener,
                 error -> handleRetry(error, errorHandler));
         request.setRetryPolicy(new DefaultRetryPolicy(
                 DEFAULT_TIMEOUT_MS,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                0,
+                0));
         this.robustJsonObjectRequest = request;
         this.context = context;
     }
@@ -49,6 +55,8 @@ public class RobustJsonRequestExecutioner {
     }
 
     private boolean isValidJSON(String payload, NetworkErrorHandler errorHandler) {
+        if (payload == null) return true;
+
         Exception exception1 = null;
         Exception exception2 = null;
         try {
@@ -109,4 +117,7 @@ public class RobustJsonRequestExecutioner {
     }
 
 
+    public void clearRequest() {
+        robustJsonObjectRequest.cancel();
+    }
 }

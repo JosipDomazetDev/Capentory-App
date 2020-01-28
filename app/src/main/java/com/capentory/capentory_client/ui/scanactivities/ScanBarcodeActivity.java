@@ -41,7 +41,6 @@ import java.util.Set;
 
 public class ScanBarcodeActivity extends Activity {
     private SurfaceView cameraPreview;
-    public static final int MY_PERMISSION_REQUEST_CAMERA = 2569;
     private boolean utilityModeActivated = false;
     private boolean useFlash = false;
     private CameraSource cameraSource;
@@ -55,7 +54,7 @@ public class ScanBarcodeActivity extends Activity {
         if (getIntent().getExtras() != null)
             utilityModeActivated = ScanBarcodeActivityArgs.fromBundle(getIntent().getExtras()).getUtilityModeActivated();
 
-        PermissionHandler.requestCameraPermission(this);
+        //PermissionHandler.requestCameraPermission(this);
         mediaPlayer = MediaPlayer.create(this, R.raw.beep);
         cameraPreview = findViewById(R.id.camera_preview);
 
@@ -84,7 +83,7 @@ public class ScanBarcodeActivity extends Activity {
 
 
     private void createCameraSource() {
-        final BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(getSelectedFormats()).build();
+        final BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).setBarcodeFormats(getSelectedFormats()).build();
 
        /* com.google.android.gms.vision.CameraSource cameraSource = new com.google.android.gms.vision.CameraSource.Builder(this, barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
@@ -96,7 +95,6 @@ public class ScanBarcodeActivity extends Activity {
             cameraSource = new CameraSource.Builder(this, barcodeDetector)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
-                    .setRequestedPreviewSize(1600, 1024)
                     .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
 
             ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_off_white_24dp);
@@ -105,7 +103,6 @@ public class ScanBarcodeActivity extends Activity {
             cameraSource = new CameraSource.Builder(this, barcodeDetector)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
-                    .setRequestedPreviewSize(1600, 1024)
                     .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
 
             ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_on_white_24dp);

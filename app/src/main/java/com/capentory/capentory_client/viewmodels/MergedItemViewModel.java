@@ -29,7 +29,6 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
     private StatusAwareLiveData<Boolean> validateSuccessful;
 
 
-
     private MutableLiveData<String> progressMessage = new MutableLiveData<>();
     private boolean startedRemoving;
     private int validatedCount = 0;
@@ -61,7 +60,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
                 if (mergedItem.getSubroom() != null) {
                     mergedItem.getSubroom().getMergedItems().remove(mergedItem);
                 }
-            }
+            } else totalItemsCount++;
         }
     }
 

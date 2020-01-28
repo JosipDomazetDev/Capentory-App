@@ -33,7 +33,7 @@ public class CustomRequest extends JsonRequest<String> {
         // 204 means empty body but response was successful (this is not handled by android per default)
         int EMPTY_BODY_CODE = 204;
         if (response.statusCode == EMPTY_BODY_CODE) {
-            return Response.success("", HttpHeaderParser.parseCacheHeaders(response));
+            return Response.success("[]", HttpHeaderParser.parseCacheHeaders(response));
         }
 
         try {
@@ -71,5 +71,9 @@ public class CustomRequest extends JsonRequest<String> {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         return headers;
+    }
+
+    public void clearRequest() {
+
     }
 }
