@@ -177,5 +177,4 @@ public class MainActivity extends DaggerAppCompatActivity {
         } catch (Exception ignored) {
         }
     }
-
 }
