@@ -14,6 +14,11 @@
             android:key="server_port"
             android:summary="Portnummer konfigurieren (Default:443)"
             android:title="Serverport" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="trust_all_certificates"
+            android:title="@string/title_switch_trust_all_certificates" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/scan_title_preferences">

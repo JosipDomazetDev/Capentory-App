@@ -175,4 +175,5 @@
     <string name="medium_compression_preferences">Mittelmäßige Kompression</string>
     <string name="msg_compression_rate_preferences">Bilder werden vor dem Senden komprimiert.</string>
     <string name="title_compression_rate_preferences">Kompressionsraten</string>
+    <string name="title_switch_trust_all_certificates">Selbst-signierten Zertifikaten vertrauen</string>
 </resources>

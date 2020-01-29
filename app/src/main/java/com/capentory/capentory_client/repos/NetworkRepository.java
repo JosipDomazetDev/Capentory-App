@@ -9,6 +9,7 @@ import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.repos.customrequest.NetworkErrorHandler;
 import com.capentory.capentory_client.repos.customrequest.NetworkSuccessHandler;
 import com.capentory.capentory_client.repos.customrequest.RobustJsonRequestExecutioner;
+import com.capentory.capentory_client.ui.SettingsFragment;
 import com.capentory.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
 import org.json.JSONObject;
@@ -172,12 +173,12 @@ public abstract class NetworkRepository<L> {
 
     private static String getIp(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("server_ip", context.getString(R.string.error_preference));
+                .getString(SettingsFragment.SERVER_IP_KEY, context.getString(R.string.error_preference));
     }
 
     private static String getPort(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("server_port", context.getString(R.string.error_preference));
+                .getString(SettingsFragment.SERVER_PORT_KEY, context.getString(R.string.error_preference));
     }
 
     public void clearRequests() {

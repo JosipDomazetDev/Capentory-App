@@ -197,4 +197,5 @@
     <string name="medium_compression_preferences">Medium Compression</string>
     <string name="high_compression_preferences">High Compression</string>
     <string name="disable_compression_preferences">Disable Compression</string>
+    <string name="title_switch_trust_all_certificates">Trust self-signed certificates</string>
 </resources>

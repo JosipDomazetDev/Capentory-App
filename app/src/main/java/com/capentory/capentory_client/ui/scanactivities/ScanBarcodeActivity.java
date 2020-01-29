@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
+import com.capentory.capentory_client.ui.SettingsFragment;
 import com.capentory.capentory_client.ui.scanactivities.modifiedgoogleapi.CameraSource;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.Detector;
@@ -91,7 +92,7 @@ public class ScanBarcodeActivity extends Activity {
                 .setAutoFocusEnabled(true).build();*/
 
 
-        if (PreferenceUtility.getBoolean(ScanBarcodeActivity.this, "switch_lightning", true)) {
+        if (PreferenceUtility.getBoolean(ScanBarcodeActivity.this, SettingsFragment.LIGHTNING_KEY, true)) {
             cameraSource = new CameraSource.Builder(this, barcodeDetector)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
@@ -227,7 +228,7 @@ public class ScanBarcodeActivity extends Activity {
         int supportedBarcodeFormats = 0;
 
         try {
-            Set<String> barcodeFormatsString = preference.getStringSet("barcode_formats_key", Collections.singleton("0"));
+            Set<String> barcodeFormatsString = preference.getStringSet(SettingsFragment.BARCODE_FORMATS_KEY, Collections.singleton("0"));
             assert barcodeFormatsString != null;
 
             for (String barcodeFormat : barcodeFormatsString) {

@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
+import com.capentory.capentory_client.ui.SettingsFragment;
 import com.capentory.capentory_client.ui.scanactivities.modifiedgoogleapi.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
@@ -41,6 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class ScanTextActivity extends AppCompatActivity {
     private static final Integer CERTAINTY_THRESHOLD_SCAN_AMOUNT = 3;
@@ -103,7 +105,7 @@ public class ScanTextActivity extends AppCompatActivity {
             }
         } else {
 
-            if (PreferenceUtility.getBoolean(ScanTextActivity.this, "switch_lightning", true)) {
+            if (PreferenceUtility.getBoolean(ScanTextActivity.this, SettingsFragment.LIGHTNING_KEY, true)) {
                 cameraSource = new CameraSource.Builder(this, textRecognizer)
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
@@ -287,7 +289,7 @@ public class ScanTextActivity extends AppCompatActivity {
         SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int text_filter_mode;
         try {
-            text_filter_mode = Integer.parseInt(Objects.requireNonNull(preference.getString("text_filter_mode", "-1")));
+            text_filter_mode = Integer.parseInt(Objects.requireNonNull(preference.getString(SettingsFragment.TEXT_MODE_KEY, "-1")));
         } catch (NullPointerException | NumberFormatException e) {
             text_filter_mode = 0;
         }

@@ -158,7 +158,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     private int getSensitivity() {
-        return Integer.parseInt(PreferenceUtility.getString(getContext(), "shake_sensitivity"));
+        return Integer.parseInt(PreferenceUtility.getString(getContext(), SettingsFragment.SHAKE_SENSITIVITY_KEY));
     }
 
 

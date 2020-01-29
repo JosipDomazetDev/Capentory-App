@@ -1,8 +1,8 @@
 package com.capentory.capentory_client.ui;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -24,10 +24,8 @@ import com.google.android.material.navigation.NavigationView;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -87,7 +85,9 @@ public class MainActivity extends DaggerAppCompatActivity {
             UserUtility.displayLoggedOutMenu(this);
         }
 
-        handleSSLHandshake();
+        if (PreferenceUtility.getBoolean(this, SettingsFragment.TRUST_ALL_CERTICATES_KEY)) {
+            allowAllSSCertificates();
+        } else disallowAllSSCertificates();
     }
 
     private void setupNavigation() {
@@ -144,13 +144,7 @@ public class MainActivity extends DaggerAppCompatActivity {
     }
 
 
-
-
-
-
-    @SuppressLint("TrulyRandom")
-    public static void handleSSLHandshake() {
-        // TODO: REMOVE THIS TEMPORARY SOLUTION
+    public static void allowAllSSCertificates() {
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
                 public X509Certificate[] getAcceptedIssuers() {
@@ -169,12 +163,17 @@ public class MainActivity extends DaggerAppCompatActivity {
             SSLContext sc = SSLContext.getInstance("SSL");
             sc.init(null, trustAllCerts, new SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String arg0, SSLSession arg1) {
-                    return true;
-                }
-            });
+            HttpsURLConnection.setDefaultHostnameVerifier((arg0, arg1) -> true);
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static void disallowAllSSCertificates() {
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, null, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(null);
         } catch (Exception ignored) {
         }
     }

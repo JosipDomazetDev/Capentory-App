@@ -2,14 +2,13 @@ package com.capentory.capentory_client.repos;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.models.Attachment;
 import com.capentory.capentory_client.models.SerializerEntry;
+import com.capentory.capentory_client.ui.SettingsFragment;
 import com.capentory.capentory_client.ui.errorhandling.CustomException;
 import com.capentory.capentory_client.viewmodels.customlivedata.StatusAwareLiveData;
 
@@ -17,14 +16,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -81,11 +84,58 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
         return mainContentRepoData;
     }
 
+    public static OkHttpClient getUnsafeOkHttpClient() {
+        // Taken from https://stackoverflow.com/questions/25509296/trusting-all-certificates-with-okhttp/25992879#25992879
+        try {
+            // Create a trust manager that does not validate certificate chains
+            final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Install the all-trusting trust manager
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            // Create an ssl socket factory with our all-trusting manager
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+            builder.hostnameVerifier((hostname, session) -> true);
+
+            return builder.build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Call<String> prepareCall(String[] args) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(getNonJsonUrl(context, true, ""))
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .build();
+        Retrofit retrofit;
+        if (PreferenceUtility.getBoolean(context, "trust_all_certificates")) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(getNonJsonUrl(context, true, ""))
+                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .client(getUnsafeOkHttpClient())
+                    .build();
+        } else {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(getNonJsonUrl(context, true, ""))
+                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .build();
+        }
 
         AttachmentAPI apiService = retrofit.create(AttachmentAPI.class);
         File file = new File(args[0]);
@@ -104,7 +154,7 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
 
     private File handleImageCompression(String[] args, File file) {
         if (Attachment.isImage(args[0])) {
-            int compressionRate = Integer.parseInt(PreferenceUtility.getString(context, "compress_rate"));
+            int compressionRate = Integer.parseInt(PreferenceUtility.getString(context, SettingsFragment.COMPRESS_RATE_KEY));
 
             // -1 means user doesn't want to compress at all
             if (compressionRate != -1) {

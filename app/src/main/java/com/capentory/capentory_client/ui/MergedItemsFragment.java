@@ -299,7 +299,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         @Override
         public void onReceive(Context context, Intent intent) {
             // User has the option to disable this behaviour in case the keyboard detection bugs
-            if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), "switch_enforce_zebra", true))
+            if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), SettingsFragment.ENFORCE_ZEBRA_KEY, true))
                 return;
 
             String action = intent.getAction();

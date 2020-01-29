@@ -1,13 +1,6 @@
 package com.capentory.capentory_client.ui;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.Navigation;
-
 import android.os.SystemClock;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -15,6 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
@@ -78,11 +77,6 @@ public class HomeScreenFragment extends NetworkFragment<MergedItem, HomeScreenRe
                 Navigation.findNavController(v).navigate(R.id.action_homeScreenFragment_to_stocktakingFragment);
             } else Navigation.findNavController(v).navigate(R.id.loginFragment);
         });
-
-
-
-
-
     }
 
 
