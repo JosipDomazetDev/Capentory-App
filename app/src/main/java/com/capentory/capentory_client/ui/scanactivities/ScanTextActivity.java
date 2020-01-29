@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
+import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.ui.SettingsFragment;
 import com.capentory.capentory_client.ui.scanactivities.modifiedgoogleapi.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -83,13 +84,16 @@ public class ScanTextActivity extends AppCompatActivity {
             return;
         }
 
-        if (!PermissionHandler.checkPermission(this)) {
-            finish();
-        } else {
+        if (PermissionHandler.verifyPermissions(grantResults)) {
             startCameraSource();
             cameraPreview.setVisibility(View.VISIBLE);
+        } else {
+            finish();
         }
     }
+
+
+
 
     private void startCameraSource() {
 
@@ -97,11 +101,14 @@ public class ScanTextActivity extends AppCompatActivity {
         final TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
 
         if (!textRecognizer.isOperational()) {
+            // Check for low storage.  If there is low storage, the native library will not be
+            // downloaded, so detection will not become operational.
+
             IntentFilter lowStorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
             boolean hasLowStorage = registerReceiver(null, lowStorageFilter) != null;
 
             if (hasLowStorage) {
-                Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
+                ToastUtility.displayCenteredToastMessage(this, getString(R.string.low_storage_error_activity_scanners), Toast.LENGTH_LONG);
             }
         } else {
 

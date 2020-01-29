@@ -1,16 +1,14 @@
 package com.capentory.capentory_client.ui.scanactivities;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.SparseArray;
@@ -22,9 +20,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
@@ -62,7 +57,7 @@ public class ScanBarcodeActivity extends Activity {
         PermissionHandler.requestCameraPermission(this);
 
         if (PermissionHandler.checkPermission(this)) {
-            createCameraSource();
+            startCameraSource();
         } else cameraPreview.setVisibility(View.INVISIBLE);
 
     }
@@ -74,16 +69,16 @@ public class ScanBarcodeActivity extends Activity {
             return;
         }
 
-        if (!PermissionHandler.checkPermission(this)) {
-            finish();
-        } else {
-            createCameraSource();
+        if (PermissionHandler.verifyPermissions(grantResults)) {
+            startCameraSource();
             cameraPreview.setVisibility(View.VISIBLE);
+        } else {
+            finish();
         }
     }
 
 
-    private void createCameraSource() {
+    private void startCameraSource() {
         final BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).setBarcodeFormats(getSelectedFormats()).build();
 
        /* com.google.android.gms.vision.CameraSource cameraSource = new com.google.android.gms.vision.CameraSource.Builder(this, barcodeDetector)
@@ -91,78 +86,92 @@ public class ScanBarcodeActivity extends Activity {
                 .setRequestedPreviewSize(1600, 1024)
                 .setAutoFocusEnabled(true).build();*/
 
+        if (!barcodeDetector.isOperational()) {
+            // Check for low storage.  If there is low storage, the native library will not be
+            // downloaded, so detection will not become operational.
 
-        if (PreferenceUtility.getBoolean(ScanBarcodeActivity.this, SettingsFragment.LIGHTNING_KEY, true)) {
-            cameraSource = new CameraSource.Builder(this, barcodeDetector)
-                    .setFacing(CameraSource.CAMERA_FACING_BACK)
-                    .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
-                    .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+            IntentFilter lowStorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
+            boolean hasLowStorage = registerReceiver(null, lowStorageFilter) != null;
 
-            ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_off_white_24dp);
-            useFlash = true;
+            if (hasLowStorage) {
+                ToastUtility.displayCenteredToastMessage(this, getString(R.string.low_storage_error_activity_scanners), Toast.LENGTH_LONG);
+            }
         } else {
-            cameraSource = new CameraSource.Builder(this, barcodeDetector)
-                    .setFacing(CameraSource.CAMERA_FACING_BACK)
-                    .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
-                    .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+            if (PreferenceUtility.getBoolean(ScanBarcodeActivity.this, SettingsFragment.LIGHTNING_KEY, true)) {
+                cameraSource = new CameraSource.Builder(this, barcodeDetector)
+                        .setFacing(CameraSource.CAMERA_FACING_BACK)
+                        .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
+                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
 
-            ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_on_white_24dp);
-            useFlash = false;
+                /*List<android.hardware.Camera.Size> supportedPreviewSizes =
+                        Camera.Parameters.getSupportedPreviewSizes();*/
+
+                ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_off_white_24dp);
+                useFlash = true;
+            } else {
+                cameraSource = new CameraSource.Builder(this, barcodeDetector)
+                        .setFacing(CameraSource.CAMERA_FACING_BACK)
+                        .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
+                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+
+                ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_on_white_24dp);
+                useFlash = false;
+            }
+
+            cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
+
+                @Override
+                public void surfaceCreated(SurfaceHolder holder) {
+                    try {
+                        if (PermissionHandler.checkPermission(ScanBarcodeActivity.this)) {
+                            cameraSource.start(cameraPreview.getHolder());
+                        }
+                    } catch (
+                            IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                @Override
+                public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+                }
+
+                @Override
+                public void surfaceDestroyed(SurfaceHolder holder) {
+                    cameraSource.stop();
+                }
+            });
+
+            barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+
+                @Override
+                public void release() {
+                }
+
+                @Override
+                public void receiveDetections(Detector.Detections<Barcode> detections) {
+                    if (lockedOnFirst) return;
+
+                    final SparseArray<Barcode> barcodeSparseArray = detections.getDetectedItems();
+                    if (barcodeSparseArray.size() > 0) {
+                        lockedOnFirst = true;
+                        Intent intent = new Intent();
+                        final String barcode = String.valueOf(barcodeSparseArray.valueAt(0).displayValue);
+                        final String format = getGoogleBarcodeFormat(barcodeSparseArray.valueAt(0).format);
+
+                        intent.putExtra("barcode", barcode);
+                        setResult(CommonStatusCodes.SUCCESS, intent);
+                        startBeep();
+                        finish();
+
+                        if (utilityModeActivated) {
+                            utilityCopyToClipboard(barcode, format);
+                        }
+                    }
+                }
+            });
         }
-
-        cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
-
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                try {
-                    if (PermissionHandler.checkPermission(ScanBarcodeActivity.this)) {
-                        cameraSource.start(cameraPreview.getHolder());
-                    }
-                } catch (
-                        IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                cameraSource.stop();
-            }
-        });
-
-        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
-
-            @Override
-            public void release() {
-            }
-
-            @Override
-            public void receiveDetections(Detector.Detections<Barcode> detections) {
-                if (lockedOnFirst) return;
-
-                final SparseArray<Barcode> barcodeSparseArray = detections.getDetectedItems();
-                if (barcodeSparseArray.size() > 0) {
-                    lockedOnFirst = true;
-                    Intent intent = new Intent();
-                    final String barcode = String.valueOf(barcodeSparseArray.valueAt(0).displayValue);
-                    final String format = getGoogleBarcodeFormat(barcodeSparseArray.valueAt(0).format);
-
-                    intent.putExtra("barcode", barcode);
-                    setResult(CommonStatusCodes.SUCCESS, intent);
-                    startBeep();
-                    finish();
-
-                    if (utilityModeActivated) {
-                        utilityCopyToClipboard(barcode, format);
-                    }
-                }
-            }
-        });
 
     }
 
