@@ -29,7 +29,7 @@ import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.models.Attachment;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.repos.AttachmentsRepository;
-import com.capentory.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.viewmodels.AttachmentsViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.capentory.capentory_client.viewmodels.adapter.AttachmentRecyclerViewAdapter;
@@ -82,7 +82,7 @@ public class AttachmentsFragment extends NetworkFragment<Attachment, Attachments
 
 
         initWithoutFetch(ViewModelProviders.of(this, providerFactory).get(AttachmentsViewModel.class),
-                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.item_textview_fragment_attachments)),
+                new ErrorHandler(getContext(), view.findViewById(R.id.item_textview_fragment_attachments)),
                 view,
                 R.id.progress_bar_fragment_attachment);
 

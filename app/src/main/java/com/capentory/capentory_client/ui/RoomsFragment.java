@@ -1,9 +1,6 @@
 package com.capentory.capentory_client.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,8 +24,9 @@ import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.models.Room;
 import com.capentory.capentory_client.repos.RoomsRepository;
-import com.capentory.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity;
+import com.capentory.capentory_client.ui.zebra.ZebraBroadcastReceiver;
 import com.capentory.capentory_client.viewmodels.RoomViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.capentory.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
@@ -52,24 +50,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     private Spinner roomDropDown;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
     private TextView finishedText;
-    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            assert action != null;
-            if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
-                //  Received a barcode scan
-                try {
-                    String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
-                    navigateByBarcode(barcode);
-                } catch (Exception e) {
-                    //  Catch if the UI does not exist when we receive the broadcast
-                    basicNetworkErrorHandler.displayTextViewMessage(getString(R.string.wait_till_scan_ready_error));
-                }
-            }
-        }
-    };
-
+    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::navigateByBarcode);
 
     public RoomsFragment() {
         // Required empty public constructor
@@ -97,7 +78,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
                     getString(R.string.started_inventory_fragment_rooms, MainActivity.getStocktaking(getContext()).getName()));
 
             initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomViewModel.class),
-                    new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom)),
+                    new ErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom)),
                     view,
                     R.id.progress_bar_fragment_actualrooms,
                     view.findViewById(R.id.cardview_rooms_dropdown_fragment_rooms),
@@ -212,17 +193,14 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        filter.addAction(getResources().getString(R.string.activity_intent_filter_action));
-        Objects.requireNonNull(getContext()).registerReceiver(myBroadcastReceiver, filter);
+        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver);
     }
 
 
     @Override
     public void onPause() {
         super.onPause();
-        Objects.requireNonNull(getContext()).unregisterReceiver(myBroadcastReceiver);
+        ZebraBroadcastReceiver.unregisterZebraReceiver(getContext(), zebraBroadcastReceiver);
     }
 
 

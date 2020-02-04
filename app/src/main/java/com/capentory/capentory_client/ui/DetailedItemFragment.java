@@ -2,16 +2,10 @@ package com.capentory.capentory_client.ui;
 
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +25,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.capentory.capentory_client.R;
-import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.androidutility.UserUtility;
 import com.capentory.capentory_client.androidutility.VibrateUtility;
@@ -40,7 +33,8 @@ import com.capentory.capentory_client.models.MergedItemField;
 import com.capentory.capentory_client.models.Room;
 import com.capentory.capentory_client.models.ValidationEntry;
 import com.capentory.capentory_client.repos.DetailItemRepository;
-import com.capentory.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
+import com.capentory.capentory_client.ui.shakedetection.ShakeDetector;
 import com.capentory.capentory_client.viewmodels.DetailItemViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.capentory.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
@@ -75,8 +69,9 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private DetailXAttachmentViewModel detailXAttachmentViewModel;
     private View view;
-    // "comment" ==> to generated View for the Field
+    // field e.g. "comment" / maps to / generated View for the Field
     private Map<String, View> mergedItemFieldViewMap = new HashMap<>();
+    private ShakeDetector shakeDetector;
 
     public DetailedItemFragment() {
         // Required empty public constructor
@@ -87,79 +82,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         return inflater.inflate(R.layout.fragment_item_detail, container, false);
     }
 
-    private SensorManager mSensorManager;
-    /*    private float accel;
-        private float accelCurrent;
-        private float accelLast;*/
     private boolean called = false;
-
-    private final SensorEventListener mSensorListener = new SensorEventListener() {
-        /* @Override
-         public void onSensorChanged(SensorEvent event) {
-             float x = event.values[0];
-             float y = event.values[1];
-             float z = event.values[2];
-             accelLast = accelCurrent;
-             //Log.e("x", x + "/" + y + "/" + z);
-             accelCurrent = (float) Math.sqrt((double) (x * x + y * y + z + z));
-             float delta = accelCurrent - accelLast;
-             accel = accel * 0.9f + delta;
-             Log.e("XXX", accel + "");
-             if (accel > 25 && !called) {
-                 called = true;
-                 Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
-                 handleValidate();
-             }
-         }*/
-        long lastUpdate = 0;
-        float last_x = 0;
-        float last_y = 0;
-        float last_z = 0;
-        int sensitivity = -2;
-        float max = 0;
-
-        public void onSensorChanged(SensorEvent event) {
-            // https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android
-            if (event.sensor.equals(mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER))) {
-                long curTime = System.currentTimeMillis();
-                if ((curTime - lastUpdate) > 100) {
-                    long diffTime = (curTime - lastUpdate);
-                    lastUpdate = curTime;
-
-                    if (sensitivity == -2) {
-                        sensitivity = getSensitivity();
-                    } else if (sensitivity == -1) return;
-
-                    float x = event.values[0];
-                    float y = event.values[1];
-                    float z = event.values[2];
-
-                    float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-
-                    Log.e("XXXX",sensitivity+"/"+ String.valueOf(speed));
-                    max =  Math.max(max, speed);
-                    if (speed > sensitivity && !called) {
-                        //((TextView) (view.findViewById(R.id.bezeichnung_fragment_itemdetail))).setText( ""+speed);
-                        called = true;
-                        Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
-                        handleValidate();
-                    }
-                    last_x = x;
-                    last_y = y;
-                    last_z = z;
-                }
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-    };
-
-
-    private int getSensitivity() {
-        return Integer.parseInt(PreferenceUtility.getString(getContext(), SettingsFragment.SHAKE_SENSITIVITY_KEY));
-    }
 
 
     @Inject
@@ -171,17 +94,9 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         super.onViewCreated(view, savedInstanceState);
 
 
-        mSensorManager = (SensorManager) Objects.requireNonNull(getContext()).getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
-
-        Objects.requireNonNull(mSensorManager).registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_GAME);
-      /*  accel = 10f;
-        accelCurrent = SensorManager.GRAVITY_EARTH;
-        accelLast = SensorManager.GRAVITY_EARTH;*/
-
         this.view = view;
         LinearLayout linearLayout = view.findViewById(R.id.content_fragment_item_detail);
-        basicNetworkErrorHandler = new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dummy));
+        errorHandler = new ErrorHandler(getContext(), view.findViewById(R.id.dummy));
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
         detailXAttachmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(DetailXAttachmentViewModel.class);
 
@@ -190,10 +105,9 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         });
 
-        /*if (shouldStop) return;*/
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(DetailItemViewModel.class),
-                basicNetworkErrorHandler,
+                errorHandler,
                 view,
                 R.id.progress_bar_fragment_item_detail,
                 linearLayout,
@@ -207,8 +121,6 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     }
                 });
 
-        Log.e("XXXXX", networkViewModel.toString());
-
         ImageButton validateButton = view.findViewById(R.id.validate_btn_fragment_itemdetail);
         validateButton.setOnClickListener(v -> handleValidate());
 
@@ -216,6 +128,16 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         cancelButton.setOnClickListener(v -> handleCancel());
 
         view.findViewById(R.id.attachment_btn_fragment_itemdetail).setOnClickListener(v -> handleAttachment());
+
+        shakeDetector = new ShakeDetector(Objects.requireNonNull(getContext()), this::handleShake);
+        shakeDetector.registerShakeDetector();
+    }
+
+    private void handleShake() {
+        if (called) return;
+        called = true;
+        Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
+        handleValidate();
     }
 
     private void handleAttachment() {
@@ -656,14 +578,13 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
     @Override
     public void onResume() {
-        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
+        shakeDetector.registerShakeDetector();
     }
 
     @Override
     public void onPause() {
-        mSensorManager.unregisterListener(mSensorListener);
         super.onPause();
+        shakeDetector.unregisterShakeDetector();
     }
 }

@@ -5,10 +5,7 @@ import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,8 +35,9 @@ import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.SerializerEntry;
 import com.capentory.capentory_client.models.Stocktaking;
 import com.capentory.capentory_client.repos.StocktakingRepository;
-import com.capentory.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity;
+import com.capentory.capentory_client.ui.zebra.ZebraBroadcastReceiver;
 import com.capentory.capentory_client.viewmodels.StocktakingViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.capentory.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
@@ -60,26 +58,13 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     private static final String CHANNEL_ID = "inventory_channel_01";
     static final int NOTIFICATION_INV_STARTED_ID = 10;
     private Spinner stocktakingDropDown;
-    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            assert action != null;
-            if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
-                //  Received a barcode scan
-                try {
-                    String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
-                    setSerializer();
-                    networkViewModel.fetchSpecificallySearchedForItem(barcode);
-                    observeSpecificLiveData(networkViewModel.getSpecificallySearchedForItem(), liveData ->
-                            showPopup(liveData.getData(), new Dialog(Objects.requireNonNull(getContext()))));
-                } catch (Exception e) {
-                    //  Catch if the UI does not exist when we receive the broadcast
-                    basicNetworkErrorHandler.displayTextViewMessage(getString(R.string.wait_till_scan_ready_error));
-                }
-            }
-        }
-    };
+    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, barcode -> {
+        setSerializer();
+        networkViewModel.fetchSpecificallySearchedForItem(barcode);
+        observeSpecificLiveData(networkViewModel.getSpecificallySearchedForItem(), liveData ->
+                showPopup(liveData.getData(), new Dialog(Objects.requireNonNull(getContext()))));
+    });
+    ;
 
 
     public StocktakingFragment() {
@@ -111,7 +96,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         Log.e("24343hhjheeeeee", "eeeeeeeeeefefefeeeeeeeeee");
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(StocktakingViewModel.class),
-                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),
+                new ErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_stocktaking)),
                 view,
                 R.id.progress_bar_fragment_stocktaking,
                 view.findViewById(R.id.content_stocktaking_fragment),
@@ -279,17 +264,14 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        filter.addAction(getResources().getString(R.string.activity_intent_filter_action));
-        Objects.requireNonNull(getContext()).registerReceiver(myBroadcastReceiver, filter);
+        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver);
     }
 
 
     @Override
     public void onPause() {
         super.onPause();
-        Objects.requireNonNull(getContext()).unregisterReceiver(myBroadcastReceiver);
+        ZebraBroadcastReceiver.unregisterZebraReceiver(getContext(), zebraBroadcastReceiver);
     }
 
 }

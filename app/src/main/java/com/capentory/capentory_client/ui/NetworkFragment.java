@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.capentory.capentory_client.repos.NetworkRepository;
-import com.capentory.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.viewmodels.NetworkViewModel;
 import com.capentory.capentory_client.viewmodels.wrappers.StatusAwareData;
 
@@ -21,12 +21,12 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     V networkViewModel;
     ProgressBar progressBar;
     private View content;
-    BasicNetworkErrorHandler basicNetworkErrorHandler;
+    ErrorHandler errorHandler;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View[] additionalViewsToHide;
 
-    void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
-        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
+    void initWithFetch(V networkViewModel, ErrorHandler errorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, String... args) {
+        initWithIDs(networkViewModel, errorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
         networkViewModel.fetchData(args);
         observeMainLiveData(networkViewModel);
@@ -46,8 +46,8 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     ;
 
 
-    void initWithFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, RefreshHandler refreshHandler, String... args) {
-        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, content, swipeRefreshLayoutID);
+    void initWithFetch(V networkViewModel, ErrorHandler errorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, RefreshHandler refreshHandler, String... args) {
+        initWithIDs(networkViewModel, errorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
         networkViewModel.fetchData(args);
         observeMainLiveData(networkViewModel);
@@ -67,12 +67,12 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
      * This one dooesn't fetch automatically
      *
      * @param networkViewModel
-     * @param basicNetworkErrorHandler
+     * @param errorHandler
      * @param view
      * @param progressBarID
      */
-    void initWithoutFetch(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID) {
-        initWithIDs(networkViewModel, basicNetworkErrorHandler, view, progressBarID, null, -1);
+    void initWithoutFetch(V networkViewModel, ErrorHandler errorHandler, View view, int progressBarID) {
+        initWithIDs(networkViewModel, errorHandler, view, progressBarID, null, -1);
     }
 
 
@@ -98,7 +98,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
                     break;
             }
             if (statusAwareData.getStatus() != StatusAwareData.State.ERROR)
-                basicNetworkErrorHandler.reset();
+                errorHandler.reset();
 
         });
     }
@@ -108,9 +108,9 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     }
 
 
-    private void initWithIDs(V networkViewModel, BasicNetworkErrorHandler basicNetworkErrorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID) {
+    private void initWithIDs(V networkViewModel, ErrorHandler errorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID) {
         this.networkViewModel = networkViewModel;
-        this.basicNetworkErrorHandler = basicNetworkErrorHandler;
+        this.errorHandler = errorHandler;
         if (progressBarID != -1)
             this.progressBar = view.findViewById(progressBarID);
         progressBar.bringToFront();
@@ -132,7 +132,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
 
 
     protected void handleError(Throwable error) {
-        basicNetworkErrorHandler.displayTextViewErrorMessage(error);
+        errorHandler.displayTextViewErrorMessage(error);
         hideProgressBarAndHideContent();
     }
 

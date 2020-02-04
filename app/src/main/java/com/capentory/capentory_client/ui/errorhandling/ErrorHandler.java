@@ -12,17 +12,17 @@ import com.capentory.capentory_client.R;
 
 import org.json.JSONException;
 
-public class BasicNetworkErrorHandler {
+public class ErrorHandler {
     private View errorView;
     private Context context;
 
 
-    public BasicNetworkErrorHandler(Context context, View errorView) {
+    public ErrorHandler(Context context, View errorView) {
         this.errorView = errorView;
         this.context = context;
     }
 
-    public BasicNetworkErrorHandler(Context context) {
+    public ErrorHandler(Context context) {
         this.context = context;
     }
 

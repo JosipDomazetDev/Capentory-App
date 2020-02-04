@@ -2,7 +2,6 @@ package com.capentory.capentory_client.ui;
 
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ import com.capentory.capentory_client.androidutility.UserUtility;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.repos.LoginRepository;
-import com.capentory.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.viewmodels.LoginViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.capentory.capentory_client.viewmodels.wrappers.StatusAwareData;
@@ -97,7 +96,7 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
 
 
         initWithoutFetch(ViewModelProviders.of(this, providerFactory).get(LoginViewModel.class),
-                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.subtitle_text_view_fragment_login)),
+                new ErrorHandler(getContext(), view.findViewById(R.id.subtitle_text_view_fragment_login)),
                 view,
                 R.id.progress_bar_fragment_login);
 

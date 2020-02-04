@@ -1,9 +1,6 @@
 package com.capentory.capentory_client.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,9 +32,10 @@ import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.RecyclerviewItem;
 import com.capentory.capentory_client.models.Room;
 import com.capentory.capentory_client.repos.MergedItemsRepository;
-import com.capentory.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.ui.errorhandling.CustomException;
 import com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity;
+import com.capentory.capentory_client.ui.zebra.ZebraBroadcastReceiver;
 import com.capentory.capentory_client.viewmodels.MergedItemViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.capentory.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
@@ -68,6 +66,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     private TextView currentProgressTextView;
     private String currentRoomString;
     private boolean isKeyboardShowing = false;
+    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::launchItemDetailFragmentFromBarcode);
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -130,7 +129,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         String displayRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getDisplayedNumber();
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(MergedItemViewModel.class),
-                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.room_number_fragment_mergeditems)),
+                new ErrorHandler(getContext(), view.findViewById(R.id.room_number_fragment_mergeditems)),
                 view,
                 R.id.progress_bar_fragment_mergeditems,
                 recyclerView,
@@ -150,37 +149,9 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         });
 
 
-        finishRoom.setOnClickListener(v -> {
-            if (networkViewModel.getData() == null || networkViewModel.getData().getValue() == null)
-                return;
+        finishRoom.setOnClickListener(v -> handleFinishRoomClick());
 
-            String title;
-            String message;
-            if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktkaking()) {
-                title = getString(R.string.title_never_ending_finishroom_fragment_mergeditems);
-                message = getString(R.string.msg_never_ending_finishroom_fragment_mergeditems);
-            } else if (networkViewModel.getAmountOfItemsLeft() == 1) {
-                title = getString(R.string.title_one_left_finishroom_fragment_mergeditems);
-                message = getString(R.string.msg_one_left_finishroom_fragment_mergeditems);
-            } else if (networkViewModel.getAmountOfItemsLeft() > 1) {
-                title = getString(R.string.title_X_left_finishroom_fragment_mergeditems, networkViewModel.getAmountOfItemsLeft());
-                message = getString(R.string.msg_X_left_finishroom_fragment_mergeditems, networkViewModel.getAmountOfItemsLeft());
-            } else {
-                title = getString(R.string.title_0_left_finishroom_fragment_mergeditems);
-                message = getString(R.string.msg_0_left_finishroom_fragment_mergeditems);
-            }
-
-            new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
-                    .setNegativeButton(android.R.string.no, null)
-                    .show();
-        });
-
-        addItem.setOnClickListener(v -> {
-            moveToItemDetail(MergedItem.createNewEmptyItem(v.getContext()));
-        });
+        addItem.setOnClickListener(v -> moveToItemDetail(MergedItem.createNewEmptyItem(v.getContext())));
 
         itemxDetailSharedViewModel.getValidationEntryForCurrentItem().observe(getViewLifecycleOwner(), validationEntry -> {
             // If it's null this means that user aborted the DetailItemScreen altogether and doesn't want to create a ValidationEntry
@@ -213,30 +184,30 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
         // https://stackoverflow.com/questions/4745988/how-do-i-detect-if-software-keyboard-is-visible-on-android-device
         View root = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
-        root.getViewTreeObserver().addOnGlobalLayoutListener(
-                () -> {
+        root.getViewTreeObserver().addOnGlobalLayoutListener(() -> setKeyboardShowing(root));
+    }
 
-                    Rect r = new Rect();
-                    root.getWindowVisibleDisplayFrame(r);
-                    int screenHeight = root.getRootView().getHeight();
+    private void setKeyboardShowing(View root) {
+        Rect r = new Rect();
+        root.getWindowVisibleDisplayFrame(r);
+        int screenHeight = root.getRootView().getHeight();
 
-                    // r.bottom is the position above soft keypad or device button.
-                    // if keypad is shown, the r.bottom is smaller than that before.
-                    int keypadHeight = screenHeight - r.bottom;
+        // r.bottom is the position above soft keypad or device button.
+        // if keypad is shown, the r.bottom is smaller than that before.
+        int keypadHeight = screenHeight - r.bottom;
 
 
-                    if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
-                        // keyboard is opened
-                        if (!isKeyboardShowing) {
-                            isKeyboardShowing = true;
-                        }
-                    } else {
-                        // keyboard is closed
-                        if (isKeyboardShowing) {
-                            isKeyboardShowing = false;
-                        }
-                    }
-                });
+        if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+            // keyboard is opened
+            if (!isKeyboardShowing) {
+                isKeyboardShowing = true;
+            }
+        } else {
+            // keyboard is closed
+            if (isKeyboardShowing) {
+                isKeyboardShowing = false;
+            }
+        }
     }
 
     @Override
@@ -251,6 +222,34 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
     }
 
+    private void handleFinishRoomClick() {
+        if (networkViewModel.getData() == null || networkViewModel.getData().getValue() == null)
+            return;
+
+        String title;
+        String message;
+        if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktkaking()) {
+            title = getString(R.string.title_never_ending_finishroom_fragment_mergeditems);
+            message = getString(R.string.msg_never_ending_finishroom_fragment_mergeditems);
+        } else if (networkViewModel.getAmountOfItemsLeft() == 1) {
+            title = getString(R.string.title_one_left_finishroom_fragment_mergeditems);
+            message = getString(R.string.msg_one_left_finishroom_fragment_mergeditems);
+        } else if (networkViewModel.getAmountOfItemsLeft() > 1) {
+            title = getString(R.string.title_X_left_finishroom_fragment_mergeditems, networkViewModel.getAmountOfItemsLeft());
+            message = getString(R.string.msg_X_left_finishroom_fragment_mergeditems, networkViewModel.getAmountOfItemsLeft());
+        } else {
+            title = getString(R.string.title_0_left_finishroom_fragment_mergeditems);
+            message = getString(R.string.msg_0_left_finishroom_fragment_mergeditems);
+        }
+
+        new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> handleFinishRoom())
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+    }
+
     private void handleFinishRoom() {
         networkViewModel.sendValidationEntriesToServer();
 
@@ -263,13 +262,13 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                 NavHostFragment.findNavController(this).popBackStack();
             }
         }, error -> {
-            basicNetworkErrorHandler.displayTextViewErrorMessage(error);
+            errorHandler.displayTextViewErrorMessage(error);
             hideProgressBarAndShowContent();
         });
     }
 
     protected void handleError(Throwable error) {
-        basicNetworkErrorHandler.displayTextViewErrorMessage(error);
+        errorHandler.displayTextViewErrorMessage(error);
         hideProgressBarAndShowContent();
     }
 
@@ -288,42 +287,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         adapter.fill(mergedItems);
     }
 
-    //
-    // After registering the broadcast receiver, the next step (below) is to define it.
-    // Here it'statusAwareLiveData done in the MainActivity.java, but also can be handled by a separate class.
-    // The logic of extracting the scanned data and displaying it on the screen
-    // is executed in its own method (later in the code). Note the use of the
-    // extra keys defined in the strings.xml file.
-    //
-    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // User has the option to disable this behaviour in case the keyboard detection bugs
-            if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), SettingsFragment.ENFORCE_ZEBRA_KEY, true))
-                return;
-
-            String action = intent.getAction();
-
-            //Bundle b = intent.getExtras();
-            //  This is useful for debugging to verify the format of received intents from DataWedge
-            //for (String key : b.keySet())
-            //{
-            //    Log.v(LOG_TAG, key);
-            //}
-
-            assert action != null;
-            if (action.equals(getResources().getString(R.string.activity_intent_filter_action))) {
-                //  Received a barcode scan
-                try {
-                    String barcode = intent.getStringExtra(getResources().getString(R.string.datawedge_intent_key_data));
-                    launchItemDetailFragmentFromBarcode(barcode);
-                } catch (Exception e) {
-                    //  Catch if the UI does not exist when we receive the broadcast
-                    basicNetworkErrorHandler.displayTextViewMessage(getString(R.string.wait_till_scan_ready_error));
-                }
-            }
-        }
-    };
 
     @NonNull
     private RecyclerViewAdapter getRecyclerViewAdapter() {
@@ -342,7 +305,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
             try {
                 adapter.handleCollapseAndExpand(position, recyclerView.getChildViewHolder(v));
             } catch (Exception e) {
-                basicNetworkErrorHandler.displayTextViewErrorMessage(
+                errorHandler.displayTextViewErrorMessage(
                         new CustomException(getString(R.string.expand_failure_fragment_mergeditems)));
             }
         }
@@ -352,7 +315,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         itemxDetailSharedViewModel.setCurrentItem(currentItem);
         List<Room> rooms = networkViewModel.getRooms();
         if (rooms == null) {
-            basicNetworkErrorHandler.displayTextViewMessage(getString(R.string.mergeditem_fragment));
+            errorHandler.displayTextViewMessage(getString(R.string.mergeditem_fragment));
             return;
         }
         itemxDetailSharedViewModel.setCurrentRooms(rooms);
@@ -377,6 +340,9 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     }
 
     private void launchItemDetailFragmentFromBarcode(String barcode) {
+        if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), SettingsFragment.ENFORCE_ZEBRA_KEY, true))
+            return;
+
         StatusAwareData<List<RecyclerviewItem>> statusAwareData = networkViewModel.getData().getValue();
         if (statusAwareData == null) return;
         List<RecyclerviewItem> items = statusAwareData.getData();
@@ -414,16 +380,13 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     @Override
     public void onPause() {
         super.onPause();
-        Objects.requireNonNull(getContext()).unregisterReceiver(myBroadcastReceiver);
+        ZebraBroadcastReceiver.unregisterZebraReceiver(getContext(), zebraBroadcastReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        filter.addAction(getResources().getString(R.string.activity_intent_filter_action));
-        Objects.requireNonNull(getContext()).registerReceiver(myBroadcastReceiver, filter);
+        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver);
     }
 
 

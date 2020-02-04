@@ -19,7 +19,7 @@ import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.repos.HomeScreenRepository;
-import com.capentory.capentory_client.ui.errorhandling.BasicNetworkErrorHandler;
+import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.viewmodels.HomeScreenViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 
@@ -63,7 +63,7 @@ public class HomeScreenFragment extends NetworkFragment<MergedItem, HomeScreenRe
         super.onViewCreated(view, savedInstanceState);
 
         initWithoutFetch(ViewModelProviders.of(this, providerFactory).get(HomeScreenViewModel.class),
-                new BasicNetworkErrorHandler(getContext(), view.findViewById(R.id.homescreen_into_text)),
+                new ErrorHandler(getContext(), view.findViewById(R.id.homescreen_into_text)),
                 view,
                 R.id.progress_bar_fragment_homescreen);
 
