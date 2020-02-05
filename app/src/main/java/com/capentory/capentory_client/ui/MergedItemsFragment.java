@@ -6,10 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +15,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
@@ -31,8 +28,9 @@ import com.capentory.capentory_client.androidutility.SearchBarHelperUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.androidutility.UserUtility;
 import com.capentory.capentory_client.models.MergedItem;
-import com.capentory.capentory_client.models.RecyclerviewItem;
+import com.capentory.capentory_client.models.RecyclerViewItem;
 import com.capentory.capentory_client.models.Room;
+import com.capentory.capentory_client.models.ValidationEntry;
 import com.capentory.capentory_client.repos.MergedItemsRepository;
 import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.ui.errorhandling.CustomException;
@@ -40,7 +38,6 @@ import com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.capentory.capentory_client.ui.zebra.ZebraBroadcastReceiver;
 import com.capentory.capentory_client.viewmodels.MergedItemViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
-import com.capentory.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import com.capentory.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
 import com.capentory.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 import com.capentory.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
@@ -60,7 +57,7 @@ import javax.inject.Inject;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>, MergedItemsRepository, MergedItemViewModel> implements RecyclerViewAdapter.ItemClickListener {
+public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>, MergedItemsRepository, MergedItemViewModel> implements RecyclerViewAdapter.ItemClickListener {
     private RecyclerView recyclerView;
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
@@ -69,6 +66,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     private TextView currentProgressTextView;
     private String currentRoomString;
     private boolean isKeyboardShowing = false;
+    private boolean quickScanActivated = true;
     private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::launchItemDetailFragmentFromBarcode);
 
     @Inject
@@ -168,6 +166,13 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         });
 
 
+        // https://stackoverflow.com/questions/4745988/how-do-i-detect-if-software-keyboard-is-visible-on-android-device
+        View root = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
+        root.getViewTreeObserver().addOnGlobalLayoutListener(() -> setKeyboardShowing(root));
+
+        view.findViewById(R.id.quick_scan_floatingbtn).setOnClickListener(this::toggleQuickScan);
+
+
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -179,12 +184,19 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
                         .show();
             }
         });
-
-
-        // https://stackoverflow.com/questions/4745988/how-do-i-detect-if-software-keyboard-is-visible-on-android-device
-        View root = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
-        root.getViewTreeObserver().addOnGlobalLayoutListener(() -> setKeyboardShowing(root));
     }
+
+
+    public void toggleQuickScan(View view) {
+        if (quickScanActivated) {
+            ((FloatingActionButton) view).setImageResource(R.drawable.ic_quick_scan_on);
+            quickScanActivated = false;
+        } else {
+            ((FloatingActionButton) view).setImageResource(R.drawable.ic_quick_scan_off);
+            quickScanActivated = true;
+        }
+    }
+
 
     private void setKeyboardShowing(View root) {
         Rect r = new Rect();
@@ -210,7 +222,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     }
 
     @Override
-    protected void handleSuccess(StatusAwareData<List<RecyclerviewItem>> statusAwareData) {
+    protected void handleSuccess(StatusAwareData<List<RecyclerViewItem>> statusAwareData) {
         super.handleSuccess(statusAwareData);
         displayRecyclerView(adapter, statusAwareData, noItemTextView);
         networkViewModel.getProgressMessage().observe(getViewLifecycleOwner(), progressAsText -> {
@@ -222,7 +234,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     }
 
     private void handleFinishRoomClick() {
-        if (networkViewModel.getData() == null || networkViewModel.getData().getValue() == null)
+        if (networkViewModel.getLiveData() == null || networkViewModel.getLiveData().getValue() == null)
             return;
 
         String title;
@@ -272,9 +284,9 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     }
 
 
-    private void displayRecyclerView(RecyclerViewAdapter adapter, StatusAwareData<List<RecyclerviewItem>> statusAwareMergedItem, TextView textView) {
+    private void displayRecyclerView(RecyclerViewAdapter adapter, StatusAwareData<List<RecyclerViewItem>> statusAwareMergedItem, TextView textView) {
         if (adapter == null) return;
-        List<RecyclerviewItem> mergedItems = statusAwareMergedItem.getData();
+        List<RecyclerViewItem> mergedItems = statusAwareMergedItem.getData();
         if (mergedItems == null) return;
 
         if (networkViewModel.getAmountOfItemsLeft() < 1) {
@@ -342,19 +354,15 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), SettingsFragment.ENFORCE_ZEBRA_KEY, true))
             return;
 
-        StatusAwareData<List<RecyclerviewItem>> statusAwareData = networkViewModel.getData().getValue();
-        if (statusAwareData == null) return;
-        List<RecyclerviewItem> items = statusAwareData.getData();
-        if (items == null) return;
 
         // Item already scanned, create subItem (if user wants to)
-        MergedItem mergedItemFromBarcode = networkViewModel.getMergedItemFromBarcode(barcode);
+        MergedItem mergedItemFromBarcode = networkViewModel.getAlreadyValidatedItemFromBarcode(barcode);
         if (mergedItemFromBarcode != null) {
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                     .setTitle(getString(R.string.title_duplicate_fragment_mergeditems))
                     .setMessage(getString(R.string.msg_duplicate_fragment_mergeditems))
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        moveToItemDetail(mergedItemFromBarcode);
+                        handleQuickScan(mergedItemFromBarcode);
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
@@ -362,18 +370,31 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         }
 
         // Item scanned first time and it's in the list
-        for (RecyclerviewItem recyclerviewItem : items) {
+        for (RecyclerViewItem recyclerviewItem : networkViewModel.getMergedItems()) {
             if (recyclerviewItem instanceof MergedItem) {
                 MergedItem mergedItem = (MergedItem) recyclerviewItem;
                 if (mergedItem.equalsBarcode(barcode)) {
-                    moveToItemDetail(mergedItem);
+                    handleQuickScan(mergedItem);
                     return;
                 }
             }
         }
 
-        // Scanned item is not in the list ==> query the barcode
+        // Scanned item is not in the list ==> no quick scan, query the barcode
         moveToItemDetail(MergedItem.createSearchedForItem(barcode));
+    }
+
+    private void handleQuickScan(MergedItem mergedItem) {
+        if (quickScanActivated) {
+            performQuickScan(mergedItem);
+        } else {
+            moveToItemDetail(mergedItem);
+        }
+    }
+
+    private void performQuickScan(MergedItem mergedItem) {
+        networkViewModel.addValidationEntry(new ValidationEntry(mergedItem));
+        networkViewModel.removeItemByFoundCounterIncrease(mergedItem);
     }
 
     @Override

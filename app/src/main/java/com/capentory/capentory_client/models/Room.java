@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Represents an Room from ralph, only the displayNumber is directly stored to allow later changes to the server
  */
-public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Room>, RecyclerviewItem {
+public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Room>, RecyclerViewItem {
     @NonNull
     private String displayNumber, roomId;
 

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.models.MergedItem;
-import com.capentory.capentory_client.models.RecyclerviewItem;
+import com.capentory.capentory_client.models.RecyclerViewItem;
 import com.capentory.capentory_client.models.Room;
 
 import java.util.ArrayList;
@@ -24,9 +24,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    private List<RecyclerviewItem> items = new ArrayList<>();
-    private List<RecyclerviewItem> itemsFull;
-    private List<RecyclerviewItem> collapsedItems = new ArrayList<>();
+    private List<RecyclerViewItem> items = new ArrayList<>();
+    private List<RecyclerViewItem> itemsFull;
+    private List<RecyclerViewItem> collapsedItems = new ArrayList<>();
     private ItemClickListener itemClickListener;
     private static final int[] SUB_HEADER_FONT_SIZES = new int[]{18, 16, 14, 12};
 
@@ -34,7 +34,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.itemClickListener = itemClickListener;
     }
 
-    public void fill(List<RecyclerviewItem> items) {
+    public void fill(List<RecyclerViewItem> items) {
         items = new ArrayList<>(items);
 
         for (int i = 0; i < items.size(); i++) {
@@ -132,7 +132,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return items.size();
     }
 
-    public RecyclerviewItem getItem(int position) {
+    public RecyclerViewItem getItem(int position) {
         return items.get(position);
     }
 
@@ -141,7 +141,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Room room = (Room) getItem(position);
 
         if (room.isExpanded()) {
-            ArrayList<RecyclerviewItem> itemsToRemove = new ArrayList<>();
+            ArrayList<RecyclerViewItem> itemsToRemove = new ArrayList<>();
             itemsToRemove = getItemsToRemove(room, itemsToRemove, 0);
 
             if (itemsToRemove.size() > 0) {
@@ -150,7 +150,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 notifyItemRangeRemoved(position + 1, itemsToRemove.size());
             }
         } else {
-            ArrayList<RecyclerviewItem> itemsToInsert = new ArrayList<>();
+            ArrayList<RecyclerViewItem> itemsToInsert = new ArrayList<>();
             itemsToInsert = getItemsToAdd(room, itemsToInsert, 0);
 
             if (itemsToInsert.size() > 0) {
@@ -163,7 +163,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         setExpandImageView((VHHeader) v, room);
     }
 
-    private ArrayList<RecyclerviewItem> getItemsToRemove(Room room, ArrayList<RecyclerviewItem> itemsToRemove, int depth) {
+    private ArrayList<RecyclerViewItem> getItemsToRemove(Room room, ArrayList<RecyclerViewItem> itemsToRemove, int depth) {
 
         if (depth > 0) {
             // Always remove the header
@@ -191,7 +191,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
-    private ArrayList<RecyclerviewItem> getItemsToAdd(Room room, ArrayList<RecyclerviewItem> itemsToInserts, int depth) {
+    private ArrayList<RecyclerViewItem> getItemsToAdd(Room room, ArrayList<RecyclerViewItem> itemsToInserts, int depth) {
 
         // Dont add a already expanded room
         if (depth > 0 /*&& !room.isExpanded()*/) {
@@ -279,14 +279,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Filter mergedItemFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<RecyclerviewItem> filteredList = new ArrayList<>();
+            List<RecyclerViewItem> filteredList = new ArrayList<>();
 
             if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(itemsFull);
             } else {
                 String filter = constraint.toString();
 
-                for (RecyclerviewItem recyclerviewItem : itemsFull) {
+                for (RecyclerViewItem recyclerviewItem : itemsFull) {
                     if (recyclerviewItem.applySearchBarFilter(filter)) {
 
                         // Add all remaining items of the room as search result
@@ -305,7 +305,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return results;
         }
 
-        private void addItemsOfSubrooms(List<RecyclerviewItem> filteredList, Room room) {
+        private void addItemsOfSubrooms(List<RecyclerViewItem> filteredList, Room room) {
             if (!room.isExpanded()) return;
 
             filteredList.add(room);
@@ -322,10 +322,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
 
-            List<RecyclerviewItem> itemsToPush = new ArrayList<>();
+            List<RecyclerViewItem> itemsToPush = new ArrayList<>();
 
             if (results.values == null) return;
-            for (RecyclerviewItem filterItem : (Collection<? extends RecyclerviewItem>) results.values) {
+            for (RecyclerViewItem filterItem : (Collection<? extends RecyclerViewItem>) results.values) {
                 // Filter results may include item that has already been collapsed,
                 // we dont want to include a item which may appear twice when the user expands the subroom again
                 if (!collapsedItems.contains(filterItem)) {

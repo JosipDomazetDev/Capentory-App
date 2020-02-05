@@ -104,7 +104,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     }
 
     private void observeMainLiveData(V networkViewModel) {
-        observeSpecificLiveData(networkViewModel.getData(), this::handleSuccess);
+        observeSpecificLiveData(networkViewModel.getLiveData(), this::handleSuccess);
     }
 
 

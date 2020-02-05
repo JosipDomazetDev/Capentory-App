@@ -17,7 +17,7 @@ import java.util.Objects;
 /**
  * Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
  */
-public class MergedItem implements RecyclerviewItem {
+public class MergedItem implements RecyclerViewItem {
     private static final String NEW_ITEM_CODE = "-1", SEARCHED_FOR_ITEM_CODE = "-2";
     @NonNull
     private String pkItemId;

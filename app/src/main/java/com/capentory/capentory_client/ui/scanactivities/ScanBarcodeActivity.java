@@ -221,13 +221,14 @@ public class ScanBarcodeActivity extends Activity {
     }
 
     public void toggleFlash(View view) {
-        useFlash = !useFlash;
         if (useFlash) {
-            cameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-            ((ImageButton) view).setImageResource(R.drawable.ic_flash_off_white_24dp);
-        } else {
             cameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             ((ImageButton) view).setImageResource(R.drawable.ic_flash_on_white_24dp);
+            useFlash = false;
+        } else {
+            cameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            ((ImageButton) view).setImageResource(R.drawable.ic_flash_off_white_24dp);
+            useFlash = true;
         }
     }
 

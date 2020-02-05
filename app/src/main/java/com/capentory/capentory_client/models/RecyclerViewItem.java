@@ -2,7 +2,7 @@ package com.capentory.capentory_client.models;
 
 import androidx.annotation.NonNull;
 
-public interface RecyclerviewItem {
+public interface RecyclerViewItem {
     boolean applySearchBarFilter(@NonNull String filter);
 
     boolean isTopLevelRoom();

@@ -1,12 +1,12 @@
 package com.capentory.capentory_client.viewmodels;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
 import com.capentory.capentory_client.models.MergedItem;
-import com.capentory.capentory_client.models.RecyclerviewItem;
+import com.capentory.capentory_client.models.RecyclerViewItem;
 import com.capentory.capentory_client.models.Room;
 import com.capentory.capentory_client.models.ValidationEntry;
 import com.capentory.capentory_client.repos.MergedItemsRepository;
@@ -21,15 +21,16 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>, MergedItemsRepository> {
+public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>, MergedItemsRepository> {
     private List<ValidationEntry> validationEntries = new ArrayList<>();
     private List<MergedItem> alreadyValidatedItems = new ArrayList<>();
-    private List<Room> subRoomListForItemDetails;
+    private List<Room> subRoomListForItemDetail;
     private StatusAwareLiveData<Boolean> validateSuccessful;
 
     private MutableLiveData<String> progressMessage = new MutableLiveData<>();
     private int validatedCount = 0;
-    private int totalItemsCount = 0;
+    // Indicates not counted yet
+    private int totalItemsCount = -1;
 
 
     @Inject
@@ -37,8 +38,10 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         super(mergedItemsRepository);
     }
 
+    // ========================= RecyclerView logic =========================
+
     public void removeItemByFoundCounterIncrease(MergedItem mergedItem) {
-        List<RecyclerviewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
+        List<RecyclerViewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
 
         mergedItem.increaseTimesFoundCurrent();
@@ -57,14 +60,14 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
     }
 
     public void removeCanceledItemDirectly(MergedItem mergedItem) {
-        List<RecyclerviewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
+        List<RecyclerViewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
 
         // New items cannot be removed anyways, so no need to check
         removeItem(currentItems, mergedItem);
     }
 
-    private boolean removeItem(List<RecyclerviewItem> currentItems, MergedItem mergedItem) {
+    private boolean removeItem(List<RecyclerViewItem> currentItems, MergedItem mergedItem) {
         if (currentItems.remove(mergedItem)) {
             validatedCount++;
             statusAwareLiveData.postSuccess(currentItems);
@@ -94,10 +97,89 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
             statusAwareLiveData = networkRepository.fetchMainData(args);
             validationEntries.clear();
             alreadyValidatedItems.clear();
-            if (subRoomListForItemDetails != null)
-                subRoomListForItemDetails.clear();
+            if (subRoomListForItemDetail != null)
+                subRoomListForItemDetail.clear();
         }
     }
+
+
+    @Nullable
+    public List<Room> getRooms() {
+        if (subRoomListForItemDetail != null) return subRoomListForItemDetail;
+
+        if (getLiveData().getValue() == null || getLiveData().getValue().getData() == null)
+            return null;
+
+        // If subRooms are not known, set them once
+        List<Room> rooms = new ArrayList<>();
+
+        for (RecyclerViewItem item : getLiveData().getValue().getData()) {
+            if (item instanceof Room) {
+                rooms.add((Room) item);
+            }
+        }
+
+        this.subRoomListForItemDetail = rooms;
+        return rooms;
+    }
+
+    @NonNull
+    public List<MergedItem> getMergedItems() {
+        List<MergedItem> mergedItems = new ArrayList<>();
+
+        if (getLiveData().getValue() == null || getLiveData().getValue().getData() == null)
+            return mergedItems;
+
+
+        for (RecyclerViewItem recyclerviewItem : getLiveData().getValue().getData()) {
+            if (recyclerviewItem instanceof MergedItem) {
+                mergedItems.add((MergedItem) recyclerviewItem);
+            }
+        }
+
+        return mergedItems;
+    }
+
+
+    // ========================= Progress message logic =========================
+
+
+    public int getAmountOfItemsLeft() {
+     /*   List<RecyclerViewItem> recyclerviewItems = Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getLiveData());
+        int c = 0;
+        for (RecyclerViewItem recyclerviewItem : recyclerviewItems) {
+            if (recyclerviewItem instanceof MergedItem) {
+                MergedItem mergedItem = (MergedItem) recyclerviewItem;
+                c += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
+            }
+        }*/
+        return getTotalItemsCount() - validatedCount;
+    }
+
+    public int getTotalItemsCount() {
+        if (this.totalItemsCount == -1) {
+            this.totalItemsCount = networkRepository.getTotalItemsCount();
+        }
+        return totalItemsCount;
+    }
+
+
+
+    public LiveData<String> getProgressMessage() {
+        //progressMessage = new MutableLiveData<>();
+        if (this.totalItemsCount == 0) {
+            this.totalItemsCount = networkRepository.getTotalItemsCount();
+        }
+
+        updateProgressMessage();
+        return progressMessage;
+    }
+
+    public void updateProgressMessage() {
+        progressMessage.postValue(validatedCount + "/" + totalItemsCount);
+    }
+
+    // ========================= Validation logic =========================
 
     public void addValidationEntry(ValidationEntry validationEntry) {
         validationEntries.add(validationEntry);
@@ -116,58 +198,12 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerviewItem>
         return validateSuccessful;
     }
 
-
-    public int getAmountOfItemsLeft() {
-        List<RecyclerviewItem> recyclerviewItems = Objects.requireNonNull(Objects.requireNonNull(statusAwareLiveData.getValue()).getData());
-        int c = 0;
-        for (RecyclerviewItem recyclerviewItem : recyclerviewItems) {
-            if (recyclerviewItem instanceof MergedItem) {
-                MergedItem mergedItem = (MergedItem) recyclerviewItem;
-                c += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
-            }
-        }
-        return c;
-    }
-
-    public MergedItem getMergedItemFromBarcode(String barcode) {
+    public MergedItem getAlreadyValidatedItemFromBarcode(String barcode) {
         for (MergedItem alreadyValidatedItem : alreadyValidatedItems) {
             if (alreadyValidatedItem.equalsBarcode(barcode))
                 return alreadyValidatedItem;
         }
         return null;
-    }
-
-    @Nullable
-    public List<Room> getRooms() {
-        if (subRoomListForItemDetails != null) return subRoomListForItemDetails;
-
-        // If subRooms are not known, add them once
-        if (statusAwareLiveData.getValue() == null) return null;
-        List<RecyclerviewItem> items = statusAwareLiveData.getValue().getData();
-        if (items == null) return null;
-
-        List<Room> rooms = new ArrayList<>();
-        for (RecyclerviewItem item : items) {
-            if (item instanceof Room) {
-                rooms.add((Room) item);
-            }
-        }
-        this.subRoomListForItemDetails = rooms;
-        return rooms;
-    }
-
-    public LiveData<String> getProgressMessage() {
-        //progressMessage = new MutableLiveData<>();
-        if (this.totalItemsCount == 0) {
-            this.totalItemsCount = networkRepository.getTotalItemsCount();
-        }
-
-        updateProgressMessage();
-        return progressMessage;
-    }
-
-    public void updateProgressMessage() {
-        progressMessage.postValue(validatedCount + "/" + totalItemsCount);
     }
 
 }

@@ -146,8 +146,9 @@ public class ValidationEntry {
                 }
             }
             // Normal Field
-            else
+            else {
                 addOnChange(field, valueFromForm, mergedItem.getNormalFieldsWithValues(), normalFieldChanges);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

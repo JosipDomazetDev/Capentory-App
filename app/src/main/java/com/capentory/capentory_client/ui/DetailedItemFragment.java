@@ -185,7 +185,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
     private void displayForm(View view) {
         MergedItem mergedItem = Objects.requireNonNull(itemxDetailSharedViewModel.getCurrentItem());
-        StatusAwareData<Map<String, MergedItemField>> mapStatusAwareData = Objects.requireNonNull(networkViewModel.getData().getValue());
+        StatusAwareData<Map<String, MergedItemField>> mapStatusAwareData = Objects.requireNonNull(networkViewModel.getLiveData().getValue());
         if (mergedItem.isSearchedForItem() || mapStatusAwareData.getData() == null) return;
         JSONObject fieldsWithValues = mergedItem.getNormalFieldsWithValues();
         JSONObject customFieldsWithValues = mergedItem.getCustomFieldsWithValues();
@@ -464,7 +464,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
 
     public void handleValidate() {
-        StatusAwareData<Map<String, MergedItemField>> value = networkViewModel.getData().getValue();
+        StatusAwareData<Map<String, MergedItemField>> value = networkViewModel.getLiveData().getValue();
         if (value == null) return;
         if (value.getStatus() != StatusAwareData.State.SUCCESS) return;
 
@@ -524,7 +524,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         }
 
         // fieldName, MergedItemField
-        Map<String, MergedItemField> mapFieldNameToField = Objects.requireNonNull(networkViewModel.getData().getValue()).getData();
+        Map<String, MergedItemField> mapFieldNameToField = Objects.requireNonNull(networkViewModel.getLiveData().getValue()).getData();
         assert mapFieldNameToField != null;
 
         for (String fieldName : mapFieldNameToField.keySet()) {

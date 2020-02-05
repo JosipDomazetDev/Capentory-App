@@ -2,14 +2,11 @@ package com.capentory.capentory_client.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -19,7 +16,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -180,7 +176,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
 
 
     private void navigateByBarcode(String barcode) {
-        StatusAwareData<List<Room>> roomsLiveData = networkViewModel.getData().getValue();
+        StatusAwareData<List<Room>> roomsLiveData = networkViewModel.getLiveData().getValue();
         if (roomsLiveData == null || roomsLiveData.getData() == null) return;
         for (Room room : roomsLiveData.getData()) {
             if (room.equalsBarcode(barcode)) {

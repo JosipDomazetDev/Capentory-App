@@ -18,7 +18,7 @@ public abstract class NetworkViewModel<P, R extends NetworkRepository<P>> extend
     public abstract void fetchData(String... args);
 
 
-    public LiveData<StatusAwareData<P>> getData() {
+    public LiveData<StatusAwareData<P>> getLiveData() {
         return this.statusAwareLiveData;
     }
 
