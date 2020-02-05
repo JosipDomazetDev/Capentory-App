@@ -31,6 +31,8 @@ public final class UserUtility {
 
 
     public static void hideKeyboard(Activity activity) {
+        if (activity == null) return;
+
         //https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.

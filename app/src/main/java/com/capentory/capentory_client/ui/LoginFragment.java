@@ -74,7 +74,7 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
         ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.logout_successful_fragment_login), Toast.LENGTH_LONG);
         PreferenceUtility.logout(getContext());
         UserUtility.displayLoggedOutMenu(getActivity());
-        UserUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
+        UserUtility.hideKeyboard(getActivity());
         NavHostFragment.findNavController(this).popBackStack();
     }
 
@@ -126,7 +126,7 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
         PreferenceUtility.login(getContext(), statusAwareData.getData());
         ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.login_successful_fragment_login), Toast.LENGTH_LONG);
         UserUtility.displayLoggedInMenu(getActivity());
-        UserUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
+        UserUtility.hideKeyboard(getActivity());
         NavHostFragment.findNavController(this).popBackStack();
     }
 

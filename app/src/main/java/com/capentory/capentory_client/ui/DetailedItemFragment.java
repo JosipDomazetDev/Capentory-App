@@ -505,7 +505,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     }
 
     private void navigateBack() {
-        UserUtility.hideKeyboard(Objects.requireNonNull(getActivity()));
+        UserUtility.hideKeyboard(getActivity());
         NavHostFragment.findNavController(this).popBackStack();
     }
 

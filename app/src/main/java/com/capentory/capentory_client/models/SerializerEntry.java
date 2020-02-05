@@ -50,5 +50,9 @@ public class SerializerEntry implements GenericDropDownAdapter.DropDownEntry {
         return getDescription();
     }
 
+    @Override
+    public boolean applySearchBarFilter(@NonNull String filter) {
+        return false;
+    }
 
 }

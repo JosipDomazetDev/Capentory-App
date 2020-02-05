@@ -38,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         items = new ArrayList<>(items);
 
         for (int i = 0; i < items.size(); i++) {
-            // User already now top level room, no need to display him
+            // User already knows top level room, no need to display it
             if (items.get(i).isTopLevelRoom()) {
                 items.remove(i--);
 
@@ -293,7 +293,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         if (recyclerviewItem instanceof Room && recyclerviewItem.isExpanded()) {
                             addItemsOfSubrooms(filteredList, (Room) recyclerviewItem);
                         } else
-                            // Add the item itself a search result
+                            // Add the item itself as search result
                             if (!filteredList.contains(recyclerviewItem))
                                 filteredList.add(recyclerviewItem);
                     }

@@ -2,9 +2,14 @@ package com.capentory.capentory_client.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -14,14 +19,16 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.capentory.capentory_client.R;
+import com.capentory.capentory_client.androidutility.SearchBarHelperUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
+import com.capentory.capentory_client.androidutility.UserUtility;
 import com.capentory.capentory_client.models.Room;
 import com.capentory.capentory_client.repos.RoomsRepository;
 import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
@@ -51,6 +58,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
     private TextView finishedText;
     private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::navigateByBarcode);
+    private GenericDropDownAdapter<Room> adapter;
 
     public RoomsFragment() {
         // Required empty public constructor
@@ -58,6 +66,34 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
 
     @Inject
     ViewModelProviderFactory providerFactory;
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        SearchBarHelperUtility.bindSearchBar(menu, inflater, getActivity(), new SearchBarHelperUtility.SearchHandler() {
+            @Override
+            public void onQueryTextSubmit(String query) {
+                UserUtility.hideKeyboard(getActivity());
+                handleRoomSelected();
+            }
+
+            @Override
+            public void onQueryTextChange(String newText) {
+                if (adapter != null)
+                    adapter.getFilter().filter(newText);
+            }
+        });
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // https://stackoverflow.com/questions/12090335/menu-in-fragments-not-showing
+        setHasOptionsMenu(true);
+    }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,14 +121,11 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
                     R.id.swipe_refresh
             );
 
+            adapter = new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()));
+            roomDropDown.setAdapter(adapter);
 
             roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
-            chooseRoomButton.setOnClickListener(v -> {
-                Room selectedRoom = (Room) roomDropDown.getSelectedItem();
-                if (selectedRoom == null) return;
-                roomxItemSharedViewModel.setCurrentRoom(selectedRoom);
-                Navigation.findNavController(view).navigate(R.id.action_roomFragment_to_itemsFragment);
-            });
+            chooseRoomButton.setOnClickListener(v -> handleRoomSelected());
 
             roomxItemSharedViewModel.getCurrentRoomValidated().observe(getViewLifecycleOwner(), b -> {
                 if (b) {
@@ -138,6 +171,14 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
         }
     }
 
+    private void handleRoomSelected() {
+        Room selectedRoom = (Room) roomDropDown.getSelectedItem();
+        if (selectedRoom == null) return;
+        roomxItemSharedViewModel.setCurrentRoom(selectedRoom);
+        NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment);
+    }
+
+
     private void navigateByBarcode(String barcode) {
         StatusAwareData<List<Room>> roomsLiveData = networkViewModel.getData().getValue();
         if (roomsLiveData == null || roomsLiveData.getData() == null) return;
@@ -152,7 +193,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     }
 
     private void handleFinishInventory() {
-        if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktkaking()) {
+        if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktaking()) {
             finishInventory();
         } else
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))
@@ -179,9 +220,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
                 roomDropDown.setVisibility(View.GONE);
                 finishedText.setVisibility(View.VISIBLE);
             } else {
-                GenericDropDownAdapter<Room> adapter =
-                        new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<Room>) statusAwareData.getData());
-                roomDropDown.setAdapter(adapter);
+                adapter.fill((ArrayList<Room>) statusAwareData.getData());
             }
         } catch (Exception e) {
             roomDropDown.setVisibility(View.GONE);

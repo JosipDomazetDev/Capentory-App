@@ -83,9 +83,15 @@ public class Stocktaking implements GenericDropDownAdapter.DropDownEntry {
         return displayDescription;
     }
 
-    public boolean isNeverEndingStocktkaking() {
+    public boolean isNeverEndingStocktaking() {
         return neverEndStocktaking;
     }
+
+    @Override
+    public boolean applySearchBarFilter(@NonNull String filter) {
+        return false;
+    }
+
 }
 
 

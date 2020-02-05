@@ -64,7 +64,8 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
         observeSpecificLiveData(networkViewModel.getSpecificallySearchedForItem(), liveData ->
                 showPopup(liveData.getData(), new Dialog(Objects.requireNonNull(getContext()))));
     });
-    ;
+    private GenericDropDownAdapter<SerializerEntry> serializerAdapter;
+    private GenericDropDownAdapter<Stocktaking> stocktakingAdapter;
 
 
     public StocktakingFragment() {
@@ -103,6 +104,12 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
                 R.id.swipe_refresh_fragment_stocktaking
         );
 
+        stocktakingAdapter = new GenericDropDownAdapter<>(getContext());
+        stocktakingDropDown.setAdapter(stocktakingAdapter);
+
+        serializerAdapter = new GenericDropDownAdapter<>(getContext());
+        serializerDropDown.setAdapter(serializerAdapter);
+
         //networkViewModel.postStocktaking(name.getText().toString(), comment.getText().toString());
         networkViewModel.fetchStocktakings();
         observeSpecificLiveData(networkViewModel.getStocktakings(), liveData -> {
@@ -112,12 +119,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
             if (liveData.getData().isEmpty())
                 ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.error_missing_inventory_fragment_stocktaking), Toast.LENGTH_LONG);
 
-
-            GenericDropDownAdapter<Stocktaking> adapter =
-                    new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<Stocktaking>) liveData.getData());
-            stocktakingDropDown.setAdapter(adapter);
-
-
+            stocktakingAdapter.fill((ArrayList<Stocktaking>) liveData.getData());
         });
 
         btnStocktaking.setOnClickListener(v -> tryToStartInventory(view));
@@ -218,9 +220,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
             ToastUtility.displayCenteredToastMessage(getContext(),
                     getString(R.string.error_missing_serializer_fragment_stocktaking), Toast.LENGTH_LONG);
 
-        GenericDropDownAdapter<SerializerEntry> adapter = new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()), (ArrayList<SerializerEntry>) statusAwareData.getData());
-        serializerDropDown.setAdapter(adapter);
-        //serializerDropDown.notify();
+        serializerAdapter.fill((ArrayList<SerializerEntry>) statusAwareData.getData());
     }
 
 

@@ -10,6 +10,4 @@ public interface RecyclerviewItem {
     boolean isExpanded();
 
     void setExpanded(boolean b);
-
-
 }

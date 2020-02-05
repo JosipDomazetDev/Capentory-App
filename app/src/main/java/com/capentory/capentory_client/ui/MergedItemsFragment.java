@@ -27,7 +27,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PopUtility;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
+import com.capentory.capentory_client.androidutility.SearchBarHelperUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
+import com.capentory.capentory_client.androidutility.UserUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.RecyclerviewItem;
 import com.capentory.capentory_client.models.Room;
@@ -38,6 +40,7 @@ import com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.capentory.capentory_client.ui.zebra.ZebraBroadcastReceiver;
 import com.capentory.capentory_client.viewmodels.MergedItemViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
+import com.capentory.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import com.capentory.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
 import com.capentory.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 import com.capentory.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
@@ -75,6 +78,26 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        SearchBarHelperUtility.bindSearchBar(menu, inflater, getActivity(), new SearchBarHelperUtility.SearchHandler() {
+            @Override
+            public void onQueryTextSubmit(String query) {
+                UserUtility.hideKeyboard(getActivity());
+            }
+
+            @Override
+            public void onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+
+            }
+        });
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,30 +107,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_mergeditems, container, false);
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        MenuItem searchItem = menu.findItem(R.id.search);
-        searchItem.setVisible(true);
-
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                adapter.getFilter().filter(newText);
-                return false;
-            }
-        });
     }
 
     @Override
@@ -228,7 +227,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerviewItem>,
 
         String title;
         String message;
-        if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktkaking()) {
+        if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktaking()) {
             title = getString(R.string.title_never_ending_finishroom_fragment_mergeditems);
             message = getString(R.string.msg_never_ending_finishroom_fragment_mergeditems);
         } else if (networkViewModel.getAmountOfItemsLeft() == 1) {

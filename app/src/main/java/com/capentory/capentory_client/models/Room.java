@@ -82,6 +82,8 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
     }
 
 
+
+
     @Override
     public int compareTo(Room that) {
         if (this.displayNumber.compareTo(that.displayNumber) < 0) {
