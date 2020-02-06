@@ -156,13 +156,12 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
         return getTotalItemsCount() - validatedCount;
     }
 
-    public int getTotalItemsCount() {
+    private int getTotalItemsCount() {
         if (this.totalItemsCount == -1) {
             this.totalItemsCount = networkRepository.getTotalItemsCount();
         }
         return totalItemsCount;
     }
-
 
 
     public LiveData<String> getProgressMessage() {

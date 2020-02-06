@@ -41,6 +41,8 @@ public class CameraSourcePreview extends ViewGroup {
 
     private GraphicOverlay mOverlay;
 
+
+
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
@@ -128,6 +130,9 @@ public class CameraSourcePreview extends ViewGroup {
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         }
     }
+
+
+
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {

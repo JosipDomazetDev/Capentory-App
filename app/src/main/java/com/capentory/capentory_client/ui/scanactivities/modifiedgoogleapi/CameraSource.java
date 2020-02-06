@@ -232,10 +232,15 @@ public class CameraSource {
             if ((width <= 0) || (width > MAX) || (height <= 0) || (height > MAX)) {
                 throw new IllegalArgumentException("Invalid preview size: " + width + "x" + height);
             }
+         /*   Camera.Size optimalPreviewSize = getOptimalPreviewSize(mCameraSource.mCamera.getParameters().getSupportedPreviewSizes(), width, height);
+            mCameraSource.mRequestedPreviewWidth = optimalPreviewSize.width;
+            mCameraSource.mRequestedPreviewHeight = optimalPreviewSize.height;*/
             mCameraSource.mRequestedPreviewWidth = width;
             mCameraSource.mRequestedPreviewHeight = height;
+
             return this;
         }
+
 
         /**
          * Sets the camera to use (either {@link #CAMERA_FACING_BACK} or
@@ -392,6 +397,7 @@ public class CameraSource {
         }
         return this;
     }
+
 
     /**
      * Closes the camera and stops sending frames to the underlying frame detector.
@@ -746,6 +752,35 @@ public class CameraSource {
         }
     }
 
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+        final double ASPECT_TOLERANCE = 0.1;
+        double targetRatio = (double) w / h;
+        if (sizes == null) return null;
+        Camera.Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+        int targetHeight = h;
+        // Try to find an size match aspect ratio and size
+        for (Camera.Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (Math.abs(size.height - targetHeight) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+        // Cannot find the one match the aspect ratio, ignore the requirement
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - targetHeight) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - targetHeight);
+                }
+            }
+        }
+        return optimalSize;
+    }
+
     /**
      * Opens the camera and applies the user settings.
      *
@@ -759,7 +794,12 @@ public class CameraSource {
         }
         Camera camera = Camera.open(requestedCameraId);
 
-        SizePair sizePair = selectSizePair(camera, mRequestedPreviewWidth, mRequestedPreviewHeight);
+
+        // MODIFIED
+        Camera.Size optimalPreviewSize = getOptimalPreviewSize(camera.getParameters().getSupportedPreviewSizes(),mRequestedPreviewWidth, mRequestedPreviewHeight);
+        SizePair sizePair = selectSizePair(camera, optimalPreviewSize.width, optimalPreviewSize.height);
+
+
         if (sizePair == null) {
             throw new RuntimeException("Could not find suitable preview size.");
         }
@@ -782,6 +822,8 @@ public class CameraSource {
                 previewFpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
                 previewFpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
         parameters.setPreviewFormat(ImageFormat.NV21);
+        // TODO: CHECK THIS
+       /* parameters.setSceneMode(Camera.Parameters.SCENE_MODE_BARCODE);*/
 
         setRotation(camera, parameters, requestedCameraId);
 
