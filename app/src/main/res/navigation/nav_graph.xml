@@ -30,8 +30,8 @@
         android:label="@string/label_roomFragment_nav"
         tools:layout="@layout/fragment_rooms">
         <action
-            android:id="@+id/action_roomFragment_to_itemsFragment"
-            app:destination="@id/itemsFragment" />
+            android:id="@+id/action_roomFragment_to_viewPagerFragment"
+            app:destination="@id/viewPagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/itemDetailFragment"
@@ -122,6 +122,12 @@
             android:id="@+id/action_attachmentsFragment_to_itemDetailFragment"
             app:destination="@id/itemDetailFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/viewPagerFragment"
+        android:name="com.capentory.capentory_client.ui.ViewPagerFragment"
+        android:label="@string/fragment_view_pager_nav"
+        tools:layout="@layout/fragment_view_pager" />
 
 
 </navigation>

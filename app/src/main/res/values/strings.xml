@@ -199,4 +199,8 @@
     <string name="disable_compression_preferences">Disable Compression</string>
     <string name="title_switch_trust_all_certificates">Trust self-signed certificates</string>
     <string name="low_storage_error_activity_scanners">Scan library cannot be downloaded due to low device storage!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_view_pager_nav">Item overview</string>
 </resources>

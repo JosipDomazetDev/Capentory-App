@@ -123,11 +123,15 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
     protected void handleSuccess(StatusAwareData<String> statusAwareData) {
         super.handleSuccess(statusAwareData);
 
-        PreferenceUtility.login(getContext(), statusAwareData.getData());
-        ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.login_successful_fragment_login), Toast.LENGTH_LONG);
-        UserUtility.displayLoggedInMenu(getActivity());
-        UserUtility.hideKeyboard(getActivity());
-        NavHostFragment.findNavController(this).popBackStack();
+        try {
+            PreferenceUtility.login(getContext(), statusAwareData.getData());
+            ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.login_successful_fragment_login), Toast.LENGTH_LONG);
+            UserUtility.displayLoggedInMenu(getActivity());
+            UserUtility.hideKeyboard(getActivity());
+            NavHostFragment.findNavController(this).popBackStack();
+        } catch (Exception e) {
+            errorHandler.displayTextViewMessage("Login fehlgeschlagen. Probieren Sie es später wieder!");
+        }
     }
 
 

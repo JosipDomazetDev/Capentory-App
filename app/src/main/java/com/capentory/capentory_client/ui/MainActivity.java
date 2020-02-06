@@ -34,7 +34,8 @@ import dagger.android.support.DaggerAppCompatActivity;
 public class MainActivity extends DaggerAppCompatActivity {
     //TODO: Update this for every fragment
     private static final int[] TOP_LEVEL_DESTINATIONS = new int[]{
-            R.id.settingsFragment, R.id.homeScreenFragment, R.id.stocktakingFragment, R.id.roomFragment, R.id.itemsFragment, R.id.itemDetailFragment};
+            R.id.settingsFragment, R.id.homeScreenFragment, R.id.stocktakingFragment, R.id.roomFragment,
+            R.id.itemsFragment,  R.id.viewPagerFragment , R.id.itemDetailFragment};
 
     private static Stocktaking stocktaking;
     private static SerializerEntry serializer;

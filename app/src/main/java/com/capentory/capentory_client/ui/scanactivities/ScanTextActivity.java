@@ -58,6 +58,7 @@ public class ScanTextActivity extends AppCompatActivity {
     private int longestCode = 0;
     private int textFilterMode;
     private Map<String, Integer> map = new HashMap<>();
+    public static final String FOCUS_MODE = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
 
 
     @Override
@@ -115,7 +116,7 @@ public class ScanTextActivity extends AppCompatActivity {
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
                         .setRequestedPreviewSize(1600, 1024)
-                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+                        .setFocusMode(FOCUS_MODE).build();
 
                 ((ImageButton) findViewById(R.id.btn_flash_activity_scan_text)).setImageResource(R.drawable.ic_flash_off_white_24dp);
                 useFlash = true;
@@ -125,7 +126,7 @@ public class ScanTextActivity extends AppCompatActivity {
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
                         .setRequestedPreviewSize(1600, 1024)
-                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+                        .setFocusMode(FOCUS_MODE).build();
 
                 ((ImageButton) findViewById(R.id.btn_flash_activity_scan_text)).setImageResource(R.drawable.ic_flash_on_white_24dp);
                 useFlash = false;

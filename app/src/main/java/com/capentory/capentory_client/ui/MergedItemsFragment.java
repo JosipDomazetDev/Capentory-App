@@ -342,7 +342,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
                     launchItemDetailFragmentFromBarcode(barcode);
                 } else {
                     ToastUtility.displayCenteredToastMessage(getContext(),
-                            getString(R.string.expand_failure_fragment_mergeditems), Toast.LENGTH_SHORT);
+                            getString(R.string.scan_failed_scan_fragments), Toast.LENGTH_SHORT);
                 }
             }
         } else {

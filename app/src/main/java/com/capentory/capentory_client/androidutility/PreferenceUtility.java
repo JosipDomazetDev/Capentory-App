@@ -46,7 +46,7 @@ public final class PreferenceUtility {
         editor.apply();
     }
 
-    public static void login(Context context, String token) {
+    public static void login(Context context, String token) throws Exception{
         Cryptography cryptography = new Cryptography(context);
         SharedPreferences.Editor editor = Objects.requireNonNull(context).getSharedPreferences(PreferenceUtility.PREF_KEY, MODE_PRIVATE).edit();
         editor.putString(PreferenceUtility.TOKEN_KEY, cryptography.encrypt(token));

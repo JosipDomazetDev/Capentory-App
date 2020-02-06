@@ -177,4 +177,5 @@
     <string name="title_compression_rate_preferences">Kompressionsraten</string>
     <string name="title_switch_trust_all_certificates">Selbst-signierten Zertifikaten vertrauen</string>
     <string name="low_storage_error_activity_scanners">Zu wenig Speicherplatz um Scanner herunterzuladen!</string>
+    <string name="fragment_view_pager_nav">Gegenstände</string>
 </resources>

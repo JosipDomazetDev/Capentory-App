@@ -171,7 +171,8 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
         Room selectedRoom = (Room) roomDropDown.getSelectedItem();
         if (selectedRoom == null) return;
         roomxItemSharedViewModel.setCurrentRoom(selectedRoom);
-        NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment);
+        //NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment);
+        NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_viewPagerFragment);
     }
 
 
@@ -181,7 +182,8 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
         for (Room room : roomsLiveData.getData()) {
             if (room.equalsBarcode(barcode)) {
                 roomxItemSharedViewModel.setCurrentRoom(room);
-                NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment);
+                //NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment);
+                NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_viewPagerFragment);
                 return;
             }
         }

@@ -42,6 +42,7 @@ public class ScanBarcodeActivity extends Activity {
     private CameraSource cameraSource;
     private MediaPlayer mediaPlayer;
     private boolean lockedOnFirst = false;
+    public static final String FOCUS_MODE = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,7 +103,7 @@ public class ScanBarcodeActivity extends Activity {
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
                         .setRequestedPreviewSize(1600, 1024)
-                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+                        .setFocusMode(FOCUS_MODE).build();
 
                 /*List<android.hardware.Camera.Size> supportedPreviewSizes =
                         Camera.Parameters.getSupportedPreviewSizes();*/
@@ -114,7 +115,7 @@ public class ScanBarcodeActivity extends Activity {
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
                         .setRequestedPreviewSize(1600, 1024)
-                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).build();
+                        .setFocusMode(FOCUS_MODE).build();
 
                 ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_on_white_24dp);
                 useFlash = false;
