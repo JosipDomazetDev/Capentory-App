@@ -3,6 +3,7 @@ package com.capentory.capentory_client.dagger.daggerviewmodels;
 import androidx.lifecycle.ViewModel;
 
 import com.capentory.capentory_client.dagger.ViewModelKey;
+import com.capentory.capentory_client.ui.ValidatedMergedItemsFragment;
 import com.capentory.capentory_client.viewmodels.AttachmentsViewModel;
 import com.capentory.capentory_client.viewmodels.DetailItemViewModel;
 import com.capentory.capentory_client.viewmodels.HomeScreenViewModel;
@@ -46,4 +47,5 @@ public abstract class ItemFragmentViewModelsModule {
     @IntoMap
     @ViewModelKey(AttachmentsViewModel.class)
     public abstract ViewModel bindAttachmentsFragmentViewModel(AttachmentsViewModel viewModel);
+
 }

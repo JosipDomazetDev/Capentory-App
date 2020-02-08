@@ -203,4 +203,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="fragment_view_pager_nav">Item overview</string>
+    <string name="todo_viewpager_fragment">TODO</string>
+    <string name="done_todo_viewpager_fragment">DONE</string>
+    <string name="no_items_validated_fragment_validated_mergeditems">No items validated yet</string>
 </resources>

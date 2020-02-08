@@ -22,10 +22,10 @@
             android:indeterminate="true"
             android:indeterminateBehavior="repeat"
             android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@+id/recyclerv_view"
+            app:layout_constraintEnd_toStartOf="@+id/recycler_view_fragment_mergeditems"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/recyclerv_view"
-            app:layout_constraintTop_toTopOf="@+id/recyclerv_view" />
+            app:layout_constraintStart_toEndOf="@+id/recycler_view_fragment_mergeditems"
+            app:layout_constraintTop_toTopOf="@+id/recycler_view_fragment_mergeditems" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
@@ -84,7 +84,7 @@
 
 
             <TextView
-                android:id="@+id/progress_textview_value_mergeditems"
+                android:id="@+id/progress_textview_value_fragment_validated_mergeditems"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -109,18 +109,19 @@
             android:textColor="#000000"
             android:textSize="17sp"
             android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@+id/recyclerv_view"
+            app:layout_constraintEnd_toStartOf="@+id/recycler_view_fragment_mergeditems"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/recyclerv_view"
+            app:layout_constraintStart_toEndOf="@+id/recycler_view_fragment_mergeditems"
             app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerv_view"
+            android:id="@+id/recycler_view_fragment_mergeditems"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="0dp"
             android:padding="5dp"
             android:visibility="gone"
+            android:scrollbars="vertical"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -128,7 +129,7 @@
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/finish_room_floatingbtn"
+            android:id="@+id/finish_room_floatingbtn_fragment_mergeditems"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -144,7 +145,7 @@
             app:srcCompat="@drawable/ic_done_all_white_24dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/quick_scan_floatingbtn"
+            android:id="@+id/quick_scan_floatingbtn_fragment_mergeditems"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

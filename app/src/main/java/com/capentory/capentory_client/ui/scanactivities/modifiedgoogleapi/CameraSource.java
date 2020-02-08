@@ -140,7 +140,7 @@ public class CameraSource {
     private Size mPreviewSize;
 
     // These values may be requested by the caller.  Due to hardware limitations, we may need to
-    // setCurrentItem close, but not exactly the same values for these.
+    // setAlreadyValidatedItems close, but not exactly the same values for these.
     private float mRequestedFps = 30.0f;
     private int mRequestedPreviewWidth = 1024;
     private int mRequestedPreviewHeight = 768;
@@ -221,7 +221,7 @@ public class CameraSource {
         /**
          * Sets the desired width and height of the camera frames in pixels.  If the exact desired
          * values are not available options, the best matching available options are selected.
-         * Also, we try to setCurrentItem a preview size which corresponds to the aspect ratio of an
+         * Also, we try to setAlreadyValidatedItems a preview size which corresponds to the aspect ratio of an
          * associated full picture size, if applicable.  Default: 1024x768.
          */
         public Builder setRequestedPreviewSize(int width, int height) {
@@ -894,7 +894,7 @@ public class CameraSource {
      * ratio.  On some hardware, if you would only set the preview size, you will getFromNonDefPref a distorted
      * image.
      *
-     * @param camera        the camera to setCurrentItem a preview size from
+     * @param camera        the camera to setAlreadyValidatedItems a preview size from
      * @param desiredWidth  the desired width of the camera preview frames
      * @param desiredHeight the desired height of the camera preview frames
      * @return the selected preview and picture size pair
@@ -904,7 +904,7 @@ public class CameraSource {
 
         // The method for selecting the best size is to minimize the sum of the differences between
         // the desired values and the actual values for width and height.  This is certainly not the
-        // only way to setCurrentItem the best size, but it provides a decent tradeoff between using the
+        // only way to setAlreadyValidatedItems the best size, but it provides a decent tradeoff between using the
         // closest aspect ratio vs. using the closest pixel area.
         SizePair selectedPair = null;
         int minDiff = Integer.MAX_VALUE;
@@ -998,7 +998,7 @@ public class CameraSource {
      * Selects the most suitable preview frames per second range, given the desired frames per
      * second.
      *
-     * @param camera            the camera to setCurrentItem a frames per second range from
+     * @param camera            the camera to setAlreadyValidatedItems a frames per second range from
      * @param desiredPreviewFps the desired frames per second for the camera preview frames
      * @return the selected preview frames per second range
      */
@@ -1008,7 +1008,7 @@ public class CameraSource {
         int desiredPreviewFpsScaled = (int) (desiredPreviewFps * 1000.0f);
 
         // The method for selecting the best range is to minimize the sum of the differences between
-        // the desired value and the upper and lower bounds of the range.  This may setCurrentItem a range
+        // the desired value and the upper and lower bounds of the range.  This may setAlreadyValidatedItems a range
         // that the desired value is outside of, but this is often preferred.  For example, if the
         // desired frame rate is 29.97, the range (30, 30) is probably more desirable than the
         // range (15, 30).

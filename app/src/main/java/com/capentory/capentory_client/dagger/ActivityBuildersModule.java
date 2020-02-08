@@ -10,6 +10,7 @@ import com.capentory.capentory_client.ui.LoginFragment;
 import com.capentory.capentory_client.ui.MainActivity;
 import com.capentory.capentory_client.ui.MergedItemsFragment;
 import com.capentory.capentory_client.ui.StocktakingFragment;
+import com.capentory.capentory_client.ui.ValidatedMergedItemsFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -48,4 +49,8 @@ public abstract class ActivityBuildersModule {
     @ContributesAndroidInjector(
             modules = {ItemFragmentViewModelsModule.class})
     abstract AttachmentsFragment contributeAttachementsFragment();
+
+    @ContributesAndroidInjector(
+            modules = {ItemFragmentViewModelsModule.class})
+    abstract ValidatedMergedItemsFragment contributeValidatedMergedItemsFragment();
 }

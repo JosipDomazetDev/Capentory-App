@@ -23,7 +23,8 @@ import javax.inject.Inject;
 
 public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>, MergedItemsRepository> {
     private List<ValidationEntry> validationEntries = new ArrayList<>();
-    private List<MergedItem> alreadyValidatedItems = new ArrayList<>();
+    private List<RecyclerViewItem> alreadyValidatedItems = new ArrayList<>();
+
     private List<Room> subRoomListForItemDetail;
     private StatusAwareLiveData<Boolean> validateSuccessful;
 
@@ -187,7 +188,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
     public void sendValidationEntriesToServer() {
         try {
             // TODO: DO NOT USE DAGGER
-            validateSuccessful = networkRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries, null));
+            validateSuccessful = networkRepository.sendValidationEntriesToServer(ValidationEntry.getValidationEntriesAsJson(validationEntries));
         } catch (JSONException e) {
             statusAwareLiveData.postError(e);
         }
@@ -198,11 +199,17 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
     }
 
     public MergedItem getAlreadyValidatedItemFromBarcode(String barcode) {
-        for (MergedItem alreadyValidatedItem : alreadyValidatedItems) {
-            if (alreadyValidatedItem.equalsBarcode(barcode))
-                return alreadyValidatedItem;
+        for (RecyclerViewItem alreadyValidatedItem : alreadyValidatedItems) {
+            if (alreadyValidatedItem instanceof MergedItem) {
+                if (((MergedItem) alreadyValidatedItem).equalsBarcode(barcode))
+                    return (MergedItem) alreadyValidatedItem;
+            }
         }
         return null;
     }
 
+
+    public List<RecyclerViewItem> getAlreadyValidatedItems() {
+        return alreadyValidatedItems;
+    }
 }

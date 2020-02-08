@@ -24,7 +24,7 @@ public class RoomxItemSharedViewModel extends ViewModel {
         currentRoomValidated.setValue(b);
     }
 
-    public MutableLiveData<Boolean> getCurrentRoomValidated() {
+    public LiveData<Boolean> getCurrentRoomValidated() {
         return currentRoomValidated;
     }
 }

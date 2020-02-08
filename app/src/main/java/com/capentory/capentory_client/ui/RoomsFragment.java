@@ -107,7 +107,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
             roomDropDown = view.findViewById(R.id.room_dropdown_fragment_room);
             finishedText = view.findViewById(R.id.no_rooms_fragment_rooms);
             ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText(
-                    getString(R.string.started_inventory_fragment_rooms, MainActivity.getStocktaking(getContext()).getName()));
+                    getString(R.string.started_inventory_fragment_rooms, MainActivity.getStocktaking().getName()));
 
             initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomViewModel.class),
                     new ErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom)),
@@ -191,7 +191,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     }
 
     private void handleFinishInventory() {
-        if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktaking()) {
+        if (MainActivity.getStocktaking().isNeverEndingStocktaking()) {
             finishInventory();
         } else
             new AlertDialog.Builder(Objects.requireNonNull(getContext()))

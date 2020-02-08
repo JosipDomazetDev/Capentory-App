@@ -78,7 +78,6 @@
     <string name="null_dropdown_value_fragment_item_detail">--- Kein Wert ---</string>
     <string name="logout_successful_fragment_login">Abmeldung erfolgreich!</string>
     <string name="login_successful_fragment_login">Token erfolgreich generiert!</string>
-    <string name="error_serializer">Sie müssen erst eine Inventur am Server anlegen und eine Datenbanksicht auswählen!</string>
     <string name="title_never_ending_finishroom_fragment_mergeditems">Alles im Raum erledigt?</string>
     <string name="msg_never_ending_finishroom_fragment_mergeditems">Wollen Sie die Validierung für diesen Raum beenden und die Daten an den Server senden?</string>
     <string name="title_one_left_finishroom_fragment_mergeditems">Fehlt ein Gegenstand?</string>
@@ -116,11 +115,10 @@
     <string name="found_times_recyclerview_adapter">Gefunden: %1$d/%2$d</string>
     <string name="recycler_view_counter_text_mergeditems">Gefunden: %1$s</string>
     <string name="room_popup"><![CDATA[<b>Raum:</b> %1$s]]></string>
-    <string name="error_stocktaking">Sie müssen eine Inventur anlegen!</string>
     <string name="label_itemsFragment_nav">Gegenstände</string>
     <string name="label_homeScreenFragment_nav">Home</string>
     <string name="label_roomFragment_nav">Raumauswahl</string>
-    <string name="label_itemDetailFragment_nav">Gegenstandsvalidierung</string>
+    <string name="label_itemDetailFragment_nav">Validierung</string>
     <string name="label_settingsFragment_nav">Einstellungen</string>
     <string name="label_aboutFragment_nav">Über uns</string>
     <string name="label_loginFragment_nav">Login</string>
@@ -178,4 +176,6 @@
     <string name="title_switch_trust_all_certificates">Selbst-signierten Zertifikaten vertrauen</string>
     <string name="low_storage_error_activity_scanners">Zu wenig Speicherplatz um Scanner herunterzuladen!</string>
     <string name="fragment_view_pager_nav">Gegenstände</string>
+    <string name="todo_viewpager_fragment">TODO</string>
+    <string name="done_todo_viewpager_fragment">DONE</string>
 </resources>

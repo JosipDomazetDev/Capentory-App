@@ -40,11 +40,16 @@ public class MainActivity extends DaggerAppCompatActivity {
     private static Stocktaking stocktaking;
     private static SerializerEntry serializer;
 
-    // We are not allowed to store a static context
-    public static Stocktaking getStocktaking(Context context) {
+    public static Stocktaking getStocktaking() {
         if (stocktaking == null)
-            throw new IllegalArgumentException(context.getString(R.string.error_stocktaking));
+            throw new IllegalArgumentException("Sie müssen eine Inventur anlegen!");
         return stocktaking;
+    }
+
+    public static SerializerEntry getSerializer() {
+        if (serializer == null)
+            throw new IllegalArgumentException("Sie müssen erst eine Inventur am Server anlegen und eine Datenbanksicht auswählen!");
+        return serializer;
     }
 
     public static void setStocktaking(Stocktaking stocktaking) {
@@ -53,13 +58,6 @@ public class MainActivity extends DaggerAppCompatActivity {
 
     public static void setSerializer(SerializerEntry selectedSerializer) {
         serializer = selectedSerializer;
-    }
-
-    // We are not allowed to store a static context
-    public static SerializerEntry getSerializer(Context context) {
-        if (serializer == null)
-            throw new IllegalArgumentException(context.getString(R.string.error_serializer));
-        return serializer;
     }
 
     public static void clearInventory() {

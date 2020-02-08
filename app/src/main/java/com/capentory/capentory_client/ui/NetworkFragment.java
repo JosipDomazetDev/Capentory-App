@@ -1,5 +1,6 @@
 package com.capentory.capentory_client.ui;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -43,7 +44,6 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     protected void refresh() {
     }
 
-    ;
 
 
     void initWithFetch(V networkViewModel, ErrorHandler errorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, RefreshHandler refreshHandler, String... args) {
@@ -75,6 +75,9 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
         initWithIDs(networkViewModel, errorHandler, view, progressBarID, null, -1);
     }
 
+    void initWithoutFetch(V networkViewModel, ErrorHandler errorHandler, View view, View content) {
+        initWithIDs(networkViewModel, errorHandler, view, -1, content, -1);
+    }
 
     <T> void observeSpecificLiveData(LiveData<StatusAwareData<T>> data, LiveDataSuccessHandler<T> liveDataSuccessHandler) {
         observeSpecificLiveData(data, liveDataSuccessHandler, this::handleError);
@@ -103,7 +106,7 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
         });
     }
 
-    private void observeMainLiveData(V networkViewModel) {
+    public void observeMainLiveData(V networkViewModel) {
         observeSpecificLiveData(networkViewModel.getLiveData(), this::handleSuccess);
     }
 
@@ -111,12 +114,14 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     private void initWithIDs(V networkViewModel, ErrorHandler errorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID) {
         this.networkViewModel = networkViewModel;
         this.errorHandler = errorHandler;
-        if (progressBarID != -1)
+        if (progressBarID != -1) {
             this.progressBar = view.findViewById(progressBarID);
-        progressBar.bringToFront();
+            progressBar.bringToFront();
+        }
         this.content = content;
-        if (swipeRefreshLayoutID != -1)
+        if (swipeRefreshLayoutID != -1) {
             this.swipeRefreshLayout = view.findViewById(swipeRefreshLayoutID);
+        }
     }
 
 

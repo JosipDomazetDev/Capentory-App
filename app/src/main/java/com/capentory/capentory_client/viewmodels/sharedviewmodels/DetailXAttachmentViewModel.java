@@ -1,5 +1,6 @@
 package com.capentory.capentory_client.viewmodels.sharedviewmodels;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -23,7 +24,7 @@ public class DetailXAttachmentViewModel extends ViewModel {
         exitedAttachmentScreen.setValue(b);
     }
 
-    public  MutableLiveData<Boolean> getExitedAttachmentScreen() {
+    public LiveData<Boolean> getExitedAttachmentScreen() {
         return exitedAttachmentScreen;
     }
 }

@@ -3,6 +3,7 @@ package com.capentory.capentory_client.ui;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +40,7 @@ import com.capentory.capentory_client.ui.zebra.ZebraBroadcastReceiver;
 import com.capentory.capentory_client.viewmodels.MergedItemViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.capentory.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
+import com.capentory.capentory_client.viewmodels.sharedviewmodels.ItemXValidatedSharedViewModel;
 import com.capentory.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 import com.capentory.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
 import com.capentory.capentory_client.viewmodels.wrappers.StatusAwareData;
@@ -61,6 +63,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     private RecyclerView recyclerView;
     private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
+    private ItemXValidatedSharedViewModel itemXValidatedSharedViewModel;
     private RecyclerViewAdapter adapter;
     private TextView noItemTextView;
     private TextView currentProgressTextView;
@@ -68,12 +71,17 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     private boolean isKeyboardShowing = false;
     private boolean quickScanActivated = true;
     private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::launchItemDetailFragmentFromBarcode);
+    private ViewPagerFragment viewPagerFragment;
 
-    @Inject
+      @Inject
     ViewModelProviderFactory providerFactory;
 
     public MergedItemsFragment() {
         // Required empty public constructor
+    }
+
+    public MergedItemsFragment(ViewPagerFragment viewPagerFragment) {
+        this.viewPagerFragment = viewPagerFragment;
     }
 
 
@@ -110,16 +118,17 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn);
+        final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn_fragment_mergeditems);
         final FloatingActionButton addItem = view.findViewById(R.id.add_item_floatingbtn);
         final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_mergeditems);
-        currentProgressTextView = view.findViewById(R.id.progress_textview_value_mergeditems);
+        currentProgressTextView = view.findViewById(R.id.progress_textview_value_fragment_validated_mergeditems);
         setAdditionalViewsToHide(currentProgressTextView);
         noItemTextView = view.findViewById(R.id.no_items_fragment_mergeditems);
         setAdditionalViewsToHide(noItemTextView);
-        recyclerView = view.findViewById(R.id.recyclerv_view);
+        recyclerView = view.findViewById(R.id.recycler_view_fragment_mergeditems);
         adapter = getRecyclerViewAdapter();
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
+        itemXValidatedSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemXValidatedSharedViewModel.class);
 
         roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
         currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomId();
@@ -135,9 +144,12 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         );
 
 
-        roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom -> currentRoomTextView.setText(
+        Log.e("XXXX", String.valueOf(networkViewModel));
+
+
+        roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom ->
                 // Set the current room view
-                PopUtility.getHTMLFromStringRessources(R.string.current_room_fragment_mergeditems, displayRoomString, getContext())));
+                currentRoomTextView.setText(PopUtility.getHTMLFromStringRessources(R.string.current_room_fragment_mergeditems, displayRoomString, getContext())));
 
 
         view.findViewById(R.id.scan_item_floatingbtn).setOnClickListener(v -> {
@@ -161,6 +173,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
                     // This means he pressed the Green Button and wants to add a ValidationEntry
                     networkViewModel.addValidationEntry(validationEntry);
                     networkViewModel.removeItemByFoundCounterIncrease(itemxDetailSharedViewModel.getCurrentItem());
+                    itemXValidatedSharedViewModel.setAlreadyValidatedItems(networkViewModel.getAlreadyValidatedItems());
                 }
             }
         });
@@ -170,20 +183,24 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         View root = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
         root.getViewTreeObserver().addOnGlobalLayoutListener(() -> setKeyboardShowing(root));
 
-        view.findViewById(R.id.quick_scan_floatingbtn).setOnClickListener(this::toggleQuickScan);
+        view.findViewById(R.id.quick_scan_floatingbtn_fragment_mergeditems).setOnClickListener(this::toggleQuickScan);
 
 
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+       /* requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-                        .setTitle(getString(R.string.title_onback_fragment_mergeditems))
-                        .setMessage(getString(R.string.msg_onback_fragment_mergeditems))
-                        .setPositiveButton(android.R.string.yes, (dialog, which) -> NavHostFragment.findNavController(MergedItemsFragment.this).popBackStack())
-                        .setNegativeButton(android.R.string.no, null)
-                        .show();
+                MergedItemsFragment.this.handleOnBackPressed();
             }
-        });
+        });*/
+    }
+
+    public void handleOnBackPressed() {
+        new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                .setTitle(getString(R.string.title_onback_fragment_mergeditems))
+                .setMessage(getString(R.string.msg_onback_fragment_mergeditems))
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> NavHostFragment.findNavController(MergedItemsFragment.this).popBackStack())
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 
 
@@ -239,7 +256,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
 
         String title;
         String message;
-        if (MainActivity.getStocktaking(getContext()).isNeverEndingStocktaking()) {
+        if (MainActivity.getStocktaking().isNeverEndingStocktaking()) {
             title = getString(R.string.title_never_ending_finishroom_fragment_mergeditems);
             message = getString(R.string.msg_never_ending_finishroom_fragment_mergeditems);
         } else if (networkViewModel.getAmountOfItemsLeft() == 1) {

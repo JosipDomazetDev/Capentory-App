@@ -8,16 +8,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.capentory.capentory_client.R;
+import com.capentory.capentory_client.viewmodels.adapter.TabLayoutMediator;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.Objects;
 
 
 public class ViewPagerFragment extends Fragment {
@@ -25,6 +29,8 @@ public class ViewPagerFragment extends Fragment {
 
     // tab titles
     private String[] titles;
+    private MergedItemsFragment mergedItemsFragment;
+    private ValidatedMergedItemsFragment validatedMergedItemsFragment;
 
     public ViewPagerFragment() {
         // Required empty public constructor
@@ -36,21 +42,38 @@ public class ViewPagerFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_pager, container, false);
         //setContentView(binding.getRoot());
-        titles = new String[]{"TODO", "DONE"};
+        titles = new String[]{getString(R.string.todo_viewpager_fragment), getString(R.string.done_todo_viewpager_fragment)};
 
         init(view);
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                ViewPagerFragment.this.handleOnBackPressed();
+            }
+        });
         return view;
+    }
+
+    public void handleOnBackPressed() {
+        new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                .setTitle(getString(R.string.title_onback_fragment_mergeditems))
+                .setMessage(getString(R.string.msg_onback_fragment_mergeditems))
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> NavHostFragment.findNavController(ViewPagerFragment.this).popBackStack())
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 
     private void init(View view) {
         ViewPager2 viewPager2 = view.findViewById(R.id.view_pager_fragment_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout_fragment_view_pager);
+        viewPager2.setUserInputEnabled(false);
 
         // removing toolbar elevation
         //((Toolbar)view.findViewById(R.id.toolbar)).setElevation(0);
         StateListAnimator stateListAnimator = new StateListAnimator();
         stateListAnimator.addState(new int[0], ObjectAnimator.ofFloat(view, "elevation", 0));
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
+        //((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
 
 
         viewPager2.setAdapter(new ViewPagerFragmentAdapter(getActivity()));
@@ -72,9 +95,17 @@ public class ViewPagerFragment extends Fragment {
         public Fragment createFragment(int position) {
             switch (position) {
                 case 0:
-                    return new MergedItemsFragment();
+                    if (mergedItemsFragment == null) {
+                        mergedItemsFragment = new MergedItemsFragment(ViewPagerFragment.this);
+                    }
+
+                    return new MergedItemsFragment(ViewPagerFragment.this);
                 case 1:
-                    return new ValidatedMergedItemsFragment();
+                    if (validatedMergedItemsFragment == null) {
+                        validatedMergedItemsFragment = new ValidatedMergedItemsFragment(ViewPagerFragment.this);
+                    }
+
+                    return new ValidatedMergedItemsFragment(ViewPagerFragment.this);
             }
             return new MergedItemsFragment();
         }
@@ -84,7 +115,11 @@ public class ViewPagerFragment extends Fragment {
             return titles.length;
         }
     }
+
+
 }
+
+
 
 /*
 package com.capentory.capentory_client.ui;

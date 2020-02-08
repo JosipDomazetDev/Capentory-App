@@ -27,7 +27,7 @@ public class HomeScreenRepository extends NetworkRepository<MergedItem> {
         }
         this.barcode = args[0];
 
-        addMainRequest(Request.Method.GET, getUrl(context, true, MainActivity.getSerializer(context).getItemUrl(), barcode));
+        addMainRequest(Request.Method.GET, getUrl(context, true, MainActivity.getSerializer().getItemUrl(), barcode));
         launchMainRequest();
         return mainContentRepoData;
     }
