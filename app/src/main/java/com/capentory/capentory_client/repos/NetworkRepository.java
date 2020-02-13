@@ -182,9 +182,14 @@ public abstract class NetworkRepository<L> {
     }
 
     public void clearRequests() {
+        // Try to avoid leaking the repository through lambdas.
+
         for (RobustJsonRequestExecutioner requestExecutioner : requests.values()) {
             requestExecutioner.clearRequest();
         }
+
+        requests = null;
+        requests = new HashMap<>();
         //NetworkSingleton.getInstance(context).getRequestQueue().cancelAll(request -> true);
     }
 }

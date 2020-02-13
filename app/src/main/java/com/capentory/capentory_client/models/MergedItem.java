@@ -172,7 +172,7 @@ public class MergedItem implements RecyclerViewItem {
         if (barcode == null) return false;
 
         // 12340000 = 12340000
-        return Objects.equals(getBarcode(), scannedBarcode);
+        return barcode.equals(scannedBarcode);
     }
 
     @Override

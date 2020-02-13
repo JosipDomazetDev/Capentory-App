@@ -199,11 +199,10 @@
     <string name="disable_compression_preferences">Disable Compression</string>
     <string name="title_switch_trust_all_certificates">Trust self-signed certificates</string>
     <string name="low_storage_error_activity_scanners">Scan library cannot be downloaded due to low device storage!</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="fragment_view_pager_nav">Item overview</string>
+    <string name="fragment_view_pager_nav">Items</string>
     <string name="todo_viewpager_fragment">TODO</string>
     <string name="done_todo_viewpager_fragment">DONE</string>
-    <string name="no_items_validated_fragment_validated_mergeditems">No items validated yet</string>
+    <string name="no_items_validated_fragment_validated_mergeditems">No items validated yet!</string>
+    <string name="title_switch_uses_tabs_preferences">Display DONE-List for the item screen</string>
+    <string name="warning_duplicate_fragment_mergeditems">Please close the dialog before continuing!</string>
 </resources>

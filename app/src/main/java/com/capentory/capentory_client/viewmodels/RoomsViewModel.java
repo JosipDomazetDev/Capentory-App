@@ -8,11 +8,11 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class RoomViewModel extends NetworkViewModel<List<Room>, RoomsRepository> {
+public class RoomsViewModel extends NetworkViewModel<List<Room>, RoomsRepository> {
     private int amountOfValidatedRooms = 0;
 
     @Inject
-    public RoomViewModel(RoomsRepository ralphRepository) {
+    public RoomsViewModel(RoomsRepository ralphRepository) {
         super(ralphRepository);
     }
 

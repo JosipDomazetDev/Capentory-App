@@ -42,7 +42,7 @@ public class ScanBarcodeActivity extends Activity {
     private CameraSource cameraSource;
     private MediaPlayer mediaPlayer;
     private boolean lockedOnFirst = false;
-    public static final String FOCUS_MODE = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
+    public static final String FOCUS_MODE = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

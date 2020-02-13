@@ -54,6 +54,14 @@
 
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/other_title_preferences">
+
+
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="switch_uses_tabs"
+            android:title="@string/title_switch_uses_tabs_preferences" />
+
         <ListPreference
             android:defaultValue="1"
             android:dialogTitle="@string/dialog_title_shake_sensitivity_preferences"

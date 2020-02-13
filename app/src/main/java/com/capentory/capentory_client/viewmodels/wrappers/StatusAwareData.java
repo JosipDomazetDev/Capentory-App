@@ -63,6 +63,6 @@ public class StatusAwareData<T> {
         INITIALIZED,
         SUCCESS,
         ERROR,
-        FETCHING;
+        FETCHING
     }
 }

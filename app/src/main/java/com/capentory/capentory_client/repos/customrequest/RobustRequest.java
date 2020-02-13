@@ -17,12 +17,12 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class CustomRequest extends JsonRequest<String> {
+public class RobustRequest extends JsonRequest<String> {
     private Context context;
     private boolean sendToken = true;
 
 
-    public CustomRequest(Context context, int method, String url, @Nullable String requestBody, Response.Listener<String> listener, @Nullable Response.ErrorListener errorListener) {
+    public RobustRequest(Context context, int method, String url, @Nullable String requestBody, Response.Listener<String> listener, @Nullable Response.ErrorListener errorListener) {
         super(method, url, requestBody, listener, errorListener);
         Log.e("REQ", url);
         this.context = context;
@@ -71,9 +71,5 @@ public class CustomRequest extends JsonRequest<String> {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         return headers;
-    }
-
-    public void clearRequest() {
-
     }
 }

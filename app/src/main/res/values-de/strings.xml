@@ -178,4 +178,7 @@
     <string name="fragment_view_pager_nav">Gegenstände</string>
     <string name="todo_viewpager_fragment">TODO</string>
     <string name="done_todo_viewpager_fragment">DONE</string>
+    <string name="title_switch_uses_tabs_preferences">DONE-Liste als zweiten Tab anzeigen</string>
+    <string name="no_items_validated_fragment_validated_mergeditems">Noch keine Gegenstände validiert!</string>
+    <string name="warning_duplicate_fragment_mergeditems">Schließen Sie das Dialogsfenster bevor Sie weitermachen!</string>
 </resources>

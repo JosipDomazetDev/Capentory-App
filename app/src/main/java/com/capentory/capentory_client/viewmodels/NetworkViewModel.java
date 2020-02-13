@@ -1,5 +1,7 @@
 package com.capentory.capentory_client.viewmodels;
 
+import android.widget.Button;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -21,7 +23,6 @@ public abstract class NetworkViewModel<P, R extends NetworkRepository<P>> extend
     public LiveData<StatusAwareData<P>> getLiveData() {
         return this.statusAwareLiveData;
     }
-
 
     public abstract void reloadData(String... args);
 

@@ -12,11 +12,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,6 +28,7 @@ import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.SearchBarHelperUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.androidutility.UserUtility;
+import com.capentory.capentory_client.androidutility.VibrateUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.RecyclerViewItem;
 import com.capentory.capentory_client.models.Room;
@@ -72,8 +73,10 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     private boolean quickScanActivated = true;
     private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::launchItemDetailFragmentFromBarcode);
     private ViewPagerFragment viewPagerFragment;
+    private AlertDialog duplicateMessage;
 
-      @Inject
+
+    @Inject
     ViewModelProviderFactory providerFactory;
 
     public MergedItemsFragment() {
@@ -134,7 +137,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         currentRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getRoomId();
         String displayRoomString = Objects.requireNonNull(roomxItemSharedViewModel.getCurrentRoom().getValue()).getDisplayedNumber();
 
-        initWithFetch(ViewModelProviders.of(this, providerFactory).get(MergedItemViewModel.class),
+        initWithFetch(new ViewModelProvider(this, providerFactory).get(MergedItemViewModel.class),
                 new ErrorHandler(getContext(), view.findViewById(R.id.room_number_fragment_mergeditems)),
                 view,
                 R.id.progress_bar_fragment_mergeditems,
@@ -371,18 +374,23 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), SettingsFragment.ENFORCE_ZEBRA_KEY, true))
             return;
 
+        if (duplicateMessage != null && duplicateMessage.isShowing()) {
+            ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.warning_duplicate_fragment_mergeditems), Toast.LENGTH_LONG);
+            VibrateUtility.makeNormalVibration(getContext());
+            return;
+        }
+
 
         // Item already scanned, create subItem (if user wants to)
         MergedItem mergedItemFromBarcode = networkViewModel.getAlreadyValidatedItemFromBarcode(barcode);
         if (mergedItemFromBarcode != null) {
-            new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+            duplicateMessage = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                     .setTitle(getString(R.string.title_duplicate_fragment_mergeditems))
                     .setMessage(getString(R.string.msg_duplicate_fragment_mergeditems))
-                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        handleQuickScan(mergedItemFromBarcode);
-                    })
-                    .setNegativeButton(android.R.string.no, null)
-                    .show();
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> handleQuickScan(mergedItemFromBarcode))
+                    .setNegativeButton(android.R.string.no, null).create();
+            duplicateMessage.show();
+            VibrateUtility.makeNormalVibration(getContext());
             return;
         }
 

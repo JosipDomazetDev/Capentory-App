@@ -47,7 +47,6 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
 
         mergedItem.increaseTimesFoundCurrent();
         if (mergedItem.getTimesFoundCurrent() >= mergedItem.getTimesFoundLast()) {
-            alreadyValidatedItems.add(mergedItem);
 
             if (!removeItem(currentItems, mergedItem)) {
                 // This is called when a additional item (subitem or new item) is added,
@@ -71,6 +70,7 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
     private boolean removeItem(List<RecyclerViewItem> currentItems, MergedItem mergedItem) {
         if (currentItems.remove(mergedItem)) {
             validatedCount++;
+            alreadyValidatedItems.add(mergedItem);
             statusAwareLiveData.postSuccess(currentItems);
 
             if (mergedItem.getSubroom() != null) {
@@ -183,6 +183,10 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
 
     public void addValidationEntry(ValidationEntry validationEntry) {
         validationEntries.add(validationEntry);
+    }
+
+    public List<ValidationEntry> getValidationEntries() {
+        return validationEntries;
     }
 
     public void sendValidationEntriesToServer() {

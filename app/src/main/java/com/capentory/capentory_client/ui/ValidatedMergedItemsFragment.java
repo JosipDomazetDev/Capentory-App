@@ -52,7 +52,6 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
     private TextView noItemTextView;
     private TextView currentProgressTextView;
     private boolean isKeyboardShowing = false;
-    private ItemxDetailSharedViewModel itemxDetailSharedViewModel;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
     private ItemXValidatedSharedViewModel itemXValidatedSharedViewModel;
     private ViewPagerFragment viewPagerFragment;
@@ -97,7 +96,6 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
         recyclerView = view.findViewById(R.id.recycler_view_fragment_validated_mergeditems);
         adapter = getRecyclerViewAdapter();
 
-        itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
         itemXValidatedSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemXValidatedSharedViewModel.class);
         roomxItemSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(RoomxItemSharedViewModel.class);
 

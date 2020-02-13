@@ -46,7 +46,7 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
 
         @Multipart
         @POST(SerializerEntry.attachmentUrl)
-        Call<String> addFile(@Header("authorization") String aut,
+        Call<String> addFile(@Header("authorization") String auth,
                              @Part MultipartBody.Part file,
                              @Part("description") String description);
     }

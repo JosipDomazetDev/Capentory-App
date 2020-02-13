@@ -14,7 +14,7 @@ public class VibrateUtility {
         throw new UnsupportedOperationException();
     }
 
-    public static void makeNormalVibrations(Context context) {
+    public static void makeNormalVibration(Context context) {
         if (context == null) return;
 
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);

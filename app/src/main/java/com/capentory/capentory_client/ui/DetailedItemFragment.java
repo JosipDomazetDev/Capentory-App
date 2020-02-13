@@ -149,7 +149,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem();
         if (mergedItem != null && mergedItem.isSearchedForItem()) {
             // Item is not of the normal case, therefore vibrate
-            VibrateUtility.makeNormalVibrations(getContext());
+            VibrateUtility.makeNormalVibration(getContext());
 
             networkViewModel.fetchSearchedForItem(mergedItem.getBarcode());
             observeSpecificLiveData(networkViewModel.getSearchedForItem(), liveData -> handleSearchedForItemResponse(view, liveData));

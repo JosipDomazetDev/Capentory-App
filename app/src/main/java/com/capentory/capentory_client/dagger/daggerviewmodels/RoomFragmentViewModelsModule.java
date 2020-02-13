@@ -3,7 +3,7 @@ package com.capentory.capentory_client.dagger.daggerviewmodels;
 import androidx.lifecycle.ViewModel;
 
 import com.capentory.capentory_client.dagger.ViewModelKey;
-import com.capentory.capentory_client.viewmodels.RoomViewModel;
+import com.capentory.capentory_client.viewmodels.RoomsViewModel;
 
 import dagger.Binds;
 import dagger.Module;
@@ -14,6 +14,6 @@ public abstract class RoomFragmentViewModelsModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RoomViewModel.class)
-    public abstract ViewModel bindRoomFragmentViewModel(RoomViewModel viewModel);
+    @ViewModelKey(RoomsViewModel.class)
+    public abstract ViewModel bindRoomFragmentViewModel(RoomsViewModel viewModel);
 }

@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_roomFragment_to_viewPagerFragment"
             app:destination="@id/viewPagerFragment" />
+        <action
+            android:id="@+id/action_roomFragment_to_itemsFragment2"
+            app:destination="@id/itemsFragment" />
     </fragment>
     <fragment
         android:id="@+id/itemDetailFragment"
@@ -41,11 +44,6 @@
         <action
             android:id="@+id/next"
             app:destination="@id/attachmentsFragment" />
-        <action
-            android:id="@+id/action_itemDetailFragment_to_itemsFragment"
-            app:popUpToInclusive="true"
-            app:popUpTo="@id/itemDetailFragment"
-            app:destination="@id/itemsFragment" />
     </fragment>
 
 
@@ -117,11 +115,7 @@
         android:id="@+id/attachmentsFragment"
         android:name="com.capentory.capentory_client.ui.AttachmentsFragment"
         android:label="@string/attachments_fragment_attachments"
-        tools:layout="@layout/fragment_attachments" >
-        <action
-            android:id="@+id/action_attachmentsFragment_to_itemDetailFragment"
-            app:destination="@id/itemDetailFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_attachments" />
 
     <fragment
         android:id="@+id/viewPagerFragment"

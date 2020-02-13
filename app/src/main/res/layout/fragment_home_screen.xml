@@ -28,7 +28,6 @@
             android:textSize="15sp"
             app:backgroundTint="#2196F3"
             app:cornerRadius="6dp"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

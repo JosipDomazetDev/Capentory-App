@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.capentory.capentory_client.R;
+import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.SearchBarHelperUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.androidutility.UserUtility;
@@ -30,7 +31,7 @@ import com.capentory.capentory_client.repos.RoomsRepository;
 import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.capentory.capentory_client.ui.zebra.ZebraBroadcastReceiver;
-import com.capentory.capentory_client.viewmodels.RoomViewModel;
+import com.capentory.capentory_client.viewmodels.RoomsViewModel;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.capentory.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 import com.capentory.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
@@ -49,7 +50,7 @@ import javax.inject.Inject;
  * Activities that contain this fragment must implement the
  * to handle interaction events.
  */
-public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, RoomViewModel> {
+public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, RoomsViewModel> {
     private Spinner roomDropDown;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
     private TextView finishedText;
@@ -109,7 +110,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
             ((TextView) view.findViewById(R.id.started_stocktaking_text_fragment_actualroom)).setText(
                     getString(R.string.started_inventory_fragment_rooms, MainActivity.getStocktaking().getName()));
 
-            initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomViewModel.class),
+            initWithFetch(ViewModelProviders.of(this, providerFactory).get(RoomsViewModel.class),
                     new ErrorHandler(getContext(), view.findViewById(R.id.dropdown_text_fragment_actualroom)),
                     view,
                     R.id.progress_bar_fragment_actualrooms,
@@ -171,8 +172,15 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
         Room selectedRoom = (Room) roomDropDown.getSelectedItem();
         if (selectedRoom == null) return;
         roomxItemSharedViewModel.setCurrentRoom(selectedRoom);
-        //NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment);
-        NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_viewPagerFragment);
+        moveToNextScreen();
+    }
+
+    private void moveToNextScreen() {
+        if (PreferenceUtility.getBoolean(getContext(), SettingsFragment.USES_TABS_KEY, true)) {
+            NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_viewPagerFragment);
+        } else {
+            NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment2);
+        }
     }
 
 
@@ -182,8 +190,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
         for (Room room : roomsLiveData.getData()) {
             if (room.equalsBarcode(barcode)) {
                 roomxItemSharedViewModel.setCurrentRoom(room);
-                //NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment);
-                NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_viewPagerFragment);
+                moveToNextScreen();
                 return;
             }
         }

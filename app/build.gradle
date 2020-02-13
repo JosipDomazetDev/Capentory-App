@@ -45,7 +45,7 @@ dependencies {
     implementation 'info.androidhive:barcode-reader:1.1.5'
     implementation 'com.android.volley:volley:1.1.1'
 
-    def nav_version = "2.2.0"
+    def nav_version = "2.2.1"
 
     // Navigation Components & MVVM Components
     implementation "androidx.navigation:navigation-fragment:$nav_version"
@@ -86,4 +86,9 @@ dependencies {
     // View Pager
     //implementation "com.google.android.material:material:1.2.0-alpha04"
     implementation "androidx.viewpager2:viewpager2:1.0.0"
+
+
+    // Testing
+
+    testImplementation 'org.mockito:mockito-all:2.0.2-beta'
 }

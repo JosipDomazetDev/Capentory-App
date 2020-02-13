@@ -56,6 +56,7 @@ public class ViewPagerFragment extends Fragment {
     }
 
     public void handleOnBackPressed() {
+        // new MaterialAlertDialogBuilder(context)
         new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setTitle(getString(R.string.title_onback_fragment_mergeditems))
                 .setMessage(getString(R.string.msg_onback_fragment_mergeditems))
@@ -109,6 +110,8 @@ public class ViewPagerFragment extends Fragment {
             }
             return new MergedItemsFragment();
         }
+
+
 
         @Override
         public int getItemCount() {
