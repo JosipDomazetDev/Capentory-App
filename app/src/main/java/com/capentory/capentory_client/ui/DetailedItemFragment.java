@@ -520,7 +520,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         if (itemxDetailSharedViewModel.areSubRoomsInvolved()) {
             Spinner subRoomDropDown = view.findViewById(R.id.subroom_dropdown_fragment_itemdetail);
             Room selectedRoom = (Room) subRoomDropDown.getSelectedItem();
-            validationEntry.setStaticRoomChange(selectedRoom, currentItem.getSubroom());
+            validationEntry.setStaticRoom(selectedRoom);
         }
 
         // fieldName, MergedItemField

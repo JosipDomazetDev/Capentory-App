@@ -30,7 +30,7 @@ public class ValidationEntry {
     private String barcode;
     private List<Attachment> attachments = new ArrayList<>();
     private boolean markForLater = false;
-    private Room newSubroom = null;
+    private Room subRoom = null;
     private List<Field> normalFieldChanges = new ArrayList<>();
     private List<Field> customFieldChanges = new ArrayList<>();
 
@@ -101,9 +101,9 @@ public class ValidationEntry {
             validationEntryAsJson.put(ATTACHMENT_JSON_KEY, Attachment.getAttachmentsAsJSON(validationEntry.attachments));
         }
 
-        // If subrooms are involved the subRoom of the item might have been changed
-        if (validationEntry.newSubroom != null) {
-            validationEntryAsJson.put(SUBROOM_JSON_KEY, validationEntry.newSubroom.getRoomId());
+        // If subRooms are involved the subRoom MUST be added (even if it did not change)
+        if (validationEntry.subRoom != null) {
+            validationEntryAsJson.put(SUBROOM_JSON_KEY, validationEntry.subRoom.getRoomId());
         }
 
         // Normal-Fields
@@ -165,10 +165,8 @@ public class ValidationEntry {
         markForLater = b;
     }
 
-    public void setStaticRoomChange(Room selectedRoom, Room currentRoom) {
-        if (!selectedRoom.equals(currentRoom)) {
-            newSubroom = selectedRoom;
-        }
+    public void setStaticRoom(Room selectedRoom) {
+        subRoom = selectedRoom;
     }
 
 

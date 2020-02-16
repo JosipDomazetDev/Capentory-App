@@ -91,4 +91,5 @@ dependencies {
     // Testing
 
     testImplementation 'org.mockito:mockito-all:2.0.2-beta'
+    testImplementation 'org.robolectric:robolectric:4.3'
 }

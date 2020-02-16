@@ -130,5 +130,6 @@ public class RobustJsonRequestExecutioner {
         errorHandler = null;
         errorListener = null;
         robustJsonObjectRequest.cancel();
+        robustJsonObjectRequest = null;
     }
 }
