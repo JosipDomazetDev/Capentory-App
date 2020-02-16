@@ -29,8 +29,8 @@ public class ViewPagerFragment extends Fragment {
 
     // tab titles
     private String[] titles;
-    private MergedItemsFragment mergedItemsFragment;
-    private ValidatedMergedItemsFragment validatedMergedItemsFragment;
+    //private MergedItemsFragment mergedItemsFragment;
+    //private ValidatedMergedItemsFragment validatedMergedItemsFragment;
 
     public ViewPagerFragment() {
         // Required empty public constructor
@@ -96,16 +96,16 @@ public class ViewPagerFragment extends Fragment {
         public Fragment createFragment(int position) {
             switch (position) {
                 case 0:
-                    if (mergedItemsFragment == null) {
+                  /*  if (mergedItemsFragment == null) {
                         mergedItemsFragment = new MergedItemsFragment(ViewPagerFragment.this);
-                    }
+                    }*/
 
                     return new MergedItemsFragment(ViewPagerFragment.this);
                 case 1:
-                    if (validatedMergedItemsFragment == null) {
+                    /*if (validatedMergedItemsFragment == null) {
                         validatedMergedItemsFragment = new ValidatedMergedItemsFragment(ViewPagerFragment.this);
                     }
-
+*/
                     return new ValidatedMergedItemsFragment(ViewPagerFragment.this);
             }
             return new MergedItemsFragment();

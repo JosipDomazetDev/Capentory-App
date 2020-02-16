@@ -18,7 +18,6 @@
                     android:icon="@drawable/scan_text_icon_ios_black"
                     android:menuCategory="secondary"
                     android:title="@string/label_textscan_nav_drawer" />
-
             </group>
         </menu>
     </item>

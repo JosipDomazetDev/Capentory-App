@@ -400,7 +400,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     textInputLayout.setPadding(0, 0, 0, 40);
 
-                    TextInputEditText editText = new TextInputEditText(Objects.requireNonNull(getContext()));
+                    TextInputEditText editText = new TextInputEditText(view.getContext());
 
                     if (!fieldsWithValuesFromItem.isNull(currentField.getKey()))
                         editText.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));

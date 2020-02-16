@@ -47,14 +47,15 @@
                 android:layout_alignParentTop="true"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="5dp"
-                android:backgroundTint="#FFF"
                 android:scaleType="center"
-                app:backgroundTint="#2196F3"
-                app:borderWidth="2dp"
+                app:backgroundTint="#FFF"
+                app:borderWidth="0dp"
+                app:rippleColor="#2196F3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/scan_item_floatingbtn"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_add_blue_24dp" />
+                app:srcCompat="@drawable/ic_add_blue_24dp"
+                app:tint="#2196F3" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/scan_item_floatingbtn"
@@ -69,7 +70,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/scan_icon_ios_white" />
+                app:srcCompat="@drawable/scan_icon_ios_white"
+                app:tint="#FFF" />
 
             <TextView
                 android:id="@+id/room_number_fragment_mergeditems"
@@ -120,8 +122,8 @@
             android:layout_height="0dp"
             android:layout_marginTop="0dp"
             android:padding="5dp"
-            android:visibility="gone"
             android:scrollbars="vertical"
+            android:visibility="gone"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -142,7 +144,8 @@
             app:borderWidth="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_done_all_white_24dp" />
+            app:srcCompat="@drawable/ic_done_all_white_24dp"
+            app:tint="#FFF" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/quick_scan_floatingbtn_fragment_mergeditems"
@@ -158,6 +161,7 @@
             app:borderWidth="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_quick_scan_off" />
+            app:srcCompat="@drawable/ic_quick_scan_off"
+            app:tint="#FFF" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

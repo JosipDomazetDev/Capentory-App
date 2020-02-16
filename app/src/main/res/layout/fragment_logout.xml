@@ -88,6 +88,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/logout_locally_btn_fragment_login"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -109,6 +110,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/logout_server_btn_fragment_login"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -120,7 +122,6 @@
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
                 android:text="@string/server_logout_fragment_logout"
-
                 android:textAllCaps="false"
                 android:textColor="#0F82C0"
                 android:textSize="18sp"

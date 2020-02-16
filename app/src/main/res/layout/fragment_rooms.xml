@@ -43,6 +43,7 @@
                 android:layout_marginEnd="8dp"
                 android:backgroundTint="#2196F3"
                 app:borderWidth="0dp"
+                app:tint="#FFF"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.976"
                 app:layout_constraintStart_toStartOf="parent"
@@ -118,12 +119,13 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/choose_room_button_fragment_room"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="20dp"
+                android:letterSpacing="0.00"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
                 android:text="@string/confirm_room_fragment_rooms"
@@ -136,8 +138,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_max="400dp"
-                app:strokeWidth="2dp" />
+                app:layout_constraintWidth_max="400dp" />
 
 
             <TextView

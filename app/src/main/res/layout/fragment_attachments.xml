@@ -29,11 +29,11 @@
                 android:layout_marginBottom="8dp"
                 android:backgroundTint="#2196F3"
                 android:textColor="@android:color/white"
-                app:tint="@android:color/white"
                 app:backgroundTint="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/ic_add_attachment_black_24dp" />
+                app:srcCompat="@drawable/ic_add_attachment_black_24dp"
+                app:tint="#FFF" />
 
             <ProgressBar
                 android:id="@+id/progress_bar_fragment_attachment"

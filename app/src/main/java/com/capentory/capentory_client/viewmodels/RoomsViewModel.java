@@ -1,7 +1,10 @@
 package com.capentory.capentory_client.viewmodels;
 
+import androidx.lifecycle.LiveData;
+
 import com.capentory.capentory_client.models.Room;
 import com.capentory.capentory_client.repos.RoomsRepository;
+import com.capentory.capentory_client.ui.MainActivity;
 
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +51,9 @@ public class RoomsViewModel extends NetworkViewModel<List<Room>, RoomsRepository
 
     public void finishRoom() {
         amountOfValidatedRooms++;
-        reloadData();
+        // No need to reload on never ending stocktaking, since rooms won't be removed
+        if (!MainActivity.getStocktaking().isNeverEndingStocktaking()) {
+            reloadData();
+        }
     }
 }

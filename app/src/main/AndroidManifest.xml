@@ -40,9 +40,11 @@
         </activity>
         <activity
             android:name="com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity"
-            android:label="Scanner" />
+            android:label="Scanner"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="com.capentory.capentory_client.ui.scanactivities.ScanTextActivity"
+            android:label="Textscanner"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <meta-data

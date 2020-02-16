@@ -21,9 +21,9 @@
         android:text="@string/unlock_activity_scan_text"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
+        android:visibility="gone"
         app:backgroundTint="@android:color/transparent"
         app:cornerRadius="8dp"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,11 +76,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:focusable="true"
         android:onClick="toggleFlashText"
         app:backgroundTint="#2196F3"
-        android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_flash_on_white_24dp"
-        android:focusable="true" />
+        app:tint="#FFF" />
 </androidx.constraintlayout.widget.ConstraintLayout>

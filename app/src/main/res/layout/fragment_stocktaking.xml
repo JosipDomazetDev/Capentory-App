@@ -111,13 +111,14 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_fragment_stocktaking"
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="32dp"
                     android:layout_marginEnd="16dp"
+                    android:letterSpacing="0.00"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:text="@string/perform_inventory_fragment_stocktaking"
@@ -129,8 +130,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cardview_stocktaking_dropdown_fragment_stocktaking"
-                    app:strokeWidth="2dp" />
+                    app:layout_constraintTop_toBottomOf="@+id/cardview_stocktaking_dropdown_fragment_stocktaking" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/button_specific_search_fragment_stocktaking"
@@ -145,7 +145,8 @@
                     app:fabSize="mini"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/button_fragment_stocktaking"
-                    app:srcCompat="@drawable/ic_question_mark_outline_white_24dp" />
+                    app:srcCompat="@drawable/ic_question_mark_outline_white_24dp"
+                    app:tint="#FFF" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

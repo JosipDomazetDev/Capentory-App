@@ -32,9 +32,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:padding="20dp"
-            android:visibility="gone"
             android:textAlignment="center"
             android:textSize="14sp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -107,7 +107,6 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_max="400dp"
-            app:strokeColor="#2196F3"
-            app:strokeWidth="2dp" />
+            app:strokeColor="#2196F3" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
