@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Represents an MergedItem from ralph, only the desc and sap_item_number (scancode) is directly stored to allow later changes to the server
@@ -20,7 +19,7 @@ import java.util.Objects;
 public class MergedItem implements RecyclerViewItem {
     private static final String NEW_ITEM_CODE = "-1", SEARCHED_FOR_ITEM_CODE = "-2";
     @NonNull
-    private String pkItemId;
+    private String itemID;
     @NonNull
     private JSONObject fields, customFields;
     @Nullable
@@ -53,8 +52,8 @@ public class MergedItem implements RecyclerViewItem {
     }
 
     // For not fully fledged item just for the code
-    private MergedItem(@NonNull String pkItemId) {
-        this.pkItemId = pkItemId;
+    private MergedItem(@NonNull String itemID) {
+        this.itemID = itemID;
     }
 
     public MergedItem(JSONObject payload, Room subroom) throws JSONException {
@@ -63,7 +62,7 @@ public class MergedItem implements RecyclerViewItem {
     }
 
     private void extractFromJson(@NonNull JSONObject payload) throws JSONException {
-        this.pkItemId = payload.getString("itemID");
+        this.itemID = payload.getString("itemID");
         this.barcode = payload.getString("barcode");
         this.displayName = payload.getString("displayName");
         this.displayDescription = payload.getString("displayDescription");
@@ -106,16 +105,16 @@ public class MergedItem implements RecyclerViewItem {
 
 
     public boolean isNewItem() {
-        return pkItemId.equals(NEW_ITEM_CODE);
+        return itemID.equals(NEW_ITEM_CODE);
     }/**/
 
     public boolean isSearchedForItem() {
-        return pkItemId.equals(SEARCHED_FOR_ITEM_CODE);
+        return itemID.equals(SEARCHED_FOR_ITEM_CODE);
     }
 
     @NonNull
-    public String getPkItemId() {
-        return pkItemId;
+    public String getItemID() {
+        return itemID;
     }
 
 

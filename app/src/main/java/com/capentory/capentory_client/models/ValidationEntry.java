@@ -26,7 +26,7 @@ public class ValidationEntry {
     private static final String CUSTOM_FIELDS_JSON_KEY = "custom_fields";
 
     private MergedItem mergedItem;
-    private String pkItem;
+    private String itemID;
     private String barcode;
     private List<Attachment> attachments = new ArrayList<>();
     private boolean markForLater = false;
@@ -34,13 +34,13 @@ public class ValidationEntry {
     private List<Field> normalFieldChanges = new ArrayList<>();
     private List<Field> customFieldChanges = new ArrayList<>();
 
-    private ValidationEntry(String pkItem) {
-        this.pkItem = pkItem;
+    private ValidationEntry(String itemID) {
+        this.itemID = itemID;
     }
 
     public ValidationEntry(MergedItem mergedItem) {
         this.mergedItem = mergedItem;
-        pkItem = mergedItem.getPkItemId();
+        itemID = mergedItem.getItemID();
         barcode = mergedItem.getBarcode();
         attachments = mergedItem.getAttachments();
     }
@@ -85,7 +85,7 @@ public class ValidationEntry {
 
     private static JSONObject getValidationEntryAsJson(ValidationEntry validationEntry) throws JSONException {
         JSONObject validationEntryAsJson = new JSONObject();
-        validationEntryAsJson.put(PK_JSON_KEY, validationEntry.pkItem);
+        validationEntryAsJson.put(PK_JSON_KEY, validationEntry.itemID);
         // If the user wants the admin to check further
         if (validationEntry.markForLater) {
             validationEntryAsJson.put(MARK_FOR_LATER_VALIDATION_JSON_KEY, true);
@@ -103,7 +103,7 @@ public class ValidationEntry {
 
         // If subRooms are involved the subRoom MUST be added (even if it did not change)
         if (validationEntry.subRoom != null) {
-            validationEntryAsJson.put(SUBROOM_JSON_KEY, validationEntry.subRoom.getRoomId());
+            validationEntryAsJson.put(SUBROOM_JSON_KEY, validationEntry.subRoom.getRoomID());
         }
 
         // Normal-Fields
@@ -130,7 +130,7 @@ public class ValidationEntry {
     }
 
     public boolean isCanceledItem() {
-        return pkItem.equals(CANCEL_CODE);
+        return itemID.equals(CANCEL_CODE);
     }
 
     public void addChangedFieldFromFormValue(MergedItemField field, Object valueFromForm) {

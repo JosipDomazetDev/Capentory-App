@@ -1,6 +1,7 @@
 package com.capentory.capentory_client.repos;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.capentory.capentory_client.models.MergedItem;
@@ -49,6 +50,7 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
 
     @Override
     protected void handleMainSuccessfulResponse(String stringPayload) {
+        Log.e("eeee", stringPayload);
         try {
             JSONObject payload = new JSONObject(stringPayload);
             Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
@@ -116,7 +118,6 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
 
         return result;
     }
-
 
 
 }

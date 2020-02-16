@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Room>, RecyclerViewItem {
     @NonNull
-    private String displayNumber, roomId;
+    private String displayNumber, roomID;
 
     @Nullable
     private String displayDescriptions, barcode;
@@ -44,15 +44,15 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
     }
 
     private void extractRoomFromJson(JSONObject payload) throws JSONException {
-        this.roomId = payload.getString("roomID");
+        this.roomID = payload.getString("roomID");
         this.displayNumber = payload.getString("displayName");
         this.displayDescriptions = payload.getString("displayDescription");
         this.barcode = payload.getString("barcode");
     }
 
     @NonNull
-    public String getRoomId() {
-        return roomId;
+    public String getRoomID() {
+        return roomID;
     }
 
     public List<MergedItem> getMergedItems() {
@@ -92,9 +92,9 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
             return 1;
         }
 
-        if (this.roomId.compareTo(that.roomId) < 0) {
+        if (this.roomID.compareTo(that.roomID) < 0) {
             return -1;
-        } else if (this.roomId.compareTo(that.roomId) > 0) {
+        } else if (this.roomID.compareTo(that.roomID) > 0) {
             return 1;
         }
         if (displayDescriptions != null && that.displayDescriptions != null) {
