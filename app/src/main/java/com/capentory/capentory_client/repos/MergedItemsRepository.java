@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 public class MergedItemsRepository extends NetworkRepository<List<RecyclerViewItem>> {
     private String currentRoomString;
     private final String VALIDATION_REQUEST_KEY = "request_validation";
-    private int totalItemsCount = 0;
+    private int totalItemsCount = -1;
 
     // StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
 
@@ -45,8 +45,8 @@ public class MergedItemsRepository extends NetworkRepository<List<RecyclerViewIt
         this.currentRoomString = args[0];
         Map<String, String> paras = new HashMap<>();
         paras.put("stocktaking_id", String.valueOf(MainActivity.getStocktaking().getStocktakingId()));
-        totalItemsCount = 0;
 
+        totalItemsCount=0;
         addMainRequest(Request.Method.GET, getUrl(context, true, new String[]{MainActivity.getSerializer().getRoomUrl(), currentRoomString + "/"}, paras));
         launchMainRequest();
 

@@ -31,7 +31,8 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
     private MutableLiveData<String> progressMessage = new MutableLiveData<>();
     private int validatedCount = 0;
     // Indicates not counted yet
-    private int totalItemsCount = -1;
+    private static final int TOTAL_COUNT_NOT_SET_YET = -1;
+    private int totalItemsCount = TOTAL_COUNT_NOT_SET_YET;
 
 
     @Inject
@@ -44,11 +45,10 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
     public void removeItemByFoundCounterIncrease(MergedItem mergedItem) {
         List<RecyclerViewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
-
         mergedItem.increaseTimesFoundCurrent();
         if (mergedItem.getTimesFoundCurrent() >= mergedItem.getTimesFoundLast()) {
             if (!alreadyValidatedItems.contains(mergedItem)) {
-                alreadyValidatedItems.add(mergedItem);
+                alreadyValidatedItems.add(mergedItem.finish(true));
             }
 
             if (!removeItem(currentItems, mergedItem)) {
@@ -67,9 +67,9 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
         if (currentItems == null) return;
 
         // New items cannot be removed anyways, so no need to check
-        if (removeItem(currentItems, mergedItem)){
+        if (removeItem(currentItems, mergedItem)) {
             if (!alreadyValidatedItems.contains(mergedItem)) {
-                alreadyValidatedItems.add(mergedItem);
+                alreadyValidatedItems.add(mergedItem.finish(false));
             }
         }
     }
@@ -94,19 +94,23 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
             return;
         }
 
-        statusAwareLiveData = networkRepository.fetchMainData(args);
+        resetAndFetch(args);
     }
 
 
     @Override
     public void reloadData(String... args) {
         if (validatedCount == 0) {
-            statusAwareLiveData = networkRepository.fetchMainData(args);
-            validationEntries.clear();
-            alreadyValidatedItems.clear();
-            if (subRoomListForItemDetail != null)
-                subRoomListForItemDetail.clear();
+            resetAndFetch(args);
         }
+    }
+
+    private void resetAndFetch(String[] args) {
+        validationEntries.clear();
+        alreadyValidatedItems.clear();
+        if (subRoomListForItemDetail != null)
+            subRoomListForItemDetail.clear();
+        statusAwareLiveData = networkRepository.fetchMainData(args);
     }
 
 
@@ -160,13 +164,19 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
                 c += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
             }
         }*/
+
         return getTotalItemsCount() - validatedCount;
     }
 
+    public boolean totalItemCountUnkown() {
+        return totalItemsCount == TOTAL_COUNT_NOT_SET_YET;
+    }
+
     private int getTotalItemsCount() {
-        if (this.totalItemsCount == -1) {
+        if (totalItemCountUnkown()) {
             this.totalItemsCount = networkRepository.getTotalItemsCount();
         }
+
         return totalItemsCount;
     }
 

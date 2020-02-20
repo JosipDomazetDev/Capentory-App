@@ -1,5 +1,7 @@
 package com.capentory.capentory_client.viewmodels.adapter;
 
+import android.graphics.Color;
+import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.capentory.capentory_client.R;
@@ -82,14 +85,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             VHItem vhItem = (VHItem) holder;
             MergedItem item = (MergedItem) items.get(position);
 
-            vhItem.anlage_textview.setText(item.getCheckedDisplayBarcode());
-            vhItem.anlage_bez_textview.setText(item.getCheckedDisplayName());
+            vhItem.anlageTextview.setText(item.getCheckedDisplayBarcode());
+            vhItem.anlageBezTextview.setText(item.getCheckedDisplayName());
 
             if (item.getTimesFoundLast() > 1) {
-                vhItem.counter_textview.setText(vhItem.counter_textview.getContext().getString(R.string.found_times_recyclerview_adapter
+                vhItem.counterTextview.setText(vhItem.counterTextview.getContext().getString(R.string.found_times_recyclerview_adapter
                         , item.getTimesFoundCurrent(), item.getTimesFoundLast()));
-                vhItem.optional_counter_container.setVisibility(View.VISIBLE);
-            } else vhItem.optional_counter_container.setVisibility(View.GONE);
+                vhItem.optionalCounterContainer.setVisibility(View.VISIBLE);
+            } else vhItem.optionalCounterContainer.setVisibility(View.GONE);
+
+            if (item.wasFound()) {
+                vhItem.cardView.setCardBackgroundColor(Color.parseColor("#81C784"));
+            } else if (item.wasNotFound()) {
+                vhItem.cardView.setCardBackgroundColor(Color.parseColor("#F06292"));
+            } else if (item.notDecided()) {
+                //vhItem.cardView.setCardBackgroundColor(Color.parseColor("#000"));
+                // Do nothing, item not finished yet, we are on the "TO_DO" screen
+            }
+
         } else if (holder instanceof VHHeader) {
             VHHeader vhHeader = (VHHeader) holder;
             Room room = (Room) items.get(position);
@@ -242,18 +255,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     class VHItem extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView anlage_textview;
-        TextView anlage_bez_textview;
-        TextView counter_textview;
-        View optional_counter_container;
+        CardView cardView;
+        TextView anlageTextview;
+        TextView anlageBezTextview;
+        TextView counterTextview;
+        View optionalCounterContainer;
         ItemClickListener itemClickListener;
 
         VHItem(View itemView, ItemClickListener itemClickListener) {
             super(itemView);
-            anlage_textview = itemView.findViewById(R.id.anlage_textview);
-            anlage_bez_textview = itemView.findViewById(R.id.anlage_bez_textview);
-            counter_textview = itemView.findViewById(R.id.counter_textview);
-            optional_counter_container = itemView.findViewById(R.id.optional_counter_container);
+            cardView = itemView.findViewById(R.id.card_view_recyclerview_item_row);
+            anlageTextview = itemView.findViewById(R.id.anlage_textview);
+            anlageBezTextview = itemView.findViewById(R.id.anlage_bez_textview);
+            counterTextview = itemView.findViewById(R.id.counter_textview);
+            optionalCounterContainer = itemView.findViewById(R.id.optional_counter_container);
 
             this.itemClickListener = itemClickListener;
             itemView.setOnClickListener(this);

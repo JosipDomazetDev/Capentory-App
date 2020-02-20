@@ -77,7 +77,7 @@ public class ViewPagerFragment extends Fragment {
         //((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
 
 
-        viewPager2.setAdapter(new ViewPagerFragmentAdapter(getActivity()));
+        viewPager2.setAdapter(new ViewPagerFragmentAdapter(ViewPagerFragment.this));
 
         // attaching tab mediator
         new TabLayoutMediator(tabLayout, viewPager2,
@@ -89,6 +89,10 @@ public class ViewPagerFragment extends Fragment {
 
         public ViewPagerFragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
             super(fragmentActivity);
+        }
+
+        public ViewPagerFragmentAdapter(@NonNull Fragment fragment) {
+            super(fragment);
         }
 
         @NonNull
@@ -109,7 +113,9 @@ public class ViewPagerFragment extends Fragment {
                     return new ValidatedMergedItemsFragment(ViewPagerFragment.this);
             }
             return new MergedItemsFragment();
+
         }
+
 
 
 

@@ -195,6 +195,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
                 MergedItemsFragment.this.handleOnBackPressed();
             }
         });*/
+        itemXValidatedSharedViewModel.setAlreadyValidatedItems(networkViewModel.getAlreadyValidatedItems());
     }
 
     public void handleOnBackPressed() {
@@ -272,6 +273,16 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
             title = getString(R.string.title_0_left_finishroom_fragment_mergeditems);
             message = getString(R.string.msg_0_left_finishroom_fragment_mergeditems);
         }
+        for (MergedItem mergedItem : networkViewModel.getMergedItems()) {
+            Log.e("eeeeee", "_-------------------------------------------------------------");
+            Log.e("eeeeee", String.valueOf(mergedItem.getCheckedDisplayName()));
+            Log.e("eeeeee", String.valueOf(mergedItem.wasFound()));
+            Log.e("eeeeee", String.valueOf(mergedItem.wasNotFound()));
+        }
+
+
+
+
 
         new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setTitle(title)
@@ -309,7 +320,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         List<RecyclerViewItem> mergedItems = statusAwareMergedItem.getData();
         if (mergedItems == null) return;
 
-        if (networkViewModel.getAmountOfItemsLeft() < 1) {
+        if (networkViewModel.getAmountOfItemsLeft() == 0) {
             textView.setVisibility(View.VISIBLE);
             textView.setText(getString(R.string.no_items_left_fragment_mergeditems));
         } else {

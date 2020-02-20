@@ -18,6 +18,7 @@ import java.util.ArrayList;
  */
 public class MergedItem implements RecyclerViewItem {
     private static final String NEW_ITEM_CODE = "-1", SEARCHED_FOR_ITEM_CODE = "-2";
+    private static final int WAS_FOUND = 1, NOT_DECIDED = 0, WAS_NOT_FOUND = -1;
     @NonNull
     private String itemID;
     @NonNull
@@ -27,7 +28,11 @@ public class MergedItem implements RecyclerViewItem {
     private int timesFoundLast = 0, timesFoundCurrent = 0;
     private Room subroom;
     // For Items this control whether a item is already validated and  therefore whether a item should be included into the expand/collapse behaviour
+
+
     private boolean isExpanded = true;
+    // Only used for the DONE screen
+    private int wasFound = NOT_DECIDED;
     // Optional attachments
     private ArrayList<Attachment> attachments = new ArrayList<>();
 
@@ -223,4 +228,28 @@ public class MergedItem implements RecyclerViewItem {
     public void addAttachment(Attachment attachment) {
         attachments.add(attachment);
     }
+
+    public RecyclerViewItem finish(boolean wasFound) {
+        if (wasFound) {
+            this.wasFound = WAS_FOUND;
+        } else {
+            this.wasFound = WAS_NOT_FOUND;
+        }
+        return this;
+    }
+
+
+    public boolean wasFound() {
+        return wasFound == WAS_FOUND;
+    }
+
+    public boolean wasNotFound() {
+        return wasFound == WAS_NOT_FOUND;
+    }
+
+    public boolean notDecided() {
+        return wasFound == NOT_DECIDED;
+    }
+
+
 }
