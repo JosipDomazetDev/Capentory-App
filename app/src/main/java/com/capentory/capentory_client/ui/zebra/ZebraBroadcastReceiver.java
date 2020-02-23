@@ -31,11 +31,16 @@ public class ZebraBroadcastReceiver extends BroadcastReceiver {
                 scanListener.handleZebraScan(barcode);
             } catch (Exception e) {
                 //  Catch if the UI does not exist when we receive the broadcast
-                errorHandler.displayTextViewMessage(context.getString(R.string.wait_till_scan_ready_error));
+                if (errorHandler != null)
+                    errorHandler.displayTextViewMessage(context.getString(R.string.wait_till_scan_ready_error));
             }
         }
     }
 
+    private void unregister() {
+        errorHandler = null;
+        scanListener = null;
+    }
 
     public static void registerZebraReceiver(Context context, ZebraBroadcastReceiver zebraBroadcastReceiver) {
         if (context == null) return;
@@ -49,6 +54,7 @@ public class ZebraBroadcastReceiver extends BroadcastReceiver {
 
     public static void unregisterZebraReceiver(Context context, ZebraBroadcastReceiver zebraBroadcastReceiver) {
         if (context == null) return;
+        zebraBroadcastReceiver.unregister();
         context.unregisterReceiver(zebraBroadcastReceiver);
     }
 

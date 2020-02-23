@@ -100,10 +100,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         itemxDetailSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemxDetailSharedViewModel.class);
         detailXAttachmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(DetailXAttachmentViewModel.class);
 
-        detailXAttachmentViewModel.getExitedAttachmentScreen().observe(getViewLifecycleOwner(), aBoolean -> {
-            shouldStop = aBoolean;
-
-        });
+        detailXAttachmentViewModel.getExitedAttachmentScreen().observe(getViewLifecycleOwner(), aBoolean -> shouldStop = aBoolean);
 
 
         initWithFetch(ViewModelProviders.of(this, providerFactory).get(DetailItemViewModel.class),
@@ -161,15 +158,19 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     private void handleSearchedForItemResponse(@NonNull View view, StatusAwareData<MergedItem> liveData) {
         MergedItem mergedItem = liveData.getData();
         itemxDetailSharedViewModel.setCurrentItem(mergedItem);
-        TextView textView = view.findViewById(R.id.otherroom_textview_fragment_itemdetail);
-        assert mergedItem != null;
+        if (mergedItem == null) return;
 
-        if (mergedItem.isNewItem())
-            textView.setText(getString(R.string.text_unkown_item_fragment_detailitem));
-        else
-            textView.setText(getString(R.string.text_kown_but_different_room_item_fragment_detailitem, mergedItem.getDescriptionaryRoom()));
+        TextView edgeCaseTextView = view.findViewById(R.id.otherroom_textview_fragment_itemdetail);
 
-        textView.setVisibility(View.VISIBLE);
+        if (mergedItem.isNewItem()) {
+            edgeCaseTextView.setText(getString(R.string.text_unkown_item_fragment_detailitem));
+            mergedItem.markAsNew();
+        } else {
+            edgeCaseTextView.setText(getString(R.string.text_kown_but_different_room_item_fragment_detailitem, mergedItem.getDescriptionaryRoom()));
+            mergedItem.markAsOtherRoom();
+        }
+
+        edgeCaseTextView.setVisibility(View.VISIBLE);
         displayForm(view);
         hideProgressBarAndShowContent();
     }
@@ -178,8 +179,21 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     @Override
     protected void handleSuccess(StatusAwareData<Map<String, MergedItemField>> statusAwareData) {
         super.handleSuccess(statusAwareData);
-        if (!fetchSearchedForItem(view))
+        if (!fetchSearchedForItem(view)) {
+
+            MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem();
+            TextView edgeCaseTextView = view.findViewById(R.id.otherroom_textview_fragment_itemdetail);
+            edgeCaseTextView.setVisibility(View.VISIBLE);
+
+            // User might move an edge case item from DONE to TO_DO
+            if (mergedItem.isNewItem()) {
+                edgeCaseTextView.setText(getString(R.string.text_unkown_item_fragment_detailitem));
+            } else if (mergedItem.isFromOtherRoom()) {
+                edgeCaseTextView.setText(getString(R.string.text_kown_but_different_room_item_fragment_detailitem, mergedItem.getDescriptionaryRoom()));
+            } else edgeCaseTextView.setVisibility(View.GONE);
+
             displayForm(view);
+        }
     }
 
 

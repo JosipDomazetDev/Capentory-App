@@ -109,6 +109,7 @@ public class LoginFragment extends NetworkFragment<String, LoginRepository, Logi
             TextView passField = view.findViewById(R.id.password_fragment_login);
 
             view.findViewById(R.id.login_btn_fragment_login).setOnClickListener(v -> {
+                UserUtility.hideKeyboard(getActivity());
                 String userString = userField.getText().toString();
                 String passwordString = passField.getText().toString();
                 fetchManually(userString, passwordString);

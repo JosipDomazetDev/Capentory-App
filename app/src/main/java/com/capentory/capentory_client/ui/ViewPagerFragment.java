@@ -4,6 +4,7 @@ package com.capentory.capentory_client.ui;
 import android.animation.ObjectAnimator;
 import android.animation.StateListAnimator;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +79,7 @@ public class ViewPagerFragment extends Fragment {
 
 
         viewPager2.setAdapter(new ViewPagerFragmentAdapter(ViewPagerFragment.this));
+        viewPager2.setOffscreenPageLimit(1);
 
         // attaching tab mediator
         new TabLayoutMediator(tabLayout, viewPager2,
@@ -87,9 +89,7 @@ public class ViewPagerFragment extends Fragment {
 
     private class ViewPagerFragmentAdapter extends FragmentStateAdapter {
 
-        public ViewPagerFragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
-            super(fragmentActivity);
-        }
+
 
         public ViewPagerFragmentAdapter(@NonNull Fragment fragment) {
             super(fragment);
@@ -104,19 +104,17 @@ public class ViewPagerFragment extends Fragment {
                         mergedItemsFragment = new MergedItemsFragment(ViewPagerFragment.this);
                     }*/
 
-                    return new MergedItemsFragment(ViewPagerFragment.this);
+                    return new MergedItemsFragment();
                 case 1:
                     /*if (validatedMergedItemsFragment == null) {
                         validatedMergedItemsFragment = new ValidatedMergedItemsFragment(ViewPagerFragment.this);
                     }
 */
-                    return new ValidatedMergedItemsFragment(ViewPagerFragment.this);
+                    return new ValidatedMergedItemsFragment();
             }
             return new MergedItemsFragment();
 
         }
-
-
 
 
         @Override

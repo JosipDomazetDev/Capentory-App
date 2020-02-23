@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 public class MergedItemsRepository extends NetworkRepository<List<RecyclerViewItem>> {
     private String currentRoomString;
     private final String VALIDATION_REQUEST_KEY = "request_validation";
-    private int totalItemsCount = -1;
+    private int totalItemsCount;
 
     // StatusAwareLiveData<Boolean> validateSuccessful = new StatusAwareLiveData<>();
 

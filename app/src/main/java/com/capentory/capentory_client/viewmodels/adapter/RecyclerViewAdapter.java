@@ -2,6 +2,7 @@ package com.capentory.capentory_client.viewmodels.adapter;
 
 import android.graphics.Color;
 import android.provider.CalendarContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +28,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
+
+    private boolean usedAsTODO;
     private List<RecyclerViewItem> items = new ArrayList<>();
     private List<RecyclerViewItem> itemsFull;
     private List<RecyclerViewItem> collapsedItems = new ArrayList<>();
     private ItemClickListener itemClickListener;
     private static final int[] SUB_HEADER_FONT_SIZES = new int[]{18, 16, 14, 12};
 
-    public RecyclerViewAdapter(ItemClickListener itemClickListener) {
+    public RecyclerViewAdapter(ItemClickListener itemClickListener, boolean usedAsTODO) {
         this.itemClickListener = itemClickListener;
+        this.usedAsTODO = usedAsTODO;
     }
 
     public void fill(List<RecyclerViewItem> items) {
@@ -88,20 +92,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             vhItem.anlageTextview.setText(item.getCheckedDisplayBarcode());
             vhItem.anlageBezTextview.setText(item.getCheckedDisplayName());
 
-            if (item.getTimesFoundLast() > 1) {
+            if (item.getTimesFoundLast() > 1 || item.getTimesFoundCurrent() > 1) {
                 vhItem.counterTextview.setText(vhItem.counterTextview.getContext().getString(R.string.found_times_recyclerview_adapter
                         , item.getTimesFoundCurrent(), item.getTimesFoundLast()));
                 vhItem.optionalCounterContainer.setVisibility(View.VISIBLE);
             } else vhItem.optionalCounterContainer.setVisibility(View.GONE);
 
-            if (item.wasFound()) {
-                vhItem.cardView.setCardBackgroundColor(Color.parseColor("#81C784"));
+
+            if (item.notDecided()) {
+                // Standard color
+                vhItem.cardView.setCardBackgroundColor(-1);
+            } else if (item.wasFound()) {
+                if (item.isFromOtherRoom()) {
+                    vhItem.cardView.setCardBackgroundColor(Color.parseColor("#FFA726"));
+                } else if (item.isNewItem()) {
+                    vhItem.cardView.setCardBackgroundColor(Color.parseColor("#8EE6F1"));
+                } else
+                    vhItem.cardView.setCardBackgroundColor(Color.parseColor("#81C784"));
             } else if (item.wasNotFound()) {
-                vhItem.cardView.setCardBackgroundColor(Color.parseColor("#F06292"));
-            } else if (item.notDecided()) {
-                //vhItem.cardView.setCardBackgroundColor(Color.parseColor("#000"));
-                // Do nothing, item not finished yet, we are on the "TO_DO" screen
+                vhItem.cardView.setCardBackgroundColor(Color.parseColor("#f37778"));
             }
+
 
         } else if (holder instanceof VHHeader) {
             VHHeader vhHeader = (VHHeader) holder;
@@ -187,10 +198,29 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             room.setFirstHeaderShouldNotBeRemoved(true);
         }
 
-        for (MergedItem mergedItem : room.getMergedItems()) {
-            // Remove the item if its room is expanded
-            itemsToRemove.add(mergedItem);
-            mergedItem.setExpanded(false);
+
+        if (usedAsTODO) {
+            for (MergedItem mergedItem : room.getMergedItems()) {
+                // Remove the item if its room is expanded
+                itemsToRemove.add(mergedItem);
+                mergedItem.setExpanded(false);
+            }
+
+            // DONE-Screen should also be hidden
+            for (MergedItem mergedItem : room.getValidatedMergedItems()) {
+                mergedItem.setExpanded(false);
+            }
+        } else {
+            for (MergedItem mergedItem : room.getValidatedMergedItems()) {
+                // Remove the item if its room is expanded
+                itemsToRemove.add(mergedItem);
+                mergedItem.setExpanded(false);
+            }
+
+            // TODO-Screen should also be hidden
+            for (MergedItem mergedItem : room.getMergedItems()) {
+                mergedItem.setExpanded(false);
+            }
         }
 
         for (Room subRoom : room.getSubRooms()) {
@@ -211,10 +241,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemsToInserts.add(room);
         }
 
-        for (MergedItem mergedItem : room.getMergedItems()) {
-            // Add the item if its room is collapsed
-            itemsToInserts.add(mergedItem);
-            mergedItem.setExpanded(true);
+        if (usedAsTODO) {
+            for (MergedItem mergedItem : room.getMergedItems()) {
+                // Add the item if its room is collapsed
+                if (!items.contains(mergedItem)) {
+                    itemsToInserts.add(mergedItem);
+                    mergedItem.setExpanded(true);
+                }
+
+            }
+            // DONE-Screen should also be displayed
+            for (MergedItem mergedItem : room.getValidatedMergedItems()) {
+                mergedItem.setExpanded(true);
+            }
+        } else {
+            for (MergedItem mergedItem : room.getValidatedMergedItems()) {
+                // Add the item if its room is collapsed
+                if (!items.contains(mergedItem)) {
+                    itemsToInserts.add(mergedItem);
+                    mergedItem.setExpanded(true);
+                }
+            }
+
+            // TO_DO-Screen should also be displayed
+            for (MergedItem mergedItem : room.getMergedItems()) {
+                mergedItem.setExpanded(true);
+            }
         }
 
         for (Room subRoom : room.getSubRooms()) {

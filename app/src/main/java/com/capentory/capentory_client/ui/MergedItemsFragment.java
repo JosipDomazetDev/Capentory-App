@@ -3,7 +3,6 @@ package com.capentory.capentory_client.ui;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -72,7 +71,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     private boolean isKeyboardShowing = false;
     private boolean quickScanActivated = true;
     private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::launchItemDetailFragmentFromBarcode);
-    private ViewPagerFragment viewPagerFragment;
     private AlertDialog duplicateMessage;
 
 
@@ -81,10 +79,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
 
     public MergedItemsFragment() {
         // Required empty public constructor
-    }
-
-    public MergedItemsFragment(ViewPagerFragment viewPagerFragment) {
-        this.viewPagerFragment = viewPagerFragment;
     }
 
 
@@ -147,9 +141,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         );
 
 
-        Log.e("XXXX", String.valueOf(networkViewModel));
-
-
         roomxItemSharedViewModel.getCurrentRoom().observe(getViewLifecycleOwner(), currentRoom ->
                 // Set the current room view
                 currentRoomTextView.setText(PopUtility.getHTMLFromStringRessources(R.string.current_room_fragment_mergeditems, displayRoomString, getContext())));
@@ -174,7 +165,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
                     networkViewModel.removeCanceledItemDirectly(itemxDetailSharedViewModel.getCurrentItem());
                 } else {
                     // This means he pressed the Green Button and wants to add a ValidationEntry
-                    networkViewModel.addValidationEntry(validationEntry);
+                    networkViewModel.addValidationEntry(itemxDetailSharedViewModel.getCurrentItem(), validationEntry);
                     networkViewModel.removeItemByFoundCounterIncrease(itemxDetailSharedViewModel.getCurrentItem());
                     itemXValidatedSharedViewModel.setAlreadyValidatedItems(networkViewModel.getAlreadyValidatedItems());
                 }
@@ -196,6 +187,14 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
             }
         });*/
         itemXValidatedSharedViewModel.setAlreadyValidatedItems(networkViewModel.getAlreadyValidatedItems());
+
+        itemXValidatedSharedViewModel.getItemsShouldBeRevised().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (!networkViewModel.returnItems(itemXValidatedSharedViewModel.getItemsToRevise())) {
+                ToastUtility.displayCenteredToastMessage(getContext(), "", Toast.LENGTH_LONG);
+            }
+
+            itemXValidatedSharedViewModel.clearItemsToRevise();
+        });
     }
 
     public void handleOnBackPressed() {
@@ -273,15 +272,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
             title = getString(R.string.title_0_left_finishroom_fragment_mergeditems);
             message = getString(R.string.msg_0_left_finishroom_fragment_mergeditems);
         }
-        for (MergedItem mergedItem : networkViewModel.getMergedItems()) {
-            Log.e("eeeeee", "_-------------------------------------------------------------");
-            Log.e("eeeeee", String.valueOf(mergedItem.getCheckedDisplayName()));
-            Log.e("eeeeee", String.valueOf(mergedItem.wasFound()));
-            Log.e("eeeeee", String.valueOf(mergedItem.wasNotFound()));
-        }
-
-
-
 
 
         new AlertDialog.Builder(Objects.requireNonNull(getContext()))
@@ -317,22 +307,28 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
 
     private void displayRecyclerView(RecyclerViewAdapter adapter, StatusAwareData<List<RecyclerViewItem>> statusAwareMergedItem, TextView textView) {
         if (adapter == null) return;
-        List<RecyclerViewItem> mergedItems = statusAwareMergedItem.getData();
-        if (mergedItems == null) return;
+        List<RecyclerViewItem> recyclerViewItems = statusAwareMergedItem.getData();
+        if (recyclerViewItems == null) return;
 
-        if (networkViewModel.getAmountOfItemsLeft() == 0) {
+        networkViewModel.setTotalItemsCount();
+
+        // Super room will not be displayed but is in the list, therefore check with <= 1
+        if (recyclerViewItems.size() <= 1) {
+            recyclerView.setVisibility(View.GONE);
             textView.setVisibility(View.VISIBLE);
             textView.setText(getString(R.string.no_items_left_fragment_mergeditems));
         } else {
             textView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            fillRecyclerViewFromViewModel();
+            adapter.fill(recyclerViewItems);
         }
-        adapter.fill(mergedItems);
     }
 
 
     @NonNull
     private RecyclerViewAdapter getRecyclerViewAdapter() {
-        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(this);
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, true);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
@@ -429,7 +425,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     }
 
     private void performQuickScan(MergedItem mergedItem) {
-        networkViewModel.addValidationEntry(new ValidationEntry(mergedItem));
+        networkViewModel.addValidationEntry(mergedItem, new ValidationEntry(mergedItem));
         networkViewModel.removeItemByFoundCounterIncrease(mergedItem);
     }
 
@@ -437,12 +433,28 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     public void onPause() {
         super.onPause();
         ZebraBroadcastReceiver.unregisterZebraReceiver(getContext(), zebraBroadcastReceiver);
+
+        synchronized (adapter) {
+            fillRecyclerViewFromViewModel();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver);
+
+        synchronized (adapter) {
+            fillRecyclerViewFromViewModel();
+        }
+    }
+
+    private void fillRecyclerViewFromViewModel() {
+        if (networkViewModel.getLiveData().getValue() != null) {
+            List<RecyclerViewItem> recyclerViewItems = networkViewModel.getLiveData().getValue().getData();
+            if (recyclerViewItems == null) return;
+            adapter.fill(recyclerViewItems);
+        }
     }
 
 

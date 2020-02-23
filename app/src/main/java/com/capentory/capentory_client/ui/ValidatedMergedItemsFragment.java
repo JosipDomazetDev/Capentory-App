@@ -2,41 +2,45 @@ package com.capentory.capentory_client.ui;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.PopUtility;
+import com.capentory.capentory_client.androidutility.PreferenceUtility;
+import com.capentory.capentory_client.androidutility.SearchBarHelperUtility;
+import com.capentory.capentory_client.androidutility.ToastUtility;
+import com.capentory.capentory_client.androidutility.UserUtility;
+import com.capentory.capentory_client.androidutility.VibrateUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.RecyclerViewItem;
-import com.capentory.capentory_client.models.Room;
-import com.capentory.capentory_client.repos.MergedItemsRepository;
 import com.capentory.capentory_client.ui.errorhandling.CustomException;
 import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity;
-import com.capentory.capentory_client.viewmodels.MergedItemViewModel;
+import com.capentory.capentory_client.ui.zebra.ZebraBroadcastReceiver;
 import com.capentory.capentory_client.viewmodels.ViewModelProviderFactory;
 import com.capentory.capentory_client.viewmodels.adapter.RecyclerViewAdapter;
 import com.capentory.capentory_client.viewmodels.sharedviewmodels.ItemXValidatedSharedViewModel;
-import com.capentory.capentory_client.viewmodels.sharedviewmodels.ItemxDetailSharedViewModel;
 import com.capentory.capentory_client.viewmodels.sharedviewmodels.RoomxItemSharedViewModel;
 import com.capentory.capentory_client.viewmodels.wrappers.StatusAwareData;
+import com.google.android.gms.common.api.CommonStatusCodes;
 
 import java.util.List;
 import java.util.Objects;
@@ -54,10 +58,12 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
     private boolean isKeyboardShowing = false;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
     private ItemXValidatedSharedViewModel itemXValidatedSharedViewModel;
-    private ViewPagerFragment viewPagerFragment;
     private ErrorHandler errorHandler;
     @Inject
     ViewModelProviderFactory providerFactory;
+
+    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::askForRevision);
+    private AlertDialog revisionMessage;
 
 
     public ValidatedMergedItemsFragment() {
@@ -65,9 +71,24 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
     }
 
 
-    public ValidatedMergedItemsFragment(ViewPagerFragment viewPagerFragment) {
-        this.viewPagerFragment = viewPagerFragment;
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        SearchBarHelperUtility.bindSearchBar(menu, inflater, getActivity(), new SearchBarHelperUtility.SearchHandler() {
+            @Override
+            public void onQueryTextSubmit(String query) {
+                UserUtility.hideKeyboard(getActivity());
+            }
+
+            @Override
+            public void onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+
+            }
+        });
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,6 +115,7 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
         noItemTextView = view.findViewById(R.id.no_items_fragment_validated_mergeditems);
 
         recyclerView = view.findViewById(R.id.recycler_view_fragment_validated_mergeditems);
+
         adapter = getRecyclerViewAdapter();
 
         itemXValidatedSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ItemXValidatedSharedViewModel.class);
@@ -132,11 +154,34 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
         });
 */
 
+
+        view.findViewById(R.id.scan_item_floatingbtn_validated_mergeditems_fragment).setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), ScanBarcodeActivity.class);
+            startActivityForResult(intent, 0);
+        });
+
+
         itemXValidatedSharedViewModel.getAlreadyValidatedItems().observe(getViewLifecycleOwner(), statusAwareData -> {
             displayRecyclerView(adapter, statusAwareData, noItemTextView);
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 0) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    String barcode = data.getStringExtra("barcode");
+                    askForRevision(barcode);
+                } else {
+                    ToastUtility.displayCenteredToastMessage(getContext(),
+                            getString(R.string.scan_failed_scan_fragments), Toast.LENGTH_SHORT);
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     private void setKeyboardShowing(View root) {
         Rect r = new Rect();
@@ -162,8 +207,6 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
     }
 
 
-
-
     private void displayRecyclerView(RecyclerViewAdapter adapter, StatusAwareData<List<RecyclerViewItem>> statusAwareMergedItem, TextView textView) {
         if (adapter == null) return;
         List<RecyclerViewItem> mergedItems = statusAwareMergedItem.getData();
@@ -174,6 +217,7 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
 
     private void displayRecyclerView(RecyclerViewAdapter adapter, List<RecyclerViewItem> mergedItems, TextView textView) {
         if (mergedItems.size() < 1) {
+            recyclerView.setVisibility(View.GONE);
             textView.setVisibility(View.VISIBLE);
             textView.setText(getString(R.string.no_items_validated_fragment_validated_mergeditems));
         } else {
@@ -186,7 +230,7 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
 
     @NonNull
     private RecyclerViewAdapter getRecyclerViewAdapter() {
-        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(this);
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, false);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
@@ -196,7 +240,7 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
     @Override
     public void onItemClick(int position, View v) {
         if (adapter.getItem(position) instanceof MergedItem) {
-            //moveToItemDetail((MergedItem) adapter.getItem(position));
+            handleRevision((MergedItem) adapter.getItem(position));
         } else {
             try {
                 adapter.handleCollapseAndExpand(position, recyclerView.getChildViewHolder(v));
@@ -205,6 +249,26 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
                         new CustomException(getString(R.string.expand_failure_fragment_mergeditems)));
             }
         }
+    }
+
+    private void handleRevision(MergedItem mergedItem) {
+        TextView textView = new TextView(getContext());
+        textView.setText(getString(R.string.title_revise_item_fragment_validated_mergeditems));
+        textView.setPadding(32, 30, 20, 30);
+        textView.setTextSize(20F);
+        textView.setTextColor(Color.parseColor("#e8190e"));
+
+        revisionMessage = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                .setCustomTitle(textView)
+                .setMessage(getString(R.string.msg_revise_item_fragment_validated_mergeditems))
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> handleItemRevision(mergedItem))
+                .setNegativeButton(android.R.string.no, null).create();
+
+        revisionMessage.show();
+    }
+
+    private void handleItemRevision(MergedItem item) {
+        itemXValidatedSharedViewModel.addItemsToRevise(item);
     }
 
    /* private void moveToItemDetail(MergedItem currentItem) {
@@ -217,6 +281,57 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
         itemxDetailSharedViewModel.setCurrentRooms(rooms);
         NavHostFragment.findNavController(this).navigate(R.id.itemDetailFragment);
     }*/
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver);
+
+        synchronized (adapter) {
+            List<RecyclerViewItem> recyclerViewItems = itemXValidatedSharedViewModel.getAlreadyValidatedItems().getValue();
+            if (recyclerViewItems == null) return;
+            adapter.fill(recyclerViewItems);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ZebraBroadcastReceiver.unregisterZebraReceiver(getContext(), zebraBroadcastReceiver);
+
+        synchronized (adapter) {
+            List<RecyclerViewItem> recyclerViewItems = itemXValidatedSharedViewModel.getAlreadyValidatedItems().getValue();
+            if (recyclerViewItems == null) return;
+            adapter.fill(recyclerViewItems);
+        }
+    }
+
+    private void askForRevision(String barcode) {
+        if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), SettingsFragment.ENFORCE_ZEBRA_KEY, true))
+            return;
+
+        if (revisionMessage != null && revisionMessage.isShowing()) {
+            ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.warning_duplicate_fragment_mergeditems), Toast.LENGTH_LONG);
+            VibrateUtility.makeNormalVibration(getContext());
+            return;
+        }
+
+        if (itemXValidatedSharedViewModel.getAlreadyValidatedItems() == null
+                || itemXValidatedSharedViewModel.getAlreadyValidatedItems().getValue() == null)
+            return;
+
+        for (RecyclerViewItem recyclerViewItem : itemXValidatedSharedViewModel.getAlreadyValidatedItems().getValue()) {
+            if (recyclerViewItem instanceof MergedItem) {
+                if (((MergedItem) recyclerViewItem).equalsBarcode(barcode)) {
+                    handleRevision((MergedItem) recyclerViewItem);
+                    return;
+                }
+            }
+        }
+
+        ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.item_not_done_fragment_validated_mergeditems), Toast.LENGTH_LONG);
+    }
 
 
 }

@@ -19,6 +19,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/scan_item_floatingbtn_validated_mergeditems_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="5dp"
+            android:backgroundTint="#2196F3"
+            app:borderWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/scan_icon_ios_white"
+            app:tint="#FFF" />
+
 
         <TextView
             android:id="@+id/room_number_fragment_validated_mergeditems"
@@ -51,16 +67,16 @@
         android:id="@+id/no_items_fragment_validated_mergeditems"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="8dp"
         android:padding="20dp"
+        android:text="@string/no_items_validated_fragment_validated_mergeditems"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="17sp"
-        android:text="@string/no_items_validated_fragment_validated_mergeditems"
-        app:layout_constraintEnd_toStartOf="@+id/recycler_view_fragment_validated_mergeditems"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/recycler_view_fragment_validated_mergeditems"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_fragment_validated_mergeditems"

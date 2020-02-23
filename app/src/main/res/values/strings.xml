@@ -205,4 +205,7 @@
     <string name="no_items_validated_fragment_validated_mergeditems">No items validated yet!</string>
     <string name="title_switch_uses_tabs_preferences">Display DONE-List for the item screen</string>
     <string name="warning_duplicate_fragment_mergeditems">Please close the dialog before continuing!</string>
+    <string name="title_revise_item_fragment_validated_mergeditems">Revise Item</string>
+    <string name="msg_revise_item_fragment_validated_mergeditems">Do you want to discard all changes made to this item?</string>
+    <string name="item_not_done_fragment_validated_mergeditems">You haven\'t validated this item yet!</string>
 </resources>

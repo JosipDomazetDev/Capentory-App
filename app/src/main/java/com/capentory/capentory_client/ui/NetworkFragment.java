@@ -45,7 +45,6 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
     }
 
 
-
     void initWithFetch(V networkViewModel, ErrorHandler errorHandler, View view, int progressBarID, View content, int swipeRefreshLayoutID, RefreshHandler refreshHandler, String... args) {
         initWithIDs(networkViewModel, errorHandler, view, progressBarID, content, swipeRefreshLayoutID);
 
@@ -189,6 +188,8 @@ public abstract class NetworkFragment<P, R extends NetworkRepository<P>, V exten
 
     @Override
     public void onDestroy() {
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setOnRefreshListener(null);
         super.onDestroy();
     }
 }

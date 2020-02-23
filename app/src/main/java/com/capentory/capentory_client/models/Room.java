@@ -23,6 +23,7 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
 
     // These are only for subrooms
     private final List<MergedItem> mergedItems = new ArrayList<>();
+    private final List<MergedItem> validatedMergedItems = new ArrayList<>();
     private final List<Room> subRooms = new ArrayList<>();
     private int depth;
     private boolean isExpanded = true;
@@ -57,6 +58,10 @@ public class Room implements GenericDropDownAdapter.DropDownEntry, Comparable<Ro
 
     public List<MergedItem> getMergedItems() {
         return mergedItems;
+    }
+
+    public List<MergedItem> getValidatedMergedItems() {
+        return validatedMergedItems;
     }
 
     @NonNull

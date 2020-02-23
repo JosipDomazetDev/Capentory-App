@@ -19,6 +19,8 @@ import java.util.ArrayList;
 public class MergedItem implements RecyclerViewItem {
     private static final String NEW_ITEM_CODE = "-1", SEARCHED_FOR_ITEM_CODE = "-2";
     private static final int WAS_FOUND = 1, NOT_DECIDED = 0, WAS_NOT_FOUND = -1;
+    private static final int NORMAL = 0, OTHER_ROOM = 1, NEW_ITEM = 2, SEARCHED_FOR = -1;
+    private int state = NORMAL;
     @NonNull
     private String itemID;
     @NonNull
@@ -42,14 +44,23 @@ public class MergedItem implements RecyclerViewItem {
         return subroom;
     }
 
-    public int getAmountOfTotalItemsForSubroom(int c) {
-        if (subroom == null) return 0;
-        for (MergedItem mergedItem : subroom.getMergedItems()) {
-            c += mergedItem.getAmountOfTotalItemsForSubroom(c);
-        }
 
-        return subroom.getMergedItems().size();
+    public void markAsNormal() {
+        state = NORMAL;
     }
+
+    public void markAsOtherRoom() {
+        state = OTHER_ROOM;
+    }
+
+    public void markAsNew() {
+        state = NEW_ITEM;
+    }
+
+    public void markAsSearchedFor() {
+        state = SEARCHED_FOR;
+    }
+
 
     // Standard
     public MergedItem(@NonNull JSONObject payload) throws JSONException {
@@ -67,6 +78,7 @@ public class MergedItem implements RecyclerViewItem {
     }
 
     private void extractFromJson(@NonNull JSONObject payload) throws JSONException {
+        this.state = NORMAL;
         this.itemID = payload.getString("itemID");
         this.barcode = payload.getString("barcode");
         this.displayName = payload.getString("displayName");
@@ -87,6 +99,7 @@ public class MergedItem implements RecyclerViewItem {
 
     public static MergedItem createNewEmptyItem(Context context) {
         MergedItem mergedItem = new MergedItem(NEW_ITEM_CODE);
+        mergedItem.markAsNew();
         mergedItem.displayName = context.getString(R.string.new_item_merged_item);
         mergedItem.fields = new JSONObject();
         mergedItem.customFields = new JSONObject();
@@ -102,7 +115,9 @@ public class MergedItem implements RecyclerViewItem {
 
     //Temporary Item, will either be transformed to a EmptyItemWithBarcode or a normal Item
     public static MergedItem createSearchedForItem(String barcode) {
+        // This id will be overridden later on
         MergedItem mergedItem = new MergedItem(SEARCHED_FOR_ITEM_CODE);
+        mergedItem.markAsSearchedFor();
         mergedItem.barcode = barcode;
 
         return mergedItem;
@@ -110,11 +125,15 @@ public class MergedItem implements RecyclerViewItem {
 
 
     public boolean isNewItem() {
-        return itemID.equals(NEW_ITEM_CODE);
-    }/**/
+        return state == NEW_ITEM;
+    }
+
+    public boolean isFromOtherRoom() {
+        return state == OTHER_ROOM;
+    }
 
     public boolean isSearchedForItem() {
-        return itemID.equals(SEARCHED_FOR_ITEM_CODE);
+        return state == SEARCHED_FOR;
     }
 
     @NonNull
@@ -205,6 +224,11 @@ public class MergedItem implements RecyclerViewItem {
         timesFoundCurrent++;
     }
 
+    public void resetTimesFoundCurrent() {
+        timesFoundCurrent = 0;
+    }
+
+
     @Nullable
     public String getDescriptionaryRoom() {
         return descriptionaryRoom;
@@ -229,13 +253,20 @@ public class MergedItem implements RecyclerViewItem {
         attachments.add(attachment);
     }
 
-    public RecyclerViewItem finish(boolean wasFound) {
+    public void finish(boolean wasFound) {
         if (wasFound) {
             this.wasFound = WAS_FOUND;
         } else {
             this.wasFound = WAS_NOT_FOUND;
         }
-        return this;
+
+        moveItemToDone();
+    }
+
+    public void unfinish() {
+        wasFound = NOT_DECIDED;
+        resetTimesFoundCurrent();
+        moveItemBackToTodo();
     }
 
 
@@ -249,6 +280,26 @@ public class MergedItem implements RecyclerViewItem {
 
     public boolean notDecided() {
         return wasFound == NOT_DECIDED;
+    }
+
+
+    public void moveItemToDone() {
+        if (wasFound == NOT_DECIDED)
+            throw new IllegalStateException("Item cannot be moved to Done and have unknown FOUND/NOT_FOUND status at the same time!");
+        if (getSubroom() == null) return;
+
+        isExpanded = getSubroom().isExpanded();
+        getSubroom().getMergedItems().remove(this);
+        getSubroom().getValidatedMergedItems().add(this);
+    }
+
+    public void moveItemBackToTodo() {
+        if (getSubroom() == null) return;
+
+        wasFound = NOT_DECIDED;
+        isExpanded = getSubroom().isExpanded();
+        getSubroom().getMergedItems().add(this);
+        getSubroom().getValidatedMergedItems().remove(this);
     }
 
 
