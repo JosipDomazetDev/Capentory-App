@@ -41,16 +41,15 @@
         <activity
             android:name="com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity"
             android:label="Scanner"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.MaterialComponents.NoActionBar" />
         <activity
             android:name="com.capentory.capentory_client.ui.scanactivities.ScanTextActivity"
             android:label="Textscanner"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.MaterialComponents.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode,ocr" />
-
 
         <meta-data
             android:name="preloaded_fonts"

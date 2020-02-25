@@ -19,6 +19,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -410,16 +412,23 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     break;
 
                 case "string":
-                    TextInputLayout textInputLayout = new TextInputLayout(view.getContext());
+                    TextInputLayout textInputLayout = new TextInputLayout(new ContextThemeWrapper(linearLayout.getContext(), R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox));
                     textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     textInputLayout.setPadding(0, 0, 0, 40);
+                    //textInputLayout.setHintTextAppearance(R.style.Base_Widget_MaterialComponents_TextInputLayout_TextInputLayout);
+                    textInputLayout.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
+                    //textInputLayout.setHintTextColor(textInputLayout.getContext().getResources().getColorStateList());
+                    //textInputLayout.setBoxBackgroundColor(ContextCompat.getColor(textInputLayout.getContext(), android.R.color.white));
 
-                    TextInputEditText editText = new TextInputEditText(view.getContext());
+
+                    TextInputEditText editText = new TextInputEditText(textInputLayout.getContext());
 
                     if (!fieldsWithValuesFromItem.isNull(currentField.getKey()))
                         editText.setText(fieldsWithValuesFromItem.optString(currentField.getKey()));
                     editText.setHint(currentField.getVerboseName());
-                    textInputLayout.addView(editText);
+                    //editText.setHintTextColor(Color.parseColor("FFFFFF"));
+
+                    textInputLayout.addView(editText, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
                     linearLayout.addView(textInputLayout);
 
                     mergedItemFieldViewMap.put(currentField.getKey(), editText);

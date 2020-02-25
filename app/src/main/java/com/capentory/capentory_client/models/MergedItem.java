@@ -258,6 +258,8 @@ public class MergedItem implements RecyclerViewItem {
             this.wasFound = WAS_FOUND;
         } else {
             this.wasFound = WAS_NOT_FOUND;
+            // We mark all of the subitems as not found as well
+            this.timesFoundCurrent = this.timesFoundLast;
         }
 
         moveItemToDone();

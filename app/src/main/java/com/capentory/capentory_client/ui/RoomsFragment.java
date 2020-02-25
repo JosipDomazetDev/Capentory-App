@@ -54,7 +54,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     private Spinner roomDropDown;
     private RoomxItemSharedViewModel roomxItemSharedViewModel;
     private TextView finishedText;
-    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::navigateByBarcode);
+    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(this::navigateByBarcode);
     private GenericDropDownAdapter<Room> adapter;
 
     public RoomsFragment() {
@@ -117,6 +117,8 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
                     view.findViewById(R.id.cardview_rooms_dropdown_fragment_rooms),
                     R.id.swipe_refresh
             );
+            ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver, errorHandler);
+
 
             adapter = new GenericDropDownAdapter<>(Objects.requireNonNull(getContext()));
             roomDropDown.setAdapter(adapter);
@@ -237,7 +239,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     @Override
     public void onResume() {
         super.onResume();
-        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver);
+        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver, errorHandler);
     }
 
 

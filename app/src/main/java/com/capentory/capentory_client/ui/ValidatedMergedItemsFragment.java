@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,7 +63,7 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
     @Inject
     ViewModelProviderFactory providerFactory;
 
-    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::askForRevision);
+    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(this::askForRevision);
     private AlertDialog revisionMessage;
 
 
@@ -286,7 +287,7 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
     @Override
     public void onResume() {
         super.onResume();
-        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver);
+        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver, errorHandler);
 
         synchronized (adapter) {
             List<RecyclerViewItem> recyclerViewItems = itemXValidatedSharedViewModel.getAlreadyValidatedItems().getValue();

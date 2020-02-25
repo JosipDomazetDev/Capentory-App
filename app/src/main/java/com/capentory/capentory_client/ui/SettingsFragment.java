@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.capentory.capentory_client.R;
+import com.capentory.capentory_client.androidutility.UserUtility;
 
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -24,9 +25,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
 
     @Override
-
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+        UserUtility.hideKeyboard(getActivity());
         PreferenceManager.setDefaultValues(getContext(), R.xml.preferences, false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -36,7 +37,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.e("XXXXXX","YYYYYYY");
+        Log.e("XXXXXX", "YYYYYYY");
         if (key.equals(TRUST_ALL_CERTICATES_KEY)) {
             if (sharedPreferences.getBoolean(key, false)) {
                 MainActivity.allowAllSSCertificates();

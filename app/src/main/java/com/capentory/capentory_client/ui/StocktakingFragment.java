@@ -58,12 +58,13 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     private static final String CHANNEL_ID = "inventory_channel_01";
     static final int NOTIFICATION_INV_STARTED_ID = 10;
     private Spinner stocktakingDropDown;
-    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, barcode -> {
+    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(barcode -> {
         setSerializer();
         networkViewModel.fetchSpecificallySearchedForItem(barcode);
         observeSpecificLiveData(networkViewModel.getSpecificallySearchedForItem(), liveData ->
                 showPopup(liveData.getData(), new Dialog(Objects.requireNonNull(getContext()))));
     });
+
     private GenericDropDownAdapter<SerializerEntry> serializerAdapter;
     private GenericDropDownAdapter<Stocktaking> stocktakingAdapter;
 
@@ -99,6 +100,8 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
                 view.findViewById(R.id.content_stocktaking_fragment),
                 R.id.swipe_refresh_fragment_stocktaking
         );
+        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver, errorHandler);
+
 
         stocktakingAdapter = new GenericDropDownAdapter<>(getContext());
         stocktakingDropDown.setAdapter(stocktakingAdapter);
@@ -260,7 +263,7 @@ public class StocktakingFragment extends NetworkFragment<List<SerializerEntry>, 
     @Override
     public void onResume() {
         super.onResume();
-        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver);
+        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver, errorHandler);
     }
 
 

@@ -3,6 +3,7 @@ package com.capentory.capentory_client.ui;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,7 +71,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     private String currentRoomString;
     private boolean isKeyboardShowing = false;
     private boolean quickScanActivated = true;
-    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(errorHandler, this::launchItemDetailFragmentFromBarcode);
+    private ZebraBroadcastReceiver zebraBroadcastReceiver = new ZebraBroadcastReceiver(this::launchItemDetailFragmentFromBarcode);
     private AlertDialog duplicateMessage;
 
 
@@ -171,7 +172,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
                 }
             }
         });
-
 
         // https://stackoverflow.com/questions/4745988/how-do-i-detect-if-software-keyboard-is-visible-on-android-device
         View root = view.findViewById(R.id.swipe_refresh_fragment_mergeditems);
@@ -381,6 +381,9 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), SettingsFragment.ENFORCE_ZEBRA_KEY, true))
             return;
 
+        Log.e("XXXXX", "CALLLLLED");
+
+
         if (duplicateMessage != null && duplicateMessage.isShowing()) {
             ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.warning_duplicate_fragment_mergeditems), Toast.LENGTH_LONG);
             VibrateUtility.makeNormalVibration(getContext());
@@ -403,6 +406,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
 
         // Item scanned first time and it's in the list
         for (RecyclerViewItem recyclerviewItem : networkViewModel.getMergedItems()) {
+            Log.e("XXXXX", String.valueOf(networkViewModel.getMergedItems().size()));
             if (recyclerviewItem instanceof MergedItem) {
                 MergedItem mergedItem = (MergedItem) recyclerviewItem;
                 if (mergedItem.equalsBarcode(barcode)) {
@@ -442,7 +446,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     @Override
     public void onResume() {
         super.onResume();
-        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver);
+        ZebraBroadcastReceiver.registerZebraReceiver(getContext(), zebraBroadcastReceiver, errorHandler);
 
         synchronized (adapter) {
             fillRecyclerViewFromViewModel();
