@@ -50,10 +50,10 @@
                 android:scaleType="center"
                 app:backgroundTint="#FFF"
                 app:borderWidth="0dp"
-                app:rippleColor="#2196F3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/scan_item_floatingbtn"
                 app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="#2196F3"
                 app:srcCompat="@drawable/ic_add_blue_24dp"
                 app:tint="#2196F3" />
 

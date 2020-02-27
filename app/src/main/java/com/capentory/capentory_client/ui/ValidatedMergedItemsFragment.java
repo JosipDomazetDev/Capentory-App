@@ -85,7 +85,6 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
             @Override
             public void onQueryTextChange(String newText) {
                 adapter.getFilter().filter(newText);
-
             }
         });
     }

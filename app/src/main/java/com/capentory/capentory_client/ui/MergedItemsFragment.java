@@ -96,7 +96,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
             @Override
             public void onQueryTextChange(String newText) {
                 adapter.getFilter().filter(newText);
-
             }
         });
     }
@@ -190,7 +189,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
 
         itemXValidatedSharedViewModel.getItemsShouldBeRevised().observe(getViewLifecycleOwner(), aBoolean -> {
             if (!networkViewModel.returnItems(itemXValidatedSharedViewModel.getItemsToRevise())) {
-                ToastUtility.displayCenteredToastMessage(getContext(), "", Toast.LENGTH_LONG);
+                ToastUtility.displayCenteredToastMessage(getContext(), "Could not return item!", Toast.LENGTH_LONG);
             }
 
             itemXValidatedSharedViewModel.clearItemsToRevise();
@@ -381,8 +380,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         if (isKeyboardShowing && !PreferenceUtility.getBoolean(getContext(), SettingsFragment.ENFORCE_ZEBRA_KEY, true))
             return;
 
-        Log.e("XXXXX", "CALLLLLED");
-
 
         if (duplicateMessage != null && duplicateMessage.isShowing()) {
             ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.warning_duplicate_fragment_mergeditems), Toast.LENGTH_LONG);
@@ -406,7 +403,6 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
 
         // Item scanned first time and it's in the list
         for (RecyclerViewItem recyclerviewItem : networkViewModel.getMergedItems()) {
-            Log.e("XXXXX", String.valueOf(networkViewModel.getMergedItems().size()));
             if (recyclerviewItem instanceof MergedItem) {
                 MergedItem mergedItem = (MergedItem) recyclerviewItem;
                 if (mergedItem.equalsBarcode(barcode)) {
@@ -431,6 +427,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     private void performQuickScan(MergedItem mergedItem) {
         networkViewModel.addValidationEntry(mergedItem, new ValidationEntry(mergedItem));
         networkViewModel.removeItemByFoundCounterIncrease(mergedItem);
+        itemXValidatedSharedViewModel.setAlreadyValidatedItems(networkViewModel.getAlreadyValidatedItems());
     }
 
     @Override

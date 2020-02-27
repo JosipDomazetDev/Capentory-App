@@ -273,7 +273,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
     @NonNull
     private ImageButton addShowMoreButton(LinearLayout content) {
-        View hr = new View(getContext());
+        View hr = new View(content.getContext());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 1
@@ -283,7 +283,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         hr.setBackgroundColor(Color.parseColor("#D8D8D8"));
         content.addView(hr);
 
-        ImageButton expandButton = new ImageButton(getContext());
+        ImageButton expandButton = new ImageButton(content.getContext());
         expandButton.setImageResource(R.drawable.ic_expand_more_black_48dp);
         expandButton.setBackground(null);
         content.addView(expandButton);
@@ -292,7 +292,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
     @NonNull
     private LinearLayout addSeparateLinearLayout(LinearLayout content) {
-        LinearLayout linearLayoutExtraFields = new LinearLayout(getContext());
+        LinearLayout linearLayoutExtraFields = new LinearLayout(content.getContext());
         linearLayoutExtraFields.setOrientation(LinearLayout.VERTICAL);
         linearLayoutExtraFields.setVisibility(View.GONE);
         content.addView(linearLayoutExtraFields);
@@ -355,7 +355,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         }
 
         if (currentField.isReadOnly()) {
-            TextView textView = new TextView(Objects.requireNonNull(getContext()));
+            TextView textView = new TextView(linearLayout.getContext());
             textView.setText(currentField.getVerboseName() + ": " + fieldsWithValuesFromItem.opt(currentField.getKey()));
             textView.setPadding(4, 20, 0, 20);
             linearLayout.addView(textView);
@@ -418,7 +418,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     //textInputLayout.setHintTextAppearance(R.style.Base_Widget_MaterialComponents_TextInputLayout_TextInputLayout);
                     textInputLayout.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
                     //textInputLayout.setHintTextColor(textInputLayout.getContext().getResources().getColorStateList());
-                    //textInputLayout.setBoxBackgroundColor(ContextCompat.getColor(textInputLayout.getContext(), android.R.color.white));
+                    textInputLayout.setBoxBackgroundColor(ContextCompat.getColor(textInputLayout.getContext(), android.R.color.white));
 
 
                     TextInputEditText editText = new TextInputEditText(textInputLayout.getContext());
@@ -435,7 +435,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     break;
 
                 case "boolean":
-                    CheckBox checkbox = new CheckBox(getContext());
+                    CheckBox checkbox = new CheckBox(linearLayout.getContext());
                     checkbox.setChecked(fieldsWithValuesFromItem.optBoolean(currentField.getKey()));
 
                     checkbox.setText(currentField.getVerboseName());
@@ -445,12 +445,12 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                     break;
 
                 case "choice":
-                    TextView textView = new TextView(getContext());
+                    TextView textView = new TextView(linearLayout.getContext());
                     textView.setText(currentField.getVerboseName());
                     textView.setTextSize(12);
                     textView.setTextColor(Color.parseColor("#b3b3b3"));
 
-                    Spinner spinner = new Spinner(getContext());
+                    Spinner spinner = new Spinner(linearLayout.getContext());
                     KeyValueDropDownAdapter.DropDownEntry[] choices;
                     try {
                         choices = getChoicesFromField(Objects.requireNonNull(currentField.getChoices()));
@@ -460,7 +460,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
                         break;
                     }
 
-                    KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, choices);
+                    KeyValueDropDownAdapter adapter = new KeyValueDropDownAdapter(linearLayout.getContext(), R.layout.support_simple_spinner_dropdown_item, choices);
                     spinner.setAdapter(adapter);
                     Object i;
                     i = fieldsWithValuesFromItem.opt(currentField.getKey());

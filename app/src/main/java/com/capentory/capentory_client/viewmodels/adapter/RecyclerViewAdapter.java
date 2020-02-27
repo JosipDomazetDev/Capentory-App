@@ -31,7 +31,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private boolean usedAsTODO;
     private List<RecyclerViewItem> items = new ArrayList<>();
-    private List<RecyclerViewItem> itemsFull;
+    private List<RecyclerViewItem> itemsFull = new ArrayList<>();
     private List<RecyclerViewItem> collapsedItems = new ArrayList<>();
     private ItemClickListener itemClickListener;
     private static final int[] SUB_HEADER_FONT_SIZES = new int[]{18, 16, 14, 12};

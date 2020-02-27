@@ -6,6 +6,9 @@ import android.animation.StateListAnimator;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -38,6 +41,13 @@ public class ViewPagerFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -53,6 +63,7 @@ public class ViewPagerFragment extends Fragment {
                 ViewPagerFragment.this.handleOnBackPressed();
             }
         });
+
         return view;
     }
 
@@ -79,7 +90,7 @@ public class ViewPagerFragment extends Fragment {
 
 
         viewPager2.setAdapter(new ViewPagerFragmentAdapter(ViewPagerFragment.this));
-        viewPager2.setOffscreenPageLimit(1);
+        viewPager2.setOffscreenPageLimit(5);
 
         // attaching tab mediator
         new TabLayoutMediator(tabLayout, viewPager2,
@@ -88,7 +99,6 @@ public class ViewPagerFragment extends Fragment {
 
 
     private class ViewPagerFragmentAdapter extends FragmentStateAdapter {
-
 
 
         public ViewPagerFragmentAdapter(@NonNull Fragment fragment) {

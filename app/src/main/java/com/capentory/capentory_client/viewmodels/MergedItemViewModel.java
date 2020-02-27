@@ -105,7 +105,12 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
 
     private boolean removeItem(List<RecyclerViewItem> currentItems, MergedItem mergedItem) {
         if (currentItems.remove(mergedItem)) {
-            validatedCount++;
+            if (mergedItem.wasNotFound() && mergedItem.getTimesFoundLast() > 1) {
+                // Sub-Item not found means remove all the children as well
+                validatedCount += mergedItem.getRemainingTimes();
+            } else
+                validatedCount++;
+
             statusAwareLiveData.postSuccess(currentItems);
             return true;
         }

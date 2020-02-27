@@ -1,6 +1,9 @@
 package com.capentory.capentory_client.androidutility;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -8,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
 
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.UserUtility;
@@ -27,6 +31,17 @@ public final class SearchBarHelperUtility {
 
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+
+
+      /*  SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
+        MenuItemCompat.setShowAsAction(searchItem,
+                MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW |
+                        MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+        MenuItemCompat.setActionView(searchItem, searchView);
+        searchView.setIconifiedByDefault(false);*/
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
