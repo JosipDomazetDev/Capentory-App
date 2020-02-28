@@ -50,7 +50,6 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
 
     @Override
     protected void handleMainSuccessfulResponse(String stringPayload) {
-        Log.e("eeee", stringPayload);
         try {
             JSONObject payload = new JSONObject(stringPayload);
             Map<String, MergedItemField> mergedItemFieldsSet = new HashMap<>();
@@ -87,9 +86,11 @@ public class DetailItemRepository extends NetworkRepository<Map<String, MergedIt
                     try {
                         JSONArray payload = new JSONObject(stringPayload).getJSONArray("items");
                         if (payload.length() < 1)
+                            // Either retuning new item
                             searchedForItem.postSuccess(MergedItem.createNewEmptyItemWithBarcode(barcode, context));
                         else {
-                            searchedForItem.postSuccess(new MergedItem(payload.getJSONObject(0)));
+                            // Or normal item from other room
+                            searchedForItem.postSuccess(MergedItem.createItemFromOtherRoom(payload.getJSONObject(0)));
                         }
                     } catch (JSONException error) {
                         searchedForItem.postError(error);

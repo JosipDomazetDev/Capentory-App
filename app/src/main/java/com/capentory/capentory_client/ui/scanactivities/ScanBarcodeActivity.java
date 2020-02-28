@@ -130,8 +130,7 @@ public class ScanBarcodeActivity extends Activity {
                         if (PermissionHandler.checkPermission(ScanBarcodeActivity.this)) {
                             cameraSource.start(cameraPreview.getHolder());
                         }
-                    } catch (
-                            IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }

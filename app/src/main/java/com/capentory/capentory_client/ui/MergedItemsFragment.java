@@ -3,7 +3,6 @@ package com.capentory.capentory_client.ui;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,7 +27,7 @@ import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.SearchBarHelperUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.androidutility.UserUtility;
-import com.capentory.capentory_client.androidutility.VibrateUtility;
+import com.capentory.capentory_client.androidutility.AlertUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.RecyclerViewItem;
 import com.capentory.capentory_client.models.Room;
@@ -383,7 +382,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
 
         if (duplicateMessage != null && duplicateMessage.isShowing()) {
             ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.warning_duplicate_fragment_mergeditems), Toast.LENGTH_LONG);
-            VibrateUtility.makeNormalVibration(getContext());
+            AlertUtility.makeNormalVibration(getContext());
             return;
         }
 
@@ -397,7 +396,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> handleQuickScan(mergedItemFromBarcode))
                     .setNegativeButton(android.R.string.no, null).create();
             duplicateMessage.show();
-            VibrateUtility.makeNormalVibration(getContext());
+            AlertUtility.makeNormalVibration(getContext());
             return;
         }
 

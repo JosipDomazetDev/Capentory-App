@@ -49,15 +49,15 @@ public class MergedItem implements RecyclerViewItem {
         state = NORMAL;
     }
 
-    public void markAsOtherRoom() {
+    private void markAsOtherRoom() {
         state = OTHER_ROOM;
     }
 
-    public void markAsNew() {
+    private void markAsNew() {
         state = NEW_ITEM;
     }
 
-    public void markAsSearchedFor() {
+    private void markAsSearchedFor() {
         state = SEARCHED_FOR;
     }
 
@@ -112,6 +112,14 @@ public class MergedItem implements RecyclerViewItem {
         mergedItem.displayName = context.getString(R.string.item_not_in_db_merged_item);
         return mergedItem;
     }
+
+
+    public static MergedItem createItemFromOtherRoom(JSONObject payload) throws JSONException {
+        MergedItem mergedItem = new MergedItem(payload);
+        mergedItem.markAsOtherRoom();
+        return mergedItem;
+    }
+
 
     //Temporary Item, will either be transformed to a EmptyItemWithBarcode or a normal Item
     public static MergedItem createSearchedForItem(String barcode) {
@@ -258,8 +266,6 @@ public class MergedItem implements RecyclerViewItem {
             this.wasFound = WAS_FOUND;
         } else {
             this.wasFound = WAS_NOT_FOUND;
-            // We mark all of the subitems as not found as well
-            this.timesFoundCurrent = this.timesFoundLast;
         }
 
         moveItemToDone();

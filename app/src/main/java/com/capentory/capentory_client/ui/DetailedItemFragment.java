@@ -29,7 +29,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.capentory.capentory_client.R;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.androidutility.UserUtility;
-import com.capentory.capentory_client.androidutility.VibrateUtility;
+import com.capentory.capentory_client.androidutility.AlertUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.MergedItemField;
 import com.capentory.capentory_client.models.Room;
@@ -148,7 +148,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
         MergedItem mergedItem = itemxDetailSharedViewModel.getCurrentItem();
         if (mergedItem != null && mergedItem.isSearchedForItem()) {
             // Item is not of the normal case, therefore vibrate
-            VibrateUtility.makeNormalVibration(getContext());
+            AlertUtility.makeNormalVibration(getContext());
 
             networkViewModel.fetchSearchedForItem(mergedItem.getBarcode());
             observeSpecificLiveData(networkViewModel.getSearchedForItem(), liveData -> handleSearchedForItemResponse(view, liveData));
@@ -166,10 +166,8 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         if (mergedItem.isNewItem()) {
             edgeCaseTextView.setText(getString(R.string.text_unkown_item_fragment_detailitem));
-            mergedItem.markAsNew();
-        } else {
+        } else if (mergedItem.isFromOtherRoom()){
             edgeCaseTextView.setText(getString(R.string.text_kown_but_different_room_item_fragment_detailitem, mergedItem.getDescriptionaryRoom()));
-            mergedItem.markAsOtherRoom();
         }
 
         edgeCaseTextView.setVisibility(View.VISIBLE);

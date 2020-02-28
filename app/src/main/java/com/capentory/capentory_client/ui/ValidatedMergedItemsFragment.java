@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,7 +28,7 @@ import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.SearchBarHelperUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.androidutility.UserUtility;
-import com.capentory.capentory_client.androidutility.VibrateUtility;
+import com.capentory.capentory_client.androidutility.AlertUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.RecyclerViewItem;
 import com.capentory.capentory_client.ui.errorhandling.CustomException;
@@ -313,7 +312,7 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
 
         if (revisionMessage != null && revisionMessage.isShowing()) {
             ToastUtility.displayCenteredToastMessage(getContext(), getString(R.string.warning_duplicate_fragment_mergeditems), Toast.LENGTH_LONG);
-            VibrateUtility.makeNormalVibration(getContext());
+            AlertUtility.makeNormalVibration(getContext());
             return;
         }
 

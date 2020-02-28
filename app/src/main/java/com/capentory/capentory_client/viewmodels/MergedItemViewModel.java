@@ -49,6 +49,8 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
         List<RecyclerViewItem> currentItems = Objects.requireNonNull(statusAwareLiveData.getValue()).getData();
         if (currentItems == null) return;
         mergedItem.increaseTimesFoundCurrent();
+        validatedCount++;
+
         if (mergedItem.getTimesFoundCurrent() >= mergedItem.getTimesFoundLast()) {
             mergedItem.finish(true);
             // Also add items from other rooms to alreadyValidatedItems
@@ -57,10 +59,14 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
             if (!removeItem(currentItems, mergedItem)) {
                 // This is called when a additional item (subitem or new item) is added,
                 // because an additional item is not part of the remaining items and can therefore not be removed
-                validatedCount++;
+                //validatedCount++;
                 totalItemsCount++;
             }
+        } else {
+            // Even if no item is removed we still need to update the UI
+            statusAwareLiveData.postSuccess(currentItems);
         }
+
 
         updateProgressMessage();
     }
@@ -107,9 +113,9 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
         if (currentItems.remove(mergedItem)) {
             if (mergedItem.wasNotFound() && mergedItem.getTimesFoundLast() > 1) {
                 // Sub-Item not found means remove all the children as well
-                validatedCount += mergedItem.getRemainingTimes();
-            } else
-                validatedCount++;
+                validatedCount += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
+                validationEntries.remove(mergedItem);
+            }
 
             statusAwareLiveData.postSuccess(currentItems);
             return true;
@@ -275,7 +281,15 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
         for (MergedItem mergedItem : itemsToRevise) {
             alreadyValidatedItems.remove(mergedItem);
             validationEntries.remove(mergedItem);
-            validatedCount -= mergedItem.getTimesFoundCurrent();
+            // revert the validated counter, it was either found as many times as expected or more
+            validatedCount -= Math.max(mergedItem.getTimesFoundCurrent(), mergedItem.getTimesFoundLast());
+
+            // If it was found 5/2 times, this means the total count was increased by 3, we need to revert that as well
+            // If the items was expected 0 times it makes no sense to decrease the total count since we move it back to to_do
+            if (mergedItem.getTimesFoundCurrent() > mergedItem.getTimesFoundLast() && mergedItem.getTimesFoundLast() > 0) {
+                totalItemsCount -= mergedItem.getTimesFoundCurrent() - mergedItem.getTimesFoundLast();
+            }
+
             mergedItem.unfinish();
 
             if (mergedItem.getSubroom() != null) {
