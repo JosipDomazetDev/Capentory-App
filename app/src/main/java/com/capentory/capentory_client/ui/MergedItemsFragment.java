@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -22,19 +23,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.capentory.capentory_client.R;
+import com.capentory.capentory_client.androidutility.AlertUtility;
 import com.capentory.capentory_client.androidutility.PopUtility;
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.androidutility.SearchBarHelperUtility;
 import com.capentory.capentory_client.androidutility.ToastUtility;
 import com.capentory.capentory_client.androidutility.UserUtility;
-import com.capentory.capentory_client.androidutility.AlertUtility;
 import com.capentory.capentory_client.models.MergedItem;
 import com.capentory.capentory_client.models.RecyclerViewItem;
 import com.capentory.capentory_client.models.Room;
 import com.capentory.capentory_client.models.ValidationEntry;
 import com.capentory.capentory_client.repos.MergedItemsRepository;
-import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.ui.errorhandling.CustomException;
+import com.capentory.capentory_client.ui.errorhandling.ErrorHandler;
 import com.capentory.capentory_client.ui.scanactivities.ScanBarcodeActivity;
 import com.capentory.capentory_client.ui.zebra.ZebraBroadcastReceiver;
 import com.capentory.capentory_client.viewmodels.MergedItemViewModel;
@@ -86,6 +87,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
+
         SearchBarHelperUtility.bindSearchBar(menu, inflater, getActivity(), new SearchBarHelperUtility.SearchHandler() {
             @Override
             public void onQueryTextSubmit(String query) {
@@ -117,6 +119,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         final FloatingActionButton finishRoom = view.findViewById(R.id.finish_room_floatingbtn_fragment_mergeditems);
         final FloatingActionButton addItem = view.findViewById(R.id.add_item_floatingbtn);
         final TextView currentRoomTextView = view.findViewById(R.id.room_number_fragment_mergeditems);
+
         currentProgressTextView = view.findViewById(R.id.progress_textview_value_fragment_validated_mergeditems);
         setAdditionalViewsToHide(currentProgressTextView);
         noItemTextView = view.findViewById(R.id.no_items_fragment_mergeditems);
@@ -437,6 +440,8 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
         synchronized (adapter) {
             fillRecyclerViewFromViewModel();
         }
+
+
     }
 
     @Override
@@ -448,6 +453,7 @@ public class MergedItemsFragment extends NetworkFragment<List<RecyclerViewItem>,
             fillRecyclerViewFromViewModel();
         }
     }
+
 
     private void fillRecyclerViewFromViewModel() {
         if (networkViewModel.getLiveData().getValue() != null) {

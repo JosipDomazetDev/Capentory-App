@@ -21,7 +21,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public static final String BARCODE_FORMATS_KEY = "barcode_formats_key";
     public static final String SHAKE_SENSITIVITY_KEY = "shake_sensitivity";
     public static final String COMPRESS_RATE_KEY = "compress_rate";
-    public static final String USES_TABS_KEY = "switch_uses_tabs";
 
 
     @Override

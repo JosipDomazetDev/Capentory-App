@@ -493,6 +493,17 @@ public class CameraSource {
                 currentZoom = maxZoom;
             }
             parameters.setZoom(currentZoom);
+
+
+            if (parameters.getSupportedPictureFormats().contains(ImageFormat.NV21)) {
+                parameters.setPictureFormat(ImageFormat.NV21);
+            }
+
+            if (parameters.getSupportedPreviewFormats().contains(ImageFormat.NV21)) {
+                parameters.setPreviewFormat(ImageFormat.NV21);
+            }
+
+
             mCamera.setParameters(parameters);
             return currentZoom;
         }
@@ -796,7 +807,7 @@ public class CameraSource {
 
 
         // MODIFIED
-        Camera.Size optimalPreviewSize = getOptimalPreviewSize(camera.getParameters().getSupportedPreviewSizes(),mRequestedPreviewWidth, mRequestedPreviewHeight);
+        Camera.Size optimalPreviewSize = getOptimalPreviewSize(camera.getParameters().getSupportedPreviewSizes(), mRequestedPreviewWidth, mRequestedPreviewHeight);
         SizePair sizePair = selectSizePair(camera, optimalPreviewSize.width, optimalPreviewSize.height);
 
 
@@ -823,7 +834,7 @@ public class CameraSource {
                 previewFpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
         parameters.setPreviewFormat(ImageFormat.NV21);
         // TODO: CHECK THIS
-       /* parameters.setSceneMode(Camera.Parameters.SCENE_MODE_BARCODE);*/
+        /* parameters.setSceneMode(Camera.Parameters.SCENE_MODE_BARCODE);*/
 
         setRotation(camera, parameters, requestedCameraId);
 

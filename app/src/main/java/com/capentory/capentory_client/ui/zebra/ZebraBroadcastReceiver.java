@@ -36,11 +36,6 @@ public class ZebraBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-    private void unregister() {
-        errorHandler = null;
-        scanListener = null;
-    }
-
     public static void registerZebraReceiver(Context context, ZebraBroadcastReceiver zebraBroadcastReceiver, ErrorHandler errorHandler) {
         if (context == null) return;
 

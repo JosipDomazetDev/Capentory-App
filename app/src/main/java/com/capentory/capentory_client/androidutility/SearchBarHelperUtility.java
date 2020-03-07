@@ -1,9 +1,6 @@
 package com.capentory.capentory_client.androidutility;
 
 import android.app.Activity;
-import android.app.SearchManager;
-import android.content.Context;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,11 +8,8 @@ import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
 
 import com.capentory.capentory_client.R;
-import com.capentory.capentory_client.androidutility.UserUtility;
-import com.capentory.capentory_client.viewmodels.adapter.GenericDropDownAdapter;
 
 public final class SearchBarHelperUtility {
 
@@ -24,7 +18,7 @@ public final class SearchBarHelperUtility {
         throw new UnsupportedOperationException();
     }
 
-    public static void bindSearchBar(@NonNull Menu menu, @NonNull MenuInflater inflater, Activity activity, SearchHandler searchHandler) {
+    public static SearchView bindSearchBar(@NonNull Menu menu, @NonNull MenuInflater inflater, Activity activity, SearchHandler searchHandler) {
 
         MenuItem searchItem = menu.findItem(R.id.search);
         searchItem.setVisible(true);
@@ -56,6 +50,8 @@ public final class SearchBarHelperUtility {
                 return false;
             }
         });
+
+        return searchView;
     }
 
     public interface SearchHandler{

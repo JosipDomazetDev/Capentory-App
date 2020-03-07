@@ -141,8 +141,6 @@
     <string name="app_name" translatable="false">Capentory</string>
     <string name="channel_name" translatable="false">Capentory</string>
     <string name="activity_intent_filter_action" translatable="false">com.capentory.ACTION</string>
-    <string name="datawedge_intent_key_source" translatable="false">com.symbol.datawedge.source</string>
-    <string name="datawedge_intent_key_label_type" translatable="false">com.symbol.datawedge.label_type</string>
     <string name="datawedge_intent_key_data" translatable="false">com.symbol.datawedge.data_string</string>
     <string name="project_title" translatable="false">Capentory</string>
     <string name="item_fragment_attachments">Item</string>

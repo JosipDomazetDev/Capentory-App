@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -74,6 +75,7 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+
 
         SearchBarHelperUtility.bindSearchBar(menu, inflater, getActivity(), new SearchBarHelperUtility.SearchHandler() {
             @Override

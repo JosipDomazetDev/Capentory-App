@@ -30,6 +30,10 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -79,13 +83,27 @@ public class ScanBarcodeActivity extends Activity {
     }
 
 
-    private void startCameraSource() {
-        final BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).setBarcodeFormats(getSelectedFormats()).build();
+  /*  private void startCameraSource2() {
 
-       /* com.google.android.gms.vision.CameraSource cameraSource = new com.google.android.gms.vision.CameraSource.Builder(this, barcodeDetector)
+
+        FirebaseVisionBarcodeDetectorOptions options =
+                new FirebaseVisionBarcodeDetectorOptions.Builder()
+                        .setBarcodeFormats(
+                                FirebaseVisionBarcode.FORMAT_CODE_93,
+                                FirebaseVisionBarcode.FORMAT_CODE_39,
+                                FirebaseVisionBarcode.FORMAT_AZTEC)
+                        .build();
+       *//* com.google.android.gms.vision.CameraSource cameraSource = new com.google.android.gms.vision.CameraSource.Builder(this, barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedPreviewSize(1600, 1024)
-                .setAutoFocusEnabled(true).build();*/
+                .setAutoFocusEnabled(true).build();*//*
+
+        FirebaseVisionBarcodeDetector barcodeDetector =         FirebaseVision.getInstance().getVisionBarcodeDetector(options);
+
+        PreviewConfi
+
+
+
 
         if (!barcodeDetector.isOperational()) {
             // Check for low storage.  If there is low storage, the native library will not be
@@ -105,8 +123,8 @@ public class ScanBarcodeActivity extends Activity {
                         .setRequestedPreviewSize(1600, 1024)
                         .setFocusMode(FOCUS_MODE).build();
 
-                /*List<android.hardware.Camera.Size> supportedPreviewSizes =
-                        Camera.Parameters.getSupportedPreviewSizes();*/
+                *//*List<android.hardware.Camera.Size> supportedPreviewSizes =
+                        Camera.Parameters.getSupportedPreviewSizes();*//*
 
                 ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_off_white_24dp);
                 useFlash = true;
@@ -160,8 +178,111 @@ public class ScanBarcodeActivity extends Activity {
                     if (barcodeSparseArray.size() > 0) {
                         lockedOnFirst = true;
                         Intent intent = new Intent();
-                        final String barcode = String.valueOf(barcodeSparseArray.valueAt(0).displayValue);
+
+                        final String barcode = barcodeSparseArray.valueAt(0).rawValue;
                         final String format = getGoogleBarcodeFormat(barcodeSparseArray.valueAt(0).format);
+
+                        intent.putExtra("barcode", barcode);
+                        setResult(CommonStatusCodes.SUCCESS, intent);
+                        startBeep();
+                        finish();
+
+                        if (utilityModeActivated) {
+                            utilityCopyToClipboard(barcode, format);
+                        }
+                    }
+                }
+            });
+        }
+
+    }*/
+
+
+    private void startCameraSource() {
+        final BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).setBarcodeFormats(getSelectedFormats()).build();
+
+       /* com.google.android.gms.vision.CameraSource cameraSource = new com.google.android.gms.vision.CameraSource.Builder(this, barcodeDetector)
+                .setFacing(CameraSource.CAMERA_FACING_BACK)
+                .setRequestedPreviewSize(1600, 1024)
+                .setAutoFocusEnabled(true).build();*/
+
+        if (!barcodeDetector.isOperational()) {
+            // Check for low storage.  If there is low storage, the native library will not be
+            // downloaded, so detection will not become operational.
+
+            IntentFilter lowStorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
+            boolean hasLowStorage = registerReceiver(null, lowStorageFilter) != null;
+
+            if (hasLowStorage) {
+                ToastUtility.displayCenteredToastMessage(this, getString(R.string.low_storage_error_activity_scanners), Toast.LENGTH_LONG);
+            }
+        } else {
+            if (PreferenceUtility.getBoolean(ScanBarcodeActivity.this, SettingsFragment.LIGHTNING_KEY, true)) {
+                cameraSource = new CameraSource.Builder(this, barcodeDetector)
+                        .setFacing(CameraSource.CAMERA_FACING_BACK)
+                        .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
+                        .setRequestedPreviewSize(1280, 720)
+                        .setFocusMode(FOCUS_MODE).build();
+
+                /*List<android.hardware.Camera.Size> supportedPreviewSizes =
+                        Camera.Parameters.getSupportedPreviewSizes();*/
+
+                ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_off_white_24dp);
+                useFlash = true;
+            } else {
+                cameraSource = new CameraSource.Builder(this, barcodeDetector)
+                        .setFacing(CameraSource.CAMERA_FACING_BACK)
+                        .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
+                        .setRequestedPreviewSize(1280, 720)
+                        .setFocusMode(FOCUS_MODE).build();
+
+                ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_on_white_24dp);
+                useFlash = false;
+            }
+
+
+            cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
+
+                @Override
+                public void surfaceCreated(SurfaceHolder holder) {
+                    try {
+                        if (PermissionHandler.checkPermission(ScanBarcodeActivity.this)) {
+                            cameraSource.start(cameraPreview.getHolder());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                @Override
+                public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+                }
+
+                @Override
+                public void surfaceDestroyed(SurfaceHolder holder) {
+                    cameraSource.stop();
+                }
+            });
+
+            barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+
+
+                @Override
+                public void release() {
+                }
+
+                @Override
+                public void receiveDetections(Detector.Detections<Barcode> detections) {
+                    if (lockedOnFirst) return;
+
+                    SparseArray<Barcode> barcodeSparseArray = detections.getDetectedItems();
+                    if (barcodeSparseArray.size() > 0) {
+                        lockedOnFirst = true;
+                        Intent intent = new Intent();
+
+                        String barcode = barcodeSparseArray.valueAt(0).rawValue;
+                        String format = getGoogleBarcodeFormat(barcodeSparseArray.valueAt(0).format);
 
                         intent.putExtra("barcode", barcode);
                         setResult(CommonStatusCodes.SUCCESS, intent);

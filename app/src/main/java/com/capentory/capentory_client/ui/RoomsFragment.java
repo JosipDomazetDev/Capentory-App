@@ -178,11 +178,7 @@ public class RoomsFragment extends NetworkFragment<List<Room>, RoomsRepository, 
     }
 
     private void moveToNextScreen() {
-        if (PreferenceUtility.getBoolean(getContext(), SettingsFragment.USES_TABS_KEY, true)) {
-            NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_viewPagerFragment);
-        } else {
-            NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_itemsFragment2);
-        }
+        NavHostFragment.findNavController(this).navigate(R.id.action_roomFragment_to_viewPagerFragment);
     }
 
 

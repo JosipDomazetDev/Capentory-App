@@ -24,7 +24,6 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>, MergedItemsRepository> {
-    //private List<ValidationEntry> validationEntries = new ArrayList<>();
     private List<RecyclerViewItem> alreadyValidatedItems = new ArrayList<>();
     private Map<RecyclerViewItem, List<ValidationEntry>> validationEntries = new HashMap<>();
 
@@ -80,6 +79,12 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
         mergedItem.finish(false);
 
         if (removeItem(currentItems, mergedItem)) {
+            if (mergedItem.wasNotFound() && mergedItem.getTimesFoundLast() > 1) {
+                // Sub-Item not found means remove all the children as well
+                validatedCount += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
+                validationEntries.remove(mergedItem);
+            } else validatedCount++;
+
             // Add removed item to alreadyValidatedItems.
             // Items that couldn't be removed (i.e. items from other rooms) should not be added to alreadyValidatedItems,
             // because they were not supposed to be in this room and the user confirmed that (this is logically impossible in the real world,
@@ -111,12 +116,6 @@ public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>
 
     private boolean removeItem(List<RecyclerViewItem> currentItems, MergedItem mergedItem) {
         if (currentItems.remove(mergedItem)) {
-            if (mergedItem.wasNotFound() && mergedItem.getTimesFoundLast() > 1) {
-                // Sub-Item not found means remove all the children as well
-                validatedCount += mergedItem.getTimesFoundLast() - mergedItem.getTimesFoundCurrent();
-                validationEntries.remove(mergedItem);
-            }
-
             statusAwareLiveData.postSuccess(currentItems);
             return true;
         }

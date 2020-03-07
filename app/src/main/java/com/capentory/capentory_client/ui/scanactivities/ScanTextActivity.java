@@ -47,7 +47,7 @@ import java.util.Set;
 
 public class ScanTextActivity extends AppCompatActivity {
     private static final Integer CERTAINTY_THRESHOLD_SCAN_AMOUNT = 3;
-    private static final Integer MIN_LENGTH_OF_BARCODE = 8;
+    private static final Integer MIN_LENGTH_OF_BARCODE = 7;
     private SurfaceView cameraPreview;
     private TextView textPreview;
     private CameraSource cameraSource;
@@ -115,7 +115,7 @@ public class ScanTextActivity extends AppCompatActivity {
                 cameraSource = new CameraSource.Builder(this, textRecognizer)
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
-                        .setRequestedPreviewSize(1600, 1024)
+                        .setRequestedPreviewSize(1280, 720)
                         .setFocusMode(FOCUS_MODE).build();
 
                 ((ImageButton) findViewById(R.id.btn_flash_activity_scan_text)).setImageResource(R.drawable.ic_flash_off_white_24dp);
@@ -125,7 +125,7 @@ public class ScanTextActivity extends AppCompatActivity {
                 cameraSource = new CameraSource.Builder(this, textRecognizer)
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
-                        .setRequestedPreviewSize(1600, 1024)
+                        .setRequestedPreviewSize(1280, 720)
                         .setFocusMode(FOCUS_MODE).build();
 
                 ((ImageButton) findViewById(R.id.btn_flash_activity_scan_text)).setImageResource(R.drawable.ic_flash_on_white_24dp);
