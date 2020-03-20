@@ -68,7 +68,7 @@ public class ViewPagerFragment extends Fragment {
     private void init(View view) {
         ViewPager2 viewPager2 = view.findViewById(R.id.view_pager_fragment_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout_fragment_view_pager);
-        viewPager2.setUserInputEnabled(true);
+        viewPager2.setUserInputEnabled(false);
 
         // removing toolbar elevation
         //((Toolbar)view.findViewById(R.id.toolbar)).setElevation(0);

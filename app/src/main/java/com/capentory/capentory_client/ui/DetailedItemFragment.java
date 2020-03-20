@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,7 +136,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     private void handleShake() {
         if (called) return;
         called = true;
-        Toast.makeText(getContext(), "Item validated!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.item_validated_detaileditem_fragment), Toast.LENGTH_SHORT).show();
         handleValidate();
     }
 

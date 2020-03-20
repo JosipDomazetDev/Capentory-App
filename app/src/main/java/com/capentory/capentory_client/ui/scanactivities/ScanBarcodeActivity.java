@@ -30,10 +30,6 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -47,6 +43,7 @@ public class ScanBarcodeActivity extends Activity {
     private MediaPlayer mediaPlayer;
     private boolean lockedOnFirst = false;
     public static final String FOCUS_MODE = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
+    public static final int[] PREVIEW_SIZE = {1920, 1080};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -221,7 +218,7 @@ public class ScanBarcodeActivity extends Activity {
                 cameraSource = new CameraSource.Builder(this, barcodeDetector)
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
-                        .setRequestedPreviewSize(1280, 720)
+                        .setRequestedPreviewSize(PREVIEW_SIZE[0], PREVIEW_SIZE[1])
                         .setFocusMode(FOCUS_MODE).build();
 
                 /*List<android.hardware.Camera.Size> supportedPreviewSizes =
@@ -233,7 +230,7 @@ public class ScanBarcodeActivity extends Activity {
                 cameraSource = new CameraSource.Builder(this, barcodeDetector)
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
-                        .setRequestedPreviewSize(1280, 720)
+                        .setRequestedPreviewSize(PREVIEW_SIZE[0], PREVIEW_SIZE[1])
                         .setFocusMode(FOCUS_MODE).build();
 
                 ((ImageButton) findViewById(R.id.btn_flash_activity_scan_barcode)).setImageResource(R.drawable.ic_flash_on_white_24dp);

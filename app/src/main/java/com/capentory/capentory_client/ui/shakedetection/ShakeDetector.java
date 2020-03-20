@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import com.capentory.capentory_client.androidutility.PreferenceUtility;
 import com.capentory.capentory_client.ui.SettingsFragment;
@@ -39,7 +40,9 @@ public class ShakeDetector implements SensorEventListener {
 
                 if (sensitivity == -2) {
                     sensitivity = getSensitivity();
-                } else if (sensitivity == -1) return;
+                }
+
+                if (sensitivity == -1) return;
 
                 float x = event.values[0];
                 float y = event.values[1];
@@ -48,6 +51,7 @@ public class ShakeDetector implements SensorEventListener {
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
                 if (speed > sensitivity) {
+                    Log.e("XXXX", String.valueOf(sensitivity));
                     shakeListener.handleShake();
                 }
                 last_x = x;

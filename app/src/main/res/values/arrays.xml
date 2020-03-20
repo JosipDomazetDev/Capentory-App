@@ -17,6 +17,7 @@
         <item>4</item>
     </string-array>
 
+
     <string-array name="barcode_formats">
         <item>@string/all_formats_preferences</item>
         <item>@string/CODE_128_preferences</item>
@@ -32,6 +33,10 @@
         <item>@string/UPC_E_preference</item>
         <item>@string/PDF417_preference</item>
         <item>@string/AZTEC_preference</item>
+    </string-array>
+
+    <string-array name="barcode_formats_default_value">
+        <item>2</item>
     </string-array>
 
     <string-array name="barcode_formats_values">
@@ -50,9 +55,7 @@
         <item>2048</item>
         <item>4096</item>
     </string-array>
-    <string-array name="barcode_formats_default_value">
-        <item>2 </item>
-    </string-array>
+
     <string-array name="sensitivity_modes">
         <item>@string/very_sensitive_preferences</item>
         <item>@string/sensitive_preferences</item>
@@ -61,6 +64,7 @@
         <item>@string/very_insensitive_preferences</item>
         <item>@string/disable_shaking_preferences</item>
     </string-array>
+
     <string-array name="sensitivity_modes_values">
         <item>2500</item>
         <item>4500</item>
@@ -69,12 +73,14 @@
         <item>14500</item>
         <item>-1</item>
     </string-array>
+
     <string-array name="compress_rates">
         <item>@string/low_compression_preferences</item>
         <item>@string/medium_compression_preferences</item>
         <item>@string/high_compression_preferences</item>
         <item>@string/disable_compression_preferences</item>
     </string-array>
+
     <string-array name="compress_rates_values">
         <item>95</item>
         <item>85</item>

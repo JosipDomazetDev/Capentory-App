@@ -56,7 +56,7 @@
     <PreferenceCategory android:title="@string/other_title_preferences">
 
         <ListPreference
-            android:defaultValue="1"
+            android:defaultValue="8500"
             android:dialogTitle="@string/dialog_title_shake_sensitivity_preferences"
             android:entries="@array/sensitivity_modes"
             android:entryValues="@array/sensitivity_modes_values"
@@ -66,7 +66,7 @@
 
 
         <ListPreference
-            android:defaultValue="0"
+            android:defaultValue="95"
             android:dialogTitle="@string/dialog_title_compression_rate_preferences"
             android:entries="@array/compress_rates"
             android:entryValues="@array/compress_rates_values"

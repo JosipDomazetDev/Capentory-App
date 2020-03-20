@@ -25,7 +25,7 @@ import javax.inject.Inject;
 
 public class MergedItemViewModel extends NetworkViewModel<List<RecyclerViewItem>, MergedItemsRepository> {
     private List<RecyclerViewItem> alreadyValidatedItems = new ArrayList<>();
-    private Map<RecyclerViewItem, List<ValidationEntry>> validationEntries = new HashMap<>();
+    private Map<MergedItem, List<ValidationEntry>> validationEntries = new HashMap<>();
 
     private List<Room> subRoomListForItemDetail;
     private StatusAwareLiveData<Boolean> validateSuccessful;

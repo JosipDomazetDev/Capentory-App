@@ -124,7 +124,7 @@ public class AttachmentsRepository extends NetworkRepository<Attachment> {
 
     private Call<String> prepareCall(String[] args) {
         Retrofit retrofit;
-        if (PreferenceUtility.getBoolean(context, "trust_all_certificates")) {
+        if (PreferenceUtility.getBoolean(context, SettingsFragment.TRUST_ALL_CERTICATES_KEY)) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(getNonJsonUrl(context, true, ""))
                     .addConverterFactory(ScalarsConverterFactory.create())

@@ -21,6 +21,8 @@ public class MergedItem implements RecyclerViewItem {
     private static final int WAS_FOUND = 1, NOT_DECIDED = 0, WAS_NOT_FOUND = -1;
     private static final int NORMAL = 0, OTHER_ROOM = 1, NEW_ITEM = 2, SEARCHED_FOR = -1;
     private int state = NORMAL;
+    private int wasFound = NOT_DECIDED;
+
     @NonNull
     private String itemID;
     @NonNull
@@ -34,7 +36,6 @@ public class MergedItem implements RecyclerViewItem {
 
     private boolean isExpanded = true;
     // Only used for the DONE screen
-    private int wasFound = NOT_DECIDED;
     // Optional attachments
     private ArrayList<Attachment> attachments = new ArrayList<>();
 

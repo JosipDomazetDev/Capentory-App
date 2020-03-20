@@ -26,7 +26,7 @@
     <string name="dialog_title_text_filter_mode_preferences">Choose Text recognition mode</string>
     <string name="title_switch_enforce_zebra_preferences">Prioritize PopUp-Functionality of the Zebra-Scan (Keyboard input via Zebra-Scan might be negelected)</string>
     <string name="error_missing_inventory_fragment_stocktaking">You must first create an inventory on the server!</string>
-    <string name="error_serializer">You must fcreate an inventory on the server and choose a database-view!</string>
+    <string name="error_serializer">You must create an inventory on the server and choose a database-view!</string>
     <string name="error_stocktaking">You must first create an inventory!</string>
     <string name="expand_failure_fragment_mergeditems">Please be more gentle with the subrooms! Unfortunately you must redo this room, please return to the previous screen!</string>
     <string name="msg_duplicate_fragment_mergeditems">You already validated this item, do you want to validate it one more time?</string>
@@ -206,4 +206,5 @@
     <string name="title_revise_item_fragment_validated_mergeditems">Revise Item</string>
     <string name="msg_revise_item_fragment_validated_mergeditems">Do you want to discard all changes made to this item?</string>
     <string name="item_not_done_fragment_validated_mergeditems">You haven\'t validated this item yet!</string>
+    <string name="item_validated_detaileditem_fragment">Item validated!</string>
 </resources>

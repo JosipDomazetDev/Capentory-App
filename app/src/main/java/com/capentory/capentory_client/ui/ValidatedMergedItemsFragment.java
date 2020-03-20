@@ -255,7 +255,7 @@ public class ValidatedMergedItemsFragment extends Fragment implements RecyclerVi
     private void handleRevision(MergedItem mergedItem) {
         TextView textView = new TextView(getContext());
         textView.setText(getString(R.string.title_revise_item_fragment_validated_mergeditems));
-        textView.setPadding(32, 30, 20, 30);
+        textView.setPadding(43, 30, 20, 30);
         textView.setTextSize(20F);
         textView.setTextColor(Color.parseColor("#e8190e"));
 

@@ -181,4 +181,8 @@
     <string name="title_switch_uses_tabs_preferences">DONE-Liste als zweiten Tab anzeigen</string>
     <string name="no_items_validated_fragment_validated_mergeditems">Noch keine Gegenstände validiert!</string>
     <string name="warning_duplicate_fragment_mergeditems">Schließen Sie das Dialogsfenster bevor Sie weitermachen!</string>
+    <string name="item_validated_detaileditem_fragment">Gegenstand validiert!</string>
+    <string name="item_not_done_fragment_validated_mergeditems">Sie haben diesen Gegenstand noch nicht validiert!</string>
+    <string name="msg_revise_item_fragment_validated_mergeditems">Wollen Sie alle Änderungen an diesem Gegenstand verwerfen?</string>
+    <string name="title_revise_item_fragment_validated_mergeditems">Gegenstand revidieren</string>
 </resources>
