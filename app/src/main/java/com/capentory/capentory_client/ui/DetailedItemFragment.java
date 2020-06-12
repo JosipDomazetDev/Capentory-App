@@ -167,7 +167,7 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
 
         if (mergedItem.isNewItem()) {
             edgeCaseTextView.setText(getString(R.string.text_unkown_item_fragment_detailitem));
-        } else if (mergedItem.isFromOtherRoom()){
+        } else if (mergedItem.isFromOtherRoom()) {
             edgeCaseTextView.setText(getString(R.string.text_kown_but_different_room_item_fragment_detailitem, mergedItem.getDescriptionaryRoom()));
         }
 
@@ -601,12 +601,16 @@ public class DetailedItemFragment extends NetworkFragment<Map<String, MergedItem
     @Override
     public void onResume() {
         super.onResume();
-        shakeDetector.registerShakeDetector();
+        if (shakeDetector != null) {
+            shakeDetector.registerShakeDetector();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        shakeDetector.unregisterShakeDetector();
+        if (shakeDetector != null) {
+            shakeDetector.unregisterShakeDetector();
+        }
     }
 }
