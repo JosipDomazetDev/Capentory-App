@@ -8,7 +8,7 @@ The apps API Level is 21 (= Android 5.0 'Lollipop'). The app uses AndroidX and J
 
 ### App-Architecture 
 
-The architecture is based on this [official article](https://developer.android.com/jetpack/guide) that is worth reading. The aApp makes use of MVVM-Architecture with an additional abstracted layer. MVVM generally includes three logical components:
+The architecture is based on this [official article](https://developer.android.com/jetpack/guide) that is worth reading. The app makes use of MVVM-Architecture with an additional abstracted layer. MVVM generally includes three logical components:
 
 * View -> Responsible for displaying the current data to the user. This layer should contain as little logic as possible.
 * ViewModel -> Responsible for performing all the logic behind the scenes. 
@@ -56,7 +56,7 @@ A general inventory might look like this:
 3. The user chooses a database-view and inventory.
 4. The user chooses a room.
 5. The user receives a list of items for the room. The user now needs to scan all barcodes in the room to validate the list item by item. 
-6. Optional: User decides to edit the attributes of an item. 
+6. **Optional:** User decides to edit the attributes of an item. 
 7. If he has scanned all barcodes in the list he can send his changes to the server. The inventory is this room is completed. Go to Step 4 again to continue with the next room. 
 
 ### Ending
