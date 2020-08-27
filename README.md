@@ -6,7 +6,7 @@ Capentory is a system that allows our school to perform an inventory through a s
 
 The apps API Level is 21 (= Android 5.0 'Lollipop'). The app uses AndroidX and Jetpack libraries. Before reading the remaining documentation you should be familiar with basic Android development.
 
-## App-Architecture 
+### App-Architecture 
 
 The architecture is based on this [official article](https://developer.android.com/jetpack/guide) that is worth reading. The aApp makes use of MVVM-Architecture with an additional abstracted layer. MVVM generally includes three logical components:
 
