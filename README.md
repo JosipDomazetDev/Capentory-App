@@ -11,8 +11,10 @@ The apps API Level is 21 (= Android 5.0 'Lollipop'). The app uses AndroidX and J
 The App makes use of MVVM-Architecture with an additional abstracted layer. MVVM generally includes three logical components:
 
 * View -> Responsible for displaying the current data to the user. This layer should contain as little logic as possible.
-* ViewModel -> Responsible for performing all the logic behind the scenes and exposing LiveData to the View. 
-* Repository -> Responsible for fetching and parsing the data
+* ViewModel -> Responsible for performing all the logic behind the scenes. 
+* Repository -> Responsible for fetching and parsing the data.
+
+Each component gets its data from the next higher level. The "data" is encapsulated into a wrapper-object that stores state information (INITIALIZED, SUCCESS, ERROR, FETCHING). That wrapper-object is further encapsulated into a LiveData-Object that is observable. The most primitive L
 
 ![MVVM according to Google](https://developer.android.com/topic/libraries/architecture/images/final-architecture.png)
           
@@ -21,3 +23,11 @@ We extracted this general MVVM logic into super classes:
 * **NetworkFragment.java** for the abstracted **View**
 * **NetworkViewModel.java** for the abstracted **ViewModel**
 * **NetworkRepository.java** for the abstracted **Repository**
+
+With this architecture in place it is quite easy to add additional features and locating bugs is much faster.
+
+
+### Navigation
+
+Navigation was implemented via the new Navigation Components library.
+
