@@ -2,6 +2,8 @@
 
 Capentory is a system that allows our school to perform an inventory through a single platform. Our system will automatically take care of all edge cases. The system consists out of a server and an Android app that communicate through a JSON REST API. The user only needs to scan barcodes via the app. All barcodes are already present on all items in the organization due to legal obligations. There is an app showcase avaliable on [YouTube](https://www.youtube.com/watch?v=ktoLtNBN13E).
 
+![Project overview](docs/BigPicture.jpg)
+
 ## Technical Details
 
 The apps API Level is 21 (= Android 5.0 'Lollipop'). The app uses AndroidX and Jetpack libraries. Before reading the remaining documentation you should be familiar with basic Android development.
